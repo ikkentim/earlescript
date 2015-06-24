@@ -1,0 +1,137 @@
+﻿// Earle
+// Copyright 2015 Tim Potze
+// 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+// 
+//     http://www.apache.org/licenses/LICENSE-2.0
+// 
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+using System;
+using System.Linq;
+using Earle.Grammars;
+using Earle.Parsers;
+using Earle.Tokens;
+
+namespace Earle
+{
+    public class Compiler
+    {
+        private static readonly IParser[] Parsers =
+        {
+            new FunctionCallParser(),
+            new EndExpressionParser()
+        };
+
+        public static readonly Grammar Grammar = new Grammar();
+        public static readonly Grammar FunctionGrammar = new Grammar();
+        private readonly Engine _engine;
+
+        static Compiler()
+        {
+            Grammar.AddProductionRule("STATEMENT_IF", "`if` ( EXPRESSION )");
+            Grammar.AddProductionRule("STATEMENT_WHILE", "`while` ( EXPRESSION )");
+            Grammar.AddProductionRule("STATEMENT_DO", "`do`");
+            Grammar.AddProductionRule("STATEMENT_FOR", "`for` ( ASSIGNMENT ; EXPRESSION ; EXPRESSION )");
+            Grammar.AddProductionRule("STATEMENT_END", ";");
+
+            Grammar.AddProductionRule("ASSIGNMENT", "IDENTIFIER = EXPRESSION ;");
+
+            Grammar.AddProductionRule("FUNCTION_CALL", "OPTIONAL PATH_PREFIX IDENTIFIER ( OPTIONAL EXPRESSION_LIST )");
+
+            Grammar.AddProductionRule("PATH", "\\IDENTIFIER");
+            Grammar.AddProductionRule("PATH", "PATH\\IDENTIFIER");
+            Grammar.AddProductionRule("PATH_PREFIX", "PATH ::");
+
+            Grammar.AddProductionRule("EXPRESSION", "( EXPRESSION )");
+            Grammar.AddProductionRule("EXPRESSION", "EXPRESSION OPERATOR EXPRESSION");
+            Grammar.AddProductionRule("EXPRESSION", "OPERATOR_UNARY EXPRESSION");
+            Grammar.AddProductionRule("EXPRESSION", "IDENTIFIER|NUMBER_LITERAL|STRING_LITERAL");
+
+            Grammar.AddProductionRule("EXPRESSION_LIST", "EXPRESSION_LIST , EXPRESSION_LIST");
+            Grammar.AddProductionRule("EXPRESSION_LIST", "EXPRESSION");
+
+            Grammar.AddProductionRule("OPERATOR", "||");
+            Grammar.AddProductionRule("OPERATOR", "&&");
+            Grammar.AddProductionRule("OPERATOR", "<<");
+            Grammar.AddProductionRule("OPERATOR", ">>");
+            Grammar.AddProductionRule("OPERATOR", "<");
+            Grammar.AddProductionRule("OPERATOR", ">");
+            Grammar.AddProductionRule("OPERATOR", "<=");
+            Grammar.AddProductionRule("OPERATOR", ">=");
+            Grammar.AddProductionRule("OPERATOR", "==");
+            Grammar.AddProductionRule("OPERATOR", "!=");
+            Grammar.AddProductionRule("OPERATOR", "+");
+            Grammar.AddProductionRule("OPERATOR", "-");
+            Grammar.AddProductionRule("OPERATOR", "*");
+            Grammar.AddProductionRule("OPERATOR", "/");
+            Grammar.AddProductionRule("OPERATOR", "^");
+
+            Grammar.AddProductionRule("OPERATOR_UNARY", "+");
+            Grammar.AddProductionRule("OPERATOR_UNARY", "-");
+            Grammar.AddProductionRule("OPERATOR_UNARY", "!");
+            Grammar.AddProductionRule("OPERATOR_UNARY", "~");
+
+            FunctionGrammar.AddProductionRule("FUNCTION_DECLARATION", "IDENTIFIER ( )");
+            FunctionGrammar.AddProductionRule("FUNCTION_DECLARATION", "IDENTIFIER ( IDENTIFIER )");
+        }
+
+        public Compiler(Engine engine)
+        {
+            _engine = engine;
+        }
+
+        public EarleFile Compile(string path, string input)
+        {
+            if (path == null) throw new ArgumentNullException("path");
+            if (input == null) throw new ArgumentNullException("input");
+
+            var tokenizer = new Tokenizer(input);
+            var methodParser = new FunctionParser();
+
+            var file = new EarleFile(_engine, path);
+
+            do
+            {
+                if (FunctionGrammar.GetMatch(tokenizer) != methodParser.ParserRule)
+                    throw new Exception("Invalid char near here");
+
+                var method = methodParser.Parse(file, tokenizer);
+
+                if (method == null)
+                    throw new Exception();
+
+                tokenizer.MoveNext();
+
+                if (tokenizer.Current.Type != TokenType.Token || tokenizer.Current.Value != "{")
+                    throw new Exception("unexpected things");
+
+                tokenizer.MoveNext();
+
+                while (!(tokenizer.Current.Type == TokenType.Token && tokenizer.Current.Value == "}"))
+                {
+                    var found = false;
+                    foreach (var parser in Parsers.Where(parser => Grammar.GetMatch(tokenizer) == parser.ParserRule))
+                    {
+                        method.AddBlock(parser.Parse(method, tokenizer));
+                        found = true;
+                        break;
+                    }
+
+                    if (!found)
+                        throw new Exception();
+                }
+
+                file.Functions.Add(method);
+            } while (tokenizer.MoveNext());
+
+            return file;
+        }
+    }
+}

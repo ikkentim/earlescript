@@ -1,0 +1,64 @@
+﻿// Earle
+// Copyright 2015 Tim Potze
+// 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+// 
+//     http://www.apache.org/licenses/LICENSE-2.0
+// 
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+using System;
+using System.Linq;
+using Earle.Variables;
+
+namespace Earle.Blocks
+{
+    public class FunctionCall : Block
+    {
+        private readonly ValueContainer[] _arguments;
+
+        public FunctionCall(Block parent, string callPath, string name, params ValueContainer[] arguments)
+            : base(parent)
+        {
+            if (name == null) throw new ArgumentNullException("name");
+            if (arguments == null) throw new ArgumentNullException("arguments");
+            CallPath = callPath;
+            Name = name;
+            _arguments = arguments;
+        }
+
+        public string CallPath { get; private set; }
+        public string Name { get; private set; }
+
+        #region Overrides of Block
+
+        public override ValueContainer Run()
+        {
+            var method = Parent.ResolveFunction(this);
+
+            if (method == null)
+                throw new Exception();
+
+            method.Invoke(_arguments.Select(ValueContainer.Get).ToArray());
+
+            return null;
+        }
+
+        #endregion
+
+        #region Overrides of Object
+
+        public override string ToString()
+        {
+            return string.Format("CALL {0}::{1}({2})", CallPath, Name, string.Join(", ", (object[]) _arguments));
+        }
+
+        #endregion
+    }
+}

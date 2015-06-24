@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Earle", "Earle\Earle.csproj", "{052A3677-9A2E-4CD9-AEC8-A4E915AF8241}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Earle.Debug", "Earle.Debug\Earle.Debug.csproj", "{066203FD-6482-499F-9249-002029D3AACC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Earle.UnitTest", "Earle.UnitTest\Earle.UnitTest.csproj", "{1763C999-B1FF-4850-B187-9A2A19BF381A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{052A3677-9A2E-4CD9-AEC8-A4E915AF8241}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{052A3677-9A2E-4CD9-AEC8-A4E915AF8241}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{052A3677-9A2E-4CD9-AEC8-A4E915AF8241}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{052A3677-9A2E-4CD9-AEC8-A4E915AF8241}.Release|Any CPU.Build.0 = Release|Any CPU
+		{066203FD-6482-499F-9249-002029D3AACC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{066203FD-6482-499F-9249-002029D3AACC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{066203FD-6482-499F-9249-002029D3AACC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{066203FD-6482-499F-9249-002029D3AACC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1763C999-B1FF-4850-B187-9A2A19BF381A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1763C999-B1FF-4850-B187-9A2A19BF381A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1763C999-B1FF-4850-B187-9A2A19BF381A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1763C999-B1FF-4850-B187-9A2A19BF381A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
