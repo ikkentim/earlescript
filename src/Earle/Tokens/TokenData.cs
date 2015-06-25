@@ -1,4 +1,4 @@
-﻿// Earle
+// Earle
 // Copyright 2015 Tim Potze
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,28 +13,36 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Text.RegularExpressions;
+
 namespace Earle.Tokens
 {
-    public class Token
+    public class TokenData
     {
-        public Token(TokenType type, string value, int line, int column)
+        private readonly string _pattern;
+
+        public TokenData(Regex pattern, TokenType type)
         {
+            Pattern = pattern;
             Type = type;
-            Value = value;
-            Line = line;
-            Column = column;
         }
 
-        public int Line { get; private set; }
-        public int Column { get; private set; }
+        public TokenData(string pattern, TokenType type, int contentGroup = 0)
+            : this(new Regex(pattern), type)
+        {
+            _pattern = pattern;
+            ContentGroup = contentGroup;
+        }
+
+        public int ContentGroup { get; private set; }
+        public Regex Pattern { get; private set; }
         public TokenType Type { get; private set; }
-        public string Value { get; private set; }
 
         #region Overrides of Object
 
         public override string ToString()
         {
-            return string.Format("{0} `{1}` at line {2}", Type, Value, Line);
+            return string.Format("{0} `{1}`", Type, _pattern);
         }
 
         #endregion

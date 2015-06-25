@@ -13,30 +13,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Earle.Tokens
+using System;
+using Earle.Tokens;
+
+namespace Earle
 {
-    public class Token
+    public class CodeException : Exception
     {
-        public Token(TokenType type, string value, int line, int column)
+        public CodeException(Token token, string error)
+            : this(token == null ? -1 : token.Line, token == null ? -1 : token.Column, error)
         {
-            Type = type;
-            Value = value;
-            Line = line;
-            Column = column;
         }
 
-        public int Line { get; private set; }
-        public int Column { get; private set; }
-        public TokenType Type { get; private set; }
-        public string Value { get; private set; }
-
-        #region Overrides of Object
-
-        public override string ToString()
+        public CodeException(int line, int column, string error)
+            : base(string.Format("ERROR:{0}:{1}: {2}", line, column, error))
         {
-            return string.Format("{0} `{1}` at line {2}", Type, Value, Line);
         }
 
-        #endregion
+        public CodeException(string message)
+            : base(message)
+        {
+        }
     }
 }

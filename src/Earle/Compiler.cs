@@ -14,10 +14,13 @@
 // limitations under the License.
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using Earle.Blocks;
 using Earle.Grammars;
 using Earle.Parsers;
 using Earle.Tokens;
+using Microsoft.CSharp.RuntimeBinder;
 
 namespace Earle
 {
@@ -87,48 +90,61 @@ namespace Earle
             _engine = engine;
         }
 
+        public IEnumerable<Block> CompileCodeBlock(Block parent, Tokenizer tokenizer)
+        {
+            var singleStatement = tokenizer.Current.Type != TokenType.Token || tokenizer.Current.Value != "{";
+
+            // If this code block does not contain a single statement, skip the `{`.
+            if (!singleStatement)
+                tokenizer.MoveNext();
+
+            while (tokenizer.Current != null && (singleStatement || !(tokenizer.Current.Type == TokenType.Token && tokenizer.Current.Value == "}")))
+            {
+                var found = false;
+                foreach (var parser in Parsers.Where(parser => Grammar.GetMatch(tokenizer) == parser.ParserRule))
+                {
+                    yield return parser.Parse(parent, tokenizer);
+                    found = true;
+                    break;
+                }
+
+                if (!found)
+                    throw new CompilerException(tokenizer.Current, string.Format("Unexpected {0}", tokenizer.Current.Type.ToUpperString()));
+
+                if (singleStatement)
+                    yield break;
+            }
+
+            if (singleStatement)
+                throw new CompilerException(tokenizer.Current, "Unexpected end of file");
+        }
+
         public EarleFile Compile(string path, string input)
         {
             if (path == null) throw new ArgumentNullException("path");
             if (input == null) throw new ArgumentNullException("input");
 
             var tokenizer = new Tokenizer(input);
-            var methodParser = new FunctionParser();
+            var functionParser = new FunctionParser();
 
             var file = new EarleFile(_engine, path);
 
             do
             {
-                if (FunctionGrammar.GetMatch(tokenizer) != methodParser.ParserRule)
-                    throw new Exception("Invalid char near here");
+                if (FunctionGrammar.GetMatch(tokenizer) != functionParser.ParserRule)
+                    throw new CompilerException(tokenizer.Current, string.Format("Expected function, found `{0}`", tokenizer.Current.Value));
 
-                var method = methodParser.Parse(file, tokenizer);
+                var function = functionParser.Parse(file, tokenizer);
 
-                if (method == null)
-                    throw new Exception();
-
-                tokenizer.MoveNext();
-
-                if (tokenizer.Current.Type != TokenType.Token || tokenizer.Current.Value != "{")
-                    throw new Exception("unexpected things");
+                if (function == null)
+                    throw new CompilerException(tokenizer.Current, string.Format("Function parse error, found `{0}`", tokenizer.Current.Value));
 
                 tokenizer.MoveNext();
 
-                while (!(tokenizer.Current.Type == TokenType.Token && tokenizer.Current.Value == "}"))
-                {
-                    var found = false;
-                    foreach (var parser in Parsers.Where(parser => Grammar.GetMatch(tokenizer) == parser.ParserRule))
-                    {
-                        method.AddBlock(parser.Parse(method, tokenizer));
-                        found = true;
-                        break;
-                    }
+                foreach(var block in CompileCodeBlock(function, tokenizer))
+                    function.AddBlock(block);
 
-                    if (!found)
-                        throw new Exception();
-                }
-
-                file.Functions.Add(method);
+                file.Functions.Add(function);
             } while (tokenizer.MoveNext());
 
             return file;

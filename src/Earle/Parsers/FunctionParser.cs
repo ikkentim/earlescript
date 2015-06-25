@@ -45,7 +45,7 @@ namespace Earle.Parsers
                     parameters.Add(tokenizer.Current.Value);
                 else
                     throw new Exception(string.Format("Unexpected {0} at line {1} near {2}", tokenizer.Current,
-                        tokenizer.Current.Line, tokenizer.CurrentBuffer));
+                        tokenizer.Current.Line, "???"));
 
                 tokenizer.MoveNext();
             }

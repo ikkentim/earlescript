@@ -47,11 +47,14 @@
     <Compile Include="Blocks\Block.cs" />
     <Compile Include="Blocks\NativeFunction.cs" />
     <Compile Include="Blocks\NoOperation.cs" />
+    <Compile Include="CodeException.cs" />
     <Compile Include="Compiler.cs" />
+    <Compile Include="CompilerException.cs" />
     <Compile Include="EarleFile.cs" />
     <Compile Include="Blocks\FunctionCall.cs" />
     <Compile Include="Blocks\Function.cs" />
     <Compile Include="Engine.cs" />
+    <Compile Include="Grammars\GrammarException.cs" />
     <Compile Include="Grammars\ProductionRuleElements\AndProductionRuleElement.cs" />
     <Compile Include="Grammars\ProductionRuleElements\EmbeddedProductionRuleElement.cs" />
     <Compile Include="Grammars\Grammar.cs" />
@@ -60,6 +63,8 @@
     <Compile Include="Grammars\ProductionRule.cs" />
     <Compile Include="Grammars\ProductionRuleElements\IProductionRuleElement.cs" />
     <Compile Include="PathResolverDelegate.cs" />
+    <Compile Include="Tokens\TokenData.cs" />
+    <Compile Include="Tokens\TokenHelper.cs" />
     <Compile Include="Tokens\TokenWalker.cs" />
     <Compile Include="Parsers\EndExpressionParser.cs" />
     <Compile Include="Parsers\FunctionCallParser.cs" />

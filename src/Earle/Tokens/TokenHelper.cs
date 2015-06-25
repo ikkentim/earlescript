@@ -13,30 +13,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Linq;
+
 namespace Earle.Tokens
 {
-    public class Token
+    public static class TokenHelper
     {
-        public Token(TokenType type, string value, int line, int column)
+        public static string ToUpperString(this TokenType tokenType)
         {
-            Type = type;
-            Value = value;
-            Line = line;
-            Column = column;
+            return string.Concat(
+                tokenType.ToString().Select((x, i) => (i > 0 && char.IsUpper(x) ? "_" : "") + x.ToString()))
+                .ToUpper();
         }
-
-        public int Line { get; private set; }
-        public int Column { get; private set; }
-        public TokenType Type { get; private set; }
-        public string Value { get; private set; }
-
-        #region Overrides of Object
-
-        public override string ToString()
-        {
-            return string.Format("{0} `{1}` at line {2}", Type, Value, Line);
-        }
-
-        #endregion
     }
 }

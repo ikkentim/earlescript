@@ -13,30 +13,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Earle.Tokens
+using System;
+using Earle.Tokens;
+
+namespace Earle.Grammars
 {
-    public class Token
+    public class GrammarException : CodeException
     {
-        public Token(TokenType type, string value, int line, int column)
+        public GrammarException(Token token, string error) : base(token, error)
         {
-            Type = type;
-            Value = value;
-            Line = line;
-            Column = column;
         }
 
-        public int Line { get; private set; }
-        public int Column { get; private set; }
-        public TokenType Type { get; private set; }
-        public string Value { get; private set; }
-
-        #region Overrides of Object
-
-        public override string ToString()
+        public GrammarException(int line, int column, string error) : base(line, column, error)
         {
-            return string.Format("{0} `{1}` at line {2}", Type, Value, Line);
         }
 
-        #endregion
+        public GrammarException(string message) : base(message)
+        {
+        }
     }
 }

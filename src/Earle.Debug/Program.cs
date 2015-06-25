@@ -23,9 +23,9 @@ namespace Earle.Debug
         private static void Main(string[] args)
         {
             var code = @"
-                cprint(inp) {
+                cprint(inp) 
                     print(inp);
-                }
+
                 entry () {
                     \External\Directory::Count(234);
                     cprint(""Hello World!"");

@@ -24,52 +24,6 @@ namespace Earle.Parsers
 {
     internal class FunctionCallParser : Parser<FunctionCall>
     {
-        private bool IsCurrentToken(Tokenizer tokenizer, Stack<Token> tokens, string token)
-        {
-            if (IsCurrentToken(tokenizer, token)) return true;
-
-            PushBack(tokenizer, tokens);
-            return false;
-        }
-
-        private bool IsCurrentToken(Tokenizer tokenizer, Stack<Token> tokens, params TokenType[] token)
-        {
-            if (IsCurrentToken(tokenizer, token)) return true;
-
-            PushBack(tokenizer, tokens);
-            return false;
-        }
-
-        private bool IsCurrentToken(Tokenizer tokenizer, string token)
-        {
-            return tokenizer.Current.Type == TokenType.Token && tokenizer.Current.Value == token;
-        }
-
-        private bool IsCurrentToken(Tokenizer tokenizer, params TokenType[] token)
-        {
-            return token.Contains(tokenizer.Current.Type);
-        }
-
-        private bool MoveNext(Tokenizer tokenizer, Stack<Token> tokens)
-        {
-            var current = tokenizer.Current;
-
-            if (tokenizer.MoveNext())
-            {
-                tokens.Push(current);
-                return true;
-            }
-
-            PushBack(tokenizer, tokens);
-            return false;
-        }
-
-        private void PushBack(Tokenizer tokenizer, Stack<Token> tokens)
-        {
-            while (tokens.Any())
-                tokenizer.PushBack(tokens.Pop());
-        }
-
         #region Overrides of Parser<FunctionCall>
 
         public override string ParserRule

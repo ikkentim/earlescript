@@ -54,6 +54,7 @@ namespace Earle.Grammars
         private static AndProductionRuleElement Compile(Token[] tokens)
         {
             if (tokens == null) throw new ArgumentNullException("tokens");
+
             var productionRule = new AndProductionRuleElement();
 
             var optional = false;
@@ -66,15 +67,11 @@ namespace Earle.Grammars
                 productionRule.AddCondition(element);
             });
 
-            var types = typeof (TokenType).GetEnumNames().Select(value =>
-            {
-                return
-                    new KeyValuePair<string, TokenType>(
-                        string.Concat(
-                            value.Select((x, i) => i > 0 && char.IsUpper(x) ? "_" + x.ToString() : x.ToString()))
-                            .ToUpper(),
-                        (TokenType) Enum.Parse(typeof (TokenType), value));
-            }).ToDictionary(p => p.Key, p => p.Value);
+            var types =
+                typeof (TokenType).GetEnumValues()
+                    .OfType<TokenType>()
+                    .Select(value => new KeyValuePair<string, TokenType>(value.ToUpperString(), value))
+                    .ToDictionary(p => p.Key, p => p.Value);
 
             for (var i = 0; i < tokens.Length; i++)
             {
@@ -100,7 +97,7 @@ namespace Earle.Grammars
 
                                 if (i >= tokens.Length || tokens[i].Type != TokenType.Identifier ||
                                     !types.ContainsKey(tokens[i].Value))
-                                    throw new Exception("Unexpected token");
+                                    throw new GrammarException(token, "expected IDENTIFIER, found " + tokens[i].Value);
                             }
 
                             add(new LiteralProductionRuleElement(typeLiterals.ToArray()));
@@ -109,7 +106,6 @@ namespace Earle.Grammars
                             optional = true;
                         else
                             add(new EmbeddedProductionRuleElement(token.Value));
-
                         break;
                     case TokenType.Token:
                         if (tokens[i].Value == "`")
@@ -120,7 +116,7 @@ namespace Earle.Grammars
                                 if (tokens[i].Type != TokenType.Identifier)
                                 {
                                     if (tokens[i].Type != TokenType.Token || tokens[i].Value != "`")
-                                        throw new Exception();
+                                        throw new GrammarException(token, "expected '`', found " + tokens[i].Value);
 
                                     break;
                                 }
@@ -129,12 +125,10 @@ namespace Earle.Grammars
                             }
                         }
                         else
-                        {
                             add(new LiteralProductionRuleElement(tokens[i].Value, TokenType.Token));
-                        }
                         break;
                     default:
-                        throw new Exception("Unexpected token type");
+                        throw new GrammarException(token, "expected IDENTIFIER or TOKEN, found " + tokens[i].Value);
                 }
             }
 
