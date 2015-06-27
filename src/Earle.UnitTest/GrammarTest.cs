@@ -29,6 +29,31 @@ namespace Earle.UnitTest
                 string.Format("`{0}` should be of type {1}", expression, expected));
         }
 
+        private void AssertFunctionExpressionType(string expected, string expression)
+        {
+            var t = new Tokenizer(expression);
+
+            Assert.AreEqual(expected, Compiler.FunctionGrammar.GetMatch(t),
+                string.Format("`{0}` should be of type {1}", expression, expected));
+        }
+
+        [TestMethod]
+        public void TestFunction()
+        {
+            AssertFunctionExpressionType("FUNCTION_DECLARATION", "func()");
+            AssertFunctionExpressionType("FUNCTION_DECLARATION", "func(a,b)");
+            AssertFunctionExpressionType("FUNCTION_DECLARATION", "func(a)");
+        }
+
+        [TestMethod]
+        public void TestReturn()
+        {
+            AssertExpressionType("STATEMENT_RETURN", @"return;");
+            AssertExpressionType("STATEMENT_RETURN", @"return "" Hello world! "";");
+            AssertExpressionType("STATEMENT_RETURN", @"return 1;");
+            AssertExpressionType("STATEMENT_RETURN", @"return 1 + 1;");
+        }
+
         [TestMethod]
         public void TestExpression()
         {

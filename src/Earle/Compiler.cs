@@ -20,7 +20,6 @@ using Earle.Blocks;
 using Earle.Grammars;
 using Earle.Parsers;
 using Earle.Tokens;
-using Microsoft.CSharp.RuntimeBinder;
 
 namespace Earle
 {
@@ -29,7 +28,9 @@ namespace Earle
         private static readonly IParser[] Parsers =
         {
             new FunctionCallParser(),
-            new EndExpressionParser()
+            new EndExpressionParser(),
+            new ReturnParser(), 
+            new AssignmentParser(), 
         };
 
         public static readonly Grammar Grammar = new Grammar();
@@ -41,8 +42,9 @@ namespace Earle
             Grammar.AddProductionRule("STATEMENT_IF", "`if` ( EXPRESSION )");
             Grammar.AddProductionRule("STATEMENT_WHILE", "`while` ( EXPRESSION )");
             Grammar.AddProductionRule("STATEMENT_DO", "`do`");
-            Grammar.AddProductionRule("STATEMENT_FOR", "`for` ( ASSIGNMENT ; EXPRESSION ; EXPRESSION )");
+            Grammar.AddProductionRule("STATEMENT_FOR", "`for` ( OPTIONAL ASSIGNMENT ; OPTIONAL EXPRESSION ; OPTIONAL EXPRESSION )");
             Grammar.AddProductionRule("STATEMENT_END", ";");
+            Grammar.AddProductionRule("STATEMENT_RETURN", "`return` OPTIONAL EXPRESSION ;");
 
             Grammar.AddProductionRule("ASSIGNMENT", "IDENTIFIER = EXPRESSION ;");
 
@@ -56,6 +58,7 @@ namespace Earle
             Grammar.AddProductionRule("EXPRESSION", "EXPRESSION OPERATOR EXPRESSION");
             Grammar.AddProductionRule("EXPRESSION", "OPERATOR_UNARY EXPRESSION");
             Grammar.AddProductionRule("EXPRESSION", "IDENTIFIER|NUMBER_LITERAL|STRING_LITERAL");
+            Grammar.AddProductionRule("EXPRESSION", "FUNCTION_CALL");
 
             Grammar.AddProductionRule("EXPRESSION_LIST", "EXPRESSION_LIST , EXPRESSION_LIST");
             Grammar.AddProductionRule("EXPRESSION_LIST", "EXPRESSION");
@@ -81,8 +84,9 @@ namespace Earle
             Grammar.AddProductionRule("OPERATOR_UNARY", "!");
             Grammar.AddProductionRule("OPERATOR_UNARY", "~");
 
-            FunctionGrammar.AddProductionRule("FUNCTION_DECLARATION", "IDENTIFIER ( )");
-            FunctionGrammar.AddProductionRule("FUNCTION_DECLARATION", "IDENTIFIER ( IDENTIFIER )");
+            FunctionGrammar.AddProductionRule("FUNCTION_DECLARATION", "IDENTIFIER ( OPTIONAL IDENTIFIER_LIST )");
+            FunctionGrammar.AddProductionRule("IDENTIFIER_LIST", "IDENTIFIER_LIST , IDENTIFIER_LIST");
+            FunctionGrammar.AddProductionRule("IDENTIFIER_LIST", "IDENTIFIER");
         }
 
         public Compiler(Engine engine)
@@ -98,11 +102,13 @@ namespace Earle
             if (!singleStatement)
                 tokenizer.MoveNext();
 
+            // Find matching parsers until end of code block.
             while (tokenizer.Current != null && (singleStatement || !(tokenizer.Current.Type == TokenType.Token && tokenizer.Current.Value == "}")))
             {
                 var found = false;
                 foreach (var parser in Parsers.Where(parser => Grammar.GetMatch(tokenizer) == parser.ParserRule))
                 {
+                    // Parse the tokens and return the resulting block.
                     yield return parser.Parse(parent, tokenizer);
                     found = true;
                     break;
@@ -131,15 +137,14 @@ namespace Earle
 
             do
             {
-                if (FunctionGrammar.GetMatch(tokenizer) != functionParser.ParserRule)
-                    throw new CompilerException(tokenizer.Current, string.Format("Expected function, found `{0}`", tokenizer.Current.Value));
+                var match = FunctionGrammar.GetMatch(tokenizer);
+                if (match != functionParser.ParserRule)
+                    throw new CompilerException(tokenizer.Current, string.Format("Expected function, found {1} `{0}`", tokenizer.Current.Value, match));
 
                 var function = functionParser.Parse(file, tokenizer);
 
                 if (function == null)
                     throw new CompilerException(tokenizer.Current, string.Format("Function parse error, found `{0}`", tokenizer.Current.Value));
-
-                tokenizer.MoveNext();
 
                 foreach(var block in CompileCodeBlock(function, tokenizer))
                     function.AddBlock(block);

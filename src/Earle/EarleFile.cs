@@ -48,6 +48,11 @@ namespace Earle
 
         #region Overrides of Block
 
+        public override bool IsReturnStatement
+        {
+            get { return false; }
+        }
+
         public override string Path
         {
             get { return _path; }

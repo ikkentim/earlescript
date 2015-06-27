@@ -19,11 +19,11 @@ using Earle.Variables;
 
 namespace Earle.Blocks
 {
-    public class FunctionCall : Block
+    public class FunctionCall : Expression
     {
-        private readonly ValueContainer[] _arguments;
+        private readonly Expression[] _arguments;
 
-        public FunctionCall(Block parent, string callPath, string name, params ValueContainer[] arguments)
+        public FunctionCall(Block parent, string callPath, string name, params Expression[] arguments)
             : base(parent)
         {
             if (name == null) throw new ArgumentNullException("name");
@@ -38,16 +38,19 @@ namespace Earle.Blocks
 
         #region Overrides of Block
 
+        public override bool IsReturnStatement
+        {
+            get { return false; }
+        }
+
         public override ValueContainer Run()
         {
-            var method = Parent.ResolveFunction(this);
+            var function = Parent.ResolveFunction(this);
 
-            if (method == null)
-                throw new Exception();
+            if (function == null)
+                throw new RuntimeException(string.Format("Function `{0}::{1}` not found", CallPath, Name));
 
-            method.Invoke(_arguments.Select(ValueContainer.Get).ToArray());
-
-            return null;
+            return function.Invoke(_arguments.Select(a => a.Run()).ToArray());
         }
 
         #endregion

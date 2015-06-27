@@ -25,6 +25,11 @@ namespace Earle.Blocks
 
         #region Overrides of Block
 
+        public override bool IsReturnStatement
+        {
+            get { return false; }
+        }
+
         public override ValueContainer Run()
         {
             return null;

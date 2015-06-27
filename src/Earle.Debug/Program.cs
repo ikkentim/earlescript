@@ -27,14 +27,14 @@ namespace Earle.Debug
                     print(inp);
 
                 entry () {
-                    \External\Directory::Count(234);
-                    cprint(""Hello World!"");
+                    sum = \External\Directory::count(23,4);
+                    cprint(""Hello "" + ""World! ("" + sum + "")"");
                 }
                 ";
 
             var code2 = @"
-                Count(num) {
-                    print(""Count was called!"");
+                count(number1, number2) {
+                    return number1 + number2;
                 }
                 ";
             var engine = new Engine(path =>
@@ -50,8 +50,12 @@ namespace Earle.Debug
                 }
             });
 
-
-            Console.WriteLine("Running code: \n {0} \n \n Result:\n", code);
+            Console.WriteLine("Running code:");
+            Console.WriteLine("  \\main:");
+            Console.WriteLine(code);
+            Console.WriteLine("  \\External\\Directory:");
+            Console.WriteLine(code2);
+            Console.WriteLine("\n\n Result:\n", code);
 
             engine["\\main"].Run();
 

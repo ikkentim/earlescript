@@ -21,6 +21,8 @@ namespace Earle.Variables
     {
         public ValueContainer()
         {
+            Type = VarType.Null;
+            Value = null;
         }
 
         public ValueContainer(VarType type, object value)
@@ -29,12 +31,37 @@ namespace Earle.Variables
             Value = value;
         }
 
+        public ValueContainer(string value)
+        {
+            Type = VarType.String;
+            Value = value;
+        }
+
+        public ValueContainer(float value)
+        {
+            Type = VarType.Number;
+            Value = value;
+        }
         public virtual VarType Type { get; private set; }
-        public virtual object Value { get; set; }
+        public virtual object Value { get; private set; }
 
         public ValueContainer GetValue()
         {
             return new ValueContainer(Type, Value);
+        }
+
+
+        public virtual void SetValue(VarType type, object value)
+        {
+            Type = type;
+            Value = value;
+        }
+
+        public virtual void SetValue(ValueContainer value)
+        {
+            var v = value.GetValue();
+            Type = v.Type;
+            Value = v.Value;
         }
 
         public static ValueContainer Get(ValueContainer valueContainer)
@@ -42,5 +69,14 @@ namespace Earle.Variables
             if (valueContainer == null) throw new ArgumentNullException("valueContainer");
             return valueContainer.GetValue();
         }
+
+        #region Overrides of Object
+
+        public override string ToString()
+        {
+            return Value.ToString();
+        }
+
+        #endregion
     }
 }

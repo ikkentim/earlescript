@@ -44,9 +44,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Blocks\Assignment.cs" />
     <Compile Include="Blocks\Block.cs" />
+    <Compile Include="Blocks\Expression.cs" />
     <Compile Include="Blocks\NativeFunction.cs" />
     <Compile Include="Blocks\NoOperation.cs" />
+    <Compile Include="Blocks\Return.cs" />
+    <Compile Include="Blocks\RuntimeException.cs" />
     <Compile Include="CodeException.cs" />
     <Compile Include="Compiler.cs" />
     <Compile Include="CompilerException.cs" />
@@ -62,6 +66,9 @@
     <Compile Include="Grammars\ProductionRuleElements\OptionalProductionRuleElement.cs" />
     <Compile Include="Grammars\ProductionRule.cs" />
     <Compile Include="Grammars\ProductionRuleElements\IProductionRuleElement.cs" />
+    <Compile Include="Parsers\AssignmentParser.cs" />
+    <Compile Include="Parsers\ExpressionParser.cs" />
+    <Compile Include="Parsers\ReturnParser.cs" />
     <Compile Include="PathResolverDelegate.cs" />
     <Compile Include="Tokens\TokenData.cs" />
     <Compile Include="Tokens\TokenHelper.cs" />

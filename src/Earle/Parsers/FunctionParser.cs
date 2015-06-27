@@ -34,23 +34,51 @@ namespace Earle.Parsers
             var name = tokenizer.Current.Value;
             var parameters = new List<string>();
 
-            tokenizer.MoveNext();
-            // `(`
-            tokenizer.MoveNext();
-
-            // first parameter or `)`
-            while (tokenizer.Current.Value != ")")
+            if (!tokenizer.MoveNext())
             {
-                if (tokenizer.Current.Type == TokenType.Identifier)
-                    parameters.Add(tokenizer.Current.Value);
-                else
-                    throw new Exception(string.Format("Unexpected {0} at line {1} near {2}", tokenizer.Current,
-                        tokenizer.Current.Line, "???"));
-
-                tokenizer.MoveNext();
+                throw new Exception();
             }
 
-            // `)`
+            if (tokenizer.Current.Type != TokenType.Token || tokenizer.Current.Value != "(")
+                throw new Exception();
+
+            if (!tokenizer.MoveNext())
+            {
+                throw new Exception();
+            }
+
+            // first parameter or `)`
+
+
+            if (!tokenizer.Current.Is(TokenType.Token, ")"))
+                while (true)
+                {
+                    if (tokenizer.Current.Type == TokenType.Identifier)
+                        parameters.Add(tokenizer.Current.Value);
+                    else
+                        throw new ParseException(tokenizer.Current, string.Format("Unexpected {0}", tokenizer.Current));
+              
+                    if (!tokenizer.MoveNext())
+                    {
+                        throw new Exception();
+                    }
+
+                    if (!tokenizer.Current.Is(TokenType.Token, ","))
+                        break;
+
+                    if (!tokenizer.MoveNext())
+                    {
+                        throw new Exception();
+                    }
+                }
+
+            if (!tokenizer.Current.Is(TokenType.Token, ")"))
+                throw new Exception();
+
+            if (!tokenizer.MoveNext())
+            {
+                throw new Exception();
+            }
 
             return new Function(parent, name, parameters.ToArray());
         }

@@ -16,6 +16,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Principal;
 using Earle.Blocks;
 using Earle.Tokens;
 using Earle.Variables;
@@ -95,32 +96,25 @@ namespace Earle.Parsers
 
             tokenizer.MoveNext();
 
-            var arguments = new List<ValueContainer>();
-            while (!(tokenizer.Current.Type == TokenType.Token && tokenizer.Current.Value == ")"))
+            var arguments = new List<Expression>();
+            var parser = new ExpressionParser();
+            while (true)
             {
-                switch (tokenizer.Current.Type)
-                {
-                    case TokenType.Identifier:
-                        arguments.Add(new ReferencedVariable(parent, tokenizer.Current.Value));
-                        break;
-                    case TokenType.NumberLiteral:
-                        arguments.Add(new ValueContainer(VarType.Number, int.Parse(tokenizer.Current.Value)));
-                        break;
-                    case TokenType.StringLiteral:
-                        arguments.Add(new ValueContainer(VarType.String, tokenizer.Current.Value));
-                        break;
-                    default:
-                        throw new Exception();
-                }
+                //TODO: parent is actually function call.
+                arguments.Add(parser.Parse(parent, tokenizer));
 
-                tokenizer.MoveNext();
-                if (tokenizer.Current.Type == TokenType.Token && tokenizer.Current.Value == ",")
-                    tokenizer.MoveNext();
-                else if (!(tokenizer.Current.Type == TokenType.Token && tokenizer.Current.Value == ")"))
+                if (tokenizer.Current.Type != TokenType.Token || tokenizer.Current.Value != ",")
+                    break;
+
+                if(!tokenizer.MoveNext())
                     throw new Exception();
             }
 
-            tokenizer.MoveNext();
+            if (tokenizer.Current.Type != TokenType.Token || tokenizer.Current.Value != ")")
+                throw new ParseException(tokenizer.Current, "Unxpected token");
+
+            if (!tokenizer.MoveNext())
+                throw new Exception();
 
             return new FunctionCall(parent, path, name, arguments.ToArray());
         }

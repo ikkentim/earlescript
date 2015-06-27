@@ -41,7 +41,11 @@ namespace Earle.Variables
         public override object Value
         {
             get { return (_block.ResolveVariable(Name) ?? new ValueContainer(VarType.Null, null)).Value; }
-            set { throw new NotImplementedException("A variable reference cannot be set."); }
+        }
+
+        public override void SetValue(ValueContainer value)
+        {
+            throw new Exception("A ReferencedVariable cannot be set");
         }
 
         #endregion

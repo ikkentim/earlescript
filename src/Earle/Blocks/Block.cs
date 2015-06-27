@@ -30,7 +30,9 @@ namespace Earle.Blocks
             Parent = parent;
         }
 
-        public virtual Block Parent { get; private set; }
+        public virtual Block Parent { get; set; }
+
+        public abstract bool IsReturnStatement { get; }
 
         public virtual string Path
         {
@@ -67,11 +69,19 @@ namespace Earle.Blocks
 
         public virtual ValueContainer ResolveVariable(string name)
         {
-            // breath-first search.
+            if (name == null) throw new ArgumentNullException("name");
+            // Breath-first search for variable.
             ValueContainer value;
             _variables.TryGetValue(name, out value);
 
             return Parent != null ? Parent.ResolveVariable(name) ?? value : value;
+        }
+
+        public virtual void AddVariable(string name, ValueContainer value)
+        {
+            if (name == null) throw new ArgumentNullException("name");
+            if (value == null) throw new ArgumentNullException("value");
+            Parent.AddVariable(name, value);
         }
     }
 }

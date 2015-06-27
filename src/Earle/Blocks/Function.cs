@@ -22,6 +22,7 @@ namespace Earle.Blocks
 {
     public class Function : Block
     {
+        private Dictionary<string,ValueContainer> _variables = new Dictionary<string, ValueContainer>(); 
         private readonly string[] _parameters;
 
         public Function(Block parent, string name, string[] parameters)
@@ -36,20 +37,40 @@ namespace Earle.Blocks
         public virtual ValueContainer Invoke(params ValueContainer[] values)
         {
             if (_parameters.Length != values.Length)
-                throw new Exception("Invalid argument count");
+                throw new ArgumentException("Invalid argument count", "values");
 
             Variables.Clear();
             foreach (var pair in _parameters.Zip(values, (p, v) => new KeyValuePair<string, ValueContainer>(p, v)))
                 Variables.Add(pair.Key, pair.Value);
 
-            return Children.Select(block => block.Run()).FirstOrDefault(value => value != null);
+            foreach (var block in Children)
+            {
+                var value = block.Run();
+                if (block.IsReturnStatement) return value;
+            }
+            return null;
         }
 
         #region Overrides of Block
 
+        public override bool IsReturnStatement
+        {
+            get { return false; }
+        }
+
         public override ValueContainer Run()
         {
             throw new NotImplementedException("Function cannot be invoked using the Run method.");
+        }
+
+        public override void AddVariable(string name, ValueContainer value)
+        {
+            _variables[name] = value;
+        }
+
+        public override ValueContainer ResolveVariable(string name)
+        {
+            return base.ResolveVariable(name) ?? (_variables.ContainsKey(name) ? _variables[name] : null);
         }
 
         #endregion

@@ -30,6 +30,11 @@ namespace Earle.Tokens
         public TokenType Type { get; private set; }
         public string Value { get; private set; }
 
+        public bool Is(TokenType type, string value)
+        {
+            return Type == type && Value == value;
+        }
+
         #region Overrides of Object
 
         public override string ToString()
