@@ -35,7 +35,7 @@ namespace Earle.Grammars
             if (key.Any(c => !char.IsLetterOrDigit(c) && c != '_'))
                 throw new ArgumentException("Invalid key character", "key");
 
-            var tokenizer = new Tokenizer(rule);
+            var tokenizer = new Tokenizer("production_rules", rule);
 
             var tokens = new List<Token>();
             do tokens.Add(tokenizer.Current); while (tokenizer.MoveNext());

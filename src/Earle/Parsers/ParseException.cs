@@ -8,10 +8,6 @@ namespace Earle.Parsers
         {
         }
 
-        public ParseException(int line, int column, string error) : base(line, column, error)
-        {
-        }
-
         public ParseException(string message) : base(message)
         {
         }

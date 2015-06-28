@@ -17,34 +17,37 @@ using System;
 using System.Linq;
 using Earle.Variables;
 
-namespace Earle.Blocks
+namespace Earle.Blocks.Expressions
 {
     public class OperatorExpression : Expression
     {
         private static readonly Operator[] Operators =
         {
             // Number
-            new Operator(VarType.Number, "+", VarType.Number, (l, r) => (float) l + (float) r),
-            new Operator(VarType.Number, "-", VarType.Number, (l, r) => (float) l - (float) r),
-            new Operator(VarType.Number, "*", VarType.Number, (l, r) => (float) l*(float) r),
-            new Operator(VarType.Number, "/", VarType.Number, (l, r) => (float) l/(float) r),
-            new Operator(VarType.Number, "&&", VarType.Number, (l, r) => (float) l != 0 && (float) r != 0 ? 1f : 0f),
-            new Operator(VarType.Number, "||", VarType.Number, (l, r) => (float) l != 0 || (float) r != 0 ? 1f : 0f),
+            new Operator(VarType.Integer, "+", VarType.Integer, (l, r) => new ValueContainer(VarType.Integer, (int) l + (int) r)),
+            new Operator(VarType.Integer, "-", VarType.Integer, (l, r) => new ValueContainer(VarType.Integer, (int) l - (int) r)),
+            new Operator(VarType.Integer, "*", VarType.Integer, (l, r) => new ValueContainer(VarType.Integer, (int) l*(int) r)),
+            new Operator(VarType.Integer, "/", VarType.Integer, (l, r) => new ValueContainer(VarType.Integer, (int) l/(int) r)),
+            new Operator(VarType.Integer, "&&", VarType.Integer, (l, r) => new ValueContainer(VarType.Integer, (int) l != 0 && (int) r != 0 ? 1 : 0)),
+            new Operator(VarType.Integer, "||", VarType.Integer, (l, r) => new ValueContainer(VarType.Integer, (int) l != 0 || (int) r != 0 ? 1 : 0)),
             // String
-            new Operator(VarType.String, "+", VarType.String, (l, r) => (string) l + (string) r),
-            new Operator(VarType.String, "+", VarType.Number, (l, r) => (string) l + (float) r),
-            new Operator(VarType.Number, "+", VarType.String, (l, r) => (float) l + (string) r)
+            new Operator(VarType.String, "+", VarType.String, (l, r) => new ValueContainer(VarType.String, (string) l + (string) r)),
+            new Operator(VarType.String, "+", VarType.Integer, (l, r) => new ValueContainer(VarType.String, (string) l + (int) r)),
+            new Operator(VarType.Integer, "+", VarType.String, (l, r) => new ValueContainer(VarType.String, (int) l + (string) r))
         };
-
-        public OperatorExpression(Block parent) : base(parent)
-        {
-        }
 
         public OperatorExpression(Block parent, Expression left, string op, Expression right) : base(parent)
         {
+            if (left == null) throw new ArgumentNullException("left");
+            if (op == null) throw new ArgumentNullException("op");
+            if (right == null) throw new ArgumentNullException("right");
+
             Left = left;
             OP = op;
             Right = right;
+
+            Left.Parent = this;
+            Right.Parent = this;
         }
 
         public Expression Left { get; set; }

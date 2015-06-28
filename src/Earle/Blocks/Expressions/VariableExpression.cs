@@ -1,4 +1,4 @@
-﻿// Earle
+// Earle
 // Copyright 2015 Tim Potze
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,27 +14,27 @@
 // limitations under the License.
 
 using System;
-using Earle.Tokens;
+using Earle.Variables;
 
-namespace Earle
+namespace Earle.Blocks.Expressions
 {
-    public class CodeException : Exception
+    public class VariableExpression : Expression
     {
-        public CodeException(Token token, string error)
-            : this(
-                token == null ? string.Empty : token.File, token == null ? -1 : token.Line,
-                token == null ? -1 : token.Column, error)
+        private readonly string _name;
+
+        public VariableExpression(Block parent, string name) : base(parent)
         {
+            if (name == null) throw new ArgumentNullException("name");
+            _name = name;
         }
 
-        public CodeException(string file, int line, int column, string error)
-            : base(string.Format("{3}:{0}:{1}: {2}", line, column, error, file))
+        #region Overrides of Block
+
+        public override ValueContainer Run()
         {
+            return ResolveVariable(_name);
         }
 
-        public CodeException(string message)
-            : base(message)
-        {
-        }
+        #endregion
     }
 }

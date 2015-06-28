@@ -49,12 +49,12 @@
     <Compile Include="Blocks\Expression.cs" />
     <Compile Include="Blocks\NativeFunction.cs" />
     <Compile Include="Blocks\NoOperation.cs" />
-    <Compile Include="Blocks\OperatorExpression.cs" />
+    <Compile Include="Blocks\Expressions\OperatorExpression.cs" />
     <Compile Include="Blocks\Return.cs" />
     <Compile Include="Blocks\RuntimeException.cs" />
-    <Compile Include="Blocks\UnaryOperatorExpression.cs" />
-    <Compile Include="Blocks\ValueExpression.cs" />
-    <Compile Include="Blocks\VariableExpression.cs" />
+    <Compile Include="Blocks\Expressions\UnaryOperatorExpression.cs" />
+    <Compile Include="Blocks\Expressions\ValueExpression.cs" />
+    <Compile Include="Blocks\Expressions\VariableExpression.cs" />
     <Compile Include="CodeException.cs" />
     <Compile Include="Compiler.cs" />
     <Compile Include="CompilerException.cs" />

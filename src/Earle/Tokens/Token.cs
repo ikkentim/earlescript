@@ -13,14 +13,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
+
 namespace Earle.Tokens
 {
     public class Token
     {
-        public Token(TokenType type, string value, int line, int column)
+        public Token(TokenType type, string value, string file, int line, int column)
         {
+            if (file == null) throw new ArgumentNullException("file");
             Type = type;
             Value = value;
+            File = file;
             Line = line;
             Column = column;
         }
@@ -29,6 +33,7 @@ namespace Earle.Tokens
         public int Column { get; private set; }
         public TokenType Type { get; private set; }
         public string Value { get; private set; }
+        public string File { get; private set; }
 
         public bool Is(TokenType type, string value)
         {

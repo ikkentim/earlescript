@@ -13,6 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Linq;
 using Earle.Blocks;
 using Earle.Tokens;
 
@@ -25,6 +26,34 @@ namespace Earle.Parsers
         Block IParser.Parse(Block parent, Tokenizer tokenizer)
         {
             return Parse(parent, tokenizer);
+        }
+
+        protected void MoveNext(Tokenizer tokenizer)
+        {
+            if (!tokenizer.MoveNext())
+                throw new ParseException("Unexpected end of file");
+        }
+
+        protected void AssertToken(Tokenizer tokenizer, params TokenType[] types)
+        {
+            if (!types.Contains(tokenizer.Current.Type))
+                throw new ParseException(tokenizer.Current, "Unexpected token");
+        }
+
+        protected void SkipToken(Tokenizer tokenizer, params TokenType[] types)
+        {
+            if (!types.Contains(tokenizer.Current.Type))
+                throw new ParseException(tokenizer.Current, "Unexpected token");
+
+            MoveNext(tokenizer);
+        }
+
+        protected void SkipToken(Tokenizer tokenizer, string value, params TokenType[] types)
+        {
+            if (!types.Contains(tokenizer.Current.Type) || tokenizer.Current.Value != value)
+                throw new ParseException(tokenizer.Current, "Unexpected token");
+
+            MoveNext(tokenizer);
         }
 
         public abstract T Parse(Block parent, Tokenizer tokenizer);

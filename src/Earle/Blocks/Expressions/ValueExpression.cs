@@ -13,28 +13,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using Earle.Tokens;
+using Earle.Variables;
 
-namespace Earle
+namespace Earle.Blocks.Expressions
 {
-    public class CodeException : Exception
+    public class ValueExpression : Expression
     {
-        public CodeException(Token token, string error)
-            : this(
-                token == null ? string.Empty : token.File, token == null ? -1 : token.Line,
-                token == null ? -1 : token.Column, error)
+        private readonly ValueContainer _value;
+
+        public ValueExpression(Block parent, ValueContainer value) : base(parent)
         {
+            _value = value;
         }
 
-        public CodeException(string file, int line, int column, string error)
-            : base(string.Format("{3}:{0}:{1}: {2}", line, column, error, file))
+        #region Overrides of Block
+
+        public override ValueContainer Run()
         {
+            return _value;
         }
 
-        public CodeException(string message)
-            : base(message)
-        {
-        }
+        #endregion
     }
 }

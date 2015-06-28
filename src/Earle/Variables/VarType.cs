@@ -18,7 +18,8 @@ namespace Earle.Variables
     public enum VarType
     {
         String,
-        Number,
+        Float,
+        Integer,
         Object,
         Target,
         Null

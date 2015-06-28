@@ -29,7 +29,7 @@ namespace Earle.Parsers
 
         public override NoOperation Parse(Block parent, Tokenizer tokenizer)
         {
-            tokenizer.MoveNext();
+            MoveNext(tokenizer);
             return new NoOperation(parent);
         }
 

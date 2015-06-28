@@ -24,10 +24,6 @@ namespace Earle.Grammars
         {
         }
 
-        public GrammarException(int line, int column, string error) : base(line, column, error)
-        {
-        }
-
         public GrammarException(string message) : base(message)
         {
         }

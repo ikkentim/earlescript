@@ -130,7 +130,7 @@ namespace Earle
             if (path == null) throw new ArgumentNullException("path");
             if (input == null) throw new ArgumentNullException("input");
 
-            var tokenizer = new Tokenizer(input);
+            var tokenizer = new Tokenizer(path, input);
             var functionParser = new FunctionParser();
 
             var file = new EarleFile(_engine, path);

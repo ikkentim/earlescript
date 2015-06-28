@@ -31,17 +31,6 @@ namespace Earle.Variables
             Value = value;
         }
 
-        public ValueContainer(string value)
-        {
-            Type = VarType.String;
-            Value = value;
-        }
-
-        public ValueContainer(float value)
-        {
-            Type = VarType.Number;
-            Value = value;
-        }
         public virtual VarType Type { get; private set; }
         public virtual object Value { get; private set; }
 
@@ -84,19 +73,14 @@ namespace Earle.Variables
             return (float) value.Value;
         }
 
-        public static implicit operator ValueContainer(float value)
+        public static explicit operator int(ValueContainer value)
         {
-            return new ValueContainer(value);
+            return (int)value.Value;
         }
 
         public static explicit operator string(ValueContainer value)
         {
             return (string)value.Value;
-        }
-
-        public static implicit operator ValueContainer(string value)
-        {
-            return new ValueContainer(value);
         }
     }
 }

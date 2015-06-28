@@ -35,47 +35,20 @@ namespace Earle.Parsers
         public override FunctionCall Parse(Block parent, Tokenizer tokenizer)
         {
             string path, name;
-            if (tokenizer.Current.Type == TokenType.Token && tokenizer.Current.Value == "\\")
+            if (tokenizer.Current.Is(TokenType.Token, "\\"))
             {
                 path = string.Empty;
-                var seperator = false;
                 do
                 {
-                    if (tokenizer.Current.Type == TokenType.Token)
-                    {
-                        if (tokenizer.Current.Value == "\\")
-                        {
-                            if (!seperator)
-                                path += "\\";
-
-                            seperator = true;
-                        }
-                        else
-                        {
-                            throw new Exception();
-                        }
-                    }
-                    else if (tokenizer.Current.Type == TokenType.Identifier)
-                    {
+                    if (tokenizer.Current.Is(TokenType.Token, "\\") || tokenizer.Current.Type == TokenType.Identifier)
                         path += tokenizer.Current.Value;
-                        seperator = false;
-                    }
                     else
-                    {
                         throw new Exception();
-                    }
-                } while (tokenizer.MoveNext() &&
-                         !(tokenizer.Current.Type == TokenType.Token && tokenizer.Current.Value == ":"));
+                } while (tokenizer.MoveNext() && !tokenizer.Current.Is(TokenType.Token, ":"));
 
-                tokenizer.MoveNext();
-
-                if (tokenizer.Current.Type != TokenType.Token || tokenizer.Current.Value != ":")
-                    throw new Exception();
-
-                tokenizer.MoveNext();
-
-                if (tokenizer.Current.Type != TokenType.Identifier)
-                    throw new Exception();
+                SkipToken(tokenizer, ":", TokenType.Token);
+                SkipToken(tokenizer, ":", TokenType.Token);
+                AssertToken(tokenizer, TokenType.Identifier);
 
                 name = tokenizer.Current.Value;
             }
@@ -89,32 +62,22 @@ namespace Earle.Parsers
                 throw new Exception();
             }
 
-            tokenizer.MoveNext();
-
-            if (tokenizer.Current.Type != TokenType.Token || tokenizer.Current.Value != "(")
-                throw new Exception();
-
-            tokenizer.MoveNext();
-
+            MoveNext(tokenizer);
+            SkipToken(tokenizer, "(", TokenType.Token);
+         
             var arguments = new List<Expression>();
             var parser = new ExpressionParser();
             while (true)
             {
-                //TODO: parent is actually function call.
                 arguments.Add(parser.Parse(parent, tokenizer));
 
-                if (tokenizer.Current.Type != TokenType.Token || tokenizer.Current.Value != ",")
+                if (!tokenizer.Current.Is(TokenType.Token, ","))
                     break;
 
-                if(!tokenizer.MoveNext())
-                    throw new Exception();
+                MoveNext(tokenizer);
             }
 
-            if (tokenizer.Current.Type != TokenType.Token || tokenizer.Current.Value != ")")
-                throw new ParseException(tokenizer.Current, "Unxpected token");
-
-            if (!tokenizer.MoveNext())
-                throw new Exception();
+            SkipToken(tokenizer, ")", TokenType.Token);
 
             return new FunctionCall(parent, path, name, arguments.ToArray());
         }

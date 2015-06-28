@@ -34,52 +34,27 @@ namespace Earle.Parsers
             var name = tokenizer.Current.Value;
             var parameters = new List<string>();
 
-            if (!tokenizer.MoveNext())
-            {
-                throw new Exception();
-            }
+            MoveNext(tokenizer);
 
-            if (tokenizer.Current.Type != TokenType.Token || tokenizer.Current.Value != "(")
-                throw new Exception();
-
-            if (!tokenizer.MoveNext())
-            {
-                throw new Exception();
-            }
-
-            // first parameter or `)`
-
-
+            SkipToken(tokenizer, "(", TokenType.Token);
+   
             if (!tokenizer.Current.Is(TokenType.Token, ")"))
                 while (true)
                 {
+
                     if (tokenizer.Current.Type == TokenType.Identifier)
                         parameters.Add(tokenizer.Current.Value);
-                    else
-                        throw new ParseException(tokenizer.Current, string.Format("Unexpected {0}", tokenizer.Current));
-              
-                    if (!tokenizer.MoveNext())
-                    {
-                        throw new Exception();
-                    }
+
+                    SkipToken(tokenizer, TokenType.Identifier);
 
                     if (!tokenizer.Current.Is(TokenType.Token, ","))
                         break;
 
-                    if (!tokenizer.MoveNext())
-                    {
-                        throw new Exception();
-                    }
+                    MoveNext(tokenizer);
                 }
 
-            if (!tokenizer.Current.Is(TokenType.Token, ")"))
-                throw new Exception();
-
-            if (!tokenizer.MoveNext())
-            {
-                throw new Exception();
-            }
-
+            SkipToken(tokenizer, ")", TokenType.Token);
+            
             return new Function(parent, name, parameters.ToArray());
         }
 

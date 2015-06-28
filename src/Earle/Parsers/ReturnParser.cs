@@ -21,15 +21,8 @@ namespace Earle.Parsers
 
         public override Return Parse(Block parent, Tokenizer tokenizer)
         {
-            var token = tokenizer.Current;
+            SkipToken(tokenizer, "return", TokenType.Identifier);
 
-            if (token.Type != TokenType.Identifier || token.Value != "return")
-                throw new ParseException(token, "Unexpected token");
-
-            if(!tokenizer.MoveNext())
-                throw new ParseException(-1, -1, "Unexpected end of file");
-
-            // TODO return is parent of expression
             return new Return(parent, _expressionParser.Parse(parent, tokenizer));
         }
 
