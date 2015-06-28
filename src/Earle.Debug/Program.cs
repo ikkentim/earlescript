@@ -27,7 +27,7 @@ namespace Earle.Debug
                     print(inp);
 
                 entry () {
-                    sum = \External\Directory::count(23,4);
+                    sum = \External\Directory::count(-23,4);
                     cprint(""Hello "" + ""World! ("" + sum + "")"");
                 }
                 ";

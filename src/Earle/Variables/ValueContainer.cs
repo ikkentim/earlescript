@@ -78,5 +78,25 @@ namespace Earle.Variables
         }
 
         #endregion
+
+        public static explicit operator float(ValueContainer value)
+        {
+            return (float) value.Value;
+        }
+
+        public static implicit operator ValueContainer(float value)
+        {
+            return new ValueContainer(value);
+        }
+
+        public static explicit operator string(ValueContainer value)
+        {
+            return (string)value.Value;
+        }
+
+        public static implicit operator ValueContainer(string value)
+        {
+            return new ValueContainer(value);
+        }
     }
 }

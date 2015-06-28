@@ -135,6 +135,11 @@ namespace Earle.Grammars
             return productionRule;
         }
 
+        public bool Matches(Tokenizer tokenizer, string rule)
+        {
+            return _rules.Where(r => r.Name == rule).Any(r => Matches(tokenizer, r));
+        }
+
         private bool Matches(Tokenizer tokenizer, ProductionRule rule)
         {
             var walker = new TokenWalker(tokenizer);

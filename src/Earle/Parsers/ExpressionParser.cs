@@ -45,18 +45,16 @@ namespace Earle.Parsers
                     tokenizer.MoveNext();
                     break;
                 case TokenType.Token:
-                    var tokenType = Compiler.Grammar.GetMatch(tokenizer);
-
-                    switch (tokenType)
+                    if (Compiler.Grammar.Matches(tokenizer, "FUNCTION_CALL"))
+                        expression = _functionCallParser.Parse(parent, tokenizer);
+                    else if (Compiler.Grammar.Matches(tokenizer, "OPERATOR_UNARY"))
                     {
-                        case "FUNCTION_CALL":
-                            expression = _functionCallParser.Parse(parent, tokenizer);
-                            break;
-                        case "OPERATOR_UNARY":
-                            throw new NotImplementedException();
-                        default:
-                            throw new ParseException(token, "Unexpected token");
+                        var unaryop = token.Value;
+                        tokenizer.MoveNext();
+                        expression = new UnaryOperatorExpression(parent, unaryop, Parse(parent, tokenizer));
                     }
+                    else
+                        throw new ParseException(token, "Unexpected token");
                     break;
                 default:
                     throw new ParseException(token, "Unexpected token type");
@@ -85,20 +83,5 @@ namespace Earle.Parsers
         }
 
         #endregion
-    }
-
-    public class ParseException : CodeException
-    {
-        public ParseException(Token token, string error) : base(token, error)
-        {
-        }
-
-        public ParseException(int line, int column, string error) : base(line, column, error)
-        {
-        }
-
-        public ParseException(string message) : base(message)
-        {
-        }
     }
 }
