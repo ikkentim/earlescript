@@ -76,10 +76,23 @@ namespace Earle.Tokens
         private void SkipWhitespace()
         {
             while (_position < _input.Length && char.IsWhiteSpace(_input[_position]))
-                UpdateLine(_input.Substring(_position, 1));
+                UpdateLineNumber(_input.Substring(_position, 1));
+
+            if (Buffer.StartsWith("//"))
+            {
+                var endidx = Buffer.IndexOf("\n", StringComparison.Ordinal);
+                UpdateLineNumber(endidx == -1 ? Buffer : Buffer.Substring(0, endidx + 1));
+                SkipWhitespace();
+            }
+            else if (Buffer.StartsWith("/*"))
+            {
+                var endidx = Buffer.IndexOf("*/", StringComparison.Ordinal);
+                UpdateLineNumber(endidx == -1 ? Buffer : Buffer.Substring(0, endidx + 2));
+                SkipWhitespace();
+            }
         }
 
-        private void UpdateLine(string input)
+        private void UpdateLineNumber(string input)
         {
             foreach (var c in input)
             {
@@ -112,7 +125,7 @@ namespace Earle.Tokens
                     Current = new Token(tokenData.Type, match.Groups[tokenData.ContentGroup].Value, _file, _line,
                         _column);
 
-                    UpdateLine(match.Groups[0].Value);
+                    UpdateLineNumber(match.Groups[0].Value);
                     SkipWhitespace();
                     return;
                 }

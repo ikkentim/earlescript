@@ -1,6 +1,12 @@
 ﻿cprint(inp) 
     print(inp);
 
+// The entry point of the script
+/*
+ * extra commenting things
+ *
+ *
+ */
 entry ()
 {
     sum = \other::count(23,4);
