@@ -18,6 +18,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Earle.Blocks;
+using Earle.Blocks.Expressions;
 using Earle.Variables;
 
 namespace Earle

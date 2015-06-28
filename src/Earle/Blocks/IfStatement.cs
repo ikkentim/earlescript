@@ -24,7 +24,7 @@ namespace Earle.Blocks
     {
         private readonly Expression _expression;
 
-        public IfStatement(Block parent, Expression expression) : base(parent)
+        public IfStatement(Block parent, Expression expression) : base(parent, true)
         {
             if (expression == null) throw new ArgumentNullException("expression");
 
@@ -34,11 +34,6 @@ namespace Earle.Blocks
         }
 
         #region Overrides of Block
-
-        public override bool CanReturn
-        {
-            get { return true; }
-        }
 
         public override ValueContainer Run()
         {
@@ -52,9 +47,9 @@ namespace Earle.Blocks
                 (result.Type == VarType.Target && result.Value == null))
                 return null;
 
-            return (Children.Select(block => new {block, value = block.Run()})
+            return Children.Select(block => new {block, value = block.Run()})
                 .Where(a => a.value != null && a.block.CanReturn)
-                .Select(a => a.value)).FirstOrDefault();
+                .Select(a => a.value).FirstOrDefault();
         }
 
         #endregion

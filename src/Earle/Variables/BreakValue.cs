@@ -13,26 +13,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using Earle.Blocks;
-using Earle.Tokens;
-
-namespace Earle.Parsers
+namespace Earle.Variables
 {
-    public class EndExpressionParser : Parser<NoOperation>
+    public class BreakValue : ValueContainer
     {
-        public EndExpressionParser()
-            : base("STATEMENT_END")
-        {
-        }
-
-        #region Overrides of Parser<Block>
-
-        public override NoOperation Parse(Block parent, Tokenizer tokenizer)
-        {
-            MoveNext(tokenizer);
-            return new NoOperation(parent);
-        }
-
-        #endregion
     }
 }

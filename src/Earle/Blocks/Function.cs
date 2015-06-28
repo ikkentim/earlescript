@@ -59,11 +59,6 @@ namespace Earle.Blocks
 
         #region Overrides of Block
 
-        public override bool CanReturn
-        {
-            get { return false; }
-        }
-
         public override ValueContainer Run()
         {
             throw new NotImplementedException("Function cannot be invoked using the Run method.");

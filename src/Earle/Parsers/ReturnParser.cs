@@ -23,7 +23,7 @@ namespace Earle.Parsers
         private readonly ExpressionParser _expressionParser = new ExpressionParser();
 
         public ReturnParser()
-            : base(false, "STATEMENT_RETURN")
+            : base("STATEMENT_RETURN")
         {
         }
 

@@ -76,6 +76,7 @@ namespace Earle.UnitTest
             AssertExpressionType("FUNCTION_CALL", @"test_call3 (a,b,c,123,""awesome"")");
             AssertExpressionType("FUNCTION_CALL", @"test_call2 (awesomeness)");
             AssertExpressionType("FUNCTION_CALL", @"test_call (1)");
+            AssertExpressionType("FUNCTION_CALL", @"cprint(""Hello "" + ""World! ("" + sum + "")"")");
         }
 
         [TestMethod]

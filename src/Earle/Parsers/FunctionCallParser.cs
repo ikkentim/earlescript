@@ -24,7 +24,7 @@ namespace Earle.Parsers
     internal class FunctionCallParser : Parser<FunctionCall>
     {
         public FunctionCallParser()
-            : base(false, "FUNCTION_CALL")
+            : base("FUNCTION_CALL")
         {
         }
 

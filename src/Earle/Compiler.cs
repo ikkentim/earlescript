@@ -31,7 +31,9 @@ namespace Earle
             new EndExpressionParser(),
             new ReturnParser(),
             new AssignmentParser(),
-            new IfStatementParser()
+            new IfStatementParser(),
+            new WhileStatementParser(),
+            new ForStatementParser(), 
         };
 
         public static readonly Grammar Grammar = new Grammar();
@@ -44,11 +46,12 @@ namespace Earle
             Grammar.AddProductionRule("STATEMENT_WHILE", "`while` ( EXPRESSION )");
             Grammar.AddProductionRule("STATEMENT_DO", "`do`");
             Grammar.AddProductionRule("STATEMENT_FOR",
-                "`for` ( OPTIONAL ASSIGNMENT ; OPTIONAL EXPRESSION ; OPTIONAL EXPRESSION )");
+                "`for` ( OPTIONAL ASSIGNMENT ; OPTIONAL EXPRESSION ; OPTIONAL ASSIGNMENT )");
             Grammar.AddProductionRule("STATEMENT_END", ";");
             Grammar.AddProductionRule("STATEMENT_RETURN", "`return` OPTIONAL EXPRESSION ;");
 
-            Grammar.AddProductionRule("ASSIGNMENT", "IDENTIFIER = EXPRESSION ;");
+            Grammar.AddProductionRule("ASSIGNMENT", "IDENTIFIER = EXPRESSION");
+            Grammar.AddProductionRule("ASSIGNMENT", "IDENTIFIER OPERATOR_POST_UNARY");
 
             Grammar.AddProductionRule("FUNCTION_CALL", "OPTIONAL PATH_PREFIX IDENTIFIER ( OPTIONAL EXPRESSION_LIST )");
 
@@ -61,6 +64,9 @@ namespace Earle
             Grammar.AddProductionRule("EXPRESSION", "OPERATOR_UNARY EXPRESSION");
             Grammar.AddProductionRule("EXPRESSION", "IDENTIFIER|NUMBER_LITERAL|STRING_LITERAL");
             Grammar.AddProductionRule("EXPRESSION", "FUNCTION_CALL");
+            Grammar.AddProductionRule("EXPRESSION", "`true`");
+            Grammar.AddProductionRule("EXPRESSION", "`false`");
+            Grammar.AddProductionRule("EXPRESSION", "`null`");
 
             Grammar.AddProductionRule("EXPRESSION_LIST", "EXPRESSION_LIST , EXPRESSION_LIST");
             Grammar.AddProductionRule("EXPRESSION_LIST", "EXPRESSION");
@@ -86,6 +92,9 @@ namespace Earle
             Grammar.AddProductionRule("OPERATOR_UNARY", "!");
             Grammar.AddProductionRule("OPERATOR_UNARY", "~");
 
+            Grammar.AddProductionRule("OPERATOR_POST_UNARY", "++");
+            Grammar.AddProductionRule("OPERATOR_POST_UNARY", "--");
+
             FunctionGrammar.AddProductionRule("FUNCTION_DECLARATION", "IDENTIFIER ( OPTIONAL IDENTIFIER_LIST )");
             FunctionGrammar.AddProductionRule("IDENTIFIER_LIST", "IDENTIFIER_LIST , IDENTIFIER_LIST");
             FunctionGrammar.AddProductionRule("IDENTIFIER_LIST", "IDENTIFIER");
@@ -98,7 +107,7 @@ namespace Earle
 
         public IEnumerable<Block> CompileCodeBlock(Block parent, Tokenizer tokenizer)
         {
-            var singleStatement = tokenizer.Current.Type != TokenType.Token || tokenizer.Current.Value != "{";
+            var singleStatement = !tokenizer.Current.Is(TokenType.Token,"{");
 
             // If this code block does not contain a single statement, skip the `{`.
             if (!singleStatement)
@@ -106,18 +115,16 @@ namespace Earle
                 if (!tokenizer.MoveNext())
                     new CompilerException("Unexpected end of file");
             }
-            // Find matching parsers until end of code block.
-            while (tokenizer.Current != null &&
-                   (singleStatement || !(tokenizer.Current.Type == TokenType.Token && tokenizer.Current.Value == "}")))
-            {
-                var found = false;
 
-                var parser = Parsers.FirstOrDefault(p => Grammar.GetMatch(tokenizer) == p.ParserRule);
+            // Find matching parsers until end of code block.
+            while (tokenizer.Current != null && (singleStatement || !tokenizer.Current.Is(TokenType.Token,"}")))
+            {
+                var match = Grammar.GetMatch(tokenizer);
+                var parser = Parsers.FirstOrDefault(p => match == p.ParserRule);
 
                 if (parser == null)
                     throw new CompilerException(tokenizer.Current,
                         string.Format("Unexpected {0}", tokenizer.Current.Type.ToUpperString()));
-
 
                 // Parse the tokens and return the resulting block.
                 var block = parser.Parse(parent, tokenizer);
@@ -128,12 +135,23 @@ namespace Earle
 
                 yield return block;
 
+                if (tokenizer.Current.Is(TokenType.Token, ";"))
+                    tokenizer.MoveNext();
+
                 if (singleStatement)
                     yield break;
+
             }
 
             if (singleStatement)
                 throw new CompilerException("Unexpected end of file");
+
+            if (!tokenizer.Current.Is(TokenType.Token, "}"))
+            {
+                throw new CompilerException("Unknown error");
+            }
+
+            tokenizer.MoveNext();
         }
 
         public EarleFile Compile(string path, string input)
@@ -146,7 +164,7 @@ namespace Earle
 
             var file = new EarleFile(_engine, path);
 
-            do
+            while(tokenizer.Current != null)
             {
                 var match = FunctionGrammar.GetMatch(tokenizer);
                 if (match != functionParser.ParserRule)
@@ -159,7 +177,7 @@ namespace Earle
                     function.AddBlock(block);
 
                 file.Functions.Add(function);
-            } while (tokenizer.MoveNext());
+            }
 
             return file;
         }

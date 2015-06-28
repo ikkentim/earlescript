@@ -20,14 +20,5 @@ namespace Earle.Blocks.Expressions
         protected Expression(Block parent) : base(parent)
         {
         }
-
-        #region Overrides of Block
-
-        public override bool CanReturn
-        {
-            get { return false; }
-        }
-
-        #endregion
     }
 }

@@ -22,17 +22,12 @@ namespace Earle.Blocks
     {
         private readonly Expression _expression;
 
-        public Return(Block parent, Expression expression) : base(parent)
+        public Return(Block parent, Expression expression) : base(parent, true)
         {
             _expression = expression;
         }
 
         #region Overrides of Block
-
-        public override bool CanReturn
-        {
-            get { return true; }
-        }
 
         public override ValueContainer Run()
         {

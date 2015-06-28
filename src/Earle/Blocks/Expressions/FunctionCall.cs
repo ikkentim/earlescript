@@ -15,10 +15,9 @@
 
 using System;
 using System.Linq;
-using Earle.Blocks.Expressions;
 using Earle.Variables;
 
-namespace Earle.Blocks
+namespace Earle.Blocks.Expressions
 {
     public class FunctionCall : Expression
     {

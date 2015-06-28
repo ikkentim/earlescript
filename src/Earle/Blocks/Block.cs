@@ -15,6 +15,7 @@
 
 using System;
 using System.Collections.Generic;
+using Earle.Blocks.Expressions;
 using Earle.Variables;
 
 namespace Earle.Blocks
@@ -24,14 +25,15 @@ namespace Earle.Blocks
         private readonly List<Block> _children;
         private readonly Dictionary<string, ValueContainer> _variables = new Dictionary<string, ValueContainer>();
 
-        protected Block(Block parent)
+        protected Block(Block parent, bool canReturn = false)
         {
             _children = new List<Block>();
             Parent = parent;
+            CanReturn = canReturn;
         }
 
         public virtual Block Parent { get; set; }
-        public abstract bool CanReturn { get; }
+        public virtual bool CanReturn { get; private set; }
 
         public virtual string Path
         {

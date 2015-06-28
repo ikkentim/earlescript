@@ -32,11 +32,6 @@ namespace Earle.Blocks
 
         #region Overrides of Block
 
-        public override bool CanReturn
-        {
-            get { return false; }
-        }
-
         public override ValueContainer Run()
         {
             var variable = ResolveVariable(_name);

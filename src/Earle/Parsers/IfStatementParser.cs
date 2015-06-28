@@ -22,7 +22,7 @@ namespace Earle.Parsers
     {
         private readonly ExpressionParser _expressionParser = new ExpressionParser();
 
-        public IfStatementParser() : base(true, "STATEMENT_IF")
+        public IfStatementParser() : base("STATEMENT_IF", true)
         {
         }
 

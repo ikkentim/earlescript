@@ -22,56 +22,18 @@ namespace Earle.Debug
     {
         private static void Main(string[] args)
         {
-            var code = @"
-                cprint(inp) 
-                    print(inp);
-
-                entry () {
-                    sum = \External\Directory::count(23,4);
-                    cprint(""Hello "" + ""World! ("" + sum + "")"");
-                }
-                ";
-
-            var code2 = @"
-                count(number1, number2) {
-                    if(number1 > 2)
-                        return 0;
-                    return number1 + number2;
-                }
-                ";
             var engine = new Engine(path =>
             {
-                switch (path)
-                {
-                    case "\\main":
-                        return GenerateStreamFromString(code);
-                    case "\\External\\Directory":
-                        return GenerateStreamFromString(code2);
-                    default:
-                        return null;
-                }
+                var fpath = Path.Combine("main", path.Trim('\\') + ".ear");
+                var fe = File.Exists(fpath);
+                return fe ? 
+                    File.OpenRead(fpath) : null;
             });
-
-            Console.WriteLine("Running code:");
-            Console.WriteLine("  \\main:");
-            Console.WriteLine(code);
-            Console.WriteLine("  \\External\\Directory:");
-            Console.WriteLine(code2);
-            Console.WriteLine("\n\n Result:\n");
 
             engine["\\main"].Run();
 
+            Console.WriteLine("Press any key to continue...");
             Console.ReadLine();
-        }
-
-        private static Stream GenerateStreamFromString(string s)
-        {
-            var stream = new MemoryStream();
-            var writer = new StreamWriter(stream);
-            writer.Write(s);
-            writer.Flush();
-            stream.Position = 0;
-            return stream;
         }
     }
 }

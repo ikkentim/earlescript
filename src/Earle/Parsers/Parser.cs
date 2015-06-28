@@ -21,10 +21,10 @@ namespace Earle.Parsers
 {
     public abstract class Parser<T> : IParser where T : Block
     {
-        protected Parser(bool requiresBlock, string parserRule)
+        protected Parser(string parserRule, bool requiresBlock = false)
         {
-            RequiresBlock = requiresBlock;
             ParserRule = parserRule;
+            RequiresBlock = requiresBlock;
         }
 
         public virtual string ParserRule { get; private set; }

@@ -26,7 +26,7 @@ namespace Earle.Parsers
         private readonly FunctionCallParser _functionCallParser = new FunctionCallParser();
 
         public ExpressionParser()
-            : base(false, null)
+            : base("EXPRESSION")
         {
         }
 
@@ -38,7 +38,22 @@ namespace Earle.Parsers
             switch (tokenizer.Current.Type)
             {
                 case TokenType.Identifier:
-                    expression = new VariableExpression(parent, tokenizer.Current.Value);
+                    // Check for reserved keywords
+                    switch (tokenizer.Current.Value)
+                    {
+                        case "true":
+                            expression = new ValueExpression(parent, new ValueContainer(VarType.Integer, 1));
+                            break;
+                        case "false":
+                            expression = new ValueExpression(parent, new ValueContainer(VarType.Integer, 0));
+                            break;
+                        case "null":
+                            expression = new ValueExpression(parent, new ValueContainer(VarType.Null, null));
+                            break;
+                        default:
+                            expression = new VariableExpression(parent, tokenizer.Current.Value);
+                            break;
+                    }
                     MoveNext(tokenizer);
                     break;
                 case TokenType.NumberLiteral:

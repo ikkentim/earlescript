@@ -22,7 +22,7 @@ namespace Earle.Parsers
     public class FunctionParser : Parser<Function>
     {
         public FunctionParser()
-            : base(true, "FUNCTION_DECLARATION")
+            : base("FUNCTION_DECLARATION", true)
         {
         }
 
