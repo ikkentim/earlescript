@@ -37,6 +37,15 @@ namespace Earle.Blocks
         public string CallPath { get; private set; }
         public string Name { get; private set; }
 
+        #region Overrides of Object
+
+        public override string ToString()
+        {
+            return string.Format("CALL {0}::{1}({2})", CallPath, Name, string.Join(", ", (object[]) _arguments));
+        }
+
+        #endregion
+
         #region Overrides of Block
 
         public override bool CanReturn
@@ -52,15 +61,6 @@ namespace Earle.Blocks
                 throw new RuntimeException(string.Format("Function `{0}::{1}` not found", CallPath, Name));
 
             return function.Invoke(_arguments.Select(a => a.Run()).ToArray());
-        }
-
-        #endregion
-
-        #region Overrides of Object
-
-        public override string ToString()
-        {
-            return string.Format("CALL {0}::{1}({2})", CallPath, Name, string.Join(", ", (object[]) _arguments));
         }
 
         #endregion

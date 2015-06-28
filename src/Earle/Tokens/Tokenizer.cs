@@ -26,10 +26,9 @@ namespace Earle.Tokens
         private readonly string _input;
         private readonly Stack<Token> _pushedTokens = new Stack<Token>();
         private readonly List<TokenData> _tokenDatas = new List<TokenData>();
-        private int _position;
-
-        private int _line = 1;
         private int _column = 1;
+        private int _line = 1;
+        private int _position;
 
         public Tokenizer(string file, string input)
         {
@@ -110,7 +109,8 @@ namespace Earle.Tokens
 
                 if (match.Success)
                 {
-                    Current = new Token(tokenData.Type, match.Groups[tokenData.ContentGroup].Value, _file, _line, _column);
+                    Current = new Token(tokenData.Type, match.Groups[tokenData.ContentGroup].Value, _file, _line,
+                        _column);
 
                     UpdateLine(match.Groups[0].Value);
                     SkipWhitespace();

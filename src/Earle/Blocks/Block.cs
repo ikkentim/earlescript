@@ -31,7 +31,6 @@ namespace Earle.Blocks
         }
 
         public virtual Block Parent { get; set; }
-
         public abstract bool CanReturn { get; }
 
         public virtual string Path

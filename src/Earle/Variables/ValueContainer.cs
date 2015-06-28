@@ -39,7 +39,6 @@ namespace Earle.Variables
             return new ValueContainer(Type, Value);
         }
 
-
         public virtual void SetValue(VarType type, object value)
         {
             Type = type;
@@ -75,12 +74,12 @@ namespace Earle.Variables
 
         public static explicit operator int(ValueContainer value)
         {
-            return (int)value.Value;
+            return (int) value.Value;
         }
 
         public static explicit operator string(ValueContainer value)
         {
-            return (string)value.Value;
+            return (string) value.Value;
         }
     }
 }

@@ -22,8 +22,8 @@ namespace Earle.Blocks
 {
     public class Function : Block
     {
-        private Dictionary<string,ValueContainer> _variables = new Dictionary<string, ValueContainer>(); 
         private readonly string[] _parameters;
+        private readonly Dictionary<string, ValueContainer> _variables = new Dictionary<string, ValueContainer>();
 
         public Function(Block parent, string name, string[] parameters)
             : base(parent)
@@ -48,6 +48,15 @@ namespace Earle.Blocks
                 .Select(a => a.value)).FirstOrDefault();
         }
 
+        #region Overrides of Object
+
+        public override string ToString()
+        {
+            return string.Format("{0}::{1}", Path, Name);
+        }
+
+        #endregion
+
         #region Overrides of Block
 
         public override bool CanReturn
@@ -68,15 +77,6 @@ namespace Earle.Blocks
         public override ValueContainer ResolveVariable(string name)
         {
             return base.ResolveVariable(name) ?? (_variables.ContainsKey(name) ? _variables[name] : null);
-        }
-
-        #endregion
-
-        #region Overrides of Object
-
-        public override string ToString()
-        {
-            return string.Format("{0}::{1}", Path, Name);
         }
 
         #endregion

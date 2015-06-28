@@ -15,12 +15,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Security.Principal;
 using Earle.Blocks;
 using Earle.Blocks.Expressions;
 using Earle.Tokens;
-using Earle.Variables;
 
 namespace Earle.Parsers
 {
@@ -65,7 +62,7 @@ namespace Earle.Parsers
 
             MoveNext(tokenizer);
             SkipToken(tokenizer, "(", TokenType.Token);
-         
+
             var arguments = new List<Expression>();
             var parser = new ExpressionParser();
             while (true)

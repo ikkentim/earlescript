@@ -29,9 +29,9 @@ namespace Earle
         {
             new FunctionCallParser(),
             new EndExpressionParser(),
-            new ReturnParser(), 
-            new AssignmentParser(), 
-            new IfStatementParser(), 
+            new ReturnParser(),
+            new AssignmentParser(),
+            new IfStatementParser()
         };
 
         public static readonly Grammar Grammar = new Grammar();
@@ -43,7 +43,8 @@ namespace Earle
             Grammar.AddProductionRule("STATEMENT_IF", "`if` ( EXPRESSION )");
             Grammar.AddProductionRule("STATEMENT_WHILE", "`while` ( EXPRESSION )");
             Grammar.AddProductionRule("STATEMENT_DO", "`do`");
-            Grammar.AddProductionRule("STATEMENT_FOR", "`for` ( OPTIONAL ASSIGNMENT ; OPTIONAL EXPRESSION ; OPTIONAL EXPRESSION )");
+            Grammar.AddProductionRule("STATEMENT_FOR",
+                "`for` ( OPTIONAL ASSIGNMENT ; OPTIONAL EXPRESSION ; OPTIONAL EXPRESSION )");
             Grammar.AddProductionRule("STATEMENT_END", ";");
             Grammar.AddProductionRule("STATEMENT_RETURN", "`return` OPTIONAL EXPRESSION ;");
 
@@ -149,11 +150,12 @@ namespace Earle
             {
                 var match = FunctionGrammar.GetMatch(tokenizer);
                 if (match != functionParser.ParserRule)
-                    throw new CompilerException(tokenizer.Current, string.Format("Expected function, found {1} `{0}`", tokenizer.Current.Value, match));
+                    throw new CompilerException(tokenizer.Current,
+                        string.Format("Expected function, found {1} `{0}`", tokenizer.Current.Value, match));
 
                 var function = functionParser.Parse(file, tokenizer);
 
-                foreach(var block in CompileCodeBlock(function, tokenizer))
+                foreach (var block in CompileCodeBlock(function, tokenizer))
                     function.AddBlock(block);
 
                 file.Functions.Add(function);

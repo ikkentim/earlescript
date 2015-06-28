@@ -13,7 +13,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
 using System.Collections.Generic;
 using Earle.Blocks;
 using Earle.Tokens;
@@ -37,11 +36,10 @@ namespace Earle.Parsers
             MoveNext(tokenizer);
 
             SkipToken(tokenizer, "(", TokenType.Token);
-   
+
             if (!tokenizer.Current.Is(TokenType.Token, ")"))
                 while (true)
                 {
-
                     if (tokenizer.Current.Type == TokenType.Identifier)
                         parameters.Add(tokenizer.Current.Value);
 
@@ -54,7 +52,7 @@ namespace Earle.Parsers
                 }
 
             SkipToken(tokenizer, ")", TokenType.Token);
-            
+
             return new Function(parent, name, parameters.ToArray());
         }
 
