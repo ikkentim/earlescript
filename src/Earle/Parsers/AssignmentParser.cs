@@ -50,14 +50,11 @@ namespace Earle.Parsers
                     new OperatorExpression(parent, new VariableExpression(parent, name), optoken,
                         new ValueExpression(parent, new ValueContainer(VarType.Integer, 1))));
             }
-            else
-            {
-                SkipToken(tokenizer, "=", TokenType.Token);
+            SkipToken(tokenizer, "=", TokenType.Token);
 
-                var result = new Assignment(parent, name, _expressionParser.Parse(parent, tokenizer));
+            var result = new Assignment(parent, name, _expressionParser.Parse(parent, tokenizer));
 
-                return result;
-            }
+            return result;
         }
 
         #endregion

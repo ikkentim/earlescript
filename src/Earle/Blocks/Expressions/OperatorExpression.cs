@@ -54,7 +54,7 @@ namespace Earle.Blocks.Expressions
             new Operator(VarType.String, "+", VarType.Integer,
                 (l, r) => new ValueContainer(VarType.String, (string) l + (int) r)),
             new Operator(VarType.Integer, "+", VarType.String,
-                (l, r) => new ValueContainer(VarType.String, (int) l + (string) r)),
+                (l, r) => new ValueContainer(VarType.String, (int) l + (string) r))
         };
 
         public OperatorExpression(Block parent, Expression left, string op, Expression right) : base(parent)

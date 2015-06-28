@@ -24,7 +24,7 @@ namespace Earle.Blocks
         }
 
         #region Overrides of Block
-        
+
         public override ValueContainer Run()
         {
             return null;

@@ -33,7 +33,7 @@ namespace Earle
             new AssignmentParser(),
             new IfStatementParser(),
             new WhileStatementParser(),
-            new ForStatementParser(), 
+            new ForStatementParser()
         };
 
         public static readonly Grammar Grammar = new Grammar();
@@ -107,7 +107,7 @@ namespace Earle
 
         public IEnumerable<Block> CompileCodeBlock(Block parent, Tokenizer tokenizer)
         {
-            var singleStatement = !tokenizer.Current.Is(TokenType.Token,"{");
+            var singleStatement = !tokenizer.Current.Is(TokenType.Token, "{");
 
             // If this code block does not contain a single statement, skip the `{`.
             if (!singleStatement)
@@ -117,7 +117,7 @@ namespace Earle
             }
 
             // Find matching parsers until end of code block.
-            while (tokenizer.Current != null && (singleStatement || !tokenizer.Current.Is(TokenType.Token,"}")))
+            while (tokenizer.Current != null && (singleStatement || !tokenizer.Current.Is(TokenType.Token, "}")))
             {
                 var match = Grammar.GetMatch(tokenizer);
                 var parser = Parsers.FirstOrDefault(p => match == p.ParserRule);
@@ -140,7 +140,6 @@ namespace Earle
 
                 if (singleStatement)
                     yield break;
-
             }
 
             if (singleStatement)
@@ -164,7 +163,7 @@ namespace Earle
 
             var file = new EarleFile(_engine, path);
 
-            while(tokenizer.Current != null)
+            while (tokenizer.Current != null)
             {
                 var match = FunctionGrammar.GetMatch(tokenizer);
                 if (match != functionParser.ParserRule)

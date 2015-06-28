@@ -1,3 +1,18 @@
+// Earle
+// Copyright 2015 Tim Potze
+// 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+// 
+//     http://www.apache.org/licenses/LICENSE-2.0
+// 
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 using System.Collections.Generic;
 using System.Linq;
 using Earle.Blocks.Expressions;
@@ -7,10 +22,10 @@ namespace Earle.Blocks
 {
     public class ForStatement : Block
     {
-        private readonly Assignment _initialisation;
         private readonly Expression _condition;
         private readonly Assignment _incrementation;
-        private readonly Dictionary<string, ValueContainer> _variables = new Dictionary<string, ValueContainer>(); 
+        private readonly Assignment _initialisation;
+        private readonly Dictionary<string, ValueContainer> _variables = new Dictionary<string, ValueContainer>();
 
         public ForStatement(Block parent, Assignment initialisation, Expression condition, Assignment incrementation)
             : base(parent, true)
@@ -63,7 +78,7 @@ namespace Earle.Blocks
 
                 foreach (
                     var value in
-                        Children.Select(block => new { block, value = block.Run() })
+                        Children.Select(block => new {block, value = block.Run()})
                             .Where(a => a.value != null && a.block.CanReturn)
                             .Select(a => a.value))
                 {

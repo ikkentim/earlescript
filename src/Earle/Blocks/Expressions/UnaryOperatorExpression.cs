@@ -26,7 +26,7 @@ namespace Earle.Blocks.Expressions
             // Number
             new Operator("+", VarType.Integer, v => v.GetValue()),
             new Operator("-", VarType.Integer, v => new ValueContainer(VarType.Integer, -(int) v)),
-            new Operator("!", VarType.Integer, v => new ValueContainer(VarType.Integer, (int) v == 0 ? 1 : 0)),
+            new Operator("!", VarType.Integer, v => new ValueContainer(VarType.Integer, (int) v == 0 ? 1 : 0))
         };
 
         public UnaryOperatorExpression(Block parent) : base(parent)
