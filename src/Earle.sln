@@ -9,6 +9,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Earle.Debug", "Earle.Debug\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Earle.UnitTest", "Earle.UnitTest\Earle.UnitTest.csproj", "{1763C999-B1FF-4850-B187-9A2A19BF381A}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{ECCFB5A2-27AA-4ECA-BB8B-5767761F78E2}"
+	ProjectSection(SolutionItems) = preProject
+		operators.txt = operators.txt
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

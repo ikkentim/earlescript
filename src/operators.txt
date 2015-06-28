@@ -1,0 +1,30 @@
+I = IMPLEMENTED
+U = UNIMPLEMENTED
+  = UNSUPPORTED
+
+TYPES:
+I = Integer
+F = Float
+S = String
+N = Null
+O = Object
+T = Target
+BINARY OPERATORS
+    | II | IF | IS | IN | FI | FF | FS | FN | SI | SF | SS | SN | NI | NF | NS | NN |
+*   |  I |  U |    |  U |  U |  U |    |  U |    |    |    |    |  U |  U |  U |  U |
+/   |  I |  U |    |  U |  U |  U |    |  U |    |    |    |    |  U |  U |  U |  U |
+%   |  U |    |    |  U |  U |  U |    |  U |    |    |    |    |  U |  U |  U |  U |
++   |  I |  U |  I |  U |  U |  U |  U |  U |  I |  U |  I |  U |  U |  U |  U |  U |
+-   |  I |  U |    |  U |  U |  U |    |  U |    |    |    |    |  U |  U |  U |  U |
+<<  |  U |    |    |  U |  U |    |    |  U |    |    |    |    |  U |  U |  U |  U |
+>>  |  U |    |    |  U |  U |    |    |  U |    |    |    |    |  U |  U |  U |  U |
+<   |  I |  U |    |  U |  U |  U |    |  U |    |    |    |    |  U |  U |  U |  U |
+>   |  I |  U |    |  U |  U |  U |    |  U |    |    |    |    |  U |  U |  U |  U |
+<=  |  I |  U |    |  U |  U |  U |    |  U |    |    |    |    |  U |  U |  U |  U |
+>=  |  I |  U |    |  U |  U |  U |    |  U |    |    |    |    |  U |  U |  U |  U |
+==  |  I |  U |    |  U |  U |  U |    |  U |    |    |    |    |  U |  U |  U |  U |
+!=  |  I |  U |    |  U |  U |  U |    |  U |    |    |    |    |  U |  U |  U |  U |
+&   |  U |    |    |  U |    |    |    |  U |    |    |    |    |  U |  U |  U |  U |
+|   |  U |    |    |  U |    |    |    |  U |    |    |    |    |  U |  U |  U |  U |
+&&  |  I |  U |    |  U |    |    |    |    |    |    |    |    |  U |    |    |  U |
+||  |  I |  U |    |  U |    |    |    |    |    |    |    |    |  U |    |    |  U |
