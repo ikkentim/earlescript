@@ -43,17 +43,14 @@ namespace Earle.Blocks
             foreach (var pair in _parameters.Zip(values, (p, v) => new KeyValuePair<string, ValueContainer>(p, v)))
                 Variables.Add(pair.Key, pair.Value);
 
-            foreach (var block in Children)
-            {
-                var value = block.Run();
-                if (block.IsReturnStatement) return value;
-            }
-            return null;
+            return (Children.Select(block => new {block, value = block.Run()})
+                .Where(a => a.value != null && a.block.CanReturn)
+                .Select(a => a.value)).FirstOrDefault();
         }
 
         #region Overrides of Block
 
-        public override bool IsReturnStatement
+        public override bool CanReturn
         {
             get { return false; }
         }

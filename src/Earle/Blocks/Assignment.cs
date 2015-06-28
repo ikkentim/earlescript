@@ -13,6 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using Earle.Blocks.Expressions;
 using Earle.Variables;
 
 namespace Earle.Blocks
@@ -31,7 +32,7 @@ namespace Earle.Blocks
 
         #region Overrides of Block
 
-        public override bool IsReturnStatement
+        public override bool CanReturn
         {
             get { return false; }
         }

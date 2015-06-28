@@ -21,6 +21,7 @@ namespace Earle.Parsers
     public interface IParser
     {
         string ParserRule { get; }
+        bool RequiresBlock { get; }
         Block Parse(Block parent, Tokenizer tokenizer);
     }
 }

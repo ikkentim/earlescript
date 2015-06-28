@@ -46,7 +46,8 @@
   <ItemGroup>
     <Compile Include="Blocks\Assignment.cs" />
     <Compile Include="Blocks\Block.cs" />
-    <Compile Include="Blocks\Expression.cs" />
+    <Compile Include="Blocks\Expressions\Expression.cs" />
+    <Compile Include="Blocks\IfStatement.cs" />
     <Compile Include="Blocks\NativeFunction.cs" />
     <Compile Include="Blocks\NoOperation.cs" />
     <Compile Include="Blocks\Expressions\OperatorExpression.cs" />
@@ -72,6 +73,7 @@
     <Compile Include="Grammars\ProductionRuleElements\IProductionRuleElement.cs" />
     <Compile Include="Parsers\AssignmentParser.cs" />
     <Compile Include="Parsers\ExpressionParser.cs" />
+    <Compile Include="Parsers\IfStatementParser.cs" />
     <Compile Include="Parsers\ParseException.cs" />
     <Compile Include="Parsers\ReturnParser.cs" />
     <Compile Include="PathResolverDelegate.cs" />
@@ -90,9 +92,6 @@
     <Compile Include="Variables\ReferencedVariable.cs" />
     <Compile Include="Variables\ValueContainer.cs" />
     <Compile Include="Variables\VarType.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

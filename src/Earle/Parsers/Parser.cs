@@ -13,6 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Linq;
 using Earle.Blocks;
 using Earle.Tokens;
@@ -21,12 +22,23 @@ namespace Earle.Parsers
 {
     public abstract class Parser<T> : IParser where T : Block
     {
-        public abstract string ParserRule { get; }
+        protected Parser(bool requiresBlock, string parserRule)
+        {
+            RequiresBlock = requiresBlock;
+            ParserRule = parserRule;
+        }
+
+        public virtual string ParserRule { get; private set; }
+        public virtual bool RequiresBlock { get; private set; }
 
         Block IParser.Parse(Block parent, Tokenizer tokenizer)
         {
             return Parse(parent, tokenizer);
         }
+
+        public abstract T Parse(Block parent, Tokenizer tokenizer);
+
+        #region Tokenizer Utilities
 
         protected void MoveNext(Tokenizer tokenizer)
         {
@@ -56,6 +68,7 @@ namespace Earle.Parsers
             MoveNext(tokenizer);
         }
 
-        public abstract T Parse(Block parent, Tokenizer tokenizer);
+        #endregion
+
     }
 }

@@ -18,6 +18,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Principal;
 using Earle.Blocks;
+using Earle.Blocks.Expressions;
 using Earle.Tokens;
 using Earle.Variables;
 
@@ -25,12 +26,12 @@ namespace Earle.Parsers
 {
     internal class FunctionCallParser : Parser<FunctionCall>
     {
-        #region Overrides of Parser<FunctionCall>
-
-        public override string ParserRule
+        public FunctionCallParser()
+            : base(false, "FUNCTION_CALL")
         {
-            get { return "FUNCTION_CALL"; }
         }
+
+        #region Overrides of Parser<FunctionCall>
 
         public override FunctionCall Parse(Block parent, Tokenizer tokenizer)
         {

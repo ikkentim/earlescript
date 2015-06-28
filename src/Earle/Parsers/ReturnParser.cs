@@ -12,18 +12,20 @@ namespace Earle.Parsers
     {
         private readonly ExpressionParser _expressionParser = new ExpressionParser();
 
-        #region Overrides of Parser<Return>
-
-        public override string ParserRule
+        public ReturnParser()
+            : base(false, "STATEMENT_RETURN")
         {
-            get { return "STATEMENT_RETURN"; }
         }
+
+        #region Overrides of Parser<Return>
 
         public override Return Parse(Block parent, Tokenizer tokenizer)
         {
             SkipToken(tokenizer, "return", TokenType.Identifier);
 
-            return new Return(parent, _expressionParser.Parse(parent, tokenizer));
+            return tokenizer.Current.Is(TokenType.Token, ";")
+                ? new Return(parent, null)
+                : new Return(parent, _expressionParser.Parse(parent, tokenizer));
         }
 
         #endregion

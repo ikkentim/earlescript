@@ -48,7 +48,7 @@ namespace Earle
 
         #region Overrides of Block
 
-        public override bool IsReturnStatement
+        public override bool CanReturn
         {
             get { return false; }
         }

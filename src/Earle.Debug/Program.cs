@@ -27,13 +27,15 @@ namespace Earle.Debug
                     print(inp);
 
                 entry () {
-                    sum = \External\Directory::count(-23,4);
+                    sum = \External\Directory::count(23,4);
                     cprint(""Hello "" + ""World! ("" + sum + "")"");
                 }
                 ";
 
             var code2 = @"
                 count(number1, number2) {
+                    if(number1 > 2)
+                        return 0;
                     return number1 + number2;
                 }
                 ";
@@ -55,7 +57,7 @@ namespace Earle.Debug
             Console.WriteLine(code);
             Console.WriteLine("  \\External\\Directory:");
             Console.WriteLine(code2);
-            Console.WriteLine("\n\n Result:\n", code);
+            Console.WriteLine("\n\n Result:\n");
 
             engine["\\main"].Run();
 

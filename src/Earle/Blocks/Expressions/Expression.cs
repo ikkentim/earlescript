@@ -13,10 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Configuration;
-using Earle.Parsers;
-
-namespace Earle.Blocks
+namespace Earle.Blocks.Expressions
 {
     public abstract class Expression : Block
     {
@@ -26,7 +23,7 @@ namespace Earle.Blocks
 
         #region Overrides of Block
 
-        public override bool IsReturnStatement
+        public override bool CanReturn
         {
             get { return false; }
         }

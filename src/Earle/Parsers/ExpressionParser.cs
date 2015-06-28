@@ -15,12 +15,12 @@ namespace Earle.Parsers
     {
         private readonly FunctionCallParser _functionCallParser = new FunctionCallParser();
 
-        #region Overrides of Parser<ExpressionParser>
-
-        public override string ParserRule
+        public ExpressionParser()
+            : base(false, null)
         {
-            get { return null; }
         }
+
+        #region Overrides of Parser<ExpressionParser>
 
         public override Expression Parse(Block parent, Tokenizer tokenizer)
         {

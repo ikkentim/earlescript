@@ -31,6 +31,7 @@ namespace Earle
             new EndExpressionParser(),
             new ReturnParser(), 
             new AssignmentParser(), 
+            new IfStatementParser(), 
         };
 
         public static readonly Grammar Grammar = new Grammar();
@@ -100,29 +101,38 @@ namespace Earle
 
             // If this code block does not contain a single statement, skip the `{`.
             if (!singleStatement)
-                tokenizer.MoveNext();
-
+            {
+                if (!tokenizer.MoveNext())
+                    new CompilerException("Unexpected end of file");
+            }
             // Find matching parsers until end of code block.
-            while (tokenizer.Current != null && (singleStatement || !(tokenizer.Current.Type == TokenType.Token && tokenizer.Current.Value == "}")))
+            while (tokenizer.Current != null &&
+                   (singleStatement || !(tokenizer.Current.Type == TokenType.Token && tokenizer.Current.Value == "}")))
             {
                 var found = false;
-                foreach (var parser in Parsers.Where(parser => Grammar.GetMatch(tokenizer) == parser.ParserRule))
-                {
-                    // Parse the tokens and return the resulting block.
-                    yield return parser.Parse(parent, tokenizer);
-                    found = true;
-                    break;
-                }
 
-                if (!found)
-                    throw new CompilerException(tokenizer.Current, string.Format("Unexpected {0}", tokenizer.Current.Type.ToUpperString()));
+                var parser = Parsers.FirstOrDefault(p => Grammar.GetMatch(tokenizer) == p.ParserRule);
+
+                if (parser == null)
+                    throw new CompilerException(tokenizer.Current,
+                        string.Format("Unexpected {0}", tokenizer.Current.Type.ToUpperString()));
+
+
+                // Parse the tokens and return the resulting block.
+                var block = parser.Parse(parent, tokenizer);
+
+                if (parser.RequiresBlock)
+                    foreach (var sub in CompileCodeBlock(block, tokenizer))
+                        block.AddBlock(sub);
+
+                yield return block;
 
                 if (singleStatement)
                     yield break;
             }
 
             if (singleStatement)
-                throw new CompilerException(tokenizer.Current, "Unexpected end of file");
+                throw new CompilerException("Unexpected end of file");
         }
 
         public EarleFile Compile(string path, string input)
@@ -142,9 +152,6 @@ namespace Earle
                     throw new CompilerException(tokenizer.Current, string.Format("Expected function, found {1} `{0}`", tokenizer.Current.Value, match));
 
                 var function = functionParser.Parse(file, tokenizer);
-
-                if (function == null)
-                    throw new CompilerException(tokenizer.Current, string.Format("Function parse error, found `{0}`", tokenizer.Current.Value));
 
                 foreach(var block in CompileCodeBlock(function, tokenizer))
                     function.AddBlock(block);

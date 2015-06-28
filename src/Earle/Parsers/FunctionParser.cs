@@ -22,12 +22,12 @@ namespace Earle.Parsers
 {
     public class FunctionParser : Parser<Function>
     {
-        #region Overrides of Parser<Function>
-
-        public override string ParserRule
+        public FunctionParser()
+            : base(true, "FUNCTION_DECLARATION")
         {
-            get { return "FUNCTION_DECLARATION"; }
         }
+
+        #region Overrides of Parser<Function>
 
         public override Function Parse(Block parent, Tokenizer tokenizer)
         {

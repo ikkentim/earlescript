@@ -20,12 +20,12 @@ namespace Earle.Parsers
 {
     public class EndExpressionParser : Parser<NoOperation>
     {
-        #region Overrides of Parser<Block>
-
-        public override string ParserRule
+        public EndExpressionParser()
+            : base(false, "STATEMENT_END")
         {
-            get { return "STATEMENT_END"; }
         }
+
+        #region Overrides of Parser<Block>
 
         public override NoOperation Parse(Block parent, Tokenizer tokenizer)
         {

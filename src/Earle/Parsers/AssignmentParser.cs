@@ -22,12 +22,12 @@ namespace Earle.Parsers
     {
         private readonly ExpressionParser _expressionParser = new ExpressionParser();
 
-        #region Overrides of Parser<Assignment>
-
-        public override string ParserRule
+        public AssignmentParser()
+            : base(false, "ASSIGNMENT")
         {
-            get { return "ASSIGNMENT"; }
         }
+
+        #region Overrides of Parser<Assignment>
 
         public override Assignment Parse(Block parent, Tokenizer tokenizer)
         {
