@@ -72,7 +72,13 @@ namespace Earle.Parsers
                     MoveNext(tokenizer);
                     break;
                 case TokenType.Token:
-                    if (Compiler.Grammar.Matches(tokenizer, "FUNCTION_CALL"))
+                    if (tokenizer.Current.Value == "(")
+                    {
+                        MoveNext(tokenizer);
+                        expression = Parse(parent, tokenizer);
+                        SkipToken(tokenizer, ")", TokenType.Token);
+                    }
+                    else if (Compiler.Grammar.Matches(tokenizer, "FUNCTION_CALL"))
                         expression = _functionCallParser.Parse(parent, tokenizer);
                     else if (Compiler.Grammar.Matches(tokenizer, "OPERATOR_UNARY"))
                     {
