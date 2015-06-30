@@ -24,6 +24,7 @@ namespace Earle.UnitTest
         private void AssertExpressionType(string expected, string expression, int tokens)
         {
             var t = new Tokenizer("test", expression);
+            t.MoveNext();
             int tc;
             Assert.AreEqual(expected, Compiler.Grammar.GetMatch(t, out tc),
                 string.Format("`{0}` should be of type {1}", expression, expected));
@@ -34,6 +35,7 @@ namespace Earle.UnitTest
         private void AssertFunctionExpressionType(string expected, string expression, int tokens)
         {
             var t = new Tokenizer("test", expression);
+            t.MoveNext();
             int tc;
             Assert.AreEqual(expected, Compiler.FunctionGrammar.GetMatch(t, out tc),
                 string.Format("`{0}` should be of type {1}", expression, expected));

@@ -20,40 +20,54 @@ using System.Linq;
 
 namespace Earle.Tokens
 {
+    /// <summary>
+    /// Represents the lexer.
+    /// </summary>
     public class Tokenizer : IEnumerator<Token>
     {
         private readonly string _file;
         private readonly string _input;
         private readonly Stack<Token> _pushedTokens = new Stack<Token>();
-        private readonly List<TokenData> _tokenDatas = new List<TokenData>();
-        private int _column = 1;
-        private int _line = 1;
-        private int _position;
+        private static TokenTypeData[] _tokenTypes;
+        private int _column = 1; // Indicates the column number at the caret.
+        private int _line = 1; // Indicates the line number at the caret.
+        private int _caretPosition; // Indicates the caret position.
 
+        /// <summary>
+        /// Initializes the <see cref="Tokenizer"/> class.
+        /// </summary>
+        static Tokenizer()
+        {
+            // Fill the token types array.
+            var data = new List<TokenTypeData>
+            {
+                new TokenTypeData(@"^[a-zA-Z_][a-zA-Z0-9_]*", TokenType.Identifier),
+                new TokenTypeData(@"^[0-9]*\.?[0-9]+", TokenType.NumberLiteral),
+                new TokenTypeData(@"^([""])((?:\\\1|.)*?)\1", TokenType.StringLiteral, 2)
+            };
+
+            data.AddRange(
+                new[] {"++", "--", "<<", ">>", "==", "!=", "<=", ">=", "&&", "||"}.Select(
+                    s => new TokenTypeData(@"^\" + string.Join(@"\", s.ToCharArray()), TokenType.Token)));
+       
+            _tokenTypes = data.ToArray();
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Tokenizer"/> class.
+        /// </summary>
+        /// <param name="file">The file.</param>
+        /// <param name="input">The input.</param>
+        /// <exception cref="System.ArgumentNullException">Thrown if file or input is null.</exception>
         public Tokenizer(string file, string input)
         {
             if (file == null) throw new ArgumentNullException("file");
             if (input == null) throw new ArgumentNullException("input");
+
             _file = file;
             _input = input;
 
-            // Load token data.
-            _tokenDatas.Add(new TokenData(@"^[a-zA-Z_][a-zA-Z0-9_]*", TokenType.Identifier));
-            _tokenDatas.Add(new TokenData(@"^[0-9]*\.?[0-9]+", TokenType.NumberLiteral));
-            _tokenDatas.Add(new TokenData(@"^([""])((?:\\\1|.)*?)\1", TokenType.StringLiteral, 2));
-
-            foreach (
-                var s in
-                    new[] {"++", "--", "<<", ">>", "==", "!=", "<=", ">=", "&&", "||"}.OrderByDescending(s => s.Length))
-                _tokenDatas.Add(new TokenData(@"^\" + string.Join(@"\", s.ToCharArray()), TokenType.Token));
-
             SkipWhitespace();
-            Next();
-        }
-
-        private string Buffer
-        {
-            get { return _input.Substring(_position); }
         }
 
         #region Implementation of IDisposable
@@ -66,74 +80,98 @@ namespace Earle.Tokens
 
         public bool HasNext()
         {
-            return _position < _input.Length || _pushedTokens.Any();
+            return _caretPosition < _input.Length || _pushedTokens.Count > 0;
         }
 
         private void SkipWhitespace()
         {
-            while (_position < _input.Length && char.IsWhiteSpace(_input[_position]))
-                UpdateLineNumber(_input.Substring(_position, 1));
+            // While the character at the caret is a white space character.
+            while (_caretPosition < _input.Length && char.IsWhiteSpace(_input[_caretPosition]))
+                MoveCaret(1);
 
-            if (Buffer.StartsWith("//"))
+            if (_caretPosition >= _input.Length - 1)
+                return;
+
+            var firstTwoCharacter = _input.Substring(_caretPosition, 2);
+            // Skip single line comments.
+            switch (firstTwoCharacter)
             {
-                var endidx = Buffer.IndexOf("\n", StringComparison.Ordinal);
-                UpdateLineNumber(endidx == -1 ? Buffer : Buffer.Substring(0, endidx + 1));
-                SkipWhitespace();
-            }
-            else if (Buffer.StartsWith("/*"))
-            {
-                var endidx = Buffer.IndexOf("*/", StringComparison.Ordinal);
-                UpdateLineNumber(endidx == -1 ? Buffer : Buffer.Substring(0, endidx + 2));
-                SkipWhitespace();
+                case "//":
+                {
+                    var endidx = _input.IndexOf("\n", _caretPosition, StringComparison.Ordinal);
+                    MoveCaret(endidx < 0 ? _input.Length - _caretPosition : endidx + 1);
+                    SkipWhitespace();
+                    break;
+                }
+                case "/*":
+                {
+                    var endidx = _input.IndexOf("*/", _caretPosition, StringComparison.Ordinal);
+                    MoveCaret(endidx < 0 ? _input.Length - _caretPosition : endidx + 2);
+                    SkipWhitespace();
+                    break;
+                }
             }
         }
 
-        private void UpdateLineNumber(string input)
+        private void MoveCaret(int count)
         {
-            foreach (var c in input)
+            if (count < 0)
+                throw new ArgumentOutOfRangeException("count", count, "value must be positive");
+
+
+            for (var i = 0; i < count && _caretPosition < _input.Length; i++)
             {
-                if (c == '\n')
+                // If the character at the caret is a line break, increase the line number and reset the column number.
+                // Otherwise increase the column number.
+                if (_input[_caretPosition] == '\n')
                 {
                     _line++;
                     _column = 1;
                 }
                 else
                     _column++;
-            }
 
-            _position += input.Length;
+                // Move the caret.
+                _caretPosition ++;
+            }
         }
 
-        private void Next()
+        private void MoveToNextToken()
         {
-            if (_pushedTokens.Any())
+            // If any tokens were pushed back to the tokenizer, move trough these first.
+            if (_pushedTokens.Count > 0)
             {
                 Current = _pushedTokens.Pop();
                 return;
             }
 
-            foreach (var tokenData in _tokenDatas)
+            // Find the first matching token type.
+            foreach (var tokenData in _tokenTypes)
             {
-                var match = tokenData.Pattern.Match(Buffer);
+//                var match = tokenData.Pattern.Match(_input, _caretPosition);
+                var match = tokenData.Pattern.Match(_input.Substring(_caretPosition));
 
                 if (match.Success)
                 {
                     Current = new Token(tokenData.Type, match.Groups[tokenData.ContentGroup].Value, _file, _line,
                         _column);
 
-                    UpdateLineNumber(match.Groups[0].Value);
+                    MoveCaret(match.Groups[0].Length);
                     SkipWhitespace();
                     return;
                 }
             }
 
-            Current = new Token(TokenType.Token, Buffer.Substring(0, 1), _file, _line, _column);
-            _position++;
+            // If no token type was found, the character at the caret is a token.
+            var token = _input.Substring(_caretPosition, 1);
+            Current = new Token(TokenType.Token, token, _file, _line, _column);
+            MoveCaret(1);
             SkipWhitespace();
         }
 
-        public void PushBack(Token token)
+        public void Push(Token token)
         {
+            // Push the current token to the stack and set the current token to the pushed token.
             if (Current != null)
                 _pushedTokens.Push(Current);
 
@@ -149,16 +187,21 @@ namespace Earle.Tokens
                 Current = null;
                 return false;
             }
-            Next();
+
+            MoveToNextToken();
             return true;
         }
 
         public void Reset()
         {
-            _position = 0;
-            _pushedTokens.Clear();
+            _column = 1;
+            _line = 1;
+            _caretPosition = 0;
 
-            Next();
+            _pushedTokens.Clear();
+            Current = null;
+
+            SkipWhitespace();
         }
 
         public Token Current { get; private set; }

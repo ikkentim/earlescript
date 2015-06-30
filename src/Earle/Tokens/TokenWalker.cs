@@ -61,7 +61,7 @@ namespace Earle.Tokens
             var session = _sessions.Pop();
 
             while (session.Count > 0)
-                Tokenizer.PushBack(session.Pop());
+                Tokenizer.Push(session.Pop());
 
             if (_sessions.Count == 0)
                 CreateSession();
@@ -91,7 +91,7 @@ namespace Earle.Tokens
             {
                 var session = _sessions.Pop();
                 while (session.Count > 0)
-                    Tokenizer.PushBack(session.Pop());
+                    Tokenizer.Push(session.Pop());
             }
 
             CreateSession();

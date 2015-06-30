@@ -17,17 +17,17 @@ using System.Text.RegularExpressions;
 
 namespace Earle.Tokens
 {
-    public class TokenData
+    public class TokenTypeData
     {
         private readonly string _pattern;
 
-        public TokenData(Regex pattern, TokenType type)
+        public TokenTypeData(Regex pattern, TokenType type)
         {
             Pattern = pattern;
             Type = type;
         }
 
-        public TokenData(string pattern, TokenType type, int contentGroup = 0)
+        public TokenTypeData(string pattern, TokenType type, int contentGroup = 0)
             : this(new Regex(pattern), type)
         {
             _pattern = pattern;

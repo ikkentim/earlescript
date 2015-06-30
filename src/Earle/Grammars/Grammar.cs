@@ -39,7 +39,8 @@ namespace Earle.Grammars
             var tokenizer = new Tokenizer("production_rules", rule);
 
             var tokens = new List<Token>();
-            do tokens.Add(tokenizer.Current); while (tokenizer.MoveNext());
+
+            while (tokenizer.MoveNext()) tokens.Add(tokenizer.Current);
 
             var productionRule = new ProductionRule(key, Compile(tokens.ToArray()));
             _rules.Add(productionRule);

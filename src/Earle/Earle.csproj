@@ -81,7 +81,7 @@
     <Compile Include="Parsers\ReturnParser.cs" />
     <Compile Include="Parsers\WhileStatementParser.cs" />
     <Compile Include="PathResolverDelegate.cs" />
-    <Compile Include="Tokens\TokenData.cs" />
+    <Compile Include="Tokens\TokenTypeData.cs" />
     <Compile Include="Tokens\TokenHelper.cs" />
     <Compile Include="Tokens\TokenWalker.cs" />
     <Compile Include="Parsers\EndExpressionParser.cs" />
