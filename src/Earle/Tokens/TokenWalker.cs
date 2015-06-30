@@ -32,6 +32,14 @@ namespace Earle.Tokens
             CreateSession();
         }
 
+        public int SessionTokenCount
+        {
+            get
+            {
+                return _sessions.Sum(s => s.Count);
+            }
+        }
+
         public Tokenizer Tokenizer { get; private set; }
 
         #region Implementation of IDisposable

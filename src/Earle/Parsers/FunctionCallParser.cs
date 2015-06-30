@@ -65,7 +65,7 @@ namespace Earle.Parsers
 
             var arguments = new List<Expression>();
             var parser = new ExpressionParser();
-            while (true)
+            while (!tokenizer.Current.Is(TokenType.Token, ")"))
             {
                 arguments.Add(parser.Parse(parent, tokenizer));
 

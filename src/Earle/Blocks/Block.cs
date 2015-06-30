@@ -78,11 +78,10 @@ namespace Earle.Blocks
             return Parent != null ? Parent.ResolveVariable(name) ?? value : value;
         }
 
-        public virtual void AddVariable(string name, ValueContainer value)
+        public virtual ValueContainer AddVariable(string name)
         {
             if (name == null) throw new ArgumentNullException("name");
-            if (value == null) throw new ArgumentNullException("value");
-            Parent.AddVariable(name, value);
+            return Parent.AddVariable(name);
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿cprint(inp) 
     print(inp);
-
+ 
 // The entry point of the script
 /*
  * extra commenting things
@@ -9,6 +9,8 @@
  */
 entry ()
 {
+    testobjs();
+    /*
     sum = \other::count(-(-(-(-23))),4);
     cprint("Hello " + "World! (" + sum + ")");
 
@@ -22,4 +24,18 @@ entry ()
     {
         cprint("FOR " + i);
     }
+    */
+}
+   
+testobjs()
+{
+    something["fun"] = 42;
+    something["funkey"] = "fun";
+    something["awesome"] = "AWESOME!!!";
+    something["em"]["bedded"] = "embedded";
+    print("FUN: " + something["fun"]);
+    print("FUNKEY: " + something[something["funkey"]]);
+    print("AWESOME: " + something["awesome"]);
+    print("DULL: " + something["dull"]);
+    print("embedded: " + something["em"]["bedded"]);
 }

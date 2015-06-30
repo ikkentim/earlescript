@@ -15,6 +15,8 @@
 
 using System;
 using System.IO;
+using Earle.Grammars;
+using Earle.Tokens;
 
 namespace Earle.Debug
 {

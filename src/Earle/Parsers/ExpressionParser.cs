@@ -13,6 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Collections.Generic;
 using System.Linq;
 using Earle.Blocks;
 using Earle.Blocks.Expressions;
@@ -42,33 +43,47 @@ namespace Earle.Parsers
                     switch (tokenizer.Current.Value)
                     {
                         case "true":
-                            expression = new ValueExpression(parent, new ValueContainer(VarType.Integer, 1));
+                            expression = new ValueExpression(parent, new ValueContainer(1));
+                            MoveNext(tokenizer);
                             break;
                         case "false":
-                            expression = new ValueExpression(parent, new ValueContainer(VarType.Integer, 0));
+                            expression = new ValueExpression(parent, new ValueContainer(0));
+                            MoveNext(tokenizer);
                             break;
                         case "null":
-                            expression = new ValueExpression(parent, new ValueContainer(VarType.Null, null));
+                            expression = new ValueExpression(parent, new ValueContainer());
+                            MoveNext(tokenizer);
                             break;
                         default:
-                            expression = new VariableExpression(parent, tokenizer.Current.Value);
+                            var name = tokenizer.Current.Value;
+                            MoveNext(tokenizer);
+
+                            List<Expression> indexers = new List<Expression>();
+
+                            while (tokenizer.Current.Is(TokenType.Token, "["))
+                            {
+                                MoveNext(tokenizer);
+                                indexers.Add(Parse(parent, tokenizer));
+                                SkipToken(tokenizer, "]", TokenType.Token);
+                            }
+
+                            expression = new VariableExpression(parent, name, indexers.ToArray());
                             break;
                     }
-                    MoveNext(tokenizer);
                     break;
                 case TokenType.NumberLiteral:
                     float fValue;
                     int iValue;
                     if (int.TryParse(tokenizer.Current.Value, out iValue))
-                        expression = new ValueExpression(parent, new ValueContainer(VarType.Integer, iValue));
+                        expression = new ValueExpression(parent, new ValueContainer(iValue));
                     else if (float.TryParse(tokenizer.Current.Value, out fValue))
-                        expression = new ValueExpression(parent, new ValueContainer(VarType.Float, fValue));
+                        expression = new ValueExpression(parent, new ValueContainer(fValue));
                     else
                         throw new ParseException(tokenizer.Current, "Failed to parse number");
                     MoveNext(tokenizer);
                     break;
                 case TokenType.StringLiteral:
-                    expression = new ValueExpression(parent, new ValueContainer(VarType.String, tokenizer.Current.Value));
+                    expression = new ValueExpression(parent, new ValueContainer(tokenizer.Current.Value));
                     MoveNext(tokenizer);
                     break;
                 case TokenType.Token:
@@ -95,7 +110,7 @@ namespace Earle.Parsers
 
             // Check for ops
             if (tokenizer.Current.Type == TokenType.Token && /* token is operator */
-                !new[] {",", ")", ";"}.Contains(tokenizer.Current.Value))
+                !new[] {",", ")", ";", "[", "]"}.Contains(tokenizer.Current.Value))
             {
                 var optoken = tokenizer.Current.Value;
                 MoveNext(tokenizer);

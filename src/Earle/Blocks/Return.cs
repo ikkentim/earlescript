@@ -31,7 +31,7 @@ namespace Earle.Blocks
 
         public override ValueContainer Run()
         {
-            return _expression == null ? new ValueContainer(VarType.Integer, 1) : _expression.Run();
+            return _expression == null ? new ValueContainer(1) : _expression.Run();
         }
 
         #endregion

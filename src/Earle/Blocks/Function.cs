@@ -64,9 +64,9 @@ namespace Earle.Blocks
             throw new NotImplementedException("Function cannot be invoked using the Run method.");
         }
 
-        public override void AddVariable(string name, ValueContainer value)
+        public override ValueContainer AddVariable(string name)
         {
-            _variables[name] = value;
+            return _variables[name] = new ValueContainer();
         }
 
         public override ValueContainer ResolveVariable(string name)

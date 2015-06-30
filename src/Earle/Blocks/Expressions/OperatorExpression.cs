@@ -27,133 +27,133 @@ namespace Earle.Blocks.Expressions
         {
             // Integer-Integer
             new Operator(VarType.Integer, "*", VarType.Integer,
-                (l, r) => new ValueContainer(VarType.Integer, (int) l*(int) r)),
+                (l, r) => new ValueContainer((int) l*(int) r)),
             new Operator(VarType.Integer, "/", VarType.Integer,
-                (l, r) => new ValueContainer(VarType.Integer, (int) l/(int) r)),
+                (l, r) => new ValueContainer((int) l/(int) r)),
             new Operator(VarType.Integer, "%", VarType.Integer,
-                (l, r) => new ValueContainer(VarType.Integer, (int) l%(int) r)),
+                (l, r) => new ValueContainer((int) l%(int) r)),
             new Operator(VarType.Integer, "+", VarType.Integer,
-                (l, r) => new ValueContainer(VarType.Integer, (int) l + (int) r)),
+                (l, r) => new ValueContainer((int) l + (int) r)),
             new Operator(VarType.Integer, "-", VarType.Integer,
-                (l, r) => new ValueContainer(VarType.Integer, (int) l - (int) r)),
+                (l, r) => new ValueContainer((int) l - (int) r)),
             new Operator(VarType.Integer, "<<", VarType.Integer,
-                (l, r) => new ValueContainer(VarType.Integer, (int) l << (int) r)),
+                (l, r) => new ValueContainer((int) l << (int) r)),
             new Operator(VarType.Integer, ">>", VarType.Integer,
-                (l, r) => new ValueContainer(VarType.Integer, (int) l >> (int) r)),
+                (l, r) => new ValueContainer((int) l >> (int) r)),
             new Operator(VarType.Integer, "<", VarType.Integer,
-                (l, r) => new ValueContainer(VarType.Integer, (int) l < (int) r ? 1 : 0)),
+                (l, r) => new ValueContainer((int) l < (int) r ? 1 : 0)),
             new Operator(VarType.Integer, ">", VarType.Integer,
-                (l, r) => new ValueContainer(VarType.Integer, (int) l > (int) r ? 1 : 0)),
+                (l, r) => new ValueContainer((int) l > (int) r ? 1 : 0)),
             new Operator(VarType.Integer, "<=", VarType.Integer,
-                (l, r) => new ValueContainer(VarType.Integer, (int) l <= (int) r ? 1 : 0)),
+                (l, r) => new ValueContainer((int) l <= (int) r ? 1 : 0)),
             new Operator(VarType.Integer, ">=", VarType.Integer,
-                (l, r) => new ValueContainer(VarType.Integer, (int) l >= (int) r ? 1 : 0)),
+                (l, r) => new ValueContainer((int) l >= (int) r ? 1 : 0)),
             new Operator(VarType.Integer, "==", VarType.Integer,
-                (l, r) => new ValueContainer(VarType.Integer, (int) l == (int) r ? 1 : 0)),
+                (l, r) => new ValueContainer((int) l == (int) r ? 1 : 0)),
             new Operator(VarType.Integer, "!=", VarType.Integer,
-                (l, r) => new ValueContainer(VarType.Integer, (int) l != (int) r ? 1 : 0)),
+                (l, r) => new ValueContainer((int) l != (int) r ? 1 : 0)),
             new Operator(VarType.Integer, "&", VarType.Integer,
-                (l, r) => new ValueContainer(VarType.Integer, (int) l & (int) r)),
+                (l, r) => new ValueContainer((int) l & (int) r)),
             new Operator(VarType.Integer, "|", VarType.Integer,
-                (l, r) => new ValueContainer(VarType.Integer, (int) l | (int) r)),
+                (l, r) => new ValueContainer((int) l | (int) r)),
             new Operator(VarType.Integer, "&&", VarType.Integer,
-                (l, r) => new ValueContainer(VarType.Integer, ((int) l != 0) && ((int) r != 0) ? 1 : 0)),
+                (l, r) => new ValueContainer(((int) l != 0) && ((int) r != 0) ? 1 : 0)),
             new Operator(VarType.Integer, "||", VarType.Integer,
-                (l, r) => new ValueContainer(VarType.Integer, ((int) l != 0) || ((int) r != 0) ? 1 : 0)),
+                (l, r) => new ValueContainer(((int) l != 0) || ((int) r != 0) ? 1 : 0)),
 
             // Integer-Float
             new Operator(VarType.Integer, "*", VarType.Float,
-                (l, r) => new ValueContainer(VarType.Float, (int) l*(float) r)),
+                (l, r) => new ValueContainer((int) l*(float) r)),
             new Operator(VarType.Integer, "/", VarType.Float,
-                (l, r) => new ValueContainer(VarType.Float, (int) l/(float) r)),
+                (l, r) => new ValueContainer((int) l/(float) r)),
             new Operator(VarType.Integer, "+", VarType.Float,
-                (l, r) => new ValueContainer(VarType.Float, (int) l + (float) r)),
+                (l, r) => new ValueContainer((int) l + (float) r)),
             new Operator(VarType.Integer, "-", VarType.Float,
-                (l, r) => new ValueContainer(VarType.Float, (int) l - (float) r)),
+                (l, r) => new ValueContainer((int) l - (float) r)),
             new Operator(VarType.Integer, "<", VarType.Float,
-                (l, r) => new ValueContainer(VarType.Integer, (int) l < (float) r ? 1 : 0)),
+                (l, r) => new ValueContainer((int) l < (float) r ? 1 : 0)),
             new Operator(VarType.Integer, ">", VarType.Float,
-                (l, r) => new ValueContainer(VarType.Integer, (int) l > (float) r ? 1 : 0)),
+                (l, r) => new ValueContainer((int) l > (float) r ? 1 : 0)),
             new Operator(VarType.Integer, "<=", VarType.Float,
-                (l, r) => new ValueContainer(VarType.Integer, (int) l <= (float) r ? 1 : 0)),
+                (l, r) => new ValueContainer((int) l <= (float) r ? 1 : 0)),
             new Operator(VarType.Integer, ">=", VarType.Float,
-                (l, r) => new ValueContainer(VarType.Integer, (int) l >= (float) r ? 1 : 0)),
+                (l, r) => new ValueContainer((int) l >= (float) r ? 1 : 0)),
             new Operator(VarType.Integer, "==", VarType.Float,
-                (l, r) => new ValueContainer(VarType.Integer, (int) l == (float) r ? 1 : 0)),
+                (l, r) => new ValueContainer((int) l == (float) r ? 1 : 0)),
             new Operator(VarType.Integer, "!=", VarType.Float,
-                (l, r) => new ValueContainer(VarType.Integer, (int) l != (float) r ? 1 : 0)),
+                (l, r) => new ValueContainer((int) l != (float) r ? 1 : 0)),
              
             // Integer-String
             new Operator(VarType.Integer, "+", VarType.String,
-                (l, r) => new ValueContainer(VarType.String, (int) l + (string) r)),
+                (l, r) => new ValueContainer((int) l + (string) r)),
   
             // Float-Integer
             new Operator(VarType.Float, "*", VarType.Integer,
-                (l, r) => new ValueContainer(VarType.Float, (float) l*(int) r)),
+                (l, r) => new ValueContainer((float) l*(int) r)),
             new Operator(VarType.Float, "/", VarType.Integer,
-                (l, r) => new ValueContainer(VarType.Float, (float) l/(int) r)),
+                (l, r) => new ValueContainer((float) l/(int) r)),
             new Operator(VarType.Float, "%", VarType.Integer,
-                (l, r) => new ValueContainer(VarType.Float, (float) l%(int) r)),
+                (l, r) => new ValueContainer((float) l%(int) r)),
             new Operator(VarType.Float, "+", VarType.Integer,
-                (l, r) => new ValueContainer(VarType.Float, (float) l + (int) r)),
+                (l, r) => new ValueContainer((float) l + (int) r)),
             new Operator(VarType.Float, "-", VarType.Integer,
-                (l, r) => new ValueContainer(VarType.Float, (float) l - (int) r)),
+                (l, r) => new ValueContainer((float) l - (int) r)),
             new Operator(VarType.Float, "<", VarType.Integer,
-                (l, r) => new ValueContainer(VarType.Integer, (float) l < (int) r ? 1 : 0)),
+                (l, r) => new ValueContainer((float) l < (int) r ? 1 : 0)),
             new Operator(VarType.Float, ">", VarType.Integer,
-                (l, r) => new ValueContainer(VarType.Integer, (float) l > (int) r ? 1 : 0)),
+                (l, r) => new ValueContainer((float) l > (int) r ? 1 : 0)),
             new Operator(VarType.Float, "<=", VarType.Integer,
-                (l, r) => new ValueContainer(VarType.Integer, (float) l <= (int) r ? 1 : 0)),
+                (l, r) => new ValueContainer((float) l <= (int) r ? 1 : 0)),
             new Operator(VarType.Float, ">=", VarType.Integer,
-                (l, r) => new ValueContainer(VarType.Integer, (float) l >= (int) r ? 1 : 0)),
+                (l, r) => new ValueContainer((float) l >= (int) r ? 1 : 0)),
             new Operator(VarType.Float, "==", VarType.Integer,
-                (l, r) => new ValueContainer(VarType.Integer, (float) l == (int) r ? 1 : 0)),
+                (l, r) => new ValueContainer((float) l == (int) r ? 1 : 0)),
             new Operator(VarType.Float, "!=", VarType.Integer,
-                (l, r) => new ValueContainer(VarType.Integer, (float) l != (int) r ? 1 : 0)),
+                (l, r) => new ValueContainer((float) l != (int) r ? 1 : 0)),
 
             // Float-Float
             new Operator(VarType.Float, "*", VarType.Float,
-                (l, r) => new ValueContainer(VarType.Float, (float) l*(float) r)),
+                (l, r) => new ValueContainer((float) l*(float) r)),
             new Operator(VarType.Float, "/", VarType.Float,
-                (l, r) => new ValueContainer(VarType.Float, (float) l/(float) r)),
+                (l, r) => new ValueContainer((float) l/(float) r)),
             new Operator(VarType.Float, "+", VarType.Float,
-                (l, r) => new ValueContainer(VarType.Float, (float) l + (float) r)),
+                (l, r) => new ValueContainer((float) l + (float) r)),
             new Operator(VarType.Float, "-", VarType.Float,
-                (l, r) => new ValueContainer(VarType.Float, (float) l - (float) r)),
+                (l, r) => new ValueContainer((float) l - (float) r)),
             new Operator(VarType.Float, "<", VarType.Float,
-                (l, r) => new ValueContainer(VarType.Integer, (float) l < (float) r ? 1 : 0)),
+                (l, r) => new ValueContainer((float) l < (float) r ? 1 : 0)),
             new Operator(VarType.Float, ">", VarType.Float,
-                (l, r) => new ValueContainer(VarType.Integer, (float) l > (float) r ? 1 : 0)),
+                (l, r) => new ValueContainer((float) l > (float) r ? 1 : 0)),
             new Operator(VarType.Float, "<=", VarType.Float,
-                (l, r) => new ValueContainer(VarType.Integer, (float) l <= (float) r ? 1 : 0)),
+                (l, r) => new ValueContainer((float) l <= (float) r ? 1 : 0)),
             new Operator(VarType.Float, ">=", VarType.Float,
-                (l, r) => new ValueContainer(VarType.Integer, (float) l >= (float) r ? 1 : 0)),
+                (l, r) => new ValueContainer((float) l >= (float) r ? 1 : 0)),
             new Operator(VarType.Float, "==", VarType.Float,
-                (l, r) => new ValueContainer(VarType.Integer, (float) l == (float) r ? 1 : 0)),
+                (l, r) => new ValueContainer((float) l == (float) r ? 1 : 0)),
             new Operator(VarType.Float, "!=", VarType.Float,
-                (l, r) => new ValueContainer(VarType.Integer, (float) l != (float) r ? 1 : 0)),
+                (l, r) => new ValueContainer((float) l != (float) r ? 1 : 0)),
              
             // Float-String
             new Operator(VarType.Float, "+", VarType.String,
-                (l, r) => new ValueContainer(VarType.String, (float) l + (string) r)),
+                (l, r) => new ValueContainer((float) l + (string) r)),
   
             // String-X
             new Operator(VarType.String, "+", VarType.Integer,
-                (l, r) => new ValueContainer(VarType.String, (string) l + (int) r)),
+                (l, r) => new ValueContainer((string) l + (int) r)),
             new Operator(VarType.String, "+", VarType.Float,
-                (l, r) => new ValueContainer(VarType.String, (string) l + (float) r)),
+                (l, r) => new ValueContainer((string) l + (float) r)),
             new Operator(VarType.String, "+", VarType.String,
-                (l, r) => new ValueContainer(VarType.String, (string) l + (string) r)),
+                (l, r) => new ValueContainer((string) l + (string) r)),
             new Operator(VarType.String, "==", VarType.String,
-                (l, r) => new ValueContainer(VarType.Integer, (string) l == (string) r ? 1 : 0)),
+                (l, r) => new ValueContainer((string) l == (string) r ? 1 : 0)),
             new Operator(VarType.String, "!=", VarType.String,
-                (l, r) => new ValueContainer(VarType.String, (string) l != (string) r ? 1 : 0)),
+                (l, r) => new ValueContainer((string) l != (string) r ? 1 : 0)),
             new Operator(VarType.String, "+", VarType.Null,
-                (l, r) => new ValueContainer(VarType.String, (string) l)),
+                (l, r) => new ValueContainer((string) l)),
 
             // Null-X
             new Operator(VarType.Null, "+", VarType.String,
-                (l, r) => new ValueContainer(VarType.String, (string) r)),
+                (l, r) => new ValueContainer((string) r)),
         };
 
         #endregion
@@ -184,17 +184,17 @@ namespace Earle.Blocks.Expressions
 
         public override ValueContainer Run()
         {
-            var leftValue = Left == null ? new ValueContainer(VarType.Null, null) : Left.Run();
+            var leftValue = Left == null ? new ValueContainer() : Left.Run();
             if (leftValue == null)
-                return new ValueContainer(VarType.Null, null);
-            var rightValue = Right == null ? new ValueContainer(VarType.Null, null) : Right.Run();
+                return new ValueContainer();
+            var rightValue = Right == null ? new ValueContainer() : Right.Run();
 
             var op =
                 _operators.FirstOrDefault(
                     o => o.LeftType == leftValue.Type && o.RightType == rightValue.Type);
 
             if (op == null)
-                return new ValueContainer(VarType.Null, null);
+                return new ValueContainer();
 
             return op.Calculate(leftValue, rightValue);
         }
@@ -222,7 +222,7 @@ namespace Earle.Blocks.Expressions
             public ValueContainer Calculate(ValueContainer left, ValueContainer right)
             {
                 if (left == null || left.Type == VarType.Null)
-                    return new ValueContainer(VarType.Null, null);
+                    return new ValueContainer();
 
                 return _function(left, right);
             }

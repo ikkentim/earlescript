@@ -41,7 +41,7 @@ namespace Earle.Grammars
 
         #region Implementation of IProductionRuleElement
 
-        public bool Matches(TokenWalker tokenWalker, ICollection<ProductionRule> rules)
+        public bool Matches(TokenWalker tokenWalker, IEnumerable<ProductionRule> rules)
         {
             if (tokenWalker.Current == null)
                 return false;

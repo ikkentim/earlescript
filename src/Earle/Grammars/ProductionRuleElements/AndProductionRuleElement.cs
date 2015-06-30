@@ -15,6 +15,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Earle.Grammars.ProductionRuleElements;
 using Earle.Tokens;
 
@@ -37,7 +38,7 @@ namespace Earle.Grammars
 
         #region Implementation of IProductionRuleElement
 
-        public bool Matches(TokenWalker tokenWalker, ICollection<ProductionRule> rules)
+        public bool Matches(TokenWalker tokenWalker, IEnumerable<ProductionRule> rules)
         {
             return Matches(tokenWalker, rules, 0);
         }
@@ -50,7 +51,7 @@ namespace Earle.Grammars
             _conditions.Add(condition);
         }
 
-        public bool Matches(TokenWalker tokenWalker, ICollection<ProductionRule> rules, int skip)
+        public bool Matches(TokenWalker tokenWalker, IEnumerable<ProductionRule> rules, int skip, ProductionRule except = null)
         {
             if (tokenWalker.Current == null)
                 return false;
@@ -62,7 +63,7 @@ namespace Earle.Grammars
             for (var i = Math.Max(0, skip); i < _conditions.Count; i++)
             {
                 var element = _conditions[i];
-                if (!element.Matches(tokenWalker, rules))
+                if (!element.Matches(tokenWalker, i == 0 && except != null ? rules.Except(new[] {except}) : rules))
                 {
                     result = false;
                     break;

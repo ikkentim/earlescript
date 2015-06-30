@@ -20,6 +20,6 @@ namespace Earle.Grammars.ProductionRuleElements
 {
     public interface IProductionRuleElement
     {
-        bool Matches(TokenWalker tokenWalker, ICollection<ProductionRule> rules);
+        bool Matches(TokenWalker tokenWalker, IEnumerable<ProductionRule> rules);
     }
 }

@@ -24,9 +24,9 @@ namespace Earle.Blocks.Expressions
         private static readonly Operator[] Operators =
         {
             // Number
-            new Operator("+", VarType.Integer, v => v.GetValue()),
-            new Operator("-", VarType.Integer, v => new ValueContainer(VarType.Integer, -(int) v)),
-            new Operator("!", VarType.Integer, v => new ValueContainer(VarType.Integer, (int) v == 0 ? 1 : 0))
+            new Operator("+", VarType.Integer, v => v.Clone()),
+            new Operator("-", VarType.Integer, v => new ValueContainer(-(int) v)),
+            new Operator("!", VarType.Integer, v => new ValueContainer((int) v == 0 ? 1 : 0))
         };
 
         public UnaryOperatorExpression(Block parent) : base(parent)
@@ -51,14 +51,14 @@ namespace Earle.Blocks.Expressions
 
         public override ValueContainer Run()
         {
-            var value = Value == null ? new ValueContainer(VarType.Null, null) : Value.Run();
+            var value = Value == null ? new ValueContainer() : Value.Run();
             if (value == null)
-                return new ValueContainer(VarType.Null, null);
+                return new ValueContainer();
 
             var op = Operators.FirstOrDefault(o => o.Type == value.Type && o.OpString == OP);
 
             if (op == null)
-                throw new RuntimeException(string.Format("Unsupported {1} operator `{0}` called", OP, value.Type));
+                return new ValueContainer();
 
             return op.Calculate(value);
         }
@@ -84,7 +84,7 @@ namespace Earle.Blocks.Expressions
             public ValueContainer Calculate(ValueContainer value)
             {
                 if (value == null || value.Type == VarType.Null)
-                    return new ValueContainer(VarType.Null, null);
+                    return new ValueContainer();
 
                 return _function(value);
             }

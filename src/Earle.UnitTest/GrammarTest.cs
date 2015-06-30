@@ -21,83 +21,100 @@ namespace Earle.UnitTest
     [TestClass]
     public class GrammarTest
     {
-        private void AssertExpressionType(string expected, string expression)
+        private void AssertExpressionType(string expected, string expression, int tokens)
         {
             var t = new Tokenizer("test", expression);
-
-            Assert.AreEqual(expected, Compiler.Grammar.GetMatch(t),
+            int tc;
+            Assert.AreEqual(expected, Compiler.Grammar.GetMatch(t, out tc),
                 string.Format("`{0}` should be of type {1}", expression, expected));
+
+            Assert.AreEqual(tokens, tc, "Unexpected token count in `" + expression + "`");
         }
 
-        private void AssertFunctionExpressionType(string expected, string expression)
+        private void AssertFunctionExpressionType(string expected, string expression, int tokens)
         {
             var t = new Tokenizer("test", expression);
-
-            Assert.AreEqual(expected, Compiler.FunctionGrammar.GetMatch(t),
+            int tc;
+            Assert.AreEqual(expected, Compiler.FunctionGrammar.GetMatch(t, out tc),
                 string.Format("`{0}` should be of type {1}", expression, expected));
+
+            Assert.AreEqual(tokens, tc, "Unexpected token count in `" + expression + "`");
         }
 
         [TestMethod]
         public void TestFunction()
         {
-            AssertFunctionExpressionType("FUNCTION_DECLARATION", "func()");
-            AssertFunctionExpressionType("FUNCTION_DECLARATION", "func(a,b)");
-            AssertFunctionExpressionType("FUNCTION_DECLARATION", "func(a)");
+            AssertFunctionExpressionType("FUNCTION_DECLARATION", "func()",3);
+            AssertFunctionExpressionType("FUNCTION_DECLARATION", "func(a,b)", 6);
+            AssertFunctionExpressionType("FUNCTION_DECLARATION", "func(a)", 4);
         }
 
         [TestMethod]
         public void TestReturn()
         {
-            AssertExpressionType("STATEMENT_RETURN", @"return;");
-            AssertExpressionType("STATEMENT_RETURN", @"return "" Hello world! "";");
-            AssertExpressionType("STATEMENT_RETURN", @"return 1;");
-            AssertExpressionType("STATEMENT_RETURN", @"return 1 + 1;");
+            AssertExpressionType("STATEMENT_RETURN", @"return;", 2);
+            AssertExpressionType("STATEMENT_RETURN", @"return "" Hello world! "";",3);
+            AssertExpressionType("STATEMENT_RETURN", @"return 1;",3);
+            AssertExpressionType("STATEMENT_RETURN", @"return 1 + 1;",5);
         }
 
         [TestMethod]
         public void TestExpression()
         {
-            AssertExpressionType("EXPRESSION", "123 - 12");
-            AssertExpressionType("EXPRESSION", "123 * 12");
-            AssertExpressionType("EXPRESSION", "123 + 12");
-            AssertExpressionType("EXPRESSION", "-123");
-            AssertExpressionType("EXPRESSION", @"test_call");
-            AssertExpressionType("EXPRESSION", @"""awesome""");
-            AssertExpressionType("EXPRESSION", @"123");
+            AssertExpressionType("EXPRESSION", @"test_call", 1);
+            AssertExpressionType("EXPRESSION", @"""awesome""", 1);
+            AssertExpressionType("EXPRESSION", @"123", 1);
+            AssertExpressionType("EXPRESSION", "-123", 2);
+            AssertExpressionType("EXPRESSION", "123 - 12", 3);
+            AssertExpressionType("EXPRESSION", "123 * 12", 3);
+            AssertExpressionType("EXPRESSION", "123 + 12", 3);
+        }
+
+        [TestMethod]
+        public void TestIndexedExpression()
+        {
+            AssertExpressionType("EXPRESSION", @"array[""index""]", 4);
+            AssertExpressionType("EXPRESSION", @"array[array[""2ndindex""]]", 7);
+            AssertExpressionType("EXPRESSION", @"array[""index""][""2ndindex""]", 7);
+            AssertExpressionType("EXPRESSION", @"array[8]", 4);
+            AssertExpressionType("EXPRESSION", @"array[index]", 4);
+            AssertExpressionType("EXPRESSION", @"""value: "" + array[""index""]", 6);
         }
 
         [TestMethod]
         public void TestFunctionCall()
         {
-            AssertExpressionType("FUNCTION_CALL", "some_function()");
-            AssertExpressionType("FUNCTION_CALL", @"some_function(123)");
-            AssertExpressionType("FUNCTION_CALL", @"some_function(123, ""abc"")");
-            AssertExpressionType("FUNCTION_CALL", @"some_function(123 * 123)");
-            AssertExpressionType("FUNCTION_CALL", @"test_call3 (a,b,c,123,""awesome"")");
-            AssertExpressionType("FUNCTION_CALL", @"test_call2 (awesomeness)");
-            AssertExpressionType("FUNCTION_CALL", @"test_call (1)");
-            AssertExpressionType("FUNCTION_CALL", @"cprint(""Hello "" + ""World! ("" + sum + "")"")");
+            AssertExpressionType("FUNCTION_CALL", "some_function()", 3);
+            AssertExpressionType("FUNCTION_CALL", @"some_function(123)", 4);
+            AssertExpressionType("FUNCTION_CALL", @"some_function(123, ""abc"")", 6);
+            AssertExpressionType("FUNCTION_CALL", @"some_function(123 * 123)", 6);
+            AssertExpressionType("FUNCTION_CALL", @"test_call3 (a,b,c,123,""awesome"")", 12);
+            AssertExpressionType("FUNCTION_CALL", @"test_call2 (awesomeness)", 4);
+
+            AssertExpressionType("FUNCTION_CALL", @"cprint(""Hello "" + ""World! ("" + sum + "")"")", 10);
+
+            AssertExpressionType("FUNCTION_CALL", @"test_call (arr[1])", 7);
         }
 
         [TestMethod]
         public void TestAssignment()
         {
-            AssertExpressionType("ASSIGNMENT", @"alpha = bravo;");
+            AssertExpressionType("ASSIGNMENT", @"alpha = bravo;", 3);
         }
 
         [TestMethod]
         public void TestStatementIf()
         {
-            AssertExpressionType("STATEMENT_IF", @"if (2 > 3)");
-            AssertExpressionType("STATEMENT_IF", @"if (2 + 39 / 2 > 3)");
+            AssertExpressionType("STATEMENT_IF", @"if (2 > 3)", 6);
+            AssertExpressionType("STATEMENT_IF", @"if (2 + 39 / 2 > 3)", 10);
         }
 
         [TestMethod]
         public void TestOperator()
         {
-            AssertExpressionType("OPERATOR", @"-");
-            AssertExpressionType("OPERATOR", @"<");
-            AssertExpressionType("OPERATOR", @"<<");
+            AssertExpressionType("OPERATOR", @"-", 1);
+            AssertExpressionType("OPERATOR", @"<", 1);
+            AssertExpressionType("OPERATOR", @"<<", 1);
         }
     }
 }

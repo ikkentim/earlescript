@@ -13,49 +13,76 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
+using System.Collections.Generic;
 
 namespace Earle.Variables
 {
+    public class ObjectValue : Dictionary<string, ValueContainer>
+    {
+        
+    }
     public class ValueContainer
     {
-        public ValueContainer()
+        public ValueContainer() : this(null)
         {
-            Type = VarType.Null;
-            Value = null;
         }
 
-        public ValueContainer(VarType type, object value)
+        public ValueContainer(object value)
         {
-            Type = type;
             Value = value;
         }
 
-        public virtual VarType Type { get; private set; }
-        public virtual object Value { get; private set; }
-
-        public ValueContainer GetValue()
+        public virtual VarType Type
         {
-            return new ValueContainer(Type, Value);
+            get
+            {
+                if(Value == null) return VarType.Null;
+                if(Value is int) return VarType.Integer;
+                if(Value is float) return VarType.Float;
+                if (Value is string) return VarType.String;
+                if(Value is ObjectValue) return VarType.Object;
+                // VarType.Target;
+                return VarType.Null;
+            }
         }
 
-        public virtual void SetValue(VarType type, object value)
+        public virtual object Value { get; set; }
+
+        public ValueContainer this[ValueContainer index]
         {
-            Type = type;
-            Value = value;
+            get
+            {
+                var isDefaultIndex = index == null || index.Value == null;
+
+                if (Type == VarType.Object)
+                {
+                    var @object = (ObjectValue) Value;
+
+                    var key = isDefaultIndex ? "" : index.Value.ToString();
+                    ValueContainer value;
+                    if (@object.TryGetValue(key, out value))
+                        return value;
+
+                    return @object[key] = new ValueContainer();
+                }
+
+                if (isDefaultIndex)
+                    return this;
+
+                Value = new ObjectValue();
+                return this[index];
+            }
+            set
+            {
+                var valueContainer = this[index];
+                if (valueContainer != null)
+                    valueContainer.Value = value == null ? null : value.Value;
+            }
         }
 
-        public virtual void SetValue(ValueContainer value)
+        public ValueContainer Clone()
         {
-            var v = value.GetValue();
-            Type = v.Type;
-            Value = v.Value;
-        }
-
-        public static ValueContainer Get(ValueContainer valueContainer)
-        {
-            if (valueContainer == null) throw new ArgumentNullException("valueContainer");
-            return valueContainer.GetValue();
+            return new ValueContainer(Value);
         }
 
         #region Overrides of Object

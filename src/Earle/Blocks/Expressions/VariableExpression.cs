@@ -14,6 +14,7 @@
 // limitations under the License.
 
 using System;
+using System.Linq;
 using Earle.Variables;
 
 namespace Earle.Blocks.Expressions
@@ -21,18 +22,30 @@ namespace Earle.Blocks.Expressions
     public class VariableExpression : Expression
     {
         private readonly string _name;
+        private readonly Expression[] _indexers;
 
-        public VariableExpression(Block parent, string name) : base(parent)
+        public VariableExpression(Block parent, string name, params Expression[] indexers) : base(parent)
         {
             if (name == null) throw new ArgumentNullException("name");
             _name = name;
+            _indexers = indexers;
         }
 
         #region Overrides of Block
 
         public override ValueContainer Run()
         {
-            return ResolveVariable(_name);
+            var variable = ResolveVariable(_name);
+
+            if (_indexers != null)
+                foreach (var indexer in _indexers.Where(indexer => indexer != null))
+                {
+                    variable = variable[indexer.Run()];
+                    if (variable == null)
+                        return new ValueContainer();
+                }
+
+            return variable;
         }
 
         #endregion

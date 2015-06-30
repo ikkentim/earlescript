@@ -31,7 +31,7 @@ namespace Earle.Grammars
 
         #region Implementation of IProductionRuleElement
 
-        public bool Matches(TokenWalker tokenWalker, ICollection<ProductionRule> rules)
+        public bool Matches(TokenWalker tokenWalker, IEnumerable<ProductionRule> rules)
         {
             if (tokenWalker.Current == null)
                 return false;
@@ -39,14 +39,17 @@ namespace Earle.Grammars
             return rules.Where(rule => rule.Name == Rule)
                 .Where(rule => !IsRecursiveProductionRule(rule.Rule.Conditions.First())).Any(rule =>
                 {
+                    tokenWalker.CreateSession();
                     if (rule.Rule.Matches(tokenWalker, rules))
                     {
                         rules.Where(rule2 => rule2.Name == Rule)
                             .Where(rule2 => IsRecursiveProductionRule(rule2.Rule.Conditions.First()))
                             // ReSharper disable once ReturnValueOfPureMethodIsNotUsed
                             .Any(rule2 => rule2.Rule.Matches(tokenWalker, rules, 1));
+                        tokenWalker.FlushSession();
                         return true;
                     }
+                    tokenWalker.DropSession();
                     return false;
                 });
         }

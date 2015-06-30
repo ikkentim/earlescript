@@ -46,9 +46,9 @@ namespace Earle.Blocks
 
         #region Overrides of Block
 
-        public override void AddVariable(string name, ValueContainer value)
+        public override ValueContainer AddVariable(string name)
         {
-            _variables[name] = value;
+            return _variables[name] = new ValueContainer();
         }
 
         public override ValueContainer ResolveVariable(string name)

@@ -15,6 +15,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using Earle.Grammars.ProductionRuleElements;
 using Earle.Tokens;
@@ -25,7 +26,7 @@ namespace Earle.Grammars
     {
         private readonly List<ProductionRule> _rules = new List<ProductionRule>();
 
-        public ProductionRule AddProductionRule(string key, string rule)
+        public ProductionRule Add(string key, string rule)
         {
             if (key == null) throw new ArgumentNullException("key");
             if (rule == null) throw new ArgumentNullException("rule");
@@ -49,6 +50,16 @@ namespace Earle.Grammars
         public string GetMatch(Tokenizer tokenizer)
         {
             return _rules.Where(rule => Matches(tokenizer, rule)).Select(rule => rule.Name).FirstOrDefault();
+        }
+
+        public string GetMatch(Tokenizer tokenizer, out int tokens)
+        {
+            foreach (var rule in _rules)
+                if (Matches(tokenizer, rule, out tokens))
+                   return rule.Name;
+            
+            tokens = 0;
+            return null;
         }
 
         private static AndProductionRuleElement Compile(Token[] tokens)
@@ -143,8 +154,18 @@ namespace Earle.Grammars
         private bool Matches(Tokenizer tokenizer, ProductionRule rule)
         {
             var walker = new TokenWalker(tokenizer);
-            var result = rule.Rule.Matches(walker, _rules);
+            var result = rule.Rule.Matches(walker, _rules, 0, rule);
 
+            walker.DropAllSessions();
+
+            return result;
+        }
+
+        private bool Matches(Tokenizer tokenizer, ProductionRule rule, out int tokens)
+        {
+            var walker = new TokenWalker(tokenizer);
+            var result = rule.Rule.Matches(walker, _rules, 0, rule);
+            tokens = walker.SessionTokenCount;
             walker.DropAllSessions();
 
             return result;

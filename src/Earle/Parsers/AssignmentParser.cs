@@ -13,6 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Collections.Generic;
 using System.Linq;
 using Earle.Blocks;
 using Earle.Blocks.Expressions;
@@ -40,19 +41,29 @@ namespace Earle.Parsers
 
             MoveNext(tokenizer);
 
+            List<Expression> indexers = new List<Expression>();
+
+            while (tokenizer.Current.Is(TokenType.Token, "["))
+            {
+                MoveNext(tokenizer);
+                indexers.Add(_expressionParser.Parse(parent, tokenizer));
+                SkipToken(tokenizer, "]", TokenType.Token);
+            }
+
             if (Compiler.Grammar.Matches(tokenizer, "OPERATOR_POST_UNARY"))
             {
                 var optokens = tokenizer.Current.Value;
                 var optoken = optokens.First().ToString();
                 SkipToken(tokenizer, optokens, TokenType.Token);
 
+                var idxs = indexers.ToArray();
                 return new Assignment(parent, name,
-                    new OperatorExpression(parent, new VariableExpression(parent, name), optoken,
-                        new ValueExpression(parent, new ValueContainer(VarType.Integer, 1))));
+                    new OperatorExpression(parent, new VariableExpression(parent, name, idxs), optoken,
+                        new ValueExpression(parent, new ValueContainer(1))), idxs);
             }
             SkipToken(tokenizer, "=", TokenType.Token);
 
-            var result = new Assignment(parent, name, _expressionParser.Parse(parent, tokenizer));
+            var result = new Assignment(parent, name, _expressionParser.Parse(parent, tokenizer), indexers.ToArray());
 
             return result;
         }

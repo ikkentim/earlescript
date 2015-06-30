@@ -13,6 +13,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
+using System.Linq;
 using Earle.Blocks.Expressions;
 using Earle.Variables;
 
@@ -22,11 +24,18 @@ namespace Earle.Blocks
     {
         private readonly string _name;
         private readonly Expression _value;
+        private readonly Expression[] _indexers;
 
-        public Assignment(Block parent, string name, Expression value) : base(parent)
+        public Assignment(Block parent, string name, Expression value, params Expression[] indexers)
+            : base(parent)
         {
+            if (name == null) throw new ArgumentNullException("name");
+            if (value == null) throw new ArgumentNullException("value");
+
             _name = name;
             _value = value;
+            _indexers = indexers;
+
             value.Parent = this;
         }
 
@@ -34,14 +43,19 @@ namespace Earle.Blocks
 
         public override ValueContainer Run()
         {
-            var variable = ResolveVariable(_name);
+            var variable = ResolveVariable(_name) ?? AddVariable(_name);
 
-            if (variable == null)
-                AddVariable(_name, _value.Run());
-            else
-                variable.SetValue(_value.Run());
+            if(_indexers != null)
+                foreach (var indexer in _indexers.Where(indexer => indexer != null))
+                {
+                    variable = variable[indexer.Run()];
+                    if (variable == null)
+                        return new ValueContainer();
+                }
 
-            return null;
+            var result = _value.Run();
+            variable.Value = result == null ? null : result.Value;
+            return result;
         }
 
         #endregion

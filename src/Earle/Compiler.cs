@@ -42,62 +42,68 @@ namespace Earle
 
         static Compiler()
         {
-            Grammar.AddProductionRule("STATEMENT_IF", "`if` ( EXPRESSION )");
-            Grammar.AddProductionRule("STATEMENT_WHILE", "`while` ( EXPRESSION )");
-            Grammar.AddProductionRule("STATEMENT_DO", "`do`");
-            Grammar.AddProductionRule("STATEMENT_FOR",
-                "`for` ( OPTIONAL ASSIGNMENT ; OPTIONAL EXPRESSION ; OPTIONAL ASSIGNMENT )");
-            Grammar.AddProductionRule("STATEMENT_END", ";");
-            Grammar.AddProductionRule("STATEMENT_RETURN", "`return` OPTIONAL EXPRESSION ;");
+            Grammar.Add("STATEMENT_IF", "`if` ( EXPRESSION )");
+//            Grammar.Add("STATEMENT_DO", "`do`");
+            Grammar.Add("STATEMENT_WHILE", "`while` ( EXPRESSION )");
+            Grammar.Add("STATEMENT_FOR", "`for` ( OPTIONAL ASSIGNMENT ; OPTIONAL EXPRESSION ; OPTIONAL ASSIGNMENT )");
+            Grammar.Add("STATEMENT_RETURN", "`return` OPTIONAL EXPRESSION ;");
+            Grammar.Add("STATEMENT_END", ";");
 
-            Grammar.AddProductionRule("ASSIGNMENT", "IDENTIFIER = EXPRESSION");
-            Grammar.AddProductionRule("ASSIGNMENT", "IDENTIFIER OPERATOR_POST_UNARY");
+            Grammar.Add("ASSIGNMENT", "IDENTIFIER OPTIONAL INDEXER_LIST = EXPRESSION");
+            Grammar.Add("ASSIGNMENT", "IDENTIFIER OPERATOR_POST_UNARY");
+//            Grammar.Add("ASSIGNMENT", "INDEXED_IDENTIFIER OPERATOR_POST_UNARY");
 
-            Grammar.AddProductionRule("FUNCTION_CALL", "OPTIONAL PATH_PREFIX IDENTIFIER ( OPTIONAL EXPRESSION_LIST )");
+            Grammar.Add("FUNCTION_CALL", "OPTIONAL PATH_PREFIX IDENTIFIER ( OPTIONAL EXPRESSION_LIST )");
 
-            Grammar.AddProductionRule("PATH", "\\IDENTIFIER");
-            Grammar.AddProductionRule("PATH", "PATH\\IDENTIFIER");
-            Grammar.AddProductionRule("PATH_PREFIX", "PATH ::");
+            Grammar.Add("EXPRESSION", "( EXPRESSION )");
+            Grammar.Add("EXPRESSION", "IDENTIFIER INDEXER_LIST");
+            Grammar.Add("EXPRESSION", "EXPRESSION OPERATOR EXPRESSION");
+            Grammar.Add("EXPRESSION", "OPERATOR_UNARY EXPRESSION");
+            Grammar.Add("EXPRESSION", "IDENTIFIER|NUMBER_LITERAL|STRING_LITERAL");
+            Grammar.Add("EXPRESSION", "FUNCTION_CALL");
+            Grammar.Add("EXPRESSION", "`true`");
+            Grammar.Add("EXPRESSION", "`false`");
+            Grammar.Add("EXPRESSION", "`null`");
 
-            Grammar.AddProductionRule("EXPRESSION", "( EXPRESSION )");
-            Grammar.AddProductionRule("EXPRESSION", "EXPRESSION OPERATOR EXPRESSION");
-            Grammar.AddProductionRule("EXPRESSION", "OPERATOR_UNARY EXPRESSION");
-            Grammar.AddProductionRule("EXPRESSION", "IDENTIFIER|NUMBER_LITERAL|STRING_LITERAL");
-            Grammar.AddProductionRule("EXPRESSION", "FUNCTION_CALL");
-            Grammar.AddProductionRule("EXPRESSION", "`true`");
-            Grammar.AddProductionRule("EXPRESSION", "`false`");
-            Grammar.AddProductionRule("EXPRESSION", "`null`");
+            // Helpers below
 
-            Grammar.AddProductionRule("EXPRESSION_LIST", "EXPRESSION_LIST , EXPRESSION_LIST");
-            Grammar.AddProductionRule("EXPRESSION_LIST", "EXPRESSION");
+            Grammar.Add("PATH", "\\IDENTIFIER");
+            Grammar.Add("PATH", "PATH\\IDENTIFIER");
+            Grammar.Add("PATH_PREFIX", "PATH ::");
 
-            Grammar.AddProductionRule("OPERATOR", "||");
-            Grammar.AddProductionRule("OPERATOR", "&&");
-            Grammar.AddProductionRule("OPERATOR", "<<");
-            Grammar.AddProductionRule("OPERATOR", ">>");
-            Grammar.AddProductionRule("OPERATOR", "<");
-            Grammar.AddProductionRule("OPERATOR", ">");
-            Grammar.AddProductionRule("OPERATOR", "<=");
-            Grammar.AddProductionRule("OPERATOR", ">=");
-            Grammar.AddProductionRule("OPERATOR", "==");
-            Grammar.AddProductionRule("OPERATOR", "!=");
-            Grammar.AddProductionRule("OPERATOR", "+");
-            Grammar.AddProductionRule("OPERATOR", "-");
-            Grammar.AddProductionRule("OPERATOR", "*");
-            Grammar.AddProductionRule("OPERATOR", "/");
-            Grammar.AddProductionRule("OPERATOR", "^");
+            Grammar.Add("EXPRESSION_LIST", "EXPRESSION_LIST , EXPRESSION_LIST");
+            Grammar.Add("EXPRESSION_LIST", "EXPRESSION");
 
-            Grammar.AddProductionRule("OPERATOR_UNARY", "+");
-            Grammar.AddProductionRule("OPERATOR_UNARY", "-");
-            Grammar.AddProductionRule("OPERATOR_UNARY", "!");
-            Grammar.AddProductionRule("OPERATOR_UNARY", "~");
+            Grammar.Add("INDEXER_LIST", "INDEXER_LIST INDEXER_LIST");
+            Grammar.Add("INDEXER_LIST", "[ EXPRESSION ]");
 
-            Grammar.AddProductionRule("OPERATOR_POST_UNARY", "++");
-            Grammar.AddProductionRule("OPERATOR_POST_UNARY", "--");
+            Grammar.Add("OPERATOR", "||");
+            Grammar.Add("OPERATOR", "&&");
+            Grammar.Add("OPERATOR", "<<");
+            Grammar.Add("OPERATOR", ">>");
+            Grammar.Add("OPERATOR", "<");
+            Grammar.Add("OPERATOR", ">");
+            Grammar.Add("OPERATOR", "<=");
+            Grammar.Add("OPERATOR", ">=");
+            Grammar.Add("OPERATOR", "==");
+            Grammar.Add("OPERATOR", "!=");
+            Grammar.Add("OPERATOR", "+");
+            Grammar.Add("OPERATOR", "-");
+            Grammar.Add("OPERATOR", "*");
+            Grammar.Add("OPERATOR", "/");
+            Grammar.Add("OPERATOR", "^");
 
-            FunctionGrammar.AddProductionRule("FUNCTION_DECLARATION", "IDENTIFIER ( OPTIONAL IDENTIFIER_LIST )");
-            FunctionGrammar.AddProductionRule("IDENTIFIER_LIST", "IDENTIFIER_LIST , IDENTIFIER_LIST");
-            FunctionGrammar.AddProductionRule("IDENTIFIER_LIST", "IDENTIFIER");
+            Grammar.Add("OPERATOR_UNARY", "+");
+            Grammar.Add("OPERATOR_UNARY", "-");
+            Grammar.Add("OPERATOR_UNARY", "!");
+            Grammar.Add("OPERATOR_UNARY", "~");
+
+            Grammar.Add("OPERATOR_POST_UNARY", "++");
+            Grammar.Add("OPERATOR_POST_UNARY", "--");
+
+            FunctionGrammar.Add("FUNCTION_DECLARATION", "IDENTIFIER ( OPTIONAL IDENTIFIER_LIST )");
+            FunctionGrammar.Add("IDENTIFIER_LIST", "IDENTIFIER_LIST , IDENTIFIER_LIST");
+            FunctionGrammar.Add("IDENTIFIER_LIST", "IDENTIFIER");
         }
 
         public Compiler(Engine engine)

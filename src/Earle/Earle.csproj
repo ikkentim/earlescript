@@ -93,8 +93,6 @@
     <Compile Include="Tokens\Token.cs" />
     <Compile Include="Tokens\Tokenizer.cs" />
     <Compile Include="Tokens\TokenType.cs" />
-    <Compile Include="Variables\BreakValue.cs" />
-    <Compile Include="Variables\ReferencedVariable.cs" />
     <Compile Include="Variables\ValueContainer.cs" />
     <Compile Include="Variables\VarType.cs" />
   </ItemGroup>

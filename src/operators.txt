@@ -29,3 +29,8 @@ BINARY OPERATORS
 |   |  I |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |
 &&  |  I |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |
 ||  |  I |    |    |    |    |    |    |    |    |    |    |    |    |    |    |    |
+
+types to be added
+Target
+Vector3
+Function
