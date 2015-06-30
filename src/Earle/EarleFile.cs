@@ -72,7 +72,7 @@ namespace Earle
 
         public override ValueContainer Run()
         {
-            var m = ResolveFunction(Path, "entry");
+            var m = ResolveFunction(Path, "init");
 
             if (m == null)
                 throw new Exception();

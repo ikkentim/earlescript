@@ -7,10 +7,10 @@
  *
  *
  */
-entry ()
+init ()
 {
     testobjs();
-    /*
+    
     sum = \other::count(-(-(-(-23))),4);
     cprint("Hello " + "World! (" + sum + ")");
 
@@ -24,7 +24,7 @@ entry ()
     {
         cprint("FOR " + i);
     }
-    */
+    
 }
    
 testobjs()
