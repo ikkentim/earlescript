@@ -34,10 +34,7 @@ namespace Earle.Tokens
 
         public int SessionTokenCount
         {
-            get
-            {
-                return _sessions.Sum(s => s.Count);
-            }
+            get { return _sessions.Sum(s => s.Count); }
         }
 
         public Tokenizer Tokenizer { get; private set; }

@@ -19,8 +19,8 @@ namespace Earle.Variables
 {
     public class ObjectValue : Dictionary<string, ValueContainer>
     {
-        
     }
+
     public class ValueContainer
     {
         public ValueContainer() : this(null)
@@ -36,11 +36,11 @@ namespace Earle.Variables
         {
             get
             {
-                if(Value == null) return VarType.Null;
-                if(Value is int) return VarType.Integer;
-                if(Value is float) return VarType.Float;
+                if (Value == null) return VarType.Null;
+                if (Value is int) return VarType.Integer;
+                if (Value is float) return VarType.Float;
                 if (Value is string) return VarType.String;
-                if(Value is ObjectValue) return VarType.Object;
+                if (Value is ObjectValue) return VarType.Object;
                 // VarType.Target;
                 return VarType.Null;
             }

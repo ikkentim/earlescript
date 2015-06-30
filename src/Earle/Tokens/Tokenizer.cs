@@ -21,40 +21,40 @@ using System.Linq;
 namespace Earle.Tokens
 {
     /// <summary>
-    /// Represents the lexer.
+    ///     Represents the lexer.
     /// </summary>
     public class Tokenizer : IEnumerator<Token>
     {
+        private static readonly TokenTypeData[] TokenTypes;
         private readonly string _file;
         private readonly string _input;
         private readonly Stack<Token> _pushedTokens = new Stack<Token>();
-        private static TokenTypeData[] _tokenTypes;
+        private int _caretPosition; // Indicates the caret position.
         private int _column = 1; // Indicates the column number at the caret.
         private int _line = 1; // Indicates the line number at the caret.
-        private int _caretPosition; // Indicates the caret position.
 
         /// <summary>
-        /// Initializes the <see cref="Tokenizer"/> class.
+        ///     Initializes the <see cref="Tokenizer" /> class.
         /// </summary>
         static Tokenizer()
         {
             // Fill the token types array.
             var data = new List<TokenTypeData>
             {
-                new TokenTypeData(@"^[a-zA-Z_][a-zA-Z0-9_]*", TokenType.Identifier),
-                new TokenTypeData(@"^[0-9]*\.?[0-9]+", TokenType.NumberLiteral),
-                new TokenTypeData(@"^([""])((?:\\\1|.)*?)\1", TokenType.StringLiteral, 2)
+                new TokenTypeData(@"\G[a-zA-Z_][a-zA-Z0-9_]*", TokenType.Identifier),
+                new TokenTypeData(@"\G[0-9]*\.?[0-9]+", TokenType.NumberLiteral),
+                new TokenTypeData(@"\G([""])((?:\\\1|.)*?)\1", TokenType.StringLiteral, 2)
             };
 
             data.AddRange(
                 new[] {"++", "--", "<<", ">>", "==", "!=", "<=", ">=", "&&", "||"}.Select(
-                    s => new TokenTypeData(@"^\" + string.Join(@"\", s.ToCharArray()), TokenType.Token)));
-       
-            _tokenTypes = data.ToArray();
+                    s => new TokenTypeData(@"\G\" + string.Join(@"\", s.ToCharArray()), TokenType.Token)));
+
+            TokenTypes = data.ToArray();
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Tokenizer"/> class.
+        ///     Initializes a new instance of the <see cref="Tokenizer" /> class.
         /// </summary>
         /// <param name="file">The file.</param>
         /// <param name="input">The input.</param>
@@ -88,7 +88,6 @@ namespace Earle.Tokens
                 return;
 
             var firstTwoCharacter = _input.Substring(_caretPosition, 2);
-            // Skip single line comments.
             switch (firstTwoCharacter)
             {
                 case "//":
@@ -141,10 +140,9 @@ namespace Earle.Tokens
             }
 
             // Find the first matching token type.
-            foreach (var tokenData in _tokenTypes)
+            foreach (var tokenData in TokenTypes)
             {
-//                var match = tokenData.Pattern.Match(_input, _caretPosition);
-                var match = tokenData.Pattern.Match(_input.Substring(_caretPosition));
+                var match = tokenData.Pattern.Match(_input, _caretPosition);
 
                 if (match.Success)
                 {
@@ -165,7 +163,7 @@ namespace Earle.Tokens
         }
 
         /// <summary>
-        /// Pushes the specified token.
+        ///     Pushes the specified token.
         /// </summary>
         /// <param name="token">The token.</param>
         public void Push(Token token)
@@ -180,10 +178,11 @@ namespace Earle.Tokens
         #region Implementation of IEnumerator
 
         /// <summary>
-        /// Advances the enumerator to the next element of the collection.
+        ///     Advances the enumerator to the next element of the collection.
         /// </summary>
         /// <returns>
-        /// true if the enumerator was successfully advanced to the next element; false if the enumerator has passed the end of the collection.
+        ///     true if the enumerator was successfully advanced to the next element; false if the enumerator has passed the end of
+        ///     the collection.
         /// </returns>
         public bool MoveNext()
         {
@@ -198,7 +197,7 @@ namespace Earle.Tokens
         }
 
         /// <summary>
-        /// Sets the enumerator to its initial position, which is before the first element in the collection.
+        ///     Sets the enumerator to its initial position, which is before the first element in the collection.
         /// </summary>
         public void Reset()
         {
@@ -213,12 +212,12 @@ namespace Earle.Tokens
         }
 
         /// <summary>
-        /// Gets the element in the collection at the current position of the enumerator.
+        ///     Gets the element in the collection at the current position of the enumerator.
         /// </summary>
         public Token Current { get; private set; }
 
         /// <summary>
-        /// Gets the element in the collection at the current position of the enumerator.
+        ///     Gets the element in the collection at the current position of the enumerator.
         /// </summary>
         object IEnumerator.Current
         {

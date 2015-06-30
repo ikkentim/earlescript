@@ -82,11 +82,11 @@ namespace Earle.Blocks.Expressions
                 (l, r) => new ValueContainer((int) l == (float) r ? 1 : 0)),
             new Operator(VarType.Integer, "!=", VarType.Float,
                 (l, r) => new ValueContainer((int) l != (float) r ? 1 : 0)),
-             
+
             // Integer-String
             new Operator(VarType.Integer, "+", VarType.String,
                 (l, r) => new ValueContainer((int) l + (string) r)),
-  
+
             // Float-Integer
             new Operator(VarType.Float, "*", VarType.Integer,
                 (l, r) => new ValueContainer((float) l*(int) r)),
@@ -132,11 +132,11 @@ namespace Earle.Blocks.Expressions
                 (l, r) => new ValueContainer((float) l == (float) r ? 1 : 0)),
             new Operator(VarType.Float, "!=", VarType.Float,
                 (l, r) => new ValueContainer((float) l != (float) r ? 1 : 0)),
-             
+
             // Float-String
             new Operator(VarType.Float, "+", VarType.String,
                 (l, r) => new ValueContainer((float) l + (string) r)),
-  
+
             // String-X
             new Operator(VarType.String, "+", VarType.Integer,
                 (l, r) => new ValueContainer((string) l + (int) r)),
@@ -153,7 +153,7 @@ namespace Earle.Blocks.Expressions
 
             // Null-X
             new Operator(VarType.Null, "+", VarType.String,
-                (l, r) => new ValueContainer((string) r)),
+                (l, r) => new ValueContainer((string) r))
         };
 
         #endregion

@@ -15,8 +15,6 @@
 
 using System;
 using System.IO;
-using Earle.Grammars;
-using Earle.Tokens;
 
 namespace Earle.Debug
 {
@@ -28,8 +26,9 @@ namespace Earle.Debug
             {
                 var fpath = Path.Combine("main", path.Trim('\\') + ".ear");
                 var fe = File.Exists(fpath);
-                return fe ? 
-                    File.OpenRead(fpath) : null;
+                return fe
+                    ? File.OpenRead(fpath)
+                    : null;
             });
 
             engine["\\main"].Run();

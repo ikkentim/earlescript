@@ -46,7 +46,7 @@ namespace Earle.UnitTest
         [TestMethod]
         public void GrammarTestFunction()
         {
-            AssertFunctionExpressionType("FUNCTION_DECLARATION", "func()",3);
+            AssertFunctionExpressionType("FUNCTION_DECLARATION", "func()", 3);
             AssertFunctionExpressionType("FUNCTION_DECLARATION", "func(a,b)", 6);
             AssertFunctionExpressionType("FUNCTION_DECLARATION", "func(a)", 4);
         }
@@ -55,9 +55,9 @@ namespace Earle.UnitTest
         public void GrammarTestReturn()
         {
             AssertExpressionType("STATEMENT_RETURN", @"return;", 2);
-            AssertExpressionType("STATEMENT_RETURN", @"return "" Hello world! "";",3);
-            AssertExpressionType("STATEMENT_RETURN", @"return 1;",3);
-            AssertExpressionType("STATEMENT_RETURN", @"return 1 + 1;",5);
+            AssertExpressionType("STATEMENT_RETURN", @"return "" Hello world! "";", 3);
+            AssertExpressionType("STATEMENT_RETURN", @"return 1;", 3);
+            AssertExpressionType("STATEMENT_RETURN", @"return 1 + 1;", 5);
         }
 
         [TestMethod]

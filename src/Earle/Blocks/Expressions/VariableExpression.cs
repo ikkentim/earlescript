@@ -21,8 +21,8 @@ namespace Earle.Blocks.Expressions
 {
     public class VariableExpression : Expression
     {
-        private readonly string _name;
         private readonly Expression[] _indexers;
+        private readonly string _name;
 
         public VariableExpression(Block parent, string name, params Expression[] indexers) : base(parent)
         {

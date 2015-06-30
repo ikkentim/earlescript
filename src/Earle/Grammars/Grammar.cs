@@ -15,7 +15,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 using Earle.Grammars.ProductionRuleElements;
 using Earle.Tokens;
@@ -57,8 +56,8 @@ namespace Earle.Grammars
         {
             foreach (var rule in _rules)
                 if (Matches(tokenizer, rule, out tokens))
-                   return rule.Name;
-            
+                    return rule.Name;
+
             tokens = 0;
             return null;
         }

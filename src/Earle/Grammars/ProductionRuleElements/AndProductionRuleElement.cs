@@ -51,7 +51,8 @@ namespace Earle.Grammars
             _conditions.Add(condition);
         }
 
-        public bool Matches(TokenWalker tokenWalker, IEnumerable<ProductionRule> rules, int skip, ProductionRule except = null)
+        public bool Matches(TokenWalker tokenWalker, IEnumerable<ProductionRule> rules, int skip,
+            ProductionRule except = null)
         {
             if (tokenWalker.Current == null)
                 return false;

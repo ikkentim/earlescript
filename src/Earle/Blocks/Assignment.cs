@@ -22,9 +22,9 @@ namespace Earle.Blocks
 {
     public class Assignment : Block
     {
+        private readonly Expression[] _indexers;
         private readonly string _name;
         private readonly Expression _value;
-        private readonly Expression[] _indexers;
 
         public Assignment(Block parent, string name, Expression value, params Expression[] indexers)
             : base(parent)
@@ -45,7 +45,7 @@ namespace Earle.Blocks
         {
             var variable = ResolveVariable(_name) ?? AddVariable(_name);
 
-            if(_indexers != null)
+            if (_indexers != null)
                 foreach (var indexer in _indexers.Where(indexer => indexer != null))
                 {
                     variable = variable[indexer.Run()];
