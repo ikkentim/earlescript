@@ -29,7 +29,8 @@ entry ()
    
 testobjs()
 {
-    something["fun"] = 42;
+    something["fun"] = 41;
+    something["fun"]++;
     something["funkey"] = "fun";
     something["awesome"] = "AWESOME!!!";
     something["em"]["bedded"] = "embedded";
