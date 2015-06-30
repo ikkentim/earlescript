@@ -3,9 +3,9 @@
  
 // The entry point of the script
 /*
- * extra commenting things
- *
- *
+ . extra commenting things
+ [
+ ]
  */
 init ()
 {

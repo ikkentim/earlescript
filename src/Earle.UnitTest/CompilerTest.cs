@@ -37,6 +37,13 @@ namespace Earle.UnitTest
             AssertResult(200, @"init() return 200;");
             AssertResult("OK", @"init() return ""OK"";");
         }
+        [TestMethod]
+        public void CompilerTestComments()
+        {
+            AssertResult(200, @"init/*j*/() /*j*/ return 200;");
+            AssertResult("OK", @"init() re/*j*/turn ""OK"";");
+        }
+
 
         [TestMethod]
         public void CompilerTestReference()

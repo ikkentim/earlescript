@@ -78,11 +78,6 @@ namespace Earle.Tokens
 
         #endregion
 
-        public bool HasNext()
-        {
-            return _caretPosition < _input.Length || _pushedTokens.Count > 0;
-        }
-
         private void SkipWhitespace()
         {
             // While the character at the caret is a white space character.
@@ -99,14 +94,14 @@ namespace Earle.Tokens
                 case "//":
                 {
                     var endidx = _input.IndexOf("\n", _caretPosition, StringComparison.Ordinal);
-                    MoveCaret(endidx < 0 ? _input.Length - _caretPosition : endidx + 1);
+                    MoveCaret(endidx < 0 ? _input.Length - _caretPosition : endidx - _caretPosition + 1);
                     SkipWhitespace();
                     break;
                 }
                 case "/*":
                 {
                     var endidx = _input.IndexOf("*/", _caretPosition, StringComparison.Ordinal);
-                    MoveCaret(endidx < 0 ? _input.Length - _caretPosition : endidx + 2);
+                    MoveCaret(endidx < 0 ? _input.Length - _caretPosition : endidx - _caretPosition + 2);
                     SkipWhitespace();
                     break;
                 }
@@ -169,6 +164,10 @@ namespace Earle.Tokens
             SkipWhitespace();
         }
 
+        /// <summary>
+        /// Pushes the specified token.
+        /// </summary>
+        /// <param name="token">The token.</param>
         public void Push(Token token)
         {
             // Push the current token to the stack and set the current token to the pushed token.
@@ -180,9 +179,15 @@ namespace Earle.Tokens
 
         #region Implementation of IEnumerator
 
+        /// <summary>
+        /// Advances the enumerator to the next element of the collection.
+        /// </summary>
+        /// <returns>
+        /// true if the enumerator was successfully advanced to the next element; false if the enumerator has passed the end of the collection.
+        /// </returns>
         public bool MoveNext()
         {
-            if (!HasNext())
+            if (_caretPosition >= _input.Length && _pushedTokens.Count == 0)
             {
                 Current = null;
                 return false;
@@ -192,6 +197,9 @@ namespace Earle.Tokens
             return true;
         }
 
+        /// <summary>
+        /// Sets the enumerator to its initial position, which is before the first element in the collection.
+        /// </summary>
         public void Reset()
         {
             _column = 1;
@@ -204,8 +212,14 @@ namespace Earle.Tokens
             SkipWhitespace();
         }
 
+        /// <summary>
+        /// Gets the element in the collection at the current position of the enumerator.
+        /// </summary>
         public Token Current { get; private set; }
 
+        /// <summary>
+        /// Gets the element in the collection at the current position of the enumerator.
+        /// </summary>
         object IEnumerator.Current
         {
             get { return Current; }
