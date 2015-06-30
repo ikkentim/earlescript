@@ -44,11 +44,7 @@ namespace Earle.Tokens
 
             foreach (
                 var s in
-                    new[]
-                    {
-                        "+=", "-=", "*=", "/=", "%=", "&=", "|=", "^=", "<<=", ">>=", "++", "--", "<<", ">>", "==",
-                        "!=", "<=", ">=", "&&", "||"
-                    }.OrderByDescending(s => s.Length))
+                    new[] {"++", "--", "<<", ">>", "==", "!=", "<=", ">=", "&&", "||"}.OrderByDescending(s => s.Length))
                 _tokenDatas.Add(new TokenData(@"^\" + string.Join(@"\", s.ToCharArray()), TokenType.Token));
 
             SkipWhitespace();

@@ -42,7 +42,7 @@ namespace Earle.UnitTest
         }
 
         [TestMethod]
-        public void TestFunction()
+        public void GrammarTestFunction()
         {
             AssertFunctionExpressionType("FUNCTION_DECLARATION", "func()",3);
             AssertFunctionExpressionType("FUNCTION_DECLARATION", "func(a,b)", 6);
@@ -50,7 +50,7 @@ namespace Earle.UnitTest
         }
 
         [TestMethod]
-        public void TestReturn()
+        public void GrammarTestReturn()
         {
             AssertExpressionType("STATEMENT_RETURN", @"return;", 2);
             AssertExpressionType("STATEMENT_RETURN", @"return "" Hello world! "";",3);
@@ -59,7 +59,7 @@ namespace Earle.UnitTest
         }
 
         [TestMethod]
-        public void TestExpression()
+        public void GrammarTestExpression()
         {
             AssertExpressionType("EXPRESSION", @"test_call", 1);
             AssertExpressionType("EXPRESSION", @"""awesome""", 1);
@@ -71,7 +71,7 @@ namespace Earle.UnitTest
         }
 
         [TestMethod]
-        public void TestIndexedExpression()
+        public void GrammarTestIndexedExpression()
         {
             AssertExpressionType("EXPRESSION", @"array[""index""]", 4);
             AssertExpressionType("EXPRESSION", @"array[array[""2ndindex""]]", 7);
@@ -82,7 +82,7 @@ namespace Earle.UnitTest
         }
 
         [TestMethod]
-        public void TestFunctionCall()
+        public void GrammarTestFunctionCall()
         {
             AssertExpressionType("FUNCTION_CALL", "some_function()", 3);
             AssertExpressionType("FUNCTION_CALL", @"some_function(123)", 4);
@@ -97,20 +97,20 @@ namespace Earle.UnitTest
         }
 
         [TestMethod]
-        public void TestAssignment()
+        public void GrammarTestAssignment()
         {
             AssertExpressionType("ASSIGNMENT", @"alpha = bravo;", 3);
         }
 
         [TestMethod]
-        public void TestStatementIf()
+        public void GrammarTestStatementIf()
         {
             AssertExpressionType("STATEMENT_IF", @"if (2 > 3)", 6);
             AssertExpressionType("STATEMENT_IF", @"if (2 + 39 / 2 > 3)", 10);
         }
 
         [TestMethod]
-        public void TestOperator()
+        public void GrammarTestOperator()
         {
             AssertExpressionType("OPERATOR", @"-", 1);
             AssertExpressionType("OPERATOR", @"<", 1);

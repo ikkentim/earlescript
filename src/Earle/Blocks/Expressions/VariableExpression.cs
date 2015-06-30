@@ -45,7 +45,7 @@ namespace Earle.Blocks.Expressions
                         return new ValueContainer();
                 }
 
-            return variable;
+            return variable.Clone();
         }
 
         #endregion

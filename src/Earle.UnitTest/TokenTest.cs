@@ -13,7 +13,7 @@ namespace Earle.UnitTest
     public class TokenTest
     {
         [TestMethod]
-        public void TestToUpperString()
+        public void TokenTestToUpperString()
         {
             Assert.AreEqual("TOKEN", TokenType.Token.ToUpperString());
             Assert.AreEqual("IDENTIFIER", TokenType.Identifier.ToUpperString());
