@@ -44,40 +44,40 @@ namespace Earle
         {
             try
             {
+                // Function body grammar.
+
+                // Level 1
                 Grammar.Add("STATEMENT_IF", "`if` ( EXPRESSION )");
-//            Grammar.Add("STATEMENT_DO", "`do`");
+                // Grammar.Add("STATEMENT_DO", "`do`");
                 Grammar.Add("STATEMENT_WHILE", "`while` ( EXPRESSION )");
                 Grammar.Add("STATEMENT_FOR", "`for` ( OPTIONAL ASSIGNMENT ; OPTIONAL EXPRESSION ; OPTIONAL ASSIGNMENT )");
                 Grammar.Add("STATEMENT_RETURN", "`return` OPTIONAL EXPRESSION ;");
                 Grammar.Add("STATEMENT_END", ";");
-
                 Grammar.Add("ASSIGNMENT", "IDENTIFIER OPTIONAL INDEXER_LIST = EXPRESSION");
                 Grammar.Add("ASSIGNMENT", "IDENTIFIER OPTIONAL INDEXER_LIST OPERATOR_POST_UNARY");
+                Grammar.Add("FUNCTION_CALL", "FUNCTION_IDENTIFIER ( OPTIONAL EXPRESSION_LIST )");
 
-                Grammar.Add("FUNCTION_CALL", "OPTIONAL PATH_PREFIX IDENTIFIER ( OPTIONAL EXPRESSION_LIST )");
-
+                // Level 2
+                Grammar.Add("EXPRESSION", "`true`");
+                Grammar.Add("EXPRESSION", "`false`");
+                Grammar.Add("EXPRESSION", "`null`");
+                Grammar.Add("EXPRESSION", "FUNCTION_CALL");
                 Grammar.Add("EXPRESSION", "( EXPRESSION )");
                 Grammar.Add("EXPRESSION", "IDENTIFIER INDEXER_LIST");
                 Grammar.Add("EXPRESSION", "EXPRESSION OPERATOR EXPRESSION");
                 Grammar.Add("EXPRESSION", "OPERATOR_UNARY EXPRESSION");
+                Grammar.Add("EXPRESSION", "FUNCTION_IDENTIFIER");
                 Grammar.Add("EXPRESSION", "IDENTIFIER|NUMBER_LITERAL|STRING_LITERAL");
-                Grammar.Add("EXPRESSION", "FUNCTION_CALL");
-                Grammar.Add("EXPRESSION", "`true`");
-                Grammar.Add("EXPRESSION", "`false`");
-                Grammar.Add("EXPRESSION", "`null`");
 
-                // Helpers below
-
+                // Level 3
                 Grammar.Add("PATH", "\\IDENTIFIER");
                 Grammar.Add("PATH", "PATH\\IDENTIFIER");
-                Grammar.Add("PATH_PREFIX", "PATH ::");
-
+                Grammar.Add("PATH_PREFIX", "OPTIONAL PATH ::");
+                Grammar.Add("FUNCTION_IDENTIFIER", "OPTIONAL PATH_PREFIX IDENTIFIER");
                 Grammar.Add("EXPRESSION_LIST", "EXPRESSION_LIST , EXPRESSION_LIST");
                 Grammar.Add("EXPRESSION_LIST", "EXPRESSION");
-
                 Grammar.Add("INDEXER_LIST", "INDEXER_LIST INDEXER_LIST");
                 Grammar.Add("INDEXER_LIST", "[ EXPRESSION ]");
-
                 Grammar.Add("OPERATOR", "||");
                 Grammar.Add("OPERATOR", "&&");
                 Grammar.Add("OPERATOR", "<<");
@@ -93,15 +93,14 @@ namespace Earle
                 Grammar.Add("OPERATOR", "*");
                 Grammar.Add("OPERATOR", "/");
                 Grammar.Add("OPERATOR", "^");
-
                 Grammar.Add("OPERATOR_UNARY", "+");
                 Grammar.Add("OPERATOR_UNARY", "-");
                 Grammar.Add("OPERATOR_UNARY", "!");
                 Grammar.Add("OPERATOR_UNARY", "~");
-
                 Grammar.Add("OPERATOR_POST_UNARY", "++");
                 Grammar.Add("OPERATOR_POST_UNARY", "--");
 
+                // File contents grammar.
                 FunctionGrammar.Add("FUNCTION_DECLARATION", "IDENTIFIER ( OPTIONAL IDENTIFIER_LIST )");
                 FunctionGrammar.Add("IDENTIFIER_LIST", "IDENTIFIER_LIST , IDENTIFIER_LIST");
                 FunctionGrammar.Add("IDENTIFIER_LIST", "IDENTIFIER");
@@ -117,7 +116,7 @@ namespace Earle
             _engine = engine;
         }
 
-        public IEnumerable<Block> CompileCodeBlock(Block parent, Tokenizer tokenizer)
+        private IEnumerable<Block> CompileCodeBlock(Block parent, Tokenizer tokenizer)
         {
             var singleStatement = !tokenizer.Current.Is(TokenType.Token, "{");
 

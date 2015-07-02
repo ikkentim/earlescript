@@ -14,6 +14,7 @@
 // limitations under the License.
 
 using System.Collections.Generic;
+using Earle.Blocks.Expressions;
 
 namespace Earle.Variables
 {
@@ -41,6 +42,7 @@ namespace Earle.Variables
                 if (Value is float) return VarType.Float;
                 if (Value is string) return VarType.String;
                 if (Value is ObjectValue) return VarType.Object;
+                if (Value is FunctionCall) return VarType.Function;
                 // VarType.Target;
                 return VarType.Null;
             }

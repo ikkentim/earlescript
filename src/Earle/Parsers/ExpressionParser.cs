@@ -95,6 +95,21 @@ namespace Earle.Parsers
                     }
                     else if (Compiler.Grammar.Matches(tokenizer, "FUNCTION_CALL"))
                         expression = _functionCallParser.Parse(parent, tokenizer);
+                    else if (tokenizer.Current.Value == "::" || tokenizer.Current.Value == "\\")
+                    {
+                        var path = "";
+                        while (tokenizer.Current.Is(TokenType.Token, "\\"))
+                        {
+                            MoveNext(tokenizer);
+                            AssertToken(tokenizer, TokenType.Identifier);
+                            path += "\\" + tokenizer.Current.Value;
+                        }
+                        SkipToken(tokenizer, "::", TokenType.Token);
+                        AssertToken(tokenizer, TokenType.Identifier);
+                        var name = tokenizer.Current.Value;
+                        expression = new ValueExpression(parent, new ValueContainer(new FunctionCall(parent, path, name)));
+                        MoveNext(tokenizer);
+                    }
                     else if (Compiler.Grammar.Matches(tokenizer, "OPERATOR_UNARY"))
                     {
                         var unaryop = tokenizer.Current.Value;

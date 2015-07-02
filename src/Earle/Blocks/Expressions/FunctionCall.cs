@@ -45,6 +45,35 @@ namespace Earle.Blocks.Expressions
 
         #endregion
 
+        public ValueContainer Invoke(params Expression[] arguments)
+        {
+            var function = Parent.ResolveFunction(this);
+
+            if (function == null && string.IsNullOrEmpty(CallPath))
+            {
+                var var = Parent.ResolveVariable(Name);
+
+                if (var != null && var.Type == VarType.Function)
+                {
+                    function = Parent.ResolveFunction(var.Value as FunctionCall);
+
+                    if (function == null)
+                    {
+                        throw new RuntimeException("Cannot invoke null pointer");
+                    }
+                }
+                else if (var != null)
+                {
+                    throw new RuntimeException("Cannot invoke variable");
+                }
+            }
+
+            if (function == null)
+                throw new RuntimeException(string.Format("Function `{0}::{1}` not found", CallPath, Name));
+
+            return function.Invoke(arguments.Select(a => a.Run()).ToArray());
+        }
+
         #region Overrides of Block
 
         public override bool CanReturn
@@ -54,12 +83,7 @@ namespace Earle.Blocks.Expressions
 
         public override ValueContainer Run()
         {
-            var function = Parent.ResolveFunction(this);
-
-            if (function == null)
-                throw new RuntimeException(string.Format("Function `{0}::{1}` not found", CallPath, Name));
-
-            return function.Invoke(_arguments.Select(a => a.Run()).ToArray());
+            return Invoke(_arguments);
         }
 
         #endregion

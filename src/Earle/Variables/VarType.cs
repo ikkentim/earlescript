@@ -22,6 +22,7 @@ namespace Earle.Variables
         Integer,
         Object,
         Target,
-        Null
+        Null,
+        Function
     }
 }

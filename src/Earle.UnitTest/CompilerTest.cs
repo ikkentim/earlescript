@@ -59,5 +59,13 @@ namespace Earle.UnitTest
         {
             AssertResult(200, @"init() { a=200; add(a); return a; } add(v){v++;}");
         }
+
+        [TestMethod]
+        public void CompilerTestFunctionCall()
+        {
+            AssertResult(200, @"init() { return func(); } func(){ return 200; }");
+//            AssertResult(200, @"init() { return ::func(); } func(){ return 200; }");
+//            AssertResult(200, @"init() { return \main::func(); } func(){ return 200; }");
+        }
     }
 }

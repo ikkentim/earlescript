@@ -58,6 +58,7 @@ namespace Earle.UnitTest
             AssertExpressionType("STATEMENT_RETURN", @"return "" Hello world! "";", 3);
             AssertExpressionType("STATEMENT_RETURN", @"return 1;", 3);
             AssertExpressionType("STATEMENT_RETURN", @"return 1 + 1;", 5);
+            AssertExpressionType("STATEMENT_RETURN", @"return func();", 5);
         }
 
         [TestMethod]

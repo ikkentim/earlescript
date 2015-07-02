@@ -47,7 +47,7 @@ namespace Earle.Tokens
             };
 
             data.AddRange(
-                new[] {"++", "--", "<<", ">>", "==", "!=", "<=", ">=", "&&", "||"}.Select(
+                new[] {"++", "--", "<<", ">>", "==", "!=", "<=", ">=", "&&", "||", "::"}.Select(
                     s => new TokenTypeData(@"\G\" + string.Join(@"\", s.ToCharArray()), TokenType.Token)));
 
             TokenTypes = data.ToArray();

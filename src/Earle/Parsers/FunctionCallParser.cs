@@ -42,12 +42,19 @@ namespace Earle.Parsers
                         path += tokenizer.Current.Value;
                     else
                         throw new Exception();
-                } while (tokenizer.MoveNext() && !tokenizer.Current.Is(TokenType.Token, ":"));
+                } while (tokenizer.MoveNext() && !tokenizer.Current.Is(TokenType.Token, "::"));
 
-                SkipToken(tokenizer, ":", TokenType.Token);
-                SkipToken(tokenizer, ":", TokenType.Token);
+                SkipToken(tokenizer, "::", TokenType.Token);
                 AssertToken(tokenizer, TokenType.Identifier);
 
+                name = tokenizer.Current.Value;
+            }
+            else if (tokenizer.Current.Is(TokenType.Token, "::"))
+            {
+                SkipToken(tokenizer, "::", TokenType.Token);
+                AssertToken(tokenizer, TokenType.Identifier);
+
+                path = null;
                 name = tokenizer.Current.Value;
             }
             else if (tokenizer.Current.Type == TokenType.Identifier)

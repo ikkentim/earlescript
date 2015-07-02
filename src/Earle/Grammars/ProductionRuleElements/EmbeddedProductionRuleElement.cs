@@ -36,16 +36,17 @@ namespace Earle.Grammars
             if (tokenWalker.Current == null)
                 return false;
 
-            return rules.Where(rule => rule.Name == Rule)
+            var productionRules = rules as ProductionRule[] ?? rules.ToArray();
+            return productionRules.Where(rule => rule.Name == Rule)
                 .Where(rule => !IsRecursiveProductionRule(rule.Rule.Conditions.First())).Any(rule =>
                 {
                     tokenWalker.CreateSession();
-                    if (rule.Rule.Matches(tokenWalker, rules))
+                    if (rule.Rule.Matches(tokenWalker, productionRules))
                     {
-                        rules.Where(rule2 => rule2.Name == Rule)
+                        productionRules.Where(rule2 => rule2.Name == Rule)
                             .Where(rule2 => IsRecursiveProductionRule(rule2.Rule.Conditions.First()))
                             // ReSharper disable once ReturnValueOfPureMethodIsNotUsed
-                            .Any(rule2 => rule2.Rule.Matches(tokenWalker, rules, 1));
+                            .Any(rule2 => rule2.Rule.Matches(tokenWalker, productionRules, 1));
                         tokenWalker.FlushSession();
                         return true;
                     }

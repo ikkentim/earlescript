@@ -9,7 +9,10 @@
  */
 init ()
 {
+    something["dull"] = -11;
     testobjs();
+    ::testobjs();
+    \main::testobjs();
     
     sum = \other::count(-(-(-(-23))),4);
     cprint("Hello " + "World! (" + sum + ")");
