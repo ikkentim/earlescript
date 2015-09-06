@@ -1,0 +1,109 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{1356E12C-6A82-4CA3-8C77-34C5320870A9}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>EarleCode</RootNamespace>
+    <AssemblyName>EarleCode</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Blocks\AssignmentExpression.cs" />
+    <Compile Include="Blocks\OperatorExpression.cs" />
+    <Compile Include="Blocks\StatementIf.cs" />
+    <Compile Include="Blocks\StatementReturn.cs" />
+    <Compile Include="Blocks\UnaryOperatorExpression.cs" />
+    <Compile Include="Compiler.cs" />
+    <Compile Include="Functions\PrintFunction.cs" />
+    <Compile Include="EarleFile.cs" />
+    <Compile Include="Functions\EarleFunction.cs" />
+    <Compile Include="EarleValue.cs" />
+    <Compile Include="EarleValueType.cs" />
+    <Compile Include="Grammar\RulesElements\AndProductionRuleElement.cs" />
+    <Compile Include="Grammar\RulesElements\EmbeddedProductionRuleElement.cs" />
+    <Compile Include="Grammar\GrammarProcessor.cs" />
+    <Compile Include="Grammar\GrammarException.cs" />
+    <Compile Include="Grammar\RulesElements\IProductionRuleElement.cs" />
+    <Compile Include="Grammar\RulesElements\LiteralProductionRuleElement.cs" />
+    <Compile Include="Grammar\RulesElements\OptionalProductionRuleElement.cs" />
+    <Compile Include="Grammar\ProductionRule.cs" />
+    <Compile Include="ICompiler.cs" />
+    <Compile Include="IEarleContext.cs" />
+    <Compile Include="Functions\IEarleFunction.cs" />
+    <Compile Include="InvocationResult.cs" />
+    <Compile Include="InvocationState.cs" />
+    <Compile Include="Blocks\Block.cs" />
+    <Compile Include="Functions\EarleFunctionSignature.cs" />
+    <Compile Include="IVariable.cs" />
+    <Compile Include="Parsers\AssignmentExpressionParser.cs" />
+    <Compile Include="Parsers\ExpressionParser.cs" />
+    <Compile Include="Blocks\FunctionCall.cs" />
+    <Compile Include="Parsers\FunctionCallParser.cs" />
+    <Compile Include="Parsers\FunctionParser.cs" />
+    <Compile Include="Blocks\IBlock.cs" />
+    <Compile Include="IScriptScope.cs" />
+    <Compile Include="Blocks\IExpression.cs" />
+    <Compile Include="Parsers\NopParser.cs" />
+    <Compile Include="Parsers\Parser.cs" />
+    <Compile Include="Parsers\IParser.cs" />
+    <Compile Include="Parsers\ParseException.cs" />
+    <Compile Include="Blocks\VariableExpression.cs" />
+    <Compile Include="Blocks\ValueExpression.cs" />
+    <Compile Include="Parsers\StatementIfParser.cs" />
+    <Compile Include="Parsers\StatementReturnParser.cs" />
+    <Compile Include="Runtime.cs" />
+    <Compile Include="Tokens\ITokenizer.cs" />
+    <Compile Include="Tokens\TokenUtils.cs" />
+    <Compile Include="Tokens\Tokenizer.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Tokens\Token.cs" />
+    <Compile Include="CodeException.cs" />
+    <Compile Include="Tokens\TokenizerUtils.cs" />
+    <Compile Include="Tokens\TokenType.cs" />
+    <Compile Include="Tokens\TokenTypeData.cs" />
+    <Compile Include="Tokens\TokenWalker.cs" />
+    <Compile Include="Variable.cs" />
+    <Compile Include="VariablesTable.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
