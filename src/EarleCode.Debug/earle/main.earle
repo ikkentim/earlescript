@@ -14,5 +14,5 @@ a()
     var2 = 2.2;
     var3 = "Hello";
     var4 = var1 + var2;
-    print(var3 + ", " + b() + "! " + var4);
+    print("Hello, " + b() + "! (var4: " + var4 + ")");
 }

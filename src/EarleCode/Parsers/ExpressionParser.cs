@@ -29,14 +29,14 @@ namespace EarleCode.Parsers
 
         public override IExpression Parse(ICompiler compiler, IScriptScope scriptScope, ITokenizer tokenizer)
         {
-            Debug.WriteLine("Parsing expression...");
+            Debug.WriteLine($"Parsing expression... current token is {tokenizer.Current}");
 
             IExpression expression;
             switch (tokenizer.Current.Type)
             {
                 case TokenType.Identifier:
                     // Check for reserved keywords
-                    switch (tokenizer.Current.Value)
+                    switch (tokenizer.Current.Value.ToLower())
                     {
                         case "true":
                             expression = new ValueExpression(scriptScope, new EarleValue(1));
@@ -51,19 +51,27 @@ namespace EarleCode.Parsers
                             tokenizer.AssertMoveNext();
                             break;
                         default:
-                            var name = tokenizer.Current.Value;
-                            tokenizer.AssertMoveNext();
-
-                            var indexers = new List<IExpression>();
-
-                            while (tokenizer.Current.Is(TokenType.Token, "["))
+                            if (compiler.Grammar.Matches(tokenizer, "FUNCTION_CALL"))
                             {
-                                tokenizer.AssertMoveNext();
-                                indexers.Add(Parse(compiler, scriptScope, tokenizer));
-                                tokenizer.SkipToken("]", TokenType.Token);
+                                var functionCallParser = new FunctionCallParser();
+                                expression = functionCallParser.Parse(compiler, scriptScope, tokenizer);
                             }
+                            else
+                            {
+                                var name = tokenizer.Current.Value;
+                                tokenizer.AssertMoveNext();
 
-                            expression = new VariableExpression(scriptScope, name, indexers.ToArray());
+                                var indexers = new List<IExpression>();
+
+                                while (tokenizer.Current.Is(TokenType.Token, "["))
+                                {
+                                    tokenizer.AssertMoveNext();
+                                    indexers.Add(Parse(compiler, scriptScope, tokenizer));
+                                    tokenizer.SkipToken("]", TokenType.Token);
+                                }
+
+                                expression = new VariableExpression(scriptScope, name, indexers.ToArray());
+                            }
                             break;
                     }
                     break;
@@ -138,9 +146,5 @@ namespace EarleCode.Parsers
         }
 
         #endregion
-    }
-
-    internal class ExpressionParserImpl : ExpressionParser
-    {
     }
 }
