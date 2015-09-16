@@ -61,8 +61,6 @@ namespace EarleCode.Functions
 
             return InvocationResult.Empty;
         }
-
-        #region Overrides of Block
         
         public override IVariable AddVariable(string variableName)
         {
@@ -75,8 +73,21 @@ namespace EarleCode.Functions
         {
             return base.ResolveVariable(variableName) ?? _variables.Resolve(variableName);
         }
-
+        
         #endregion
+
+        #region Overrides of Object
+
+        /// <summary>
+        /// Returns a string that represents the current object.
+        /// </summary>
+        /// <returns>
+        /// A string that represents the current object.
+        /// </returns>
+        public override string ToString()
+        {
+            return $"{Name} ({string.Join(", ", ParameterNames)}) {{\n{base.ToString()}\n}}";
+        }
 
         #endregion
     }

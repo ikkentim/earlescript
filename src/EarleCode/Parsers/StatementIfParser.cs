@@ -13,6 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Diagnostics;
 using EarleCode.Blocks;
 using EarleCode.Tokens;
 
@@ -24,6 +25,7 @@ namespace EarleCode.Parsers
 
         public override StatementIf Parse(ICompiler compiler, IScriptScope scriptScope, ITokenizer tokenizer)
         {
+            Debug.WriteLine("PARSING IF.. At token " + tokenizer.Current);
             tokenizer.SkipToken("if", TokenType.Identifier);
             tokenizer.SkipToken("(", TokenType.Token);
 
@@ -34,6 +36,7 @@ namespace EarleCode.Parsers
             var statement = new StatementIf(scriptScope, expression);
             compiler.CompileBlock(statement, tokenizer);
 
+            Debug.WriteLine("DONE PARSING IF.. At token " + tokenizer.Current);
             return statement;
         }
 

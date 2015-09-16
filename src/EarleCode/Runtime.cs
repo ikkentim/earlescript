@@ -22,11 +22,16 @@ namespace EarleCode
 {
     public class Runtime : IScriptScope
     {
-        private readonly Compiler _compiler;
+        private readonly ICompiler _compiler;
 
-        public Runtime()
+        public Runtime(ICompiler compiler)
         {
-            _compiler = new Compiler(this);
+            if (compiler == null) throw new ArgumentNullException(nameof(compiler));
+            _compiler = compiler;
+        }
+
+        public Runtime() : this(new Compiler())
+        {
         }
 
         protected Dictionary<string, EarleFile> Files { get; } = new Dictionary<string, EarleFile>();
@@ -75,7 +80,7 @@ namespace EarleCode
 
             //todo : check valid file name
 
-            var file = _compiler.Compile(fileName, script);
+            var file = _compiler.Compile(this, fileName, script);
             Files.Add(fileName, file);
         }
 

@@ -22,9 +22,8 @@ namespace EarleCode
 {
     public interface ICompiler
     {
-        Runtime Runtime { get; }
         GrammarProcessor Grammar { get; }
-        EarleFile Compile(string fileName, string script);
+        EarleFile Compile(Runtime runtime, string fileName, string script);
         IEnumerable<IBlock> Compile(IScriptScope scriptScope, ITokenizer tokenizer);
         void CompileBlock(IBlock target, ITokenizer tokenizer);
     }

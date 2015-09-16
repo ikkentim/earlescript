@@ -172,7 +172,15 @@ namespace EarleCode
         /// </returns>
         public override string ToString()
         {
-            return Value?.ToString() ?? "NULL";
+            switch (Type)
+            {
+                case EarleValueType.String:
+                    return $"\"{Value}\"";
+                case EarleValueType.Void:
+                    return "NULL";
+                default:
+                    return Value.ToString();
+            }
         }
 
         #endregion

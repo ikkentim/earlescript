@@ -15,6 +15,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using EarleCode.Functions;
 
 namespace EarleCode.Blocks
@@ -55,6 +56,21 @@ namespace EarleCode.Blocks
         public virtual void AddBlock(IBlock block)
         {
             _blocks.Add(block);
+        }
+
+        #endregion
+
+        #region Overrides of Object
+
+        /// <summary>
+        /// Returns a string that represents the current object.
+        /// </summary>
+        /// <returns>
+        /// A string that represents the current object.
+        /// </returns>
+        public override string ToString()
+        {
+            return string.Join("\n", Blocks);
         }
 
         #endregion

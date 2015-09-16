@@ -33,6 +33,17 @@ namespace EarleCode.Blocks
             return new InvocationResult(InvocationState.Returned,
                 _expression?.Invoke(context).ReturnValue ?? EarleValue.Null);
         }
+        
+        /// <summary>
+        /// Returns a string that represents the current object.
+        /// </summary>
+        /// <returns>
+        /// A string that represents the current object.
+        /// </returns>
+        public override string ToString()
+        {
+            return _expression == null ? "return;" : $"return {_expression};";
+        }
 
         #endregion
     }

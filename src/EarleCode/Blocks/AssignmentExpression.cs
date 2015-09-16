@@ -48,7 +48,7 @@ namespace EarleCode.Blocks
         /// </returns>
         public override string ToString()
         {
-            return $"{_name}{string.Concat(_indexers.Select(i => $"[{i}]"))} = {_expression}";
+            return $"{_name}{string.Concat(_indexers.Select(i => $"[{i}]"))} = {_expression};";
         }
 
         #endregion

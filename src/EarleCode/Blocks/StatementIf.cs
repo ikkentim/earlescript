@@ -45,6 +45,17 @@ namespace EarleCode.Blocks
             return InvocationResult.Empty;
         }
 
+        /// <summary>
+        /// Returns a string that represents the current object.
+        /// </summary>
+        /// <returns>
+        /// A string that represents the current object.
+        /// </returns>
+        public override string ToString()
+        {
+            return $"if({_expression}) {{\n{base.ToString()}\n}}";
+        }
+
         #endregion
     }
 }

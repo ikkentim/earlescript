@@ -26,8 +26,6 @@ namespace EarleCode
     
     public class Compiler : ICompiler
     {
-        public virtual Runtime Runtime { get; }
-
         private readonly GrammarProcessor _functionGrammar = new GrammarProcessor
         {
             // File contents grammar.
@@ -103,19 +101,15 @@ namespace EarleCode
             ["STATEMENT_END"] = new NopParser(),
             ["ASSIGNMENT"] = new AssignmentExpressionParser(),
         };
-
-        public Compiler(Runtime runtime)
-        {
-            Runtime = runtime;
-        }
-
+        
         /// <summary>
         /// Compiles the specified file name / script.
         /// </summary>
+        /// <param name="runtime">The runtime.</param>
         /// <param name="fileName">Name of the file.</param>
         /// <param name="script">The script.</param>
         /// <returns></returns>
-        public virtual EarleFile Compile(string fileName, string script)
+        public virtual EarleFile Compile(Runtime runtime, string fileName, string script)
         {
             if (fileName == null) throw new ArgumentNullException(nameof(fileName));
             if (script == null) throw new ArgumentNullException(nameof(script));
@@ -123,21 +117,22 @@ namespace EarleCode
             var tokenizer = new Tokenizer(fileName, script);
             var functionParser = new FunctionParser();
 
-            var file = new EarleFile(Runtime, fileName);
-            
-            tokenizer.MoveNext();
+            var file = new EarleFile(runtime, fileName);
 
-            while (tokenizer.Current != null)
+            if (!tokenizer.MoveNext())
+                return file;
+
+            do
             {
                 var match = _functionGrammar.GetMatch(tokenizer);
                 if (match != "FUNCTION_DECLARATION")
                     throw new CodeException(tokenizer.Current,
                         string.Format("Expected function, found {1} `{0}`", tokenizer.Current.Value, match));
-                
+
                 var function = functionParser.Parse(this, file, tokenizer);
-                
+
                 file.AddFunction(function.Name, function);
-            }
+            } while (tokenizer.MoveNext());
 
             return file;
         }
@@ -181,22 +176,21 @@ namespace EarleCode
                 IParser parser;
                 _parsers.TryGetValue(parserName, out parser);
 
+                Debug.WriteLine(scriptScope);
                 if (parser == null)
-                    throw new Exception("Comper error");
+                    throw new Exception("Compiler error");
 
                 var result = parser.Parse(this, scriptScope, tokenizer);
 
                 if (result != null)
                     yield return result;
 
-                if (!tokenizer.MoveNext())
-                    break;
+                tokenizer.AssertMoveNext();
             } while (multiLine && !tokenizer.Current.Is(TokenType.Token, "}"));
 
             if (multiLine)
             {
                 tokenizer.AssertToken("}", TokenType.Token);
-                tokenizer.MoveNext();
             }
         }
     }

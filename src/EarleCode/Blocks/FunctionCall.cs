@@ -54,7 +54,7 @@ namespace EarleCode.Blocks
         /// </returns>
         public override string ToString()
         {
-            return $"CALL {_functionSignature}({string.Join(", ", (object[])_arguments)})";
+            return $"{_functionSignature}({string.Join(", ", (object[])_arguments)});";
         }
 
         #endregion
