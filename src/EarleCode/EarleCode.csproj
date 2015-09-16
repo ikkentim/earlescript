@@ -44,6 +44,7 @@
     <Compile Include="Blocks\OperatorExpression.cs" />
     <Compile Include="Blocks\StatementIf.cs" />
     <Compile Include="Blocks\StatementReturn.cs" />
+    <Compile Include="Blocks\StatementWhile.cs" />
     <Compile Include="Blocks\UnaryOperatorExpression.cs" />
     <Compile Include="Compiler.cs" />
     <Compile Include="Functions\PrintFunction.cs" />
@@ -83,6 +84,7 @@
     <Compile Include="Blocks\ValueExpression.cs" />
     <Compile Include="Parsers\StatementIfParser.cs" />
     <Compile Include="Parsers\StatementReturnParser.cs" />
+    <Compile Include="Parsers\StatementWhileParser.cs" />
     <Compile Include="Runtime.cs" />
     <Compile Include="Tokens\ITokenizer.cs" />
     <Compile Include="Tokens\TokenUtils.cs" />

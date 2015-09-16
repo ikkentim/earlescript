@@ -1,4 +1,4 @@
-﻿// EarleCode
+// EarleCode
 // Copyright 2015 Tim Potze
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,28 +13,27 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Diagnostics;
 using EarleCode.Blocks;
 using EarleCode.Tokens;
 
 namespace EarleCode.Parsers
 {
-    public class StatementIfParser : Parser<StatementIf>
+    public class StatementWhileParser : Parser<StatementWhile>
     {
         #region Overrides of Parser<StatementIf>
 
-        public override StatementIf Parse(ICompiler compiler, IScriptScope scriptScope, ITokenizer tokenizer)
+        public override StatementWhile Parse(ICompiler compiler, IScriptScope scriptScope, ITokenizer tokenizer)
         {
-            tokenizer.SkipToken("if", TokenType.Identifier);
+            tokenizer.SkipToken("while", TokenType.Identifier);
             tokenizer.SkipToken("(", TokenType.Token);
 
             var expressionParser = new ExpressionParser();
             var expression = expressionParser.Parse(compiler, scriptScope, tokenizer);
             tokenizer.SkipToken(")", TokenType.Token);
 
-            var statement = new StatementIf(scriptScope, expression);
+            var statement = new StatementWhile(scriptScope, expression);
             compiler.CompileBlock(statement, tokenizer);
-            
+
             return statement;
         }
 

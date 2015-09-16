@@ -1,4 +1,4 @@
-﻿// EarleCode
+// EarleCode
 // Copyright 2015 Tim Potze
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,11 +17,11 @@ using System;
 
 namespace EarleCode.Blocks
 {
-    public class StatementIf : Block
+    public class StatementWhile : Block
     {
         private readonly IExpression _expression;
 
-        public StatementIf(IScriptScope scriptScope, IExpression expression) : base(scriptScope)
+        public StatementWhile(IScriptScope scriptScope, IExpression expression) : base(scriptScope)
         {
             if (expression == null) throw new ArgumentNullException(nameof(expression));
             _expression = expression;
@@ -31,29 +31,29 @@ namespace EarleCode.Blocks
 
         public override InvocationResult Invoke(IEarleContext context)
         {
-            if (!_expression.Invoke(context).ReturnValue.ToBoolean())
-                return InvocationResult.Empty;
-
-            foreach (var block in Blocks)
+            while (_expression.Invoke(context).ReturnValue.ToBoolean())
             {
-                var result = block.Invoke(context);
+                foreach (var block in Blocks)
+                {
+                    var result = block.Invoke(context);
 
-                if (result.State != InvocationState.None)
-                    return result;
+                    if (result.State != InvocationState.None)
+                        return result;
+                }
             }
 
             return InvocationResult.Empty;
         }
 
         /// <summary>
-        /// Returns a string that represents the current object.
+        ///     Returns a string that represents the current object.
         /// </summary>
         /// <returns>
-        /// A string that represents the current object.
+        ///     A string that represents the current object.
         /// </returns>
         public override string ToString()
         {
-            return $"if({_expression}) {{\n{base.ToString()}\n}}";
+            return $"while({_expression}) {{\n{base.ToString()}\n}}";
         }
 
         #endregion

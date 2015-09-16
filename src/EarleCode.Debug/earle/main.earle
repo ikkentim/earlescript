@@ -16,9 +16,17 @@ a()
     var3 = "Hello";
     var4 = var1 + var2;
 
-    if(var1)
+    i=0;
+
+    while(i < 5)
     {
-        print("Hello, " + b() + "! (var4: " + var4 + ")");
+        if(var1)
+        {
+            print(i + ": Hello, " + b() + "! (var4: " + var4 + ")");
+        }
+
+        var4 = var4 + i + 0.2;
+        i = i + 1;
     }
 
     print("Always.");

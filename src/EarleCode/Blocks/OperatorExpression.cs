@@ -39,6 +39,8 @@ namespace EarleCode.Blocks
         public override InvocationResult Invoke(IEarleContext context)
         {
             // TODO states...
+            // TODO is messy
+            // TODO comparators are messy and badly casted to float
             EarleValue leftValue, rightValue;
             switch (OperatorToken)
             {
@@ -68,6 +70,38 @@ namespace EarleCode.Blocks
                     return rightValue.ToBoolean()
                         ? new InvocationResult(InvocationState.None, 1)
                         : new InvocationResult(InvocationState.None, 0);
+                case "<":
+                    leftValue = LeftExpression.Invoke(context).ReturnValue;
+                    rightValue = RightExpression.Invoke(context).ReturnValue;
+                    return new InvocationResult(InvocationState.None,
+                        ((float)leftValue.CastTo(EarleValueType.Float).Value <
+                         (float)rightValue.CastTo(EarleValueType.Float).Value)
+                            ? 1
+                            : 0);
+                case ">":
+                    leftValue = LeftExpression.Invoke(context).ReturnValue;
+                    rightValue = RightExpression.Invoke(context).ReturnValue;
+                    return new InvocationResult(InvocationState.None,
+                        ((float)leftValue.CastTo(EarleValueType.Float).Value >
+                         (float)rightValue.CastTo(EarleValueType.Float).Value)
+                            ? 1
+                            : 0);
+                case "<=":
+                    leftValue = LeftExpression.Invoke(context).ReturnValue;
+                    rightValue = RightExpression.Invoke(context).ReturnValue;
+                    return new InvocationResult(InvocationState.None,
+                        ((float)leftValue.CastTo(EarleValueType.Float).Value <=
+                         (float)rightValue.CastTo(EarleValueType.Float).Value)
+                            ? 1
+                            : 0);
+                case ">=":
+                    leftValue = LeftExpression.Invoke(context).ReturnValue;
+                    rightValue = RightExpression.Invoke(context).ReturnValue;
+                    return new InvocationResult(InvocationState.None,
+                        ((float)leftValue.CastTo(EarleValueType.Float).Value >=
+                         (float)rightValue.CastTo(EarleValueType.Float).Value)
+                            ? 1
+                            : 0);
                 default:
                     throw new NotImplementedException();
             }

@@ -134,7 +134,7 @@ namespace EarleCode.Parsers
 
             // Check for ops
             if (tokenizer.Current.Type == TokenType.Token &&
-                new[] {"+", "-", "&&", "||"}.Contains(tokenizer.Current.Value))
+                new[] {"+", "-", "&&", "||", "<", ">", "<=", ">="}.Contains(tokenizer.Current.Value))
             {
                 var operatorToken = tokenizer.Current.Value;
                 tokenizer.AssertMoveNext();

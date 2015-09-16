@@ -97,6 +97,7 @@ namespace EarleCode
         {
             ["FUNCTION_CALL"] = new FunctionCallParser(),
             ["STATEMENT_IF"] = new StatementIfParser(),
+            ["STATEMENT_WHILE"] = new StatementWhileParser(),
             ["STATEMENT_RETURN"] = new StatementReturnParser(),
             ["STATEMENT_END"] = new NopParser(),
             ["ASSIGNMENT"] = new AssignmentExpressionParser(),
