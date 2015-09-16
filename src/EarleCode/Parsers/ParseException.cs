@@ -13,17 +13,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using EarleCode.Tokens;
 
 namespace EarleCode.Parsers
 {
-    public class ParseException : CodeException
+    public class ParseException : Exception
     {
-        public ParseException(Token token, string error) : base(token, error)
+        public ParseException(Token token, string error)
+            : this(token?.File ?? string.Empty, token?.Line ?? -1, token?.Column ?? -1, error)
         {
         }
 
-        public ParseException(string message) : base(message)
+        public ParseException(string file, int line, int column, string error)
+            : this(string.Format("{3}:{0}:{1}: {2}", line, column, error, file))
+        {
+        }
+
+        public ParseException(string message)
+            : base(message)
         {
         }
     }

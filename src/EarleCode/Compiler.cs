@@ -127,8 +127,7 @@ namespace EarleCode
             {
                 var match = _functionGrammar.GetMatch(tokenizer);
                 if (match != "FUNCTION_DECLARATION")
-                    throw new CodeException(tokenizer.Current,
-                        string.Format("Expected function, found {1} `{0}`", tokenizer.Current.Value, match));
+                    throw new ParseException(tokenizer.Current, $"Expected function, found {match} `{tokenizer.Current.Value}`");
 
                 var function = functionParser.Parse(this, file, tokenizer);
 
@@ -170,16 +169,13 @@ namespace EarleCode
             do
             {
                 var parserName = Grammar.GetMatch(tokenizer);
-
-                Debug.WriteLine("Current token is " + tokenizer.Current);
-                Debug.WriteLine("Parsing by " + parserName);
-
+                
                 IParser parser;
                 _parsers.TryGetValue(parserName, out parser);
 
                 Debug.WriteLine(scriptScope);
                 if (parser == null)
-                    throw new Exception("Compiler error");
+                    throw new Exception($"Expected function definition, found {tokenizer.Current}.");
 
                 var result = parser.Parse(this, scriptScope, tokenizer);
 

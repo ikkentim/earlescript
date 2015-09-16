@@ -17,6 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using EarleCode.Grammar.RulesElements;
+using EarleCode.Parsers;
 using EarleCode.Tokens;
 
 namespace EarleCode.Grammar
@@ -103,7 +104,7 @@ namespace EarleCode.Grammar
 
                                 if (i >= tokens.Length || tokens[i].Type != TokenType.Identifier ||
                                     !types.ContainsKey(tokens[i].Value))
-                                    throw new GrammarException(token, "expected IDENTIFIER, found " + tokens[i].Value);
+                                    throw new ParseException(token, "expected IDENTIFIER, found " + tokens[i].Value);
                             }
 
                             add(new LiteralProductionRuleElement(typeLiterals.ToArray()));
@@ -122,7 +123,7 @@ namespace EarleCode.Grammar
                                 if (tokens[i].Type != TokenType.Identifier)
                                 {
                                     if (tokens[i].Type != TokenType.Token || tokens[i].Value != "`")
-                                        throw new GrammarException(token, "expected '`', found " + tokens[i].Value);
+                                        throw new ParseException(token, "expected '`', found " + tokens[i].Value);
 
                                     break;
                                 }
@@ -134,7 +135,7 @@ namespace EarleCode.Grammar
                             add(new LiteralProductionRuleElement(tokens[i].Value, TokenType.Token));
                         break;
                     default:
-                        throw new GrammarException(token, "expected IDENTIFIER or TOKEN, found " + tokens[i].Value);
+                        throw new ParseException(token, "expected IDENTIFIER or TOKEN, found " + tokens[i].Value);
                 }
             }
 

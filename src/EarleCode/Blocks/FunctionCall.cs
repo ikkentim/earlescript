@@ -17,6 +17,7 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using EarleCode.Functions;
+using EarleCode.Parsers;
 
 namespace EarleCode.Blocks
 {
@@ -64,7 +65,7 @@ namespace EarleCode.Blocks
             var function = ScriptScope.ResolveFunction(_functionSignature);
 
             if (function == null)
-                throw new CodeException($"Function `{_functionSignature}` not found");
+                throw new Exception($"Function `{_functionSignature}` not found");
 
             // TODO: States...
             return function.Invoke(context, arguments.Select(a => a.Invoke(context).ReturnValue).ToArray());
