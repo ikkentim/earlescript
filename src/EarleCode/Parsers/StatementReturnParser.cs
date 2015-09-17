@@ -24,7 +24,7 @@ namespace EarleCode.Parsers
 
         public override StatementReturn Parse(ICompiler compiler, IScriptScope scriptScope, ITokenizer tokenizer)
         {
-            tokenizer.SkipToken("return", TokenType.Identifier);
+            tokenizer.SkipToken(TokenType.Identifier, "return");
 
             if (tokenizer.Current.Is(TokenType.Token, ";"))
                 return new StatementReturn(scriptScope, null);

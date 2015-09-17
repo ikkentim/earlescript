@@ -47,6 +47,7 @@ namespace EarleCode.Tokens
 
         public void Reset()
         {
+            _sessions.Clear();
             Tokenizer.Reset();
         }
 

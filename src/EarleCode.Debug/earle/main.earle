@@ -1,14 +1,14 @@
 ﻿init()
 { 
     // \ext::b();
-    a();
+    testA();
 } 
  
-b()
+testB()
 {
     return "World";
 }
-a()
+testA()
 {
     var1 = true;
 
@@ -22,11 +22,9 @@ a()
     {
         if(var1)
         {
-            print(i + ": Hello, " + b() + "! (var4: " + var4 + ")");
+            // Whoohoo unary assignment operators in expressions :D
+            print(++i + ": Hello, " + testB() + "! (var4: " + (var4 = var4 + i + 0.2) + ")");
         }
-
-        var4 = var4 + i + 0.2;
-        i = i + 1;
     }
 
     print("Always.");

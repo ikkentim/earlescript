@@ -33,7 +33,7 @@ namespace EarleCode.Parsers
 
             if (tokenizer.Current.Is(TokenType.Token, "::"))
             {
-                tokenizer.SkipToken("::", TokenType.Token);
+                tokenizer.SkipToken(TokenType.Token, "::");
             }
             else if (tokenizer.Current.Is(TokenType.Token, "\\"))
             {
@@ -45,7 +45,7 @@ namespace EarleCode.Parsers
                     if (identifier)
                         tokenizer.AssertToken(TokenType.Identifier);
                     else
-                        tokenizer.AssertToken("\\", TokenType.Token);
+                        tokenizer.AssertToken(TokenType.Token, "\\");
                     identifier = !identifier;
 
                     path += tokenizer.Current.Value;
@@ -53,14 +53,14 @@ namespace EarleCode.Parsers
                     tokenizer.AssertMoveNext();
                 } while (!tokenizer.Current.Is(TokenType.Token, "::"));
 
-                tokenizer.SkipToken("::", TokenType.Token);
+                tokenizer.SkipToken(TokenType.Token, "::");
             }
 
             tokenizer.AssertToken(TokenType.Identifier);
             var name = tokenizer.Current.Value;
             tokenizer.AssertMoveNext();
 
-            tokenizer.SkipToken("(", TokenType.Token);
+            tokenizer.SkipToken(TokenType.Token, "(");
 
             var arguments = new List<IExpression>();
             while (!tokenizer.Current.Is(TokenType.Token, ")"))

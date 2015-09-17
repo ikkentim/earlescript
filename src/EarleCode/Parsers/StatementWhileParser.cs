@@ -24,12 +24,12 @@ namespace EarleCode.Parsers
 
         public override StatementWhile Parse(ICompiler compiler, IScriptScope scriptScope, ITokenizer tokenizer)
         {
-            tokenizer.SkipToken("while", TokenType.Identifier);
-            tokenizer.SkipToken("(", TokenType.Token);
+            tokenizer.SkipToken(TokenType.Identifier, "while");
+            tokenizer.SkipToken(TokenType.Token, "(");
 
             var expressionParser = new ExpressionParser();
             var expression = expressionParser.Parse(compiler, scriptScope, tokenizer);
-            tokenizer.SkipToken(")", TokenType.Token);
+            tokenizer.SkipToken(TokenType.Token, ")");
 
             var statement = new StatementWhile(scriptScope, expression);
             compiler.CompileBlock(statement, tokenizer);

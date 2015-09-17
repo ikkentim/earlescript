@@ -26,27 +26,39 @@ namespace EarleCode.Tokens
                 throw new ParseException("Unexpected end of file");
         }
 
-        public static void AssertToken(this ITokenizer tokenizer, params TokenType[] types)
+        public static void AssertToken(this ITokenizer tokenizer, TokenType type, string value)
         {
-            if (!types.Contains(tokenizer.Current.Type))
+            if (tokenizer.Current.Type != type || tokenizer.Current.Value != value)
                 throw new ParseException(tokenizer.Current, "Unexpected token");
         }
 
-        public static void AssertToken(this ITokenizer tokenizer, string value, params TokenType[] types)
+        public static void AssertToken(this ITokenizer tokenizer, TokenType type, params string[] values)
         {
-            if (!types.Contains(tokenizer.Current.Type) || tokenizer.Current.Value != value)
+            if (tokenizer.Current.Type != type || !values.Contains(tokenizer.Current.Value))
                 throw new ParseException(tokenizer.Current, "Unexpected token");
         }
 
-        public static void SkipToken(this ITokenizer tokenizer, string value, params TokenType[] types)
+        public static void AssertToken(this ITokenizer tokenizer, TokenType type)
         {
-            AssertToken(tokenizer, value, types);
+            if (tokenizer.Current.Type != type)
+                throw new ParseException(tokenizer.Current, "Unexpected token");
+        }
+
+        public static void SkipToken(this ITokenizer tokenizer, TokenType type, string value)
+        {
+            AssertToken(tokenizer, type, value);
             AssertMoveNext(tokenizer);
         }
 
-        public static void SkipToken(this ITokenizer tokenizer, params TokenType[] types)
+        public static void SkipToken(this ITokenizer tokenizer, TokenType type, params string[] values)
         {
-            AssertToken(tokenizer, types);
+            AssertToken(tokenizer, type, values);
+            AssertMoveNext(tokenizer);
+        }
+
+        public static void SkipToken(this ITokenizer tokenizer, TokenType type)
+        {
+            AssertToken(tokenizer, type);
             AssertMoveNext(tokenizer);
         }
     }

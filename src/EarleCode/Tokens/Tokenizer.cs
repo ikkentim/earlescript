@@ -27,9 +27,9 @@ namespace EarleCode.Tokens
         private readonly string _file;
         private readonly string _input;
         private readonly Stack<Token> _pushedTokens = new Stack<Token>();
-        private int _caretPosition; // Indicates the caret position.
-        private int _column = 1; // Indicates the column number at the caret.
-        private int _line = 1; // Indicates the line number at the caret.
+        private int _caretPosition;
+        private int _column;
+        private int _line; 
         
         /// <summary>
         ///     Initializes a new instance of the <see cref="Tokenizer" /> class.
@@ -55,7 +55,7 @@ namespace EarleCode.Tokens
             _file = file;
             _input = input;
 
-            SkipWhitespace();
+            Reset();
         }
         
         private void SkipWhitespace()
@@ -148,6 +148,8 @@ namespace EarleCode.Tokens
         /// <param name="token">The token.</param>
         public void Push(Token token)
         {
+            if (token == null) throw new ArgumentNullException(nameof(token));
+
             // Push the current token to the stack and set the current token to the pushed token.
             if (Current != null)
                 _pushedTokens.Push(Current);

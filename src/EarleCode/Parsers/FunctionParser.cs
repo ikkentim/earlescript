@@ -32,7 +32,7 @@ namespace EarleCode.Parsers
             var parameters = new List<string>();
 
             tokenizer.AssertMoveNext();
-            tokenizer.SkipToken("(", TokenType.Token);
+            tokenizer.SkipToken(TokenType.Token, "(");
 
             if (!tokenizer.Current.Is(TokenType.Token, ")"))
                 while (true)
@@ -48,7 +48,7 @@ namespace EarleCode.Parsers
                     tokenizer.AssertMoveNext();
                 }
 
-            tokenizer.SkipToken(")", TokenType.Token);
+            tokenizer.SkipToken(TokenType.Token, ")");
 
             var function = new EarleFunction(scriptScope, name, parameters.ToArray());
             compiler.CompileBlock(function, tokenizer);

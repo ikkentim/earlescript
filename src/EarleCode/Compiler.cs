@@ -38,30 +38,33 @@ namespace EarleCode
         {
             // Function body grammar.
 
-            // Level 1
+            // Level 1: Statements
             ["STATEMENT_IF"] = "`if` ( EXPRESSION )",
             ["STATEMENT_DO"] = "`do`",
             ["STATEMENT_WHILE"] = "`while` ( EXPRESSION )",
             ["STATEMENT_FOR"] = "`for` ( OPTIONAL ASSIGNMENT ; OPTIONAL EXPRESSION ; OPTIONAL ASSIGNMENT )",
             ["STATEMENT_RETURN"] = "`return` OPTIONAL EXPRESSION ;",
             ["STATEMENT_END"] = ",",
-            ["ASSIGNMENT"] = "IDENTIFIER OPTIONAL INDEXER_LIST = EXPRESSION",
-            ["ASSIGNMENT"] = "IDENTIFIER OPTIONAL INDEXER_LIST OPERATOR_POST_UNARY",
+            ["ASSIGNMENT_UNARY"] = "VARIABLE OPERATOR_MOD_UNARY",
+            ["ASSIGNMENT_UNARY"] = "OPERATOR_MOD_UNARY VARIABLE",
+            ["ASSIGNMENT"] = "VARIABLE = EXPRESSION",
             ["FUNCTION_CALL"] = "FUNCTION_IDENTIFIER ( OPTIONAL EXPRESSION_LIST )",
 
-            // Level 2
-            ["EXPRESSION"] = "`true`",
-            ["EXPRESSION"] = "`false`",
-            ["EXPRESSION"] = "`null`",
+            // Level 2: Expressions
             ["EXPRESSION"] = "FUNCTION_CALL",
             ["EXPRESSION"] = "( EXPRESSION )",
-            ["EXPRESSION"] = "IDENTIFIER INDEXER_LIST",
             ["EXPRESSION"] = "EXPRESSION OPERATOR EXPRESSION",
             ["EXPRESSION"] = "OPERATOR_UNARY EXPRESSION",
-            ["EXPRESSION"] = "FUNCTION_IDENTIFIER",
-            ["EXPRESSION"] = "IDENTIFIER|NUMBER_LITERAL|STRING_LITERAL",
+            ["EXPRESSION"] = "ASSIGNMENT_UNARY",
+            ["EXPRESSION"] = "ASSIGNMENT",
 
-            // Level 3
+            // Level 2 cont: Value types
+            ["EXPRESSION"] = "VARIABLE", // variable value
+            ["EXPRESSION"] = "FUNCTION_IDENTIFIER", // function reference
+            ["EXPRESSION"] = "KEYWORD",
+            ["EXPRESSION"] = "NUMBER_LITERAL|STRING_LITERAL",
+
+            // Level 3: Grammar strings
             ["PATH"] = "\\IDENTIFIER",
             ["PATH"] = "PATH\\IDENTIFIER",
             ["PATH_PREFIX"] = "OPTIONAL PATH ::",
@@ -70,10 +73,16 @@ namespace EarleCode
             ["EXPRESSION_LIST"] = "EXPRESSION",
             ["INDEXER_LIST"] = "INDEXER_LIST INDEXER_LIST",
             ["INDEXER_LIST"] = "[ EXPRESSION ]",
+            ["VARIABLE"] = "IDENTIFIER OPTIONAL INDEXER_LIST",
+
+            // Level 4: Operators/keywords
+            ["KEYWORD"] = "`true`",
+            ["KEYWORD"] = "`false`",
+            ["KEYWORD"] = "`null`",
             ["OPERATOR"] = "||",
             ["OPERATOR"] = "&&",
-            ["OPERATOR"] = "<<",
-            ["OPERATOR"] = ">>",
+//            ["OPERATOR"] = "<<",
+//            ["OPERATOR"] = ">>",
             ["OPERATOR"] = "<",
             ["OPERATOR"] = ">",
             ["OPERATOR"] = "<=",
@@ -84,13 +93,13 @@ namespace EarleCode
             ["OPERATOR"] = "-",
             ["OPERATOR"] = "*",
             ["OPERATOR"] = "/",
-            ["OPERATOR"] = "^",
+//            ["OPERATOR"] = "^",
             ["OPERATOR_UNARY"] = "+",
             ["OPERATOR_UNARY"] = "-",
             ["OPERATOR_UNARY"] = "!",
             ["OPERATOR_UNARY"] = "~",
-            ["OPERATOR_POST_UNARY"] = "++",
-            ["OPERATOR_POST_UNARY"] = "--",
+            ["OPERATOR_MOD_UNARY"] = "++",
+            ["OPERATOR_MOD_UNARY"] = "--",
         };
 
         private readonly Dictionary<string, IParser> _parsers = new Dictionary<string, IParser>
@@ -101,6 +110,7 @@ namespace EarleCode
             ["STATEMENT_RETURN"] = new StatementReturnParser(),
             ["STATEMENT_END"] = new NopParser(),
             ["ASSIGNMENT"] = new AssignmentExpressionParser(),
+            ["ASSIGNMENT_UNARY"] = new AssignmentUnaryExpressionParser(),
         };
         
         /// <summary>
@@ -187,7 +197,7 @@ namespace EarleCode
 
             if (multiLine)
             {
-                tokenizer.AssertToken("}", TokenType.Token);
+                tokenizer.AssertToken(TokenType.Token, "}");
             }
         }
     }

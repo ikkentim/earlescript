@@ -14,6 +14,7 @@
 // limitations under the License.
 
 using System;
+using System.Linq;
 
 namespace EarleCode.Tokens
 {
@@ -34,6 +35,11 @@ namespace EarleCode.Tokens
         public TokenType Type { get; }
         public string Value { get; }
         public string File { get; private set; }
+
+        public bool Is(TokenType type, params string[] values)
+        {
+            return Is(type) && (values == null || values.Contains(Value));
+        }
 
         public bool Is(TokenType type, string value)
         {
