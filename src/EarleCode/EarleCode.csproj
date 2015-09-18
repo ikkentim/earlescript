@@ -49,7 +49,9 @@
     <Compile Include="Blocks\StatementReturn.cs" />
     <Compile Include="Blocks\StatementWhile.cs" />
     <Compile Include="Blocks\UnaryOperatorExpression.cs" />
+    <Compile Include="Blocks\VectorExpression.cs" />
     <Compile Include="Compiler.cs" />
+    <Compile Include="EarleVector.cs" />
     <Compile Include="Functions\PrintFunction.cs" />
     <Compile Include="EarleFile.cs" />
     <Compile Include="Functions\EarleFunction.cs" />
@@ -89,6 +91,7 @@
     <Compile Include="Parsers\StatementIfParser.cs" />
     <Compile Include="Parsers\StatementReturnParser.cs" />
     <Compile Include="Parsers\StatementWhileParser.cs" />
+    <Compile Include="Parsers\VectorExpressionParser.cs" />
     <Compile Include="Runtime.cs" />
     <Compile Include="Tokens\ITokenizer.cs" />
     <Compile Include="Tokens\TokenUtils.cs" />

@@ -29,8 +29,12 @@ testA()
 
     for(j=0;j<10;j++)
     {
-        print("j: " + j);
+        print("j is " + j);
     }
+    
+    up = (0,1,0);
+    backward = (-1,0,0);
 
-    print("Always.");
+    print(up);
+    print(backward);
 }

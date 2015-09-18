@@ -15,14 +15,26 @@
 
 namespace EarleCode
 {
-    public enum EarleValueType
+    public struct EarleVector
     {
-        Void,
-        Integer,
-        Float,
-        String,
-        Array,
-        Vector,
-        Function,
+        public EarleVector(float x, float y, float z)
+        {
+            X = x;
+            Y = y;
+            Z = z;
+        }
+
+        public float X { get; set; }
+        public float Y { get; set; }
+        public float Z { get; set; }
+
+        #region Overrides of ValueType
+
+        public override string ToString()
+        {
+            return $"({X}, {Y}, {Z})";
+        }
+
+        #endregion
     }
 }

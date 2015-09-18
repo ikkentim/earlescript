@@ -16,7 +16,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
 using System.Linq;
 using EarleCode.Blocks;
 using EarleCode.Functions;
@@ -26,7 +25,7 @@ namespace EarleCode.Parsers
 {
     public class ExpressionParser : Parser<IExpression>
     {
-        private readonly string[] _supportedOperators = 
+        private readonly string[] _supportedOperators =
         {
             "+", "-", "&&", "||", "<", ">", "<=", ">="
         };
@@ -40,11 +39,16 @@ namespace EarleCode.Parsers
             IExpression expression;
 
             if (compiler.Grammar.Matches(tokenizer, "ASSIGNMENT_UNARY"))
-                expression = ParserUtilities.Delegate<AssignmentUnaryExpressionParser, IExpression>(compiler, scriptScope, tokenizer);
+                expression = ParserUtilities.Delegate<AssignmentUnaryExpressionParser, IExpression>(compiler,
+                    scriptScope, tokenizer);
             else if (compiler.Grammar.Matches(tokenizer, "ASSIGNMENT"))
-                expression = ParserUtilities.Delegate<AssignmentExpressionParser, IExpression>(compiler, scriptScope, tokenizer);
+                expression = ParserUtilities.Delegate<AssignmentExpressionParser, IExpression>(compiler, scriptScope,
+                    tokenizer);
             else if (compiler.Grammar.Matches(tokenizer, "FUNCTION_CALL"))
                 expression = ParserUtilities.Delegate<FunctionCallParser, IExpression>(compiler, scriptScope, tokenizer);
+            else if (compiler.Grammar.Matches(tokenizer, "VECTOR"))
+                expression = ParserUtilities.Delegate<VectorExpressionParser, IExpression>(compiler, scriptScope,
+                    tokenizer);
             else if (compiler.Grammar.Matches(tokenizer, "KEYWORD"))
             {
                 tokenizer.AssertToken(TokenType.Identifier);
@@ -73,15 +77,7 @@ namespace EarleCode.Parsers
                     }
                         break;
                     case TokenType.NumberLiteral:
-                        float fValue;
-                        int iValue;
-                        if (int.TryParse(tokenizer.Current.Value, out iValue))
-                            expression = new ValueExpression(scriptScope, new EarleValue(iValue));
-                        else if (float.TryParse(tokenizer.Current.Value, NumberStyles.Any,
-                            CultureInfo.InvariantCulture, out fValue))
-                            expression = new ValueExpression(scriptScope, new EarleValue(fValue));
-                        else
-                            throw new ParseException(tokenizer.Current, "Failed to parse number");
+                        expression = new ValueExpression(scriptScope, ParserUtilities.ParseNumber(tokenizer));
                         tokenizer.AssertMoveNext();
                         break;
                     case TokenType.StringLiteral:
@@ -132,7 +128,7 @@ namespace EarleCode.Parsers
                         throw new ParseException(tokenizer.Current, "Unexpected token type");
                 }
             }
-            
+
 
             // Check for operators
             if (tokenizer.Current.Is(TokenType.Token) && _supportedOperators.Contains(tokenizer.Current.Value))

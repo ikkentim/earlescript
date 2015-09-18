@@ -63,6 +63,7 @@ namespace EarleCode
             ["EXPRESSION"] = "VARIABLE", // variable value
             ["EXPRESSION"] = "FUNCTION_IDENTIFIER", // function reference
             ["EXPRESSION"] = "KEYWORD",
+            ["EXPRESSION"] = "VECTOR",
             ["EXPRESSION"] = "NUMBER_LITERAL|STRING_LITERAL",
 
             // Level 3: Grammar strings
@@ -75,6 +76,7 @@ namespace EarleCode
             ["INDEXER_LIST"] = "INDEXER_LIST INDEXER_LIST",
             ["INDEXER_LIST"] = "[ EXPRESSION ]",
             ["VARIABLE"] = "IDENTIFIER OPTIONAL INDEXER_LIST",
+            ["VECTOR"] = "( EXPRESSION , EXPRESSION , EXPRESSION )",
 
             // Level 4: Operators/keywords
             ["KEYWORD"] = "`true`",
@@ -184,10 +186,9 @@ namespace EarleCode
                 
                 IParser parser;
                 _parsers.TryGetValue(parserName, out parser);
-
-                Debug.WriteLine(scriptScope);
+                
                 if (parser == null)
-                    throw new Exception($"Expected function definition, found {tokenizer.Current}.");
+                    throw new Exception($"Expected function definition, found {parserName} {tokenizer.Current}.");
 
                 var result = parser.Parse(this, scriptScope, tokenizer);
 
