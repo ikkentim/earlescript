@@ -31,13 +31,6 @@ namespace EarleCode.Parsers
             "+", "-", "&&", "||", "<", ">", "<=", ">="
         };
 
-        private IExpression ParseByDelegation<T>(ICompiler compiler, IScriptScope scriptScope, ITokenizer tokenizer)
-            where T : IParser
-        {
-            var parser = (IParser) Activator.CreateInstance<T>();
-            return parser.Parse(compiler, scriptScope, tokenizer) as IExpression;
-        }
-
         #region Overrides of Parser<IExpression>
 
         public override IExpression Parse(ICompiler compiler, IScriptScope scriptScope, ITokenizer tokenizer)
@@ -47,11 +40,11 @@ namespace EarleCode.Parsers
             IExpression expression;
 
             if (compiler.Grammar.Matches(tokenizer, "ASSIGNMENT_UNARY"))
-                expression = ParseByDelegation<AssignmentUnaryExpressionParser>(compiler, scriptScope, tokenizer);
+                expression = ParserUtilities.Delegate<AssignmentUnaryExpressionParser, IExpression>(compiler, scriptScope, tokenizer);
             else if (compiler.Grammar.Matches(tokenizer, "ASSIGNMENT"))
-                expression = ParseByDelegation<AssignmentExpressionParser>(compiler, scriptScope, tokenizer);
+                expression = ParserUtilities.Delegate<AssignmentExpressionParser, IExpression>(compiler, scriptScope, tokenizer);
             else if (compiler.Grammar.Matches(tokenizer, "FUNCTION_CALL"))
-                expression = ParseByDelegation<FunctionCallParser>(compiler, scriptScope, tokenizer);
+                expression = ParserUtilities.Delegate<FunctionCallParser, IExpression>(compiler, scriptScope, tokenizer);
             else if (compiler.Grammar.Matches(tokenizer, "KEYWORD"))
             {
                 tokenizer.AssertToken(TokenType.Identifier);

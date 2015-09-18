@@ -48,6 +48,7 @@ namespace EarleCode
             ["ASSIGNMENT_UNARY"] = "VARIABLE OPERATOR_MOD_UNARY",
             ["ASSIGNMENT_UNARY"] = "OPERATOR_MOD_UNARY VARIABLE",
             ["ASSIGNMENT"] = "VARIABLE = EXPRESSION",
+            ["ASSIGNMENT"] = "ASSIGNMENT_UNARY",
             ["FUNCTION_CALL"] = "FUNCTION_IDENTIFIER ( OPTIONAL EXPRESSION_LIST )",
 
             // Level 2: Expressions
@@ -107,6 +108,7 @@ namespace EarleCode
             ["FUNCTION_CALL"] = new FunctionCallParser(),
             ["STATEMENT_IF"] = new StatementIfParser(),
             ["STATEMENT_WHILE"] = new StatementWhileParser(),
+            ["STATEMENT_FOR"] = new StatementForParser(),
             ["STATEMENT_RETURN"] = new StatementReturnParser(),
             ["STATEMENT_END"] = new NopParser(),
             ["ASSIGNMENT"] = new AssignmentExpressionParser(),

@@ -32,6 +32,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -43,6 +44,7 @@
     <Compile Include="Blocks\AssignmentExpression.cs" />
     <Compile Include="Blocks\AssignmentUnaryExpression.cs" />
     <Compile Include="Blocks\OperatorExpression.cs" />
+    <Compile Include="Blocks\StatementFor.cs" />
     <Compile Include="Blocks\StatementIf.cs" />
     <Compile Include="Blocks\StatementReturn.cs" />
     <Compile Include="Blocks\StatementWhile.cs" />
@@ -69,6 +71,7 @@
     <Compile Include="Functions\EarleFunctionSignature.cs" />
     <Compile Include="IVariable.cs" />
     <Compile Include="Parsers\AssignmentExpressionParser.cs" />
+    <Compile Include="Parsers\AssignmentUnaryExpressionParser.cs" />
     <Compile Include="Parsers\ExpressionParser.cs" />
     <Compile Include="Blocks\FunctionCall.cs" />
     <Compile Include="Parsers\FunctionCallParser.cs" />
@@ -82,6 +85,7 @@
     <Compile Include="Parsers\ParseException.cs" />
     <Compile Include="Blocks\VariableExpression.cs" />
     <Compile Include="Blocks\ValueExpression.cs" />
+    <Compile Include="Parsers\ParserUtilities.cs" />
     <Compile Include="Parsers\StatementIfParser.cs" />
     <Compile Include="Parsers\StatementReturnParser.cs" />
     <Compile Include="Parsers\StatementWhileParser.cs" />
@@ -98,7 +102,6 @@
     <Compile Include="Variable.cs" />
     <Compile Include="VariablesTable.cs" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
