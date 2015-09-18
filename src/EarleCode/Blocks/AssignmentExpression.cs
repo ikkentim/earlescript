@@ -10,7 +10,7 @@ namespace EarleCode.Blocks
     public class AssignmentExpression : Block, IExpression
     {
         private readonly string _name;
-        private readonly IExpression[] _indexers;
+        private readonly IExpression[] _indexers;//todo
         private readonly IExpression _expression;
 
         public AssignmentExpression(IScriptScope scriptScope, string name, IExpression[] indexers, IExpression expression) : base(scriptScope)
@@ -23,17 +23,35 @@ namespace EarleCode.Blocks
             _expression = expression;
         }
 
+        private EarleValue SetVariable(string name, EarleValue value)
+        {
+            var variable = ResolveVariable(name) ?? AddVariable(name);
+            variable.Set(value);
+
+            return value;
+        }
+
         #region Overrides of Block
 
         public override InvocationResult Invoke(IEarleContext context)
         {
-            var variable = ResolveVariable(_name) ?? AddVariable(_name);
+            var result = _expression.Invoke(context);
 
-            //todo : states
-            var value = _expression.Invoke(context).ReturnValue;
-            variable.Set(value);
+            return result.State == InvocationState.Incomplete
+                ? new InvocationResult(result.Result)
+                : new InvocationResult(InvocationState.None, SetVariable(_name, result.ReturnValue));
+        }
 
-            return new InvocationResult(InvocationState.None, value);
+        public override InvocationResult Continue(IncompleteInvocationResult incompleteInvocationResult)
+        {
+            if(incompleteInvocationResult?.InnerResult == null)
+                throw new Exception();
+
+            var result = _expression.Continue(incompleteInvocationResult.InnerResult);
+
+            return result.State == InvocationState.Incomplete
+                ? new InvocationResult(result.Result)
+                : new InvocationResult(InvocationState.None, SetVariable(_name, result.ReturnValue));
         }
 
         #endregion

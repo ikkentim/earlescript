@@ -18,7 +18,7 @@ namespace EarleCode
     public enum InvocationState
     {
         None,
-        Sleeping,
+        Incomplete,
         Returned
     }
 }

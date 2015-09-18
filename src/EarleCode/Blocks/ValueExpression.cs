@@ -33,6 +33,11 @@ namespace EarleCode.Blocks
             return new InvocationResult(InvocationState.None, _value);
         }
 
+        public override InvocationResult Continue(IncompleteInvocationResult incompleteInvocationResult)
+        {
+            throw new NotImplementedException("cant be continued");
+        }
+
         #endregion
 
         #region Overrides of Object

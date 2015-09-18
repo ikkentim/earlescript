@@ -9,7 +9,7 @@ namespace EarleCode.Blocks
     public class AssignmentUnaryExpression : Block, IExpression
     {
         private readonly string _name;
-        private readonly IExpression[] _indexers;
+        private readonly IExpression[] _indexers;//todo
         private readonly string _operatorToken;
         private readonly bool _isPostOperation;
 
@@ -22,6 +22,14 @@ namespace EarleCode.Blocks
             _indexers = indexers;
             _operatorToken = operatorToken;
             _isPostOperation = isPostOperation;
+        }
+
+        private EarleValue SetVariable(string name, EarleValue value)
+        {
+            var variable = ResolveVariable(name) ?? AddVariable(name);
+            variable.Set(value);
+
+            return value;
         }
 
         #region Overrides of Block
@@ -62,6 +70,12 @@ namespace EarleCode.Blocks
             variable.Set(postValue);
 
             return new InvocationResult(InvocationState.None, _isPostOperation ? preValue : postValue);
+        }
+
+        public override InvocationResult Continue(IncompleteInvocationResult incompleteInvocationResult)
+        {
+            // only incomplete causes may be indexers which are not implemented yet
+            throw new NotImplementedException();
         }
 
         #endregion

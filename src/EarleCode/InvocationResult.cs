@@ -13,19 +13,65 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
+
 namespace EarleCode
 {
     public struct InvocationResult
     {
-        public static InvocationResult Empty { get; } = new InvocationResult(InvocationState.None, EarleValue.Null);
+        public static InvocationResult Empty { get; } = new InvocationResult(InvocationState.None, EarleValue.Null, null);
 
-        public InvocationResult(InvocationState state, EarleValue returnValue)
+        private InvocationResult(InvocationState state, EarleValue returnValue, IncompleteInvocationResult result)
         {
+            if(state == InvocationState.Incomplete && result == null)
+                throw new ArgumentNullException(nameof(result));
+
             State = state;
             ReturnValue = returnValue;
+            Result = result;
+        }
+
+        public InvocationResult(InvocationState state, EarleValue returnValue) : this(state, returnValue, null)
+        {
+
+        }
+
+        public InvocationResult(IncompleteInvocationResult result)
+            : this(InvocationState.Incomplete, EarleValue.Null, result)
+        {
+
         }
 
         public InvocationState State { get; }
         public EarleValue ReturnValue { get; }
+        public IncompleteInvocationResult Result { get; }
     }
+
+    public interface IInvocationAwaitableEvent
+    {
+        bool IsReady();
+    }
+    public class IncompleteInvocationResult
+    {
+        public IEarleContext Context { get; }
+        public IncompleteInvocationResult InnerResult { get; }
+        public int Stage { get; }
+        public EarleValue[] Data { get; }
+        public IInvocationAwaitableEvent Event { get; }
+        public IncompleteInvocationResult(IEarleContext context, IncompleteInvocationResult innerResult, int stage, EarleValue[] data, IInvocationAwaitableEvent @event = null)
+        {
+            Context = context;
+            InnerResult = innerResult;
+            Stage = stage;
+            Data = data;
+            Event = @event;
+        }
+
+        public IncompleteInvocationResult(IEarleContext context, IncompleteInvocationResult innerResult)
+            : this(context, innerResult, -1, null, null)
+        {
+            
+        }
+    }
+
 }

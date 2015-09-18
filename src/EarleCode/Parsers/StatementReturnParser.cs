@@ -40,4 +40,20 @@ namespace EarleCode.Parsers
 
         #endregion
     }
+    public class StatementWaitParser : Parser<StatementWait>
+    {
+        #region Overrides of Parser<StatementReturn>
+
+        public override StatementWait Parse(ICompiler compiler, IScriptScope scriptScope, ITokenizer tokenizer)
+        {
+            tokenizer.SkipToken(TokenType.Identifier, "wait");
+
+            var time = (float) ParserUtilities.ParseNumberFloat(tokenizer).Value;
+            tokenizer.AssertMoveNext();
+
+            return new StatementWait(scriptScope, time);
+        }
+
+        #endregion
+    }
 }

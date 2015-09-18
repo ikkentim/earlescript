@@ -47,6 +47,7 @@
     <Compile Include="Blocks\StatementFor.cs" />
     <Compile Include="Blocks\StatementIf.cs" />
     <Compile Include="Blocks\StatementReturn.cs" />
+    <Compile Include="Blocks\StatementWait.cs" />
     <Compile Include="Blocks\StatementWhile.cs" />
     <Compile Include="Blocks\UnaryOperatorExpression.cs" />
     <Compile Include="Blocks\VectorExpression.cs" />

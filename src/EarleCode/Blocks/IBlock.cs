@@ -21,6 +21,7 @@ namespace EarleCode.Blocks
     {
         IEnumerable<IBlock> Blocks { get; }
         InvocationResult Invoke(IEarleContext context);
+        InvocationResult Continue(IncompleteInvocationResult incompleteInvocationResult);
         void AddBlock(IBlock block);
     }
 }

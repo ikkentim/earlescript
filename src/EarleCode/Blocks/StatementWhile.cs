@@ -45,6 +45,11 @@ namespace EarleCode.Blocks
             return InvocationResult.Empty;
         }
 
+        public override InvocationResult Continue(IncompleteInvocationResult incompleteInvocationResult)
+        {
+            throw new NotImplementedException();
+        }
+
         /// <summary>
         ///     Returns a string that represents the current object.
         /// </summary>

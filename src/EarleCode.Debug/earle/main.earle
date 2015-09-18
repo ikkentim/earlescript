@@ -1,8 +1,24 @@
 ﻿init()
 { 
+    print("waittest test:");
+    waittest();
+    print("");
+
+    // print("\ext::b test:");
     // \ext::b();
+    // print("");
+
+    print("testA test:");
     testA();
+    print("");
 } 
+
+waittest()
+{
+    print("Before");
+    wait 2.5;
+    print("After");
+}
  
 testB()
 {

@@ -30,6 +30,11 @@ namespace EarleCode.Functions
             return InvocationResult.Empty;
         }
 
+        public InvocationResult Continue(IncompleteInvocationResult incompleteInvocationResult)
+        {
+            throw new NotImplementedException("does not break");
+        }
+
         #endregion
     }
 }

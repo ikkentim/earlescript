@@ -51,6 +51,11 @@ namespace EarleCode.Blocks
             }
         }
 
+        public override InvocationResult Continue(IncompleteInvocationResult incompleteInvocationResult)
+        {
+            throw new NotImplementedException();
+        }
+
         #endregion
 
         #region Overrides of Object

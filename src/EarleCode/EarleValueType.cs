@@ -24,5 +24,6 @@ namespace EarleCode
         Array,
         Vector,
         Function,
+        Context,
     }
 }

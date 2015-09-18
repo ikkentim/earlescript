@@ -31,6 +31,11 @@ namespace EarleCode.Blocks
                     (float) z.CastTo(EarleValueType.Float).Value, (float) z.CastTo(EarleValueType.Float).Value));
         }
 
+        public override InvocationResult Continue(IncompleteInvocationResult incompleteInvocationResult)
+        {
+            throw new NotImplementedException();
+        }
+
         #endregion
 
         #region Overrides of Object

@@ -43,6 +43,7 @@ namespace EarleCode.Functions
             _variables.AddRange(ParameterNames.Zip(args.Select(v => (IVariable) new Variable(v)),
                 (p, a) => new KeyValuePair<string, IVariable>(p, a)));
 
+            _variables.Add("self", new Variable(context == null ? EarleValue.Null : new EarleValue(context)));
 
             return Invoke(context);
         }
@@ -51,17 +52,48 @@ namespace EarleCode.Functions
 
         public override InvocationResult Invoke(IEarleContext context)
         {
-            foreach (var block in Blocks)
+            // todo parameters!
+            for (var i = 0; i < Blocks.Count(); i++)
             {
+                var block = Blocks.ElementAt(i);
+
                 var result = block.Invoke(context);
 
-                if (result.State != InvocationState.None)
-                    return result;
+                switch (result.State)
+                {
+                    case InvocationState.Incomplete:
+                        return new InvocationResult(new IncompleteInvocationResult(context, result.Result, i, null));
+                    case InvocationState.Returned:
+                        return result;
+                }
             }
 
             return InvocationResult.Empty;
         }
-        
+
+        public override InvocationResult Continue(IncompleteInvocationResult incompleteInvocationResult)
+        {
+            // todo parameters!
+            for (var i = incompleteInvocationResult.Stage; i < Blocks.Count(); i++)
+            {
+                var block = Blocks.ElementAt(i);
+
+                var result = i == incompleteInvocationResult.Stage
+                    ? block.Continue(incompleteInvocationResult.InnerResult)
+                    : block.Invoke(incompleteInvocationResult.Context);
+
+                switch (result.State)
+                {
+                    case InvocationState.Incomplete:
+                        return new InvocationResult(new IncompleteInvocationResult(incompleteInvocationResult.Context, result.Result, i, null));
+                    case InvocationState.Returned:
+                        return result;
+                }
+            }
+
+            return InvocationResult.Empty;
+        }
+
         public override IVariable AddVariable(string variableName)
         {
             var variable = new Variable();

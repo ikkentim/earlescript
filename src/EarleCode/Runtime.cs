@@ -15,6 +15,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using EarleCode.Functions;
 using EarleCode.Parsers;
 
@@ -92,7 +93,49 @@ namespace EarleCode
             if (earleFunction == null)
                 throw new Exception("function not found");
 
-            return earleFunction.Invoke(context, args);
+            var result = earleFunction.Invoke(context, args);
+
+            if (result.State == InvocationState.Incomplete)
+            {
+                _waitingCalls.Add(new WaitingCall(earleFunction, result.Result));
+            }
+
+            // todo how to use result if result is incomplete
+            return result;
         }
+
+        private readonly List<WaitingCall> _waitingCalls = new List<WaitingCall>();
+
+        public void Continue()
+        {
+            // todo : lol this is stupid
+            var calls = _waitingCalls.ToArray();
+            _waitingCalls.Clear();
+            foreach (var c in calls)
+            {
+                var result = c.Function.Continue(c.IncompleteInvocationResult);
+
+                if (result.State == InvocationState.Incomplete)
+                {
+                    _waitingCalls.Add(new WaitingCall(c.Function, result.Result));
+                }
+            }
+        }
+    }
+
+    public struct WaitingCall
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="T:System.Object"/> class.
+        /// </summary>
+        public WaitingCall(IEarleFunction function, IncompleteInvocationResult incompleteInvocationResult)
+        {
+            Function = function;
+            IncompleteInvocationResult = incompleteInvocationResult;
+        }
+
+        public IEarleFunction Function { get; }
+        public IncompleteInvocationResult IncompleteInvocationResult { get; }
+
     }
 }

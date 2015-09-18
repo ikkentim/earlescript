@@ -33,7 +33,12 @@ namespace EarleCode.Blocks
             return new InvocationResult(InvocationState.Returned,
                 _expression?.Invoke(context).ReturnValue ?? EarleValue.Null);
         }
-        
+
+        public override InvocationResult Continue(IncompleteInvocationResult incompleteInvocationResult)
+        {
+            throw new System.NotImplementedException();
+        }
+
         /// <summary>
         /// Returns a string that represents the current object.
         /// </summary>

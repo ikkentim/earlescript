@@ -49,6 +49,12 @@ namespace EarleCode.Blocks
             return new InvocationResult(InvocationState.None, variable?.Get() ?? EarleValue.Null);
         }
 
+        public override InvocationResult Continue(IncompleteInvocationResult incompleteInvocationResult)
+        {
+            // indexers have not yet been implemented
+            throw new NotImplementedException();
+        }
+
         #endregion
 
         #region Overrides of Object

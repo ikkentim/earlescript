@@ -15,6 +15,7 @@
 
 using System;
 using System.IO;
+using System.Threading;
 
 namespace EarleCode.Debug
 {
@@ -30,11 +31,30 @@ namespace EarleCode.Debug
             
             runtime.Invoke(context, "init", @"\main");
 
-            Console.ReadLine();
+            for (;;)
+            {
+                Thread.Sleep(20);
+                System.Diagnostics.Debug.WriteLine("continue");
+                runtime.Continue();
+            }
         }
     }
 
     internal class SampleContext : IEarleContext
     {
+        #region Overrides of Object
+
+        /// <summary>
+        /// Returns a string that represents the current object.
+        /// </summary>
+        /// <returns>
+        /// A string that represents the current object.
+        /// </returns>
+        public override string ToString()
+        {
+            return "Sample Context";
+        }
+
+        #endregion
     }
 }

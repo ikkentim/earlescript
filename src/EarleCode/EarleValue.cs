@@ -38,6 +38,7 @@ namespace EarleCode
                 // if(Value is array) return EarleValueType.Array;
                 if (Value is EarleVector) return EarleValueType.Vector;
                 if (Value is EarleFunction) return EarleValueType.Function;
+                if (Value is IEarleContext) return EarleValueType.Context;
                 return EarleValueType.Void;
             }
         }

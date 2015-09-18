@@ -37,6 +37,7 @@ namespace EarleCode.Blocks
         public virtual IEnumerable<IBlock> Blocks => _blocks;
 
         public abstract InvocationResult Invoke(IEarleContext context);
+        public abstract InvocationResult Continue(IncompleteInvocationResult incompleteInvocationResult);
 
         public virtual IVariable ResolveVariable(string variableName)
         {

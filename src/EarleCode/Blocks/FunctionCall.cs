@@ -34,13 +34,92 @@ namespace EarleCode.Blocks
             _functionSignature = functionSignature;
             _arguments = arguments;
         }
+        
+        private IEarleFunction GetFunction()
+        {
+            var function = ScriptScope.ResolveFunction(_functionSignature);
+
+            if (function == null)
+                throw new Exception($"Function `{_functionSignature}` not found");
+
+            return function;
+        }
 
         #region Overrides of Block
 
         public override InvocationResult Invoke(IEarleContext context)
         {
-            Debug.WriteLine("Invoking function call " + _functionSignature);
-            return Invoke(context, _arguments);
+            var parameters = new EarleValue[_arguments.Length];
+            for (var i = 0; i < _arguments.Length; i++)
+            {
+                var arg = _arguments[i];
+
+                var result = arg.Invoke(context);
+
+                if (result.State == InvocationState.Incomplete)
+                {
+                    return new InvocationResult(new IncompleteInvocationResult(context, result.Result, i, parameters));
+                }
+
+                parameters[i] = result.ReturnValue;
+            }
+
+            var functionResult = GetFunction().Invoke(context, parameters);
+
+            if (functionResult.State == InvocationState.Incomplete)
+            {
+                return new InvocationResult(new IncompleteInvocationResult(context, functionResult.Result, -1, null));
+            }
+            
+            return new InvocationResult(InvocationState.None, functionResult.ReturnValue);
+        }
+
+        public override InvocationResult Continue(IncompleteInvocationResult incompleteInvocationResult)
+        {
+            var parameters = incompleteInvocationResult.Data;
+
+
+            if (incompleteInvocationResult.Stage != -1)
+            {
+                for (var i = incompleteInvocationResult.Stage; i < _arguments.Length; i++)
+                {
+                    var arg = _arguments[i];
+
+                    var result = i == incompleteInvocationResult.Stage
+                        ? arg.Continue(incompleteInvocationResult.InnerResult)
+                        : arg.Invoke(incompleteInvocationResult.Context);
+
+                    if (result.State == InvocationState.Incomplete)
+                    {
+                        return
+                            new InvocationResult(new IncompleteInvocationResult(incompleteInvocationResult.Context,
+                                result.Result, i, parameters));
+                    }
+
+                    parameters[i] = result.ReturnValue;
+                }
+
+                var functionResult = GetFunction().Invoke(incompleteInvocationResult.Context, parameters);
+
+                if (functionResult.State == InvocationState.Incomplete)
+                {
+                    return new InvocationResult(new IncompleteInvocationResult(incompleteInvocationResult.Context, functionResult.Result, -1, null));
+                }
+
+                return new InvocationResult(InvocationState.None, functionResult.ReturnValue);
+            }
+            else
+            {
+                var functionResult = GetFunction().Continue(incompleteInvocationResult.InnerResult);
+
+                if (functionResult.State == InvocationState.Incomplete)
+                {
+                    return new InvocationResult(new IncompleteInvocationResult(incompleteInvocationResult.Context, functionResult.Result, -1, null));
+                }
+
+                return new InvocationResult(InvocationState.None, functionResult.ReturnValue);
+            }
+
         }
 
         #endregion
@@ -59,17 +138,5 @@ namespace EarleCode.Blocks
         }
 
         #endregion
-
-        public InvocationResult Invoke(IEarleContext context, params IExpression[] arguments)
-        {
-            var function = ScriptScope.ResolveFunction(_functionSignature);
-
-            if (function == null)
-                throw new Exception($"Function `{_functionSignature}` not found");
-
-            // TODO: States...
-            return function.Invoke(context, arguments.Select(a => a.Invoke(context).ReturnValue).ToArray());
-        }
-        
     }
 }
