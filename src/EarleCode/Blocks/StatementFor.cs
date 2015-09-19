@@ -24,27 +24,27 @@ namespace EarleCode.Blocks
 
         #region Overrides of Block
 
-        public override InvocationResult Invoke(IEarleContext context)
+        public override InvocationResult Invoke(Runtime runtime, IEarleContext context)
         {
-            _assignmentExpression?.Invoke(context);
+            _assignmentExpression?.Invoke(runtime, context);
 
-            while (_checkExpression == null || _checkExpression.Invoke(context).ReturnValue.ToBoolean())
+            while (_checkExpression == null || _checkExpression.Invoke(runtime, context).ReturnValue.ToBoolean())
             {
                 foreach (var block in Blocks)
                 {
-                    var result = block.Invoke(context);
+                    var result = block.Invoke(runtime, context);
 
                     if (result.State != InvocationState.None)
                         return result;
                 }
 
-                _incrementExpression?.Invoke(context);
+                _incrementExpression?.Invoke(runtime, context);
             }
 
             return InvocationResult.Empty;
         }
 
-        public override InvocationResult Continue(IncompleteInvocationResult incompleteInvocationResult)
+        public override InvocationResult Continue(Runtime runtime, IncompleteInvocationResult incompleteInvocationResult)
         {
             throw new NotImplementedException();
         }

@@ -26,15 +26,15 @@ namespace EarleCode.Blocks
 
         #region Overrides of Block
 
-        public override InvocationResult Invoke(IEarleContext context)
+        public override InvocationResult Invoke(Runtime runtime, IEarleContext context)
         {
             // todo : states
 
             return new InvocationResult(InvocationState.Returned,
-                _expression?.Invoke(context).ReturnValue ?? EarleValue.Null);
+                _expression?.Invoke(runtime, context).ReturnValue ?? EarleValue.Null);
         }
 
-        public override InvocationResult Continue(IncompleteInvocationResult incompleteInvocationResult)
+        public override InvocationResult Continue(Runtime runtime, IncompleteInvocationResult incompleteInvocationResult)
         {
             throw new System.NotImplementedException();
         }

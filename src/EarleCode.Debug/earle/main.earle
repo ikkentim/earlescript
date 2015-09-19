@@ -1,29 +1,30 @@
 ﻿init()
 { 
-    print("waittest test:");
+    println("waittest test:");
     waittest();
-    print("");
+    println("");
 
-    // print("\ext::b test:");
+    // println("\ext::b test:");
     // \ext::b();
-    // print("");
+    // println("");
 
-    print("testA test:");
+    println("testA test:");
     testA();
-    print("");
+    println("");
 } 
 
 waittest()
 {
-    print("Before");
-    wait 2.5;
-    print("After");
+    println("Before");
+    wait .5;
+    println("After");
 }
  
 testB()
 {
     return "World";
 }
+
 testA()
 {
     var1 = true;
@@ -34,23 +35,23 @@ testA()
 
     i=0;
 
-    while(i < 5)
+    while(i < 2)
     {
         if(var1)
         {
             // Whoohoo unary assignment operators in expressions :D
-            print(++i + ": Hello, " + testB() + "! (var4: " + (var4 = var4 + i + 0.2) + ")");
+            println(++i + ": Hello, " + testB() + "! (var4: " + (var4 = var4 + i + 0.2) + ")");
         }
     }
 
-    for(j=0;j<10;j++)
+    for(j=0;j<3;j++)
     {
-        print("j is " + j);
+        println("j is " + j);
     }
     
     up = (0,1,0);
     backward = (-1,0,0);
 
-    print(up);
-    print(backward);
+    println(up);
+    println(backward);
 }

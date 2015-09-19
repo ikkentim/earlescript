@@ -33,7 +33,7 @@ namespace EarleCode.Blocks
 
         #region Overrides of Block
 
-        public override InvocationResult Invoke(IEarleContext context)
+        public override InvocationResult Invoke(Runtime runtime, IEarleContext context)
         {
             var variable = ResolveVariable(_name);
 
@@ -49,7 +49,7 @@ namespace EarleCode.Blocks
             return new InvocationResult(InvocationState.None, variable?.Get() ?? EarleValue.Null);
         }
 
-        public override InvocationResult Continue(IncompleteInvocationResult incompleteInvocationResult)
+        public override InvocationResult Continue(Runtime runtime, IncompleteInvocationResult incompleteInvocationResult)
         {
             // indexers have not yet been implemented
             throw new NotImplementedException();

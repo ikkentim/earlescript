@@ -33,7 +33,7 @@ namespace EarleCode.Functions
         public string Name { get; }
         public string[] ParameterNames { get; }
 
-        public virtual InvocationResult Invoke(IEarleContext context, EarleValue[] args)
+        public virtual InvocationResult Invoke(Runtime runtime, IEarleContext context, EarleValue[] args)
         {
             if (args == null) throw new ArgumentNullException(nameof(args));
             if (ParameterNames.Length != args.Length)
@@ -45,19 +45,19 @@ namespace EarleCode.Functions
 
             _variables.Add("self", new Variable(context == null ? EarleValue.Null : new EarleValue(context)));
 
-            return Invoke(context);
+            return Invoke(runtime, context);
         }
 
         #region Overrides of Block
 
-        public override InvocationResult Invoke(IEarleContext context)
+        public override InvocationResult Invoke(Runtime runtime, IEarleContext context)
         {
             // todo parameters!
             for (var i = 0; i < Blocks.Count(); i++)
             {
                 var block = Blocks.ElementAt(i);
 
-                var result = block.Invoke(context);
+                var result = block.Invoke(runtime, context);
 
                 switch (result.State)
                 {
@@ -71,7 +71,7 @@ namespace EarleCode.Functions
             return InvocationResult.Empty;
         }
 
-        public override InvocationResult Continue(IncompleteInvocationResult incompleteInvocationResult)
+        public override InvocationResult Continue(Runtime runtime, IncompleteInvocationResult incompleteInvocationResult)
         {
             // todo parameters!
             for (var i = incompleteInvocationResult.Stage; i < Blocks.Count(); i++)
@@ -79,8 +79,8 @@ namespace EarleCode.Functions
                 var block = Blocks.ElementAt(i);
 
                 var result = i == incompleteInvocationResult.Stage
-                    ? block.Continue(incompleteInvocationResult.InnerResult)
-                    : block.Invoke(incompleteInvocationResult.Context);
+                    ? block.Continue(runtime, incompleteInvocationResult.InnerResult)
+                    : block.Invoke(runtime, incompleteInvocationResult.Context);
 
                 switch (result.State)
                 {

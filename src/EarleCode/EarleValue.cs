@@ -100,13 +100,14 @@ namespace EarleCode
 
         public EarleValue CastTo(EarleValueType targetType)
         {
+            if (Type == targetType)
+                return this;
+
             switch (targetType)
             {
                 case EarleValueType.Integer:
                     switch (Type)
                     {
-                        case EarleValueType.Integer:
-                            return this;
                         case EarleValueType.Float:
                             return (int) (float) Value;
                         case EarleValueType.String:
@@ -120,8 +121,6 @@ namespace EarleCode
                     {
                         case EarleValueType.Integer:
                             return (float) (int) Value;
-                        case EarleValueType.Float:
-                            return this;
                         case EarleValueType.String:
                             float result;
                             return float.TryParse((string) Value, out result) ? result : Null;
@@ -129,13 +128,9 @@ namespace EarleCode
                             return 0f;
                     }
                 case EarleValueType.String:
-                    return Type == EarleValueType.String
-                        ? this
-                        : (Type == EarleValueType.Void ? string.Empty : Value.ToString());
+                    return Type == EarleValueType.Void ? string.Empty : Value.ToString();
                 case EarleValueType.Array:
-                    return Type == EarleValueType.Array ? this : Null;
                 case EarleValueType.Function:
-                    return Type == EarleValueType.Function ? this : Null;
                 case EarleValueType.Void:
                 default:
                     return Null;
@@ -187,5 +182,10 @@ namespace EarleCode
         public static implicit operator EarleValue(string value) => new EarleValue(value);
         public static implicit operator EarleValue(EarleFunction value) => new EarleValue(value);
         public static implicit operator EarleValue(EarleVector value) => new EarleValue(value);
+        public static explicit operator int (EarleValue value) => (int)value.CastTo(EarleValueType.Integer).Value;
+        public static explicit operator float (EarleValue value) => (float)value.CastTo(EarleValueType.Float).Value;
+        public static explicit operator string (EarleValue value) => (string)value.CastTo(EarleValueType.String).Value;
+        public static explicit operator EarleVector (EarleValue value) => (EarleVector)value.CastTo(EarleValueType.Vector).Value;
+        public static explicit operator EarleFunction (EarleValue value) => (EarleFunction)value.CastTo(EarleValueType.Function).Value;
     }
 }

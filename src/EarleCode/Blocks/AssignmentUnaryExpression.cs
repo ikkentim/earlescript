@@ -34,7 +34,7 @@ namespace EarleCode.Blocks
 
         #region Overrides of Block
 
-        public override InvocationResult Invoke(IEarleContext context)
+        public override InvocationResult Invoke(Runtime runtime, IEarleContext context)
         {
             var variable = ResolveVariable(_name) ?? AddVariable(_name);
 
@@ -72,7 +72,7 @@ namespace EarleCode.Blocks
             return new InvocationResult(InvocationState.None, _isPostOperation ? preValue : postValue);
         }
 
-        public override InvocationResult Continue(IncompleteInvocationResult incompleteInvocationResult)
+        public override InvocationResult Continue(Runtime runtime, IncompleteInvocationResult incompleteInvocationResult)
         {
             // only incomplete causes may be indexers which are not implemented yet
             throw new NotImplementedException();

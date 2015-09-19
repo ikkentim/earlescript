@@ -20,18 +20,18 @@ namespace EarleCode.Blocks
 
         #region Overrides of Block
 
-        public override InvocationResult Invoke(IEarleContext context)
+        public override InvocationResult Invoke(Runtime runtime, IEarleContext context)
         {
-            var x = _xExpression.Invoke(context).ReturnValue;
-            var y = _yExpression.Invoke(context).ReturnValue;
-            var z = _zExpression.Invoke(context).ReturnValue;
+            var x = _xExpression.Invoke(runtime, context).ReturnValue;
+            var y = _yExpression.Invoke(runtime, context).ReturnValue;
+            var z = _zExpression.Invoke(runtime, context).ReturnValue;
 
             return new InvocationResult(InvocationState.None,
                 new EarleVector((float) x.CastTo(EarleValueType.Float).Value,
                     (float) z.CastTo(EarleValueType.Float).Value, (float) z.CastTo(EarleValueType.Float).Value));
         }
 
-        public override InvocationResult Continue(IncompleteInvocationResult incompleteInvocationResult)
+        public override InvocationResult Continue(Runtime runtime, IncompleteInvocationResult incompleteInvocationResult)
         {
             throw new NotImplementedException();
         }

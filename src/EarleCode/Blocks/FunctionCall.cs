@@ -47,79 +47,56 @@ namespace EarleCode.Blocks
 
         #region Overrides of Block
 
-        public override InvocationResult Invoke(IEarleContext context)
+        public override InvocationResult Invoke(Runtime runtime, IEarleContext context)
         {
             var parameters = new EarleValue[_arguments.Length];
             for (var i = 0; i < _arguments.Length; i++)
             {
-                var arg = _arguments[i];
+                var argument = _arguments[i];
 
-                var result = arg.Invoke(context);
+                var result = argument.Invoke(runtime, context);
 
                 if (result.State == InvocationState.Incomplete)
-                {
                     return new InvocationResult(new IncompleteInvocationResult(context, result.Result, i, parameters));
-                }
 
                 parameters[i] = result.ReturnValue;
             }
 
-            var functionResult = GetFunction().Invoke(context, parameters);
+            var functionResult = GetFunction().Invoke(runtime, context, parameters);
 
-            if (functionResult.State == InvocationState.Incomplete)
-            {
-                return new InvocationResult(new IncompleteInvocationResult(context, functionResult.Result, -1, null));
-            }
-            
-            return new InvocationResult(InvocationState.None, functionResult.ReturnValue);
+            return functionResult.State == InvocationState.Incomplete
+                ? new InvocationResult(new IncompleteInvocationResult(context, functionResult.Result, _arguments.Length,
+                    parameters))
+                : new InvocationResult(InvocationState.None, functionResult.ReturnValue);
         }
 
-        public override InvocationResult Continue(IncompleteInvocationResult incompleteInvocationResult)
+        public override InvocationResult Continue(Runtime runtime, IncompleteInvocationResult incompleteInvocationResult)
         {
             var parameters = incompleteInvocationResult.Data;
-
-
-            if (incompleteInvocationResult.Stage != -1)
+            for (var i = incompleteInvocationResult.Stage; i >= 0 && i < _arguments.Length; i++)
             {
-                for (var i = incompleteInvocationResult.Stage; i < _arguments.Length; i++)
-                {
-                    var arg = _arguments[i];
+                var argument = _arguments[i];
 
-                    var result = i == incompleteInvocationResult.Stage
-                        ? arg.Continue(incompleteInvocationResult.InnerResult)
-                        : arg.Invoke(incompleteInvocationResult.Context);
+                var result = i == incompleteInvocationResult.Stage
+                    ? argument.Continue(runtime, incompleteInvocationResult.InnerResult)
+                    : argument.Invoke(runtime, incompleteInvocationResult.Context);
 
-                    if (result.State == InvocationState.Incomplete)
-                    {
-                        return
-                            new InvocationResult(new IncompleteInvocationResult(incompleteInvocationResult.Context,
-                                result.Result, i, parameters));
-                    }
+                if (result.State == InvocationState.Incomplete)
+                    return
+                        new InvocationResult(new IncompleteInvocationResult(incompleteInvocationResult.Context,
+                            result.Result, i, parameters));
 
-                    parameters[i] = result.ReturnValue;
-                }
-
-                var functionResult = GetFunction().Invoke(incompleteInvocationResult.Context, parameters);
-
-                if (functionResult.State == InvocationState.Incomplete)
-                {
-                    return new InvocationResult(new IncompleteInvocationResult(incompleteInvocationResult.Context, functionResult.Result, -1, null));
-                }
-
-                return new InvocationResult(InvocationState.None, functionResult.ReturnValue);
-            }
-            else
-            {
-                var functionResult = GetFunction().Continue(incompleteInvocationResult.InnerResult);
-
-                if (functionResult.State == InvocationState.Incomplete)
-                {
-                    return new InvocationResult(new IncompleteInvocationResult(incompleteInvocationResult.Context, functionResult.Result, -1, null));
-                }
-
-                return new InvocationResult(InvocationState.None, functionResult.ReturnValue);
+                parameters[i] = result.ReturnValue;
             }
 
+            var functionResult = incompleteInvocationResult.Stage == _arguments.Length
+                ? GetFunction().Continue(runtime, incompleteInvocationResult.InnerResult)
+                : GetFunction().Invoke(runtime, incompleteInvocationResult.Context, parameters);
+
+            return functionResult.State == InvocationState.Incomplete
+                ? new InvocationResult(new IncompleteInvocationResult(incompleteInvocationResult.Context,
+                    functionResult.Result, _arguments.Length, parameters))
+                : new InvocationResult(InvocationState.None, functionResult.ReturnValue);
         }
 
         #endregion

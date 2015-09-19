@@ -20,8 +20,8 @@ namespace EarleCode.Blocks
     public interface IBlock : IScriptScope
     {
         IEnumerable<IBlock> Blocks { get; }
-        InvocationResult Invoke(IEarleContext context);
-        InvocationResult Continue(IncompleteInvocationResult incompleteInvocationResult);
+        InvocationResult Invoke(Runtime runtime, IEarleContext context);
+        InvocationResult Continue(Runtime runtime, IncompleteInvocationResult incompleteInvocationResult);
         void AddBlock(IBlock block);
     }
 }

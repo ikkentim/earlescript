@@ -13,7 +13,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
 using System.IO;
 using System.Threading;
 
@@ -34,7 +33,6 @@ namespace EarleCode.Debug
             for (;;)
             {
                 Thread.Sleep(20);
-                System.Diagnostics.Debug.WriteLine("continue");
                 runtime.Continue();
             }
         }

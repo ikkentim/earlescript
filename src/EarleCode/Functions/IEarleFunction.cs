@@ -17,7 +17,7 @@ namespace EarleCode.Functions
 {
     public interface IEarleFunction
     {
-        InvocationResult Invoke(IEarleContext context, params EarleValue[] args);
-        InvocationResult Continue(IncompleteInvocationResult incompleteInvocationResult);
+        InvocationResult Invoke(Runtime runtime, IEarleContext context, params EarleValue[] args);
+        InvocationResult Continue(Runtime runtime, IncompleteInvocationResult incompleteInvocationResult);
     }
 }

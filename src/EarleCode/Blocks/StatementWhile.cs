@@ -29,13 +29,13 @@ namespace EarleCode.Blocks
 
         #region Overrides of Block
 
-        public override InvocationResult Invoke(IEarleContext context)
+        public override InvocationResult Invoke(Runtime runtime, IEarleContext context)
         {
-            while (_expression.Invoke(context).ReturnValue.ToBoolean())
+            while (_expression.Invoke(runtime, context).ReturnValue.ToBoolean())
             {
                 foreach (var block in Blocks)
                 {
-                    var result = block.Invoke(context);
+                    var result = block.Invoke(runtime, context);
 
                     if (result.State != InvocationState.None)
                         return result;
@@ -45,7 +45,7 @@ namespace EarleCode.Blocks
             return InvocationResult.Empty;
         }
 
-        public override InvocationResult Continue(IncompleteInvocationResult incompleteInvocationResult)
+        public override InvocationResult Continue(Runtime runtime, IncompleteInvocationResult incompleteInvocationResult)
         {
             throw new NotImplementedException();
         }

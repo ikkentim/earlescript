@@ -17,13 +17,13 @@ namespace EarleCode
 {
     public enum EarleValueType
     {
-        Void,
-        Integer,
-        Float,
-        String,
-        Array,
-        Vector,
-        Function,
-        Context,
+        Void = 0,
+        Integer = 1,
+        Float = 2,
+        String = 3,
+        Array = 4,
+        Vector = 5,
+        Function = 6,
+        Context = 7,
     }
 }

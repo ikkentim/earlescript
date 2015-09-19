@@ -21,7 +21,27 @@ namespace EarleCode.Functions
     {
         #region Implementation of IEarleFunction
 
-        public InvocationResult Invoke(IEarleContext context, params EarleValue[] args)
+        public InvocationResult Invoke(Runtime runtime, IEarleContext context, params EarleValue[] args)
+        {
+            foreach (var arg in args)
+            {
+                Console.Write(arg.Value);
+            }
+            return InvocationResult.Empty;
+        }
+
+        public InvocationResult Continue(Runtime runtime, IncompleteInvocationResult incompleteInvocationResult)
+        {
+            throw new NotImplementedException("does not break");
+        }
+
+        #endregion
+    }
+    internal class PrintLnFunction : IEarleFunction
+    {
+        #region Implementation of IEarleFunction
+
+        public InvocationResult Invoke(Runtime runtime, IEarleContext context, params EarleValue[] args)
         {
             foreach (var arg in args)
             {
@@ -30,7 +50,7 @@ namespace EarleCode.Functions
             return InvocationResult.Empty;
         }
 
-        public InvocationResult Continue(IncompleteInvocationResult incompleteInvocationResult)
+        public InvocationResult Continue(Runtime runtime, IncompleteInvocationResult incompleteInvocationResult)
         {
             throw new NotImplementedException("does not break");
         }

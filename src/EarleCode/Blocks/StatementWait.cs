@@ -48,7 +48,7 @@ namespace EarleCode.Blocks
 
         #region Overrides of Block
 
-        public override InvocationResult Invoke(IEarleContext context)
+        public override InvocationResult Invoke(Runtime runtime, IEarleContext context)
         {
             return _time <= 0
                 ? InvocationResult.Empty
@@ -56,7 +56,7 @@ namespace EarleCode.Blocks
                     new WaitInvocationAwaitableEvent(_time)));
         }
 
-        public override InvocationResult Continue(IncompleteInvocationResult incompleteInvocationResult)
+        public override InvocationResult Continue(Runtime runtime, IncompleteInvocationResult incompleteInvocationResult)
         {
             return incompleteInvocationResult.Event.IsReady()
                 ? InvocationResult.Empty

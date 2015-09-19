@@ -33,22 +33,19 @@ namespace EarleCode.Blocks
 
         #region Overrides of Block
 
-        public override InvocationResult Invoke(IEarleContext context)
+        public override InvocationResult Invoke(Runtime runtime, IEarleContext context)
         {
-            var result = _expression.Invoke(context);
+            var result = _expression.Invoke(runtime, context);
 
             return result.State == InvocationState.Incomplete
                 ? new InvocationResult(result.Result)
                 : new InvocationResult(InvocationState.None, SetVariable(_name, result.ReturnValue));
         }
 
-        public override InvocationResult Continue(IncompleteInvocationResult incompleteInvocationResult)
+        public override InvocationResult Continue(Runtime runtime, IncompleteInvocationResult incompleteInvocationResult)
         {
-            if(incompleteInvocationResult?.InnerResult == null)
-                throw new Exception();
-
-            var result = _expression.Continue(incompleteInvocationResult.InnerResult);
-
+            var result = _expression.Continue(runtime, incompleteInvocationResult.InnerResult);
+            
             return result.State == InvocationState.Incomplete
                 ? new InvocationResult(result.Result)
                 : new InvocationResult(InvocationState.None, SetVariable(_name, result.ReturnValue));

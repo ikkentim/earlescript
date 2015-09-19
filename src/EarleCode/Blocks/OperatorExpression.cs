@@ -36,80 +36,16 @@ namespace EarleCode.Blocks
 
         #region Overrides of Block
 
-        public override InvocationResult Invoke(IEarleContext context)
+        public override InvocationResult Invoke(Runtime runtime, IEarleContext context)
         {
-            // TODO states...
-            // TODO is messy
-            // TODO comparators are messy and badly casted to float
-            EarleValue leftValue, rightValue;
-            switch (OperatorToken)
-            {
-                case "+":
-                    leftValue = LeftExpression.Invoke(context).ReturnValue;
-                    rightValue = RightExpression.Invoke(context).ReturnValue;
-                    return new InvocationResult(InvocationState.None, EarleValue.Add(leftValue, rightValue));
-                case "-":
-                    leftValue = LeftExpression.Invoke(context).ReturnValue;
-                    rightValue = RightExpression.Invoke(context).ReturnValue;
-                    return new InvocationResult(InvocationState.None, EarleValue.Subtract(leftValue, rightValue));
-                case "&&":
-                    leftValue = LeftExpression.Invoke(context).ReturnValue;
-                    if(!leftValue.ToBoolean())
-                        return new InvocationResult(InvocationState.None, 0);
-
-                    rightValue = RightExpression.Invoke(context).ReturnValue;
-                    return !rightValue.ToBoolean()
-                        ? new InvocationResult(InvocationState.None, 0)
-                        : new InvocationResult(InvocationState.None, 1);
-                case "||":
-                    leftValue = LeftExpression.Invoke(context).ReturnValue;
-                    if (leftValue.ToBoolean())
-                        return new InvocationResult(InvocationState.None, 1);
-
-                    rightValue = RightExpression.Invoke(context).ReturnValue;
-                    return rightValue.ToBoolean()
-                        ? new InvocationResult(InvocationState.None, 1)
-                        : new InvocationResult(InvocationState.None, 0);
-                case "<":
-                    leftValue = LeftExpression.Invoke(context).ReturnValue;
-                    rightValue = RightExpression.Invoke(context).ReturnValue;
-                    return new InvocationResult(InvocationState.None,
-                        ((float)leftValue.CastTo(EarleValueType.Float).Value <
-                         (float)rightValue.CastTo(EarleValueType.Float).Value)
-                            ? 1
-                            : 0);
-                case ">":
-                    leftValue = LeftExpression.Invoke(context).ReturnValue;
-                    rightValue = RightExpression.Invoke(context).ReturnValue;
-                    return new InvocationResult(InvocationState.None,
-                        ((float)leftValue.CastTo(EarleValueType.Float).Value >
-                         (float)rightValue.CastTo(EarleValueType.Float).Value)
-                            ? 1
-                            : 0);
-                case "<=":
-                    leftValue = LeftExpression.Invoke(context).ReturnValue;
-                    rightValue = RightExpression.Invoke(context).ReturnValue;
-                    return new InvocationResult(InvocationState.None,
-                        ((float)leftValue.CastTo(EarleValueType.Float).Value <=
-                         (float)rightValue.CastTo(EarleValueType.Float).Value)
-                            ? 1
-                            : 0);
-                case ">=":
-                    leftValue = LeftExpression.Invoke(context).ReturnValue;
-                    rightValue = RightExpression.Invoke(context).ReturnValue;
-                    return new InvocationResult(InvocationState.None,
-                        ((float)leftValue.CastTo(EarleValueType.Float).Value >=
-                         (float)rightValue.CastTo(EarleValueType.Float).Value)
-                            ? 1
-                            : 0);
-                default:
-                    throw new NotImplementedException();
-            }
+            return runtime.GetOperator(OperatorToken)?.Invoke(runtime, context, LeftExpression, RightExpression) ??
+                   InvocationResult.Empty;
         }
 
-        public override InvocationResult Continue(IncompleteInvocationResult incompleteInvocationResult)
+        public override InvocationResult Continue(Runtime runtime, IncompleteInvocationResult incompleteInvocationResult)
         {
-            throw new NotImplementedException();
+            return runtime.GetOperator(OperatorToken)?.Continue(runtime, incompleteInvocationResult) ??
+                   InvocationResult.Empty;
         }
 
         #endregion
