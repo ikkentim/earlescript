@@ -25,9 +25,9 @@ namespace EarleCode.Parsers
 {
     public class ExpressionParser : Parser<IExpression>
     {
-        private readonly string[] _supportedOperators =
+        private readonly string[] _supportedBinaryOperators =
         {
-            "+", "-", "&&", "||", "<", ">", "<=", ">="
+            "+", "-", "&&", "||", "<", ">", "<=", ">=", "==", "!="
         };
 
         #region Overrides of Parser<IExpression>
@@ -131,7 +131,7 @@ namespace EarleCode.Parsers
 
 
             // Check for operators
-            if (tokenizer.Current.Is(TokenType.Token) && _supportedOperators.Contains(tokenizer.Current.Value))
+            if (tokenizer.Current.Is(TokenType.Token) && _supportedBinaryOperators.Contains(tokenizer.Current.Value))
             {
                 var operatorToken = tokenizer.Current.Value;
                 tokenizer.AssertMoveNext();

@@ -55,4 +55,25 @@ namespace EarleCode
 
         #endregion
     }
+
+    public class SimpleUnaryOperator : EarleUnaryOperator
+    {
+        private readonly Func<EarleValue, EarleValue> _compute;
+
+        public SimpleUnaryOperator(Func<EarleValue, EarleValue> compute)
+        {
+            if (compute == null) throw new ArgumentNullException(nameof(compute));
+            _compute = compute;
+        }
+
+        #region Overrides of EarleBinaryOperator
+
+        protected override EarleValue Compute(EarleValue value)
+        {
+            return _compute(value);
+        }
+        
+
+        #endregion
+    }
 }

@@ -3,6 +3,22 @@
     println("s");
 
     num = delayfive() + 4;
+
+    vec = (0.5 + -delayfive(), 5.5 + delayfive(), 10.5 + delayfive());
+
+    println(vec);
+
+    if((delayfive() + delayfive()) == (delayfive() + delayfive()))
+    {
+        println("TEST!");
+    }
+
+    while(delayfive())
+    {
+        wait .5;
+        println("Hello, World!");
+    }
+
     for(j=1;j<num;j++)
     {
         println("j is " + j);
@@ -24,7 +40,7 @@
 waittest()
 {
     println("Before");
-    wait .5;
+    wait 0.5;
     println("After");
 }
  
@@ -35,7 +51,7 @@ testB()
 
 delayfive()
 {
-    wait .5;
+    wait .05;
     return 5;
 }
 

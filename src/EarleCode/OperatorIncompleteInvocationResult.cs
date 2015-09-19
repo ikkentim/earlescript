@@ -40,4 +40,14 @@ namespace EarleCode
         public EarleValue Value1 { get; set; }
         public IExpression Expression2 { get; }
     }
+    public class UnaryOperatorIncompleteInvocationResult : IncompleteInvocationResult
+    {
+        public UnaryOperatorIncompleteInvocationResult(IEarleContext context, IncompleteInvocationResult innerResult, IExpression expression)
+            : base(context, innerResult)
+        {
+            Expression = expression;
+        }
+        
+        public IExpression Expression { get; }
+    }
 }

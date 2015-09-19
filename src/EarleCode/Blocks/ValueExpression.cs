@@ -35,7 +35,7 @@ namespace EarleCode.Blocks
 
         public override InvocationResult Continue(Runtime runtime, IncompleteInvocationResult incompleteInvocationResult)
         {
-            throw new NotImplementedException("cant be continued");
+            return new InvocationResult(InvocationState.None, _value);
         }
 
         #endregion

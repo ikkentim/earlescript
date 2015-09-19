@@ -35,25 +35,14 @@ namespace EarleCode.Blocks
 
         public override InvocationResult Invoke(Runtime runtime, IEarleContext context)
         {
-            // TODO states...
-            var value = Expression.Invoke(runtime, context).ReturnValue;
-            
-            switch (OperatorToken)
-            {
-                case "+":
-                    return new InvocationResult(InvocationState.None, EarleValue.Positive(value));
-                case "-":
-                    return new InvocationResult(InvocationState.None, EarleValue.Negative(value));
-                case "!":
-                    return new InvocationResult(InvocationState.None, !value.ToBoolean() ? 1 : 0);
-                default:
-                    throw new NotImplementedException();
-            }
+            return runtime.GetUnaryOperator(OperatorToken)?.Invoke(runtime, context, Expression) ??
+                   InvocationResult.Empty;
         }
 
         public override InvocationResult Continue(Runtime runtime, IncompleteInvocationResult incompleteInvocationResult)
         {
-            throw new NotImplementedException();
+            return runtime.GetUnaryOperator(OperatorToken)?.Continue(runtime, incompleteInvocationResult) ??
+                   InvocationResult.Empty;
         }
 
         #endregion

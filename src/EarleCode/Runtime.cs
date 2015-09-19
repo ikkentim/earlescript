@@ -37,10 +37,10 @@ namespace EarleCode
                 new SimpleBinaryOperator((l, r) => EarleValue.Subtract(l ?? EarleValue.Null, r ?? EarleValue.Null)));
             SetOperator("==",
                 new SimpleBinaryOperator(
-                    (l, r) => ((l ?? EarleValue.Null).Value == (r ?? EarleValue.Null).Value) ? 1 : 0));
+                    (l, r) => (float) (l ?? EarleValue.Null) == (float) (r ?? EarleValue.Null) ? 1 : 0));//todo fix: float: lol?
             SetOperator("!=",
                 new SimpleBinaryOperator(
-                    (l, r) => ((l ?? EarleValue.Null).Value != (r ?? EarleValue.Null).Value) ? 1 : 0));
+                    (l, r) => (float)(l ?? EarleValue.Null) != (float)(r ?? EarleValue.Null) ? 1 : 0));
             SetOperator("<",
                 new SimpleBinaryOperator(
                     (l, r) => (float) (l ?? EarleValue.Null) < (float) (r ?? EarleValue.Null) ? 1 : 0));
@@ -53,6 +53,10 @@ namespace EarleCode
             SetOperator(">=",
                 new SimpleBinaryOperator(
                     (l, r) => (float) (l ?? EarleValue.Null) >= (float) (r ?? EarleValue.Null) ? 1 : 0));
+
+            SetUnaryOperator("-", new SimpleUnaryOperator(EarleValue.Negative));
+            SetUnaryOperator("+", new SimpleUnaryOperator(EarleValue.Positive));
+            SetUnaryOperator("!", new SimpleUnaryOperator(v => (!v.ToBoolean()) ? 1 : 0));
         }
 
         public Runtime() : this(new Compiler())
@@ -132,6 +136,7 @@ namespace EarleCode
 
         private readonly List<WaitingCall> _waitingCalls = new List<WaitingCall>();
 
+        public int WaitingCallsCount => _waitingCalls.Count;
         public void Continue()
         {
             // todo : lol this is stupid
@@ -149,17 +154,26 @@ namespace EarleCode
         }
 
         private readonly IEarleBinaryOperator[] _binaryOperators = new IEarleBinaryOperator[13];//todo don't hardcode
+        private readonly IEarleUnaryOperator[] _unaryOperators = new IEarleUnaryOperator[13];//todo don't hardcode
 
         public IEarleBinaryOperator GetOperator(string operatorToken)
         {
             return _binaryOperators[OperatorUtil.GetOperatorIdentifier(operatorToken)];
         }
 
-        public void SetOperator(string operatorToken,
-            IEarleBinaryOperator @operator)
+        public IEarleUnaryOperator GetUnaryOperator(string operatorToken)
         {
-            _binaryOperators[OperatorUtil.GetOperatorIdentifier(operatorToken)]
-                = @operator;
+            return _unaryOperators[OperatorUtil.GetOperatorIdentifier(operatorToken)];
+        }
+
+        public void SetOperator(string operatorToken,  IEarleBinaryOperator @operator)
+        {
+            _binaryOperators[OperatorUtil.GetOperatorIdentifier(operatorToken)]  = @operator;
+        }
+
+        public void SetUnaryOperator(string operatorToken, IEarleUnaryOperator @operator)
+        {
+            _unaryOperators[OperatorUtil.GetOperatorIdentifier(operatorToken)] = @operator;
         }
     }
 }

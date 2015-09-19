@@ -32,8 +32,11 @@ namespace EarleCode.Debug
 
             for (;;)
             {
-                Thread.Sleep(20);
-                runtime.Continue();
+                if (runtime.WaitingCallsCount > 0)
+                {
+                    System.Diagnostics.Debug.WriteLine("cont");
+                    runtime.Continue();
+                }
             }
         }
     }

@@ -33,7 +33,7 @@ namespace EarleCode
 
             var result2 = expression2.Invoke(runtime, context);
             if (result2.State == InvocationState.Incomplete)
-                return new InvocationResult(new OperatorIncompleteInvocationResult(context, result2.Result, expression1, expression2, 1));
+                return new InvocationResult(new OperatorIncompleteInvocationResult(context, result2.Result, expression1, expression2, result1.ReturnValue, 1));
 
             return new InvocationResult(InvocationState.None,
                 Compute(result1.ReturnValue,
@@ -84,5 +84,37 @@ namespace EarleCode
         }
 
         protected abstract EarleValue Compute(EarleValue? value1, EarleValue? value2);
+    }
+
+
+    public abstract class EarleUnaryOperator : IEarleUnaryOperator
+    {
+        #region Implementation of IEarleBinaryOperator
+
+        public InvocationResult Invoke(Runtime runtime, IEarleContext context, IExpression expression)
+        {
+            var result = expression.Invoke(runtime, context);
+
+            return result.State == InvocationState.Incomplete
+                ? new InvocationResult(new UnaryOperatorIncompleteInvocationResult(context, result.Result, expression))
+                : new InvocationResult(InvocationState.None, Compute(result.ReturnValue));
+        }
+
+        public InvocationResult Continue(Runtime runtime, IncompleteInvocationResult incompleteInvocationResult)
+        {
+            var incomplete = incompleteInvocationResult as UnaryOperatorIncompleteInvocationResult;
+
+            var result = incomplete.Expression.Continue(runtime, incomplete.InnerResult);
+
+            return result.State == InvocationState.Incomplete
+                ? new InvocationResult(new UnaryOperatorIncompleteInvocationResult(incomplete.Context, result.Result,
+                    incomplete.Expression))
+                : new InvocationResult(InvocationState.None, Compute(result.ReturnValue));
+        }
+
+
+        #endregion
+        
+        protected abstract EarleValue Compute(EarleValue value);
     }
 }

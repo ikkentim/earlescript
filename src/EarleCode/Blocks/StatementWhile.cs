@@ -31,23 +31,68 @@ namespace EarleCode.Blocks
 
         public override InvocationResult Invoke(Runtime runtime, IEarleContext context)
         {
-            while (_expression.Invoke(runtime, context).ReturnValue.ToBoolean())
+            for (;;)
             {
-                foreach (var block in Blocks)
                 {
-                    var result = block.Invoke(runtime, context);
+                    var result = _expression.Invoke(runtime, context);
 
-                    if (result.State != InvocationState.None)
-                        return result;
+                    if (result.State == InvocationState.Incomplete)
+                        return new InvocationResult(new IncompleteInvocationResult(context, result.Result, 0, null));
+
+                    if (!result.ReturnValue.ToBoolean())
+                        return InvocationResult.Empty;
+                }
+
+                {
+                    var result = InvokeBlocks(runtime, context);
+
+                    switch (result.State)
+                    {
+                        case InvocationState.Incomplete:
+                            return new InvocationResult(new IncompleteInvocationResult(context, result.Result, 1, null));
+                        case InvocationState.Returned:
+                            return result;
+                    }
                 }
             }
-
-            return InvocationResult.Empty;
         }
 
         public override InvocationResult Continue(Runtime runtime, IncompleteInvocationResult incompleteInvocationResult)
         {
-            throw new NotImplementedException();
+            var continueStage = incompleteInvocationResult.Stage;
+            for (;;)
+            {
+                if(continueStage <= 0)
+                {
+                    var result = continueStage == 0
+                        ? _expression.Continue(runtime, incompleteInvocationResult.InnerResult)
+                        : _expression.Invoke(runtime, incompleteInvocationResult.Context);
+
+                    if (result.State == InvocationState.Incomplete)
+                        return
+                            new InvocationResult(new IncompleteInvocationResult(incompleteInvocationResult.Context,
+                                result.Result, 0, null));
+
+                    if (!result.ReturnValue.ToBoolean())
+                        return InvocationResult.Empty;
+                }
+
+                {
+                    var result = continueStage == 1
+                        ? ContinueBlocks(runtime, incompleteInvocationResult.InnerResult)
+                        : InvokeBlocks(runtime, incompleteInvocationResult.Context);
+
+                    switch (result.State)
+                    {
+                        case InvocationState.Incomplete:
+                            return new InvocationResult(new IncompleteInvocationResult(incompleteInvocationResult.Context, result.Result, 1, null));
+                        case InvocationState.Returned:
+                            return result;
+                    }
+                }
+
+                continueStage = -1;
+            }
         }
 
         /// <summary>

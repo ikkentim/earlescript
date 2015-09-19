@@ -28,15 +28,24 @@ namespace EarleCode.Blocks
 
         public override InvocationResult Invoke(Runtime runtime, IEarleContext context)
         {
-            // todo : states
+            if (_expression == null)
+                return new InvocationResult(InvocationState.Returned, EarleValue.Null);
 
-            return new InvocationResult(InvocationState.Returned,
-                _expression?.Invoke(runtime, context).ReturnValue ?? EarleValue.Null);
+            var result = _expression.Invoke(runtime, context);
+            return result.State == InvocationState.Incomplete
+                ? result
+                : new InvocationResult(InvocationState.Returned, result.ReturnValue);
         }
 
         public override InvocationResult Continue(Runtime runtime, IncompleteInvocationResult incompleteInvocationResult)
         {
-            throw new System.NotImplementedException();
+            if (_expression == null)
+                return new InvocationResult(InvocationState.Returned, EarleValue.Null);
+
+            var result = _expression.Continue(runtime, incompleteInvocationResult);
+            return result.State == InvocationState.Incomplete
+                ? result
+                : new InvocationResult(InvocationState.Returned, result.ReturnValue);
         }
 
         /// <summary>

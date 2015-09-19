@@ -31,23 +31,47 @@ namespace EarleCode.Blocks
 
         public override InvocationResult Invoke(Runtime runtime, IEarleContext context)
         {
-            if (!_expression.Invoke(runtime, context).ReturnValue.ToBoolean())
-                return InvocationResult.Empty;
-
-            foreach (var block in Blocks)
             {
-                var result = block.Invoke(runtime, context);
+                var result = _expression.Invoke(runtime, context);
 
-                if (result.State != InvocationState.None)
-                    return result;
+                if(result.State == InvocationState.Incomplete)
+                    return new InvocationResult(new IncompleteInvocationResult(context, result.Result, 0, null));
+
+                if (!result.ReturnValue.ToBoolean())
+                    return InvocationResult.Empty;
             }
 
-            return InvocationResult.Empty;
+            {
+                var result = InvokeBlocks(runtime, context);
+
+                return result.State == InvocationState.Incomplete
+                    ? new InvocationResult(new IncompleteInvocationResult(context, result.Result, 1, null))
+                    : result;
+            }
         }
 
         public override InvocationResult Continue(Runtime runtime, IncompleteInvocationResult incompleteInvocationResult)
         {
-            throw new NotImplementedException();
+            if (incompleteInvocationResult.Stage == 0)
+            {
+                var result = _expression.Continue(runtime, incompleteInvocationResult.InnerResult);
+
+                if (result.State == InvocationState.Incomplete)
+                    return new InvocationResult(new IncompleteInvocationResult(incompleteInvocationResult.Context, result.Result, 0, null));
+
+                if (!result.ReturnValue.ToBoolean())
+                    return InvocationResult.Empty;
+            }
+
+            {
+                var result = incompleteInvocationResult.Stage == 0
+                    ? InvokeBlocks(runtime, incompleteInvocationResult.Context)
+                    : ContinueBlocks(runtime, incompleteInvocationResult.InnerResult);
+
+                return result.State == InvocationState.Incomplete
+                    ? new InvocationResult(new IncompleteInvocationResult(incompleteInvocationResult.Context, result.Result, 1, null))
+                    : result;
+            }
         }
 
         /// <summary>
