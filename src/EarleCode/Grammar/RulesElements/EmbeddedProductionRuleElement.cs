@@ -42,10 +42,11 @@ namespace EarleCode.Grammar.RulesElements
                     tokenWalker.CreateSession();
                     if (rule.Rule.Matches(tokenWalker, productionRules))
                     {
-                        productionRules.Where(rule2 => rule2.Name == Rule)
-                            .Where(rule2 => IsRecursiveProductionRule(rule2.Rule.Conditions.First()))
-                            // ReSharper disable once ReturnValueOfPureMethodIsNotUsed
-                            .Any(rule2 => rule2.Rule.Matches(tokenWalker, productionRules, 1));
+                        foreach (var rule2 in productionRules)
+                            if (rule2.Name == Rule && IsRecursiveProductionRule(rule2.Rule.Conditions.First()) &&
+                                rule2.Rule.Matches(tokenWalker, productionRules, 1))
+                                break;
+                                
                         tokenWalker.FlushSession();
                         return true;
                     }

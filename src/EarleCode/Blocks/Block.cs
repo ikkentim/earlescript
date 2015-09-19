@@ -61,6 +61,50 @@ namespace EarleCode.Blocks
 
         #endregion
 
+        public InvocationResult InvokeBlocks(Runtime runtime, IEarleContext context)
+        {
+            for (var i = 0; i < Blocks.Count(); i++)
+            {
+                var block = Blocks.ElementAt(i);
+
+                var result = block.Invoke(runtime, context);
+
+                switch (result.State)
+                {
+                    case InvocationState.Incomplete:
+                        return new InvocationResult(new IncompleteInvocationResult(context, result.Result, i, null));
+                    case InvocationState.Returned:
+                        return result;
+                }
+            }
+
+            return InvocationResult.Empty;
+        }
+
+        public InvocationResult ContinueBlocks(Runtime runtime, IncompleteInvocationResult incompleteInvocationResult)
+        {
+            for (var i = incompleteInvocationResult.Stage; i < Blocks.Count(); i++)
+            {
+                var block = Blocks.ElementAt(i);
+
+                var result = i == incompleteInvocationResult.Stage
+                    ? block.Continue(runtime, incompleteInvocationResult.InnerResult)
+                    : block.Invoke(runtime, incompleteInvocationResult.Context);
+
+                switch (result.State)
+                {
+                    case InvocationState.Incomplete:
+                        return
+                            new InvocationResult(new IncompleteInvocationResult(incompleteInvocationResult.Context,
+                                result.Result, i, null));
+                    case InvocationState.Returned:
+                        return result;
+                }
+            }
+
+            return InvocationResult.Empty;
+        }
+
         #region Overrides of Object
 
         /// <summary>

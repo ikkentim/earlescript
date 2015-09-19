@@ -26,19 +26,38 @@ namespace EarleCode.Blocks
 
         public override InvocationResult Invoke(Runtime runtime, IEarleContext context)
         {
-            _assignmentExpression?.Invoke(runtime, context);
-
-            while (_checkExpression == null || _checkExpression.Invoke(runtime, context).ReturnValue.ToBoolean())
+            if (_assignmentExpression != null)
             {
-                foreach (var block in Blocks)
-                {
-                    var result = block.Invoke(runtime, context);
+                var result = _assignmentExpression.Invoke(runtime, context);
 
-                    if (result.State != InvocationState.None)
-                        return result;
+                if (result.State == InvocationState.Incomplete)
+                    return new InvocationResult(new IncompleteInvocationResult(context, result.Result, 0, null));
+            }
+
+            while (true)
+            {
+                if (_checkExpression != null)
+                {
+                    var result = _checkExpression.Invoke(runtime, context);
+                    if (result.State == InvocationState.Incomplete)
+                        return new InvocationResult(new IncompleteInvocationResult(context, result.Result, 1, null));
+
+                    if (!result.ReturnValue.ToBoolean())
+                        break;
                 }
 
-                _incrementExpression?.Invoke(runtime, context);
+                {
+                    var result = InvokeBlocks(runtime, context);
+                    if (result.State == InvocationState.Incomplete)
+                        return new InvocationResult(new IncompleteInvocationResult(context, result.Result, 2, null));
+                }
+
+                if (_incrementExpression != null)
+                {
+                    var result = _incrementExpression.Invoke(runtime, context);
+                    if (result.State == InvocationState.Incomplete)
+                        return new InvocationResult(new IncompleteInvocationResult(context, result.Result, 3, null));
+                }
             }
 
             return InvocationResult.Empty;
@@ -46,7 +65,62 @@ namespace EarleCode.Blocks
 
         public override InvocationResult Continue(Runtime runtime, IncompleteInvocationResult incompleteInvocationResult)
         {
-            throw new NotImplementedException();
+            if (_assignmentExpression != null && incompleteInvocationResult.Stage == 0)
+            {
+                var result = _assignmentExpression.Continue(runtime, incompleteInvocationResult);
+
+                if (result.State == InvocationState.Incomplete)
+                    return
+                        new InvocationResult(new IncompleteInvocationResult(incompleteInvocationResult.Context,
+                            result.Result, 0, null));
+            }
+
+            var continueStage = incompleteInvocationResult.Stage;
+            while (true)
+            {
+                if (_checkExpression != null && continueStage <= 1)
+                {
+                    var result = continueStage == 1
+                        ? _checkExpression.Continue(runtime, incompleteInvocationResult.InnerResult)
+                        : _checkExpression.Invoke(runtime, incompleteInvocationResult.Context);
+
+                    if (result.State == InvocationState.Incomplete)
+                        return
+                            new InvocationResult(new IncompleteInvocationResult(incompleteInvocationResult.Context,
+                                result.Result, 1, null));
+
+                    if (!result.ReturnValue.ToBoolean())
+                        break;
+                }
+
+                if(continueStage <= 2)
+                {
+                    var result = continueStage == 2
+                        ? ContinueBlocks(runtime, incompleteInvocationResult.InnerResult)
+                        : InvokeBlocks(runtime, incompleteInvocationResult.Context);
+
+                    if (result.State == InvocationState.Incomplete)
+                        return
+                            new InvocationResult(new IncompleteInvocationResult(incompleteInvocationResult.Context,
+                                result.Result, 2, null));
+                }
+
+                if (_incrementExpression != null && continueStage <= 3)
+                {
+                    var result = continueStage == 3
+                        ? _incrementExpression.Continue(runtime, incompleteInvocationResult.InnerResult)
+                        : _incrementExpression.Invoke(runtime, incompleteInvocationResult.Context);
+
+                    if (result.State == InvocationState.Incomplete)
+                        return
+                            new InvocationResult(new IncompleteInvocationResult(incompleteInvocationResult.Context,
+                                result.Result, 3, null));
+                }
+
+                continueStage = 0;
+            }
+
+            return InvocationResult.Empty;
         }
 
         /// <summary>

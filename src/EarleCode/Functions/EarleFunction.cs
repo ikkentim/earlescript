@@ -16,14 +16,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using EarleCode.Blocks;
 
 namespace EarleCode.Functions
 {
-    public class EarleFunction : Block, IEarleFunction
+    public class EarleFunction : ScopeBlock, IEarleFunction
     {
-        private readonly VariablesTable _variables = new VariablesTable();
-
         public EarleFunction(IScriptScope scriptScope, string name, string[] parameterNames) : base(scriptScope)
         {
             Name = name;
@@ -39,11 +36,11 @@ namespace EarleCode.Functions
             if (ParameterNames.Length != args.Length)
                 throw new ArgumentException("Invalid argument count", nameof(args));
 
-            _variables.Clear();
-            _variables.AddRange(ParameterNames.Zip(args.Select(v => (IVariable) new Variable(v)),
+            Variables.Clear();
+            Variables.AddRange(ParameterNames.Zip(args.Select(v => (IVariable) new Variable(v)),
                 (p, a) => new KeyValuePair<string, IVariable>(p, a)));
 
-            _variables.Add("self", new Variable(context == null ? EarleValue.Null : new EarleValue(context)));
+            Variables.Add("self", new Variable(context == null ? EarleValue.Null : new EarleValue(context)));
 
             return Invoke(runtime, context);
         }
@@ -53,57 +50,15 @@ namespace EarleCode.Functions
         public override InvocationResult Invoke(Runtime runtime, IEarleContext context)
         {
             // todo parameters!
-            for (var i = 0; i < Blocks.Count(); i++)
-            {
-                var block = Blocks.ElementAt(i);
-
-                var result = block.Invoke(runtime, context);
-
-                switch (result.State)
-                {
-                    case InvocationState.Incomplete:
-                        return new InvocationResult(new IncompleteInvocationResult(context, result.Result, i, null));
-                    case InvocationState.Returned:
-                        return result;
-                }
-            }
-
-            return InvocationResult.Empty;
+            var result = InvokeBlocks(runtime, context);
+            return result;
         }
 
         public override InvocationResult Continue(Runtime runtime, IncompleteInvocationResult incompleteInvocationResult)
         {
             // todo parameters!
-            for (var i = incompleteInvocationResult.Stage; i < Blocks.Count(); i++)
-            {
-                var block = Blocks.ElementAt(i);
-
-                var result = i == incompleteInvocationResult.Stage
-                    ? block.Continue(runtime, incompleteInvocationResult.InnerResult)
-                    : block.Invoke(runtime, incompleteInvocationResult.Context);
-
-                switch (result.State)
-                {
-                    case InvocationState.Incomplete:
-                        return new InvocationResult(new IncompleteInvocationResult(incompleteInvocationResult.Context, result.Result, i, null));
-                    case InvocationState.Returned:
-                        return result;
-                }
-            }
-
-            return InvocationResult.Empty;
-        }
-
-        public override IVariable AddVariable(string variableName)
-        {
-            var variable = new Variable();
-            _variables.Add(variableName, variable);
-            return variable;
-        }
-        
-        public override IVariable ResolveVariable(string variableName)
-        {
-            return base.ResolveVariable(variableName) ?? _variables.Resolve(variableName);
+            var result = ContinueBlocks(runtime, incompleteInvocationResult);
+            return result;
         }
         
         #endregion

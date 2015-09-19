@@ -188,10 +188,10 @@ namespace EarleCode.Grammar
                                     add(new LiteralProductionRuleElement(tokens[i].Value, TokenType.Identifier));
 
                                 // The only other accepted token is a ` token. This token will break the search.
-                                if (tokens[i].Type == TokenType.Token && tokens[i].Value != "`")
+                                else if (tokens[i].Type == TokenType.Token && tokens[i].Value == "`")
                                     break;
-
-                                throw new ParseException(token, "expected '`', found " + tokens[i].Value);
+                                else
+                                    throw new ParseException(token, "expected '`', found " + tokens[i].Value);
                             }
                         }
 

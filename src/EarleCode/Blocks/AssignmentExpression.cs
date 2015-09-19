@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EarleCode.Blocks
 {
@@ -44,7 +40,7 @@ namespace EarleCode.Blocks
 
         public override InvocationResult Continue(Runtime runtime, IncompleteInvocationResult incompleteInvocationResult)
         {
-            var result = _expression.Continue(runtime, incompleteInvocationResult.InnerResult);
+            var result = _expression.Continue(runtime, incompleteInvocationResult);
             
             return result.State == InvocationState.Incomplete
                 ? new InvocationResult(result.Result)

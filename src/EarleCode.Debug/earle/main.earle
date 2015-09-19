@@ -1,16 +1,24 @@
 ﻿init()
 { 
-    println("waittest test:");
-    waittest();
-    println("");
+    println("s");
+
+    num = delayfive() + 4;
+    for(j=1;j<num;j++)
+    {
+        println("j is " + j);
+    }
+
+    // println("waittest test:");
+    // waittest();
+    // println("");
 
     // println("\ext::b test:");
     // \ext::b();
     // println("");
 
-    println("testA test:");
-    testA();
-    println("");
+    // println("testA test:");
+    // testA();
+    // println("");
 } 
 
 waittest()
@@ -25,6 +33,12 @@ testB()
     return "World";
 }
 
+delayfive()
+{
+    wait .5;
+    return 5;
+}
+
 testA()
 {
     var1 = true;
@@ -35,7 +49,7 @@ testA()
 
     i=0;
 
-    while(i < 2)
+    while(i < 5)
     {
         if(var1)
         {
@@ -44,7 +58,7 @@ testA()
         }
     }
 
-    for(j=0;j<3;j++)
+    for(j=0;j<2;j++)
     {
         println("j is " + j);
     }
