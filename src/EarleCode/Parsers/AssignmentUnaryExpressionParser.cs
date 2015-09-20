@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using EarleCode.Blocks;
+using EarleCode.Blocks.Expressions;
 using EarleCode.Tokens;
 
 namespace EarleCode.Parsers

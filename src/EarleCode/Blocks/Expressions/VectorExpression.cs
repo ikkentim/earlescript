@@ -1,7 +1,8 @@
 using System;
+using EarleCode.Blocks.Expressions;
 using EarleCode.Values;
 
-namespace EarleCode.Blocks
+namespace EarleCode.Blocks.Expressions
 {
     public class VectorExpression : Block, IExpression
     {

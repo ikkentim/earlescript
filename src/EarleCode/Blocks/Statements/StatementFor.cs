@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using EarleCode.Blocks.Expressions;
 
-namespace EarleCode.Blocks
+namespace EarleCode.Blocks.Statements
 {
-    public class StatementFor : Block
+    public class StatementFor : ScopeBlock
     {
         private readonly IBlock _assignmentExpression;
         private readonly IExpression _checkExpression;

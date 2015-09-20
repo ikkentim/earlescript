@@ -17,7 +17,7 @@ using System;
 using System.Linq;
 using EarleCode.Values;
 
-namespace EarleCode.Blocks
+namespace EarleCode.Blocks.Expressions
 {
     public class VariableExpression : Block, IExpression
     {

@@ -14,20 +14,17 @@
 // limitations under the License.
 
 using System;
-using System.Diagnostics;
-using System.Linq;
 using EarleCode.Functions;
-using EarleCode.Parsers;
 using EarleCode.Values;
 
-namespace EarleCode.Blocks
+namespace EarleCode.Blocks.Expressions
 {
-    public class FunctionCall : Block, IExpression
+    public class FunctionCallExpression : Block, IExpression
     {
         private readonly IExpression[] _arguments;
         private readonly EarleFunctionSignature _functionSignature;
 
-        public FunctionCall(IScriptScope scriptScope, EarleFunctionSignature functionSignature,
+        public FunctionCallExpression(IScriptScope scriptScope, EarleFunctionSignature functionSignature,
             params IExpression[] arguments)
             : base(scriptScope)
         {

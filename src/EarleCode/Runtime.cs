@@ -15,10 +15,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices.ComTypes;
 using EarleCode.Functions;
 using EarleCode.Operators;
-using EarleCode.Parsers;
 using EarleCode.Values;
 
 namespace EarleCode

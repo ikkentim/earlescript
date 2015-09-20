@@ -18,6 +18,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using EarleCode.Blocks;
+using EarleCode.Blocks.Expressions;
 using EarleCode.Functions;
 using EarleCode.Tokens;
 using EarleCode.Values;

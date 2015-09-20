@@ -15,33 +15,36 @@
 
 using System;
 
-namespace EarleCode.Blocks
+namespace EarleCode.Blocks.Expressions
 {
-    public class UnaryOperatorExpression : Block, IExpression
+    public class BinaryOperatorExpression : Block, IExpression
     {
-        public UnaryOperatorExpression(IScriptScope scriptScope, string operatorToken,
-            IExpression expression) : base(scriptScope)
-        {
-            if (operatorToken == null) throw new ArgumentNullException(nameof(operatorToken));
-            if (expression == null) throw new ArgumentNullException(nameof(expression));
-            OperatorToken = operatorToken;
-            Expression = expression;
-        }
-
+        public IExpression LeftExpression { get; }
         public string OperatorToken { get; }
-        public IExpression Expression { get; }
+        public IExpression RightExpression { get; }
+
+        public BinaryOperatorExpression(IScriptScope scriptScope, IExpression leftExpression, string operatorToken,
+            IExpression rightExpression) : base(scriptScope)
+        {
+            if (leftExpression == null) throw new ArgumentNullException(nameof(leftExpression));
+            if (operatorToken == null) throw new ArgumentNullException(nameof(operatorToken));
+            if (rightExpression == null) throw new ArgumentNullException(nameof(rightExpression));
+            LeftExpression = leftExpression;
+            OperatorToken = operatorToken;
+            RightExpression = rightExpression;
+        }
 
         #region Overrides of Block
 
         public override InvocationResult Invoke(Runtime runtime, IEarleContext context)
         {
-            return runtime.GetUnaryOperator(OperatorToken)?.Invoke(runtime, context, Expression) ??
+            return runtime.GetOperator(OperatorToken)?.Invoke(runtime, context, LeftExpression, RightExpression) ??
                    InvocationResult.Empty;
         }
 
         public override InvocationResult Continue(Runtime runtime, IncompleteInvocationResult incompleteInvocationResult)
         {
-            return runtime.GetUnaryOperator(OperatorToken)?.Continue(runtime, incompleteInvocationResult) ??
+            return runtime.GetOperator(OperatorToken)?.Continue(runtime, incompleteInvocationResult) ??
                    InvocationResult.Empty;
         }
 
@@ -57,7 +60,7 @@ namespace EarleCode.Blocks
         /// </returns>
         public override string ToString()
         {
-            return $"{OperatorToken}{Expression}";
+            return $"{LeftExpression} {OperatorToken} {RightExpression}";
         }
 
         #endregion

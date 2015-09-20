@@ -15,7 +15,7 @@
 
 using System;
 
-namespace EarleCode.Blocks
+namespace EarleCode.Blocks.Statements
 {
     public class StatementWait : Block
     {

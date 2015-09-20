@@ -14,29 +14,35 @@
 // limitations under the License.
 
 using System;
-using EarleCode.Values;
 
-namespace EarleCode.Blocks
+namespace EarleCode.Blocks.Expressions
 {
-    public class ValueExpression : Block, IExpression
+    public class UnaryOperatorExpression : Block, IExpression
     {
-        private readonly EarleValue _value;
-
-        public ValueExpression(IScriptScope scriptScope, EarleValue value) : base(scriptScope)
+        public UnaryOperatorExpression(IScriptScope scriptScope, string operatorToken,
+            IExpression expression) : base(scriptScope)
         {
-            _value = value;
+            if (operatorToken == null) throw new ArgumentNullException(nameof(operatorToken));
+            if (expression == null) throw new ArgumentNullException(nameof(expression));
+            OperatorToken = operatorToken;
+            Expression = expression;
         }
+
+        public string OperatorToken { get; }
+        public IExpression Expression { get; }
 
         #region Overrides of Block
 
         public override InvocationResult Invoke(Runtime runtime, IEarleContext context)
         {
-            return new InvocationResult(InvocationState.None, _value);
+            return runtime.GetUnaryOperator(OperatorToken)?.Invoke(runtime, context, Expression) ??
+                   InvocationResult.Empty;
         }
 
         public override InvocationResult Continue(Runtime runtime, IncompleteInvocationResult incompleteInvocationResult)
         {
-            return new InvocationResult(InvocationState.None, _value);
+            return runtime.GetUnaryOperator(OperatorToken)?.Continue(runtime, incompleteInvocationResult) ??
+                   InvocationResult.Empty;
         }
 
         #endregion
@@ -51,7 +57,7 @@ namespace EarleCode.Blocks
         /// </returns>
         public override string ToString()
         {
-            return _value.ToString();
+            return $"{OperatorToken}{Expression}";
         }
 
         #endregion

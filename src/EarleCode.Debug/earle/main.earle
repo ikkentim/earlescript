@@ -1,7 +1,7 @@
 ﻿init()
 { 
     println("s");
-
+    ::if(eleven);
     num = delayfive() + 4;
 
     vec = (0.5 + -delayfive(), 5.5 + delayfive(), 10.5 + delayfive());

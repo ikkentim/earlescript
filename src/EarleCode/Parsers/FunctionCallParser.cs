@@ -15,16 +15,17 @@
 
 using System.Collections.Generic;
 using EarleCode.Blocks;
+using EarleCode.Blocks.Expressions;
 using EarleCode.Functions;
 using EarleCode.Tokens;
 
 namespace EarleCode.Parsers
 {
-    public class FunctionCallParser : Parser<FunctionCall>
+    public class FunctionCallParser : Parser<FunctionCallExpression>
     {
         #region Overrides of Parser<FunctionCall>
 
-        public override FunctionCall Parse(ICompiler compiler, IScriptScope scriptScope, ITokenizer tokenizer)
+        public override FunctionCallExpression Parse(ICompiler compiler, IScriptScope scriptScope, ITokenizer tokenizer)
         {
             string path = null;
 
@@ -66,7 +67,7 @@ namespace EarleCode.Parsers
                 arguments.Add(expressionParser.Parse(compiler, scriptScope, tokenizer));
             }
 
-            var functionCall = new FunctionCall(scriptScope, new EarleFunctionSignature(name, path), arguments.ToArray());
+            var functionCall = new FunctionCallExpression(scriptScope, new EarleFunctionSignature(name, path), arguments.ToArray());
             compiler.Compile(functionCall, tokenizer);
             tokenizer.AssertMoveNext();
             return functionCall;

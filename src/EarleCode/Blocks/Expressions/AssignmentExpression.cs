@@ -2,7 +2,7 @@
 using System.Linq;
 using EarleCode.Values;
 
-namespace EarleCode.Blocks
+namespace EarleCode.Blocks.Expressions
 {
     public class AssignmentExpression : Block, IExpression
     {

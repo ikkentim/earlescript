@@ -14,38 +14,29 @@
 // limitations under the License.
 
 using System;
+using EarleCode.Values;
 
-namespace EarleCode.Blocks
+namespace EarleCode.Blocks.Expressions
 {
-    public class BinaryOperatorExpression : Block, IExpression
+    public class ValueExpression : Block, IExpression
     {
-        public IExpression LeftExpression { get; }
-        public string OperatorToken { get; }
-        public IExpression RightExpression { get; }
+        private readonly EarleValue _value;
 
-        public BinaryOperatorExpression(IScriptScope scriptScope, IExpression leftExpression, string operatorToken,
-            IExpression rightExpression) : base(scriptScope)
+        public ValueExpression(IScriptScope scriptScope, EarleValue value) : base(scriptScope)
         {
-            if (leftExpression == null) throw new ArgumentNullException(nameof(leftExpression));
-            if (operatorToken == null) throw new ArgumentNullException(nameof(operatorToken));
-            if (rightExpression == null) throw new ArgumentNullException(nameof(rightExpression));
-            LeftExpression = leftExpression;
-            OperatorToken = operatorToken;
-            RightExpression = rightExpression;
+            _value = value;
         }
 
         #region Overrides of Block
 
         public override InvocationResult Invoke(Runtime runtime, IEarleContext context)
         {
-            return runtime.GetOperator(OperatorToken)?.Invoke(runtime, context, LeftExpression, RightExpression) ??
-                   InvocationResult.Empty;
+            return new InvocationResult(InvocationState.None, _value);
         }
 
         public override InvocationResult Continue(Runtime runtime, IncompleteInvocationResult incompleteInvocationResult)
         {
-            return runtime.GetOperator(OperatorToken)?.Continue(runtime, incompleteInvocationResult) ??
-                   InvocationResult.Empty;
+            return new InvocationResult(InvocationState.None, _value);
         }
 
         #endregion
@@ -60,7 +51,7 @@ namespace EarleCode.Blocks
         /// </returns>
         public override string ToString()
         {
-            return $"{LeftExpression} {OperatorToken} {RightExpression}";
+            return _value.ToString();
         }
 
         #endregion

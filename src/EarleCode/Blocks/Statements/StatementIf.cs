@@ -14,10 +14,11 @@
 // limitations under the License.
 
 using System;
+using EarleCode.Blocks.Expressions;
 
-namespace EarleCode.Blocks
+namespace EarleCode.Blocks.Statements
 {
-    public class StatementIf : Block
+    public class StatementIf : ScopeBlock
     {
         private readonly IExpression _expression;
 

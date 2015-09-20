@@ -14,6 +14,7 @@
 // limitations under the License.
 
 using EarleCode.Blocks;
+using EarleCode.Blocks.Expressions;
 
 namespace EarleCode.Operators
 {

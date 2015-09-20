@@ -13,9 +13,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using EarleCode.Blocks.Expressions;
 using EarleCode.Values;
 
-namespace EarleCode.Blocks
+namespace EarleCode.Blocks.Statements
 {
     public class StatementReturn : Block
     {
