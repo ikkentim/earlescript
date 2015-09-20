@@ -13,31 +13,32 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Collections.Generic;
+using EarleCode.Values;
 
-namespace EarleCode
+namespace EarleCode.Blocks
 {
-    public class VariablesTable : Dictionary<string, IVariable>
+    public abstract class ScopeBlock : Block
     {
-        public void Add(KeyValuePair<string, IVariable> keyValuePair)
+        protected ScopeBlock(IScriptScope scriptScope) : base(scriptScope)
         {
-            Add(keyValuePair.Key, keyValuePair.Value);
         }
 
-        public void AddRange(IEnumerable<KeyValuePair<string, IVariable>> keyValuePairs)
-        {
-            if (keyValuePairs == null) throw new ArgumentNullException(nameof(keyValuePairs));
+        protected VariablesTable Variables { get; set; } = new VariablesTable();
 
-            foreach (var keyValuePair in keyValuePairs)
-                Add(keyValuePair);
-        }
+        #region Overrides of Block
 
-        public IVariable Resolve(string name)
+        public override IVariable AddVariable(string variableName)
         {
-            IVariable variable;
-            TryGetValue(name, out variable);
+            var variable = new Variable();
+            Variables.Add(variableName, variable);
             return variable;
         }
+
+        public override IVariable ResolveVariable(string variableName)
+        {
+            return base.ResolveVariable(variableName) ?? Variables.Resolve(variableName);
+        }
+
+        #endregion
     }
 }

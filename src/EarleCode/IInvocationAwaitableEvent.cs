@@ -1,4 +1,4 @@
-﻿// EarleCode
+// EarleCode
 // Copyright 2015 Tim Potze
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,27 +15,8 @@
 
 namespace EarleCode
 {
-    public class Variable : IVariable
+    public interface IInvocationAwaitableEvent
     {
-        private EarleValue _value;
-        
-        public Variable()
-        {
-        }
-        
-        public Variable(EarleValue value)
-        {
-            _value = value;
-        }
-
-        public void Set(EarleValue value)
-        {
-            _value = value;
-        }
-
-        public EarleValue Get()
-        {
-            return _value;
-        }
+        bool IsReady();
     }
 }

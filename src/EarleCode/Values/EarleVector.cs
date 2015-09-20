@@ -13,17 +13,28 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace EarleCode
+namespace EarleCode.Values
 {
-    public enum EarleValueType
+    public struct EarleVector
     {
-        Void = 0,
-        Integer = 1,
-        Float = 2,
-        String = 3,
-        Array = 4,
-        Vector = 5,
-        Function = 6,
-        Context = 7,
+        public EarleVector(float x, float y, float z)
+        {
+            X = x;
+            Y = y;
+            Z = z;
+        }
+
+        public float X { get; set; }
+        public float Y { get; set; }
+        public float Z { get; set; }
+
+        #region Overrides of ValueType
+
+        public override string ToString()
+        {
+            return $"({X}, {Y}, {Z})";
+        }
+
+        #endregion
     }
 }

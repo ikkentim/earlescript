@@ -14,6 +14,7 @@
 // limitations under the License.
 
 using System;
+using EarleCode.Values;
 
 namespace EarleCode
 {
@@ -46,32 +47,4 @@ namespace EarleCode
         public EarleValue ReturnValue { get; }
         public IncompleteInvocationResult Result { get; }
     }
-
-    public interface IInvocationAwaitableEvent
-    {
-        bool IsReady();
-    }
-    public class IncompleteInvocationResult
-    {
-        public IEarleContext Context { get; }
-        public IncompleteInvocationResult InnerResult { get; }
-        public int Stage { get; }
-        public EarleValue[] Data { get; }
-        public IInvocationAwaitableEvent Event { get; }
-        public IncompleteInvocationResult(IEarleContext context, IncompleteInvocationResult innerResult, int stage, EarleValue[] data, IInvocationAwaitableEvent @event = null)
-        {
-            Context = context;
-            InnerResult = innerResult;
-            Stage = stage;
-            Data = data;
-            Event = @event;
-        }
-
-        public IncompleteInvocationResult(IEarleContext context, IncompleteInvocationResult innerResult)
-            : this(context, innerResult, -1, null, null)
-        {
-            
-        }
-    }
-
 }

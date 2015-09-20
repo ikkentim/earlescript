@@ -13,30 +13,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using EarleCode.Blocks;
+using System;
+using EarleCode.Values;
 
-namespace EarleCode.Functions
+namespace EarleCode.Operators
 {
-    public abstract class ScopeBlock : Block
+    public class SimpleUnaryOperator : EarleUnaryOperator
     {
-        protected ScopeBlock(IScriptScope scriptScope) : base(scriptScope)
+        private readonly Func<EarleValue, EarleValue> _compute;
+
+        public SimpleUnaryOperator(Func<EarleValue, EarleValue> compute)
         {
+            if (compute == null) throw new ArgumentNullException(nameof(compute));
+            _compute = compute;
         }
 
-        protected VariablesTable Variables { get; } = new VariablesTable();
+        #region Overrides of EarleBinaryOperator
 
-        #region Overrides of Block
-
-        public override IVariable AddVariable(string variableName)
+        protected override EarleValue Compute(EarleValue value)
         {
-            var variable = new Variable();
-            Variables.Add(variableName, variable);
-            return variable;
-        }
-
-        public override IVariable ResolveVariable(string variableName)
-        {
-            return base.ResolveVariable(variableName) ?? Variables.Resolve(variableName);
+            return _compute(value);
         }
 
         #endregion

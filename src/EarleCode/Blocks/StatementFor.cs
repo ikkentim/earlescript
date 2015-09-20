@@ -31,7 +31,7 @@ namespace EarleCode.Blocks
                 var result = _assignmentExpression.Invoke(runtime, context);
 
                 if (result.State == InvocationState.Incomplete)
-                    return new InvocationResult(new IncompleteInvocationResult(context, result.Result, 0, null));
+                    return new InvocationResult(new IncompleteInvocationResult(context, result.Result) {Stage=0});
             }
 
             while (true)
@@ -40,7 +40,7 @@ namespace EarleCode.Blocks
                 {
                     var result = _checkExpression.Invoke(runtime, context);
                     if (result.State == InvocationState.Incomplete)
-                        return new InvocationResult(new IncompleteInvocationResult(context, result.Result, 1, null));
+                        return new InvocationResult(new IncompleteInvocationResult(context, result.Result) { Stage = 1 });
 
                     if (!result.ReturnValue.ToBoolean())
                         break;
@@ -49,14 +49,14 @@ namespace EarleCode.Blocks
                 {
                     var result = InvokeBlocks(runtime, context);
                     if (result.State == InvocationState.Incomplete)
-                        return new InvocationResult(new IncompleteInvocationResult(context, result.Result, 2, null));
+                        return new InvocationResult(new IncompleteInvocationResult(context, result.Result) { Stage = 2});
                 }
 
                 if (_incrementExpression != null)
                 {
                     var result = _incrementExpression.Invoke(runtime, context);
                     if (result.State == InvocationState.Incomplete)
-                        return new InvocationResult(new IncompleteInvocationResult(context, result.Result, 3, null));
+                        return new InvocationResult(new IncompleteInvocationResult(context, result.Result) { Stage = 3});
                 }
             }
 
@@ -72,7 +72,7 @@ namespace EarleCode.Blocks
                 if (result.State == InvocationState.Incomplete)
                     return
                         new InvocationResult(new IncompleteInvocationResult(incompleteInvocationResult.Context,
-                            result.Result, 0, null));
+                            result.Result) { Stage = 0 });
             }
 
             var continueStage = incompleteInvocationResult.Stage;
@@ -87,7 +87,8 @@ namespace EarleCode.Blocks
                     if (result.State == InvocationState.Incomplete)
                         return
                             new InvocationResult(new IncompleteInvocationResult(incompleteInvocationResult.Context,
-                                result.Result, 1, null));
+                                result.Result)
+                            { Stage = 1 });
 
                     if (!result.ReturnValue.ToBoolean())
                         break;
@@ -102,7 +103,8 @@ namespace EarleCode.Blocks
                     if (result.State == InvocationState.Incomplete)
                         return
                             new InvocationResult(new IncompleteInvocationResult(incompleteInvocationResult.Context,
-                                result.Result, 2, null));
+                                result.Result)
+                            { Stage = 2 });
                 }
 
                 if (_incrementExpression != null && continueStage <= 3)
@@ -114,7 +116,8 @@ namespace EarleCode.Blocks
                     if (result.State == InvocationState.Incomplete)
                         return
                             new InvocationResult(new IncompleteInvocationResult(incompleteInvocationResult.Context,
-                                result.Result, 3, null));
+                                result.Result)
+                            { Stage = 3 });
                 }
 
                 continueStage = 0;

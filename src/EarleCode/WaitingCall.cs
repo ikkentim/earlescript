@@ -19,9 +19,6 @@ namespace EarleCode
 {
     public struct WaitingCall
     {
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="T:System.Object" /> class.
-        /// </summary>
         public WaitingCall(IEarleFunction function, IncompleteInvocationResult incompleteInvocationResult)
         {
             Function = function;

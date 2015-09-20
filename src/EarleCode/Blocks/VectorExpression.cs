@@ -1,4 +1,5 @@
 using System;
+using EarleCode.Values;
 
 namespace EarleCode.Blocks
 {
@@ -26,17 +27,17 @@ namespace EarleCode.Blocks
 
             var xResult = _xExpression.Invoke(runtime, context);
             if (xResult.State == InvocationState.Incomplete)
-                return new InvocationResult(new IncompleteInvocationResult(context, xResult.Result, 0, values));
+                return new InvocationResult(new IncompleteInvocationResult(context, xResult.Result) { Stage = 0, Data=values });
             values[0] = xResult.ReturnValue;
             
             var yResult = _yExpression.Invoke(runtime, context);
             if (yResult.State == InvocationState.Incomplete)
-                return new InvocationResult(new IncompleteInvocationResult(context, yResult.Result, 1, values));
+                return new InvocationResult(new IncompleteInvocationResult(context, yResult.Result) { Stage = 1, Data = values });
             values[1] = yResult.ReturnValue;
             
             var zResult = _zExpression.Invoke(runtime, context);
             if (zResult.State == InvocationState.Incomplete)
-                return new InvocationResult(new IncompleteInvocationResult(context, zResult.Result, 2, values));
+                return new InvocationResult(new IncompleteInvocationResult(context, zResult.Result) { Stage = 2, Data = values });
             var z = zResult.ReturnValue;
             
             return new InvocationResult(InvocationState.None,
@@ -52,7 +53,7 @@ namespace EarleCode.Blocks
             {
                 var xResult = _xExpression.Continue(runtime, incompleteInvocationResult.InnerResult);
                 if (xResult.State == InvocationState.Incomplete)
-                    return new InvocationResult(new IncompleteInvocationResult(incompleteInvocationResult.Context, xResult.Result, 0, values));
+                    return new InvocationResult(new IncompleteInvocationResult(incompleteInvocationResult.Context, xResult.Result) { Stage = 0, Data = values });
                 values[0] = xResult.ReturnValue;
             }
 
@@ -63,7 +64,7 @@ namespace EarleCode.Blocks
                     : _yExpression.Continue(runtime, incompleteInvocationResult.InnerResult);
 
                 if (yResult.State == InvocationState.Incomplete)
-                    return new InvocationResult(new IncompleteInvocationResult(incompleteInvocationResult.Context, yResult.Result, 1, values));
+                    return new InvocationResult(new IncompleteInvocationResult(incompleteInvocationResult.Context, yResult.Result) { Stage = 1, Data = values });
                 values[1] = yResult.ReturnValue;
             }
 
@@ -72,7 +73,7 @@ namespace EarleCode.Blocks
                 : _zExpression.Invoke(runtime, incompleteInvocationResult.Context);
 
             if (zResult.State == InvocationState.Incomplete)
-                return new InvocationResult(new IncompleteInvocationResult(incompleteInvocationResult.Context, zResult.Result, 2, values));
+                return new InvocationResult(new IncompleteInvocationResult(incompleteInvocationResult.Context, zResult.Result) { Stage = 2, Data = values });
             var z = zResult.ReturnValue;
 
             return new InvocationResult(InvocationState.None,

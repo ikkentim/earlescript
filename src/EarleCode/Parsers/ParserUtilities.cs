@@ -17,6 +17,7 @@ using System;
 using System.Globalization;
 using EarleCode.Blocks;
 using EarleCode.Tokens;
+using EarleCode.Values;
 
 namespace EarleCode.Parsers
 {

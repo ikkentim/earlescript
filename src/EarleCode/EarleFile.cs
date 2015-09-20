@@ -16,6 +16,7 @@
 using System;
 using System.Collections.Generic;
 using EarleCode.Functions;
+using EarleCode.Values;
 
 namespace EarleCode
 {

@@ -14,6 +14,7 @@
 // limitations under the License.
 
 using System;
+using EarleCode.Values;
 
 namespace EarleCode.Functions
 {
@@ -32,27 +33,7 @@ namespace EarleCode.Functions
 
         public InvocationResult Continue(Runtime runtime, IncompleteInvocationResult incompleteInvocationResult)
         {
-            throw new NotImplementedException("does not break");
-        }
-
-        #endregion
-    }
-    internal class PrintLnFunction : IEarleFunction
-    {
-        #region Implementation of IEarleFunction
-
-        public InvocationResult Invoke(Runtime runtime, IEarleContext context, params EarleValue[] args)
-        {
-            foreach (var arg in args)
-            {
-                Console.WriteLine(arg.Value);
-            }
-            return InvocationResult.Empty;
-        }
-
-        public InvocationResult Continue(Runtime runtime, IncompleteInvocationResult incompleteInvocationResult)
-        {
-            throw new NotImplementedException("does not break");
+            throw new NotImplementedException("This function call does not await events");
         }
 
         #endregion

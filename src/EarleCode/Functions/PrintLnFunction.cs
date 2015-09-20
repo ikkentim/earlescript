@@ -13,13 +13,29 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using EarleCode.Values;
 
 namespace EarleCode.Functions
 {
-    public interface IEarleFunction
+    internal class PrintLnFunction : IEarleFunction
     {
-        InvocationResult Invoke(Runtime runtime, IEarleContext context, params EarleValue[] args);
-        InvocationResult Continue(Runtime runtime, IncompleteInvocationResult incompleteInvocationResult);
+        #region Implementation of IEarleFunction
+
+        public InvocationResult Invoke(Runtime runtime, IEarleContext context, params EarleValue[] args)
+        {
+            foreach (var arg in args)
+            {
+                Console.WriteLine(arg.Value);
+            }
+            return InvocationResult.Empty;
+        }
+
+        public InvocationResult Continue(Runtime runtime, IncompleteInvocationResult incompleteInvocationResult)
+        {
+            throw new NotImplementedException("This function call does not await events");
+        }
+
+        #endregion
     }
 }

@@ -43,7 +43,7 @@
   <ItemGroup>
     <Compile Include="Blocks\AssignmentExpression.cs" />
     <Compile Include="Blocks\AssignmentUnaryExpression.cs" />
-    <Compile Include="Blocks\OperatorExpression.cs" />
+    <Compile Include="Blocks\BinaryOperatorExpression.cs" />
     <Compile Include="Blocks\StatementFor.cs" />
     <Compile Include="Blocks\StatementIf.cs" />
     <Compile Include="Blocks\StatementReturn.cs" />
@@ -52,14 +52,17 @@
     <Compile Include="Blocks\UnaryOperatorExpression.cs" />
     <Compile Include="Blocks\VectorExpression.cs" />
     <Compile Include="Compiler.cs" />
-    <Compile Include="EarleBinaryOperator.cs" />
-    <Compile Include="EarleVector.cs" />
+    <Compile Include="Functions\PrintLnFunction.cs" />
+    <Compile Include="IInvocationAwaitableEvent.cs" />
+    <Compile Include="IncompleteInvocationResult.cs" />
+    <Compile Include="Operators\EarleBinaryOperator.cs" />
+    <Compile Include="Values\EarleVector.cs" />
     <Compile Include="Functions\PrintFunction.cs" />
     <Compile Include="EarleFile.cs" />
     <Compile Include="Functions\EarleFunction.cs" />
-    <Compile Include="EarleValue.cs" />
-    <Compile Include="EarleValueType.cs" />
-    <Compile Include="Functions\ScopeBlock.cs" />
+    <Compile Include="Values\EarleValue.cs" />
+    <Compile Include="Values\EarleValueType.cs" />
+    <Compile Include="Blocks\ScopeBlock.cs" />
     <Compile Include="Grammar\RulesElements\AndProductionRuleElement.cs" />
     <Compile Include="Grammar\RulesElements\EmbeddedProductionRuleElement.cs" />
     <Compile Include="Grammar\GrammarProcessor.cs" />
@@ -68,17 +71,17 @@
     <Compile Include="Grammar\RulesElements\OptionalProductionRuleElement.cs" />
     <Compile Include="Grammar\ProductionRule.cs" />
     <Compile Include="ICompiler.cs" />
-    <Compile Include="IEarleBinaryOperator.cs" />
+    <Compile Include="Operators\IEarleBinaryOperator.cs" />
     <Compile Include="IEarleContext.cs" />
     <Compile Include="Functions\IEarleFunction.cs" />
-    <Compile Include="IEarleUnaryOperator.cs" />
+    <Compile Include="Operators\IEarleUnaryOperator.cs" />
     <Compile Include="InvocationResult.cs" />
     <Compile Include="InvocationState.cs" />
     <Compile Include="Blocks\Block.cs" />
     <Compile Include="Functions\EarleFunctionSignature.cs" />
-    <Compile Include="IVariable.cs" />
-    <Compile Include="OperatorIncompleteInvocationResult.cs" />
-    <Compile Include="OperatorUtil.cs" />
+    <Compile Include="Values\IVariable.cs" />
+    <Compile Include="Operators\EarleUnaryOperator.cs" />
+    <Compile Include="Operators\OperatorUtil.cs" />
     <Compile Include="Parsers\AssignmentExpressionParser.cs" />
     <Compile Include="Parsers\AssignmentUnaryExpressionParser.cs" />
     <Compile Include="Parsers\ExpressionParser.cs" />
@@ -100,7 +103,8 @@
     <Compile Include="Parsers\StatementWhileParser.cs" />
     <Compile Include="Parsers\VectorExpressionParser.cs" />
     <Compile Include="Runtime.cs" />
-    <Compile Include="SimpleBinaryOperator.cs" />
+    <Compile Include="Operators\SimpleBinaryOperator.cs" />
+    <Compile Include="Operators\SimpleUnaryOperator.cs" />
     <Compile Include="Tokens\ITokenizer.cs" />
     <Compile Include="Tokens\TokenUtils.cs" />
     <Compile Include="Tokens\Tokenizer.cs" />
@@ -110,8 +114,8 @@
     <Compile Include="Tokens\TokenType.cs" />
     <Compile Include="Tokens\TokenTypeData.cs" />
     <Compile Include="Tokens\TokenWalker.cs" />
-    <Compile Include="Variable.cs" />
-    <Compile Include="VariablesTable.cs" />
+    <Compile Include="Values\Variable.cs" />
+    <Compile Include="Values\VariablesTable.cs" />
     <Compile Include="WaitingCall.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

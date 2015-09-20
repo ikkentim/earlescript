@@ -1,4 +1,4 @@
-﻿// EarleCode
+// EarleCode
 // Copyright 2015 Tim Potze
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,13 +13,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using EarleCode.Blocks;
+using EarleCode.Values;
 
 namespace EarleCode
 {
-    public interface IEarleBinaryOperator
+    public class IncompleteInvocationResult
     {
-        InvocationResult Invoke(Runtime runtime, IEarleContext context, IExpression expression1, IExpression expression2);
-        InvocationResult Continue(Runtime runtime, IncompleteInvocationResult incompleteInvocationResult);
+        public IncompleteInvocationResult(IEarleContext context, IncompleteInvocationResult innerResult)
+        {
+            Context = context;
+            InnerResult = innerResult;
+        }
+
+        public IEarleContext Context { get; }
+        public IncompleteInvocationResult InnerResult { get; }
+        public int Stage { get; set;  }
+        public EarleValue[] Data { get; set; }
+        public VariablesTable Variables { get; set; }
+        public IInvocationAwaitableEvent Event { get; set; }
     }
 }

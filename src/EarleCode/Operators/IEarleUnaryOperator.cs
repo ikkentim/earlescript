@@ -13,13 +13,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using EarleCode.Values;
+using EarleCode.Blocks;
 
-namespace EarleCode.Functions
+namespace EarleCode.Operators
 {
-    public interface IEarleFunction
+    public interface IEarleUnaryOperator
     {
-        InvocationResult Invoke(Runtime runtime, IEarleContext context, params EarleValue[] args);
+        InvocationResult Invoke(Runtime runtime, IEarleContext context, IExpression expression);
         InvocationResult Continue(Runtime runtime, IncompleteInvocationResult incompleteInvocationResult);
     }
 }

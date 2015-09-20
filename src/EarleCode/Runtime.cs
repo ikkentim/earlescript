@@ -17,13 +17,18 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices.ComTypes;
 using EarleCode.Functions;
+using EarleCode.Operators;
 using EarleCode.Parsers;
+using EarleCode.Values;
 
 namespace EarleCode
 {
     public class Runtime : IScriptScope
     {
         private readonly ICompiler _compiler;
+        private readonly List<WaitingCall> _waitingCalls = new List<WaitingCall>();
+        private readonly IEarleBinaryOperator[] _binaryOperators = new IEarleBinaryOperator[13];//todo don't hardcode
+        private readonly IEarleUnaryOperator[] _unaryOperators = new IEarleUnaryOperator[13];//todo don't hardcode
 
         public Runtime(ICompiler compiler)
         {
@@ -134,8 +139,6 @@ namespace EarleCode
             return result;
         }
 
-        private readonly List<WaitingCall> _waitingCalls = new List<WaitingCall>();
-
         public int WaitingCallsCount => _waitingCalls.Count;
         public void Continue()
         {
@@ -153,14 +156,10 @@ namespace EarleCode
             }
         }
 
-        private readonly IEarleBinaryOperator[] _binaryOperators = new IEarleBinaryOperator[13];//todo don't hardcode
-        private readonly IEarleUnaryOperator[] _unaryOperators = new IEarleUnaryOperator[13];//todo don't hardcode
-
         public IEarleBinaryOperator GetOperator(string operatorToken)
         {
             return _binaryOperators[OperatorUtil.GetOperatorIdentifier(operatorToken)];
         }
-
         public IEarleUnaryOperator GetUnaryOperator(string operatorToken)
         {
             return _unaryOperators[OperatorUtil.GetOperatorIdentifier(operatorToken)];

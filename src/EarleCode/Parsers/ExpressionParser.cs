@@ -20,6 +20,7 @@ using System.Linq;
 using EarleCode.Blocks;
 using EarleCode.Functions;
 using EarleCode.Tokens;
+using EarleCode.Values;
 
 namespace EarleCode.Parsers
 {
@@ -34,8 +35,6 @@ namespace EarleCode.Parsers
 
         public override IExpression Parse(ICompiler compiler, IScriptScope scriptScope, ITokenizer tokenizer)
         {
-            Debug.WriteLine($"Parsing expression... current token is {tokenizer.Current}");
-
             IExpression expression;
 
             if (compiler.Grammar.Matches(tokenizer, "ASSIGNMENT_UNARY"))
@@ -135,7 +134,7 @@ namespace EarleCode.Parsers
             {
                 var operatorToken = tokenizer.Current.Value;
                 tokenizer.AssertMoveNext();
-                return new OperatorExpression(scriptScope, expression, operatorToken,
+                return new BinaryOperatorExpression(scriptScope, expression, operatorToken,
                     Parse(compiler, scriptScope, tokenizer));
             }
 

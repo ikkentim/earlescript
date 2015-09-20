@@ -14,8 +14,9 @@
 // limitations under the License.
 
 using EarleCode.Blocks;
+using EarleCode.Values;
 
-namespace EarleCode
+namespace EarleCode.Operators
 {
     public abstract class EarleBinaryOperator : IEarleBinaryOperator
     {
@@ -26,14 +27,18 @@ namespace EarleCode
         {
             var result1 = expression1.Invoke(runtime, context);
             if (result1.State == InvocationState.Incomplete)
-                return new InvocationResult(new OperatorIncompleteInvocationResult(context, result1.Result, expression1, expression2, 0));
+                return
+                    new InvocationResult(new OperatorIncompleteInvocationResult(context, result1.Result, expression1,
+                        expression2, 0));
 
             if (!IsValue1Acceptable(result1.ReturnValue))
                 return new InvocationResult(InvocationState.None, Compute(null, null));
 
             var result2 = expression2.Invoke(runtime, context);
             if (result2.State == InvocationState.Incomplete)
-                return new InvocationResult(new OperatorIncompleteInvocationResult(context, result2.Result, expression1, expression2, result1.ReturnValue, 1));
+                return
+                    new InvocationResult(new OperatorIncompleteInvocationResult(context, result2.Result, expression1,
+                        expression2, result1.ReturnValue, 1));
 
             return new InvocationResult(InvocationState.None,
                 Compute(result1.ReturnValue,
@@ -84,37 +89,31 @@ namespace EarleCode
         }
 
         protected abstract EarleValue Compute(EarleValue? value1, EarleValue? value2);
-    }
 
-
-    public abstract class EarleUnaryOperator : IEarleUnaryOperator
-    {
-        #region Implementation of IEarleBinaryOperator
-
-        public InvocationResult Invoke(Runtime runtime, IEarleContext context, IExpression expression)
+        private class OperatorIncompleteInvocationResult : IncompleteInvocationResult
         {
-            var result = expression.Invoke(runtime, context);
+            public OperatorIncompleteInvocationResult(IEarleContext context, IncompleteInvocationResult innerResult,
+                IExpression expression1, IExpression expression2, int stage)
+                : base(context, innerResult) 
+            {
+                Expression1 = expression1;
+                Expression2 = expression2;
+                Stage = stage;
+            }
 
-            return result.State == InvocationState.Incomplete
-                ? new InvocationResult(new UnaryOperatorIncompleteInvocationResult(context, result.Result, expression))
-                : new InvocationResult(InvocationState.None, Compute(result.ReturnValue));
+            public OperatorIncompleteInvocationResult(IEarleContext context, IncompleteInvocationResult innerResult,
+                IExpression expression1, IExpression expression2, EarleValue value1, int stage)
+                : base(context, innerResult)
+            {
+                Expression1 = expression1;
+                Expression2 = expression2;
+                Value1 = value1;
+                Stage = stage;
+            }
+
+            public IExpression Expression1 { get; }
+            public EarleValue Value1 { get; set; }
+            public IExpression Expression2 { get; }
         }
-
-        public InvocationResult Continue(Runtime runtime, IncompleteInvocationResult incompleteInvocationResult)
-        {
-            var incomplete = incompleteInvocationResult as UnaryOperatorIncompleteInvocationResult;
-
-            var result = incomplete.Expression.Continue(runtime, incomplete.InnerResult);
-
-            return result.State == InvocationState.Incomplete
-                ? new InvocationResult(new UnaryOperatorIncompleteInvocationResult(incomplete.Context, result.Result,
-                    incomplete.Expression))
-                : new InvocationResult(InvocationState.None, Compute(result.ReturnValue));
-        }
-
-
-        #endregion
-        
-        protected abstract EarleValue Compute(EarleValue value);
     }
 }

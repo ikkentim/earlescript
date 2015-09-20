@@ -15,7 +15,7 @@
 
 using EarleCode.Functions;
 
-namespace EarleCode
+namespace EarleCode.Values
 {
     public struct EarleValue
     {

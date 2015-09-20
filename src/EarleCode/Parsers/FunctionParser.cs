@@ -26,8 +26,6 @@ namespace EarleCode.Parsers
 
         public override EarleFunction Parse(ICompiler compiler, IScriptScope scriptScope, ITokenizer tokenizer)
         {
-            Debug.WriteLine("Parsing function...");
-
             var name = tokenizer.Current.Value;
             var parameters = new List<string>();
 

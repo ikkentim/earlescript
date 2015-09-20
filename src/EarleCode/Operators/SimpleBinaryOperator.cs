@@ -14,8 +14,9 @@
 // limitations under the License.
 
 using System;
+using EarleCode.Values;
 
-namespace EarleCode
+namespace EarleCode.Operators
 {
     public class SimpleBinaryOperator : EarleBinaryOperator
     {
@@ -52,27 +53,6 @@ namespace EarleCode
         {
             return _isValue2Acceptable == null || _isValue2Acceptable(value);
         }
-
-        #endregion
-    }
-
-    public class SimpleUnaryOperator : EarleUnaryOperator
-    {
-        private readonly Func<EarleValue, EarleValue> _compute;
-
-        public SimpleUnaryOperator(Func<EarleValue, EarleValue> compute)
-        {
-            if (compute == null) throw new ArgumentNullException(nameof(compute));
-            _compute = compute;
-        }
-
-        #region Overrides of EarleBinaryOperator
-
-        protected override EarleValue Compute(EarleValue value)
-        {
-            return _compute(value);
-        }
-        
 
         #endregion
     }

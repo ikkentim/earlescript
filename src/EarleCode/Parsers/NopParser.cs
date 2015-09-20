@@ -25,7 +25,6 @@ namespace EarleCode.Parsers
 
         public override IBlock Parse(ICompiler compiler, IScriptScope scriptScope, ITokenizer tokenizer)
         {
-            Debug.WriteLine("PARSING NOP");
             return null;
         }
 

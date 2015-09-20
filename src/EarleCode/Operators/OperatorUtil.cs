@@ -15,7 +15,7 @@
 
 using System;
 
-namespace EarleCode
+namespace EarleCode.Operators
 {
     public static class OperatorUtil
     {

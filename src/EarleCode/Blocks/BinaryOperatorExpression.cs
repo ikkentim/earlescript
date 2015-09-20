@@ -17,13 +17,13 @@ using System;
 
 namespace EarleCode.Blocks
 {
-    public class OperatorExpression : Block, IExpression
+    public class BinaryOperatorExpression : Block, IExpression
     {
         public IExpression LeftExpression { get; }
         public string OperatorToken { get; }
         public IExpression RightExpression { get; }
 
-        public OperatorExpression(IScriptScope scriptScope, IExpression leftExpression, string operatorToken,
+        public BinaryOperatorExpression(IScriptScope scriptScope, IExpression leftExpression, string operatorToken,
             IExpression rightExpression) : base(scriptScope)
         {
             if (leftExpression == null) throw new ArgumentNullException(nameof(leftExpression));

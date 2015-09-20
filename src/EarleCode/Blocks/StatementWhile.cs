@@ -37,7 +37,7 @@ namespace EarleCode.Blocks
                     var result = _expression.Invoke(runtime, context);
 
                     if (result.State == InvocationState.Incomplete)
-                        return new InvocationResult(new IncompleteInvocationResult(context, result.Result, 0, null));
+                        return new InvocationResult(new IncompleteInvocationResult(context, result.Result) {Stage=0});
 
                     if (!result.ReturnValue.ToBoolean())
                         return InvocationResult.Empty;
@@ -49,7 +49,7 @@ namespace EarleCode.Blocks
                     switch (result.State)
                     {
                         case InvocationState.Incomplete:
-                            return new InvocationResult(new IncompleteInvocationResult(context, result.Result, 1, null));
+                            return new InvocationResult(new IncompleteInvocationResult(context, result.Result) { Stage = 1 });
                         case InvocationState.Returned:
                             return result;
                     }
@@ -70,8 +70,7 @@ namespace EarleCode.Blocks
 
                     if (result.State == InvocationState.Incomplete)
                         return
-                            new InvocationResult(new IncompleteInvocationResult(incompleteInvocationResult.Context,
-                                result.Result, 0, null));
+                            new InvocationResult(new IncompleteInvocationResult(incompleteInvocationResult.Context, result.Result) { Stage = 0 });
 
                     if (!result.ReturnValue.ToBoolean())
                         return InvocationResult.Empty;
@@ -85,7 +84,7 @@ namespace EarleCode.Blocks
                     switch (result.State)
                     {
                         case InvocationState.Incomplete:
-                            return new InvocationResult(new IncompleteInvocationResult(incompleteInvocationResult.Context, result.Result, 1, null));
+                            return new InvocationResult(new IncompleteInvocationResult(incompleteInvocationResult.Context, result.Result) { Stage = 1 });
                         case InvocationState.Returned:
                             return result;
                     }

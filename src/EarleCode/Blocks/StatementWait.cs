@@ -17,26 +17,6 @@ using System;
 
 namespace EarleCode.Blocks
 {
-    public class WaitInvocationAwaitableEvent : IInvocationAwaitableEvent
-    {
-        public DateTime StartTime { get; }
-        public float Time { get; }
-        
-        public WaitInvocationAwaitableEvent(float time)
-        {
-            StartTime = DateTime.Now;
-            Time = time;
-        }
-
-        #region Implementation of IInvocationAwaitableEvent
-
-        public bool IsReady()
-        {
-            return (DateTime.Now - StartTime).TotalSeconds > Time;
-        }
-
-        #endregion
-    }
     public class StatementWait : Block
     {
         private readonly float _time;
@@ -52,8 +32,10 @@ namespace EarleCode.Blocks
         {
             return _time <= 0
                 ? InvocationResult.Empty
-                : new InvocationResult(new IncompleteInvocationResult(context, null, 0, null,
-                    new WaitInvocationAwaitableEvent(_time)));
+                : new InvocationResult(new IncompleteInvocationResult(context, null)
+                {
+                    Event = new WaitInvocationAwaitableEvent(_time)
+                });
         }
 
         public override InvocationResult Continue(Runtime runtime, IncompleteInvocationResult incompleteInvocationResult)
@@ -69,5 +51,26 @@ namespace EarleCode.Blocks
         }
 
         #endregion
+
+        private class WaitInvocationAwaitableEvent : IInvocationAwaitableEvent
+        {
+            public DateTime StartTime { get; }
+            public float Time { get; }
+
+            public WaitInvocationAwaitableEvent(float time)
+            {
+                StartTime = DateTime.Now;
+                Time = time;
+            }
+
+            #region Implementation of IInvocationAwaitableEvent
+
+            public bool IsReady()
+            {
+                return (DateTime.Now - StartTime).TotalSeconds > Time;
+            }
+
+            #endregion
+        }
     }
 }

@@ -18,6 +18,7 @@ using System.Diagnostics;
 using System.Linq;
 using EarleCode.Functions;
 using EarleCode.Parsers;
+using EarleCode.Values;
 
 namespace EarleCode.Blocks
 {
@@ -57,7 +58,7 @@ namespace EarleCode.Blocks
                 var result = argument.Invoke(runtime, context);
 
                 if (result.State == InvocationState.Incomplete)
-                    return new InvocationResult(new IncompleteInvocationResult(context, result.Result, i, parameters));
+                    return new InvocationResult(new IncompleteInvocationResult(context, result.Result) {Stage=i, Data=parameters});
 
                 parameters[i] = result.ReturnValue;
             }
@@ -65,8 +66,7 @@ namespace EarleCode.Blocks
             var functionResult = GetFunction().Invoke(runtime, context, parameters);
 
             return functionResult.State == InvocationState.Incomplete
-                ? new InvocationResult(new IncompleteInvocationResult(context, functionResult.Result, _arguments.Length,
-                    parameters))
+                ? new InvocationResult(new IncompleteInvocationResult(context, functionResult.Result) {Stage = _arguments.Length, Data=parameters})
                 : new InvocationResult(InvocationState.None, functionResult.ReturnValue);
         }
 
@@ -84,7 +84,7 @@ namespace EarleCode.Blocks
                 if (result.State == InvocationState.Incomplete)
                     return
                         new InvocationResult(new IncompleteInvocationResult(incompleteInvocationResult.Context,
-                            result.Result, i, parameters));
+                            result.Result) {Stage=i,Data=parameters});
 
                 parameters[i] = result.ReturnValue;
             }
@@ -95,7 +95,7 @@ namespace EarleCode.Blocks
 
             return functionResult.State == InvocationState.Incomplete
                 ? new InvocationResult(new IncompleteInvocationResult(incompleteInvocationResult.Context,
-                    functionResult.Result, _arguments.Length, parameters))
+                    functionResult.Result) {Stage=_arguments.Length, Data=parameters})
                 : new InvocationResult(InvocationState.None, functionResult.ReturnValue);
         }
 

@@ -14,6 +14,7 @@
 // limitations under the License.
 
 using EarleCode.Functions;
+using EarleCode.Values;
 
 namespace EarleCode
 {

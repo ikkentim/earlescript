@@ -17,7 +17,6 @@ using System.Collections.Generic;
 using EarleCode.Blocks;
 using EarleCode.Functions;
 using EarleCode.Tokens;
-using static System.Diagnostics.Debug;
 
 namespace EarleCode.Parsers
 {
@@ -27,8 +26,6 @@ namespace EarleCode.Parsers
 
         public override FunctionCall Parse(ICompiler compiler, IScriptScope scriptScope, ITokenizer tokenizer)
         {
-            WriteLine("Parsing function call...");
-
             string path = null;
 
             if (tokenizer.Current.Is(TokenType.Token, "::"))

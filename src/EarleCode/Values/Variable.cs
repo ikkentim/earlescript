@@ -13,13 +13,29 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using EarleCode.Blocks;
-
-namespace EarleCode
+namespace EarleCode.Values
 {
-    public interface IEarleUnaryOperator
+    public class Variable : IVariable
     {
-        InvocationResult Invoke(Runtime runtime, IEarleContext context, IExpression expression);
-        InvocationResult Continue(Runtime runtime, IncompleteInvocationResult incompleteInvocationResult);
+        private EarleValue _value;
+        
+        public Variable()
+        {
+        }
+        
+        public Variable(EarleValue value)
+        {
+            _value = value;
+        }
+
+        public void Set(EarleValue value)
+        {
+            _value = value;
+        }
+
+        public EarleValue Get()
+        {
+            return _value;
+        }
     }
 }

@@ -13,28 +13,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace EarleCode
+using EarleCode.Blocks;
+
+namespace EarleCode.Operators
 {
-    public struct EarleVector
+    public interface IEarleBinaryOperator
     {
-        public EarleVector(float x, float y, float z)
-        {
-            X = x;
-            Y = y;
-            Z = z;
-        }
-
-        public float X { get; set; }
-        public float Y { get; set; }
-        public float Z { get; set; }
-
-        #region Overrides of ValueType
-
-        public override string ToString()
-        {
-            return $"({X}, {Y}, {Z})";
-        }
-
-        #endregion
+        InvocationResult Invoke(Runtime runtime, IEarleContext context, IExpression expression1, IExpression expression2);
+        InvocationResult Continue(Runtime runtime, IncompleteInvocationResult incompleteInvocationResult);
     }
 }

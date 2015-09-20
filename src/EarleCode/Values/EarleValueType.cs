@@ -13,13 +13,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using EarleCode.Values;
-
-namespace EarleCode.Functions
+namespace EarleCode.Values
 {
-    public interface IEarleFunction
+    public enum EarleValueType
     {
-        InvocationResult Invoke(Runtime runtime, IEarleContext context, params EarleValue[] args);
-        InvocationResult Continue(Runtime runtime, IncompleteInvocationResult incompleteInvocationResult);
+        Void = 0,
+        Integer = 1,
+        Float = 2,
+        String = 3,
+        Array = 4,
+        Vector = 5,
+        Function = 6,
+        Context = 7,
     }
 }

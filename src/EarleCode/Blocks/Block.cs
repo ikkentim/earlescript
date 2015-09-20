@@ -17,6 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using EarleCode.Functions;
+using EarleCode.Values;
 
 namespace EarleCode.Blocks
 {
@@ -72,7 +73,7 @@ namespace EarleCode.Blocks
                 switch (result.State)
                 {
                     case InvocationState.Incomplete:
-                        return new InvocationResult(new IncompleteInvocationResult(context, result.Result, i, null));
+                        return new InvocationResult(new IncompleteInvocationResult(context, result.Result) {Stage=i});
                     case InvocationState.Returned:
                         return result;
                 }
@@ -96,7 +97,7 @@ namespace EarleCode.Blocks
                     case InvocationState.Incomplete:
                         return
                             new InvocationResult(new IncompleteInvocationResult(incompleteInvocationResult.Context,
-                                result.Result, i, null));
+                                result.Result) { Stage = i });
                     case InvocationState.Returned:
                         return result;
                 }
