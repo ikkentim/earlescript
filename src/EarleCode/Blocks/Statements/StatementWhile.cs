@@ -38,7 +38,7 @@ namespace EarleCode.Blocks.Statements
                     var result = _expression.Invoke(runtime, context);
 
                     if (result.State == InvocationState.Incomplete)
-                        return new InvocationResult(new IncompleteInvocationResult(context, result.Result) {Stage=0});
+                        return new InvocationResult(new IncompleteInvocationResult(context, result.Result) {Stage=0,Variables =Variables.Clone()});
 
                     if (!result.ReturnValue.ToBoolean())
                         return InvocationResult.Empty;
@@ -50,7 +50,7 @@ namespace EarleCode.Blocks.Statements
                     switch (result.State)
                     {
                         case InvocationState.Incomplete:
-                            return new InvocationResult(new IncompleteInvocationResult(context, result.Result) { Stage = 1 });
+                            return new InvocationResult(new IncompleteInvocationResult(context, result.Result) { Stage = 1,Variables = Variables.Clone()});
                         case InvocationState.Returned:
                             return result;
                     }
@@ -60,6 +60,8 @@ namespace EarleCode.Blocks.Statements
 
         public override InvocationResult Continue(Runtime runtime, IncompleteInvocationResult incompleteInvocationResult)
         {
+            Variables = incompleteInvocationResult.Variables;
+
             var continueStage = incompleteInvocationResult.Stage;
             for (;;)
             {
@@ -71,7 +73,7 @@ namespace EarleCode.Blocks.Statements
 
                     if (result.State == InvocationState.Incomplete)
                         return
-                            new InvocationResult(new IncompleteInvocationResult(incompleteInvocationResult.Context, result.Result) { Stage = 0 });
+                            new InvocationResult(new IncompleteInvocationResult(incompleteInvocationResult.Context, result.Result) { Stage = 0,Variables=Variables.Clone() });
 
                     if (!result.ReturnValue.ToBoolean())
                         return InvocationResult.Empty;
@@ -85,7 +87,7 @@ namespace EarleCode.Blocks.Statements
                     switch (result.State)
                     {
                         case InvocationState.Incomplete:
-                            return new InvocationResult(new IncompleteInvocationResult(incompleteInvocationResult.Context, result.Result) { Stage = 1 });
+                            return new InvocationResult(new IncompleteInvocationResult(incompleteInvocationResult.Context, result.Result) { Stage = 1,Variables=Variables.Clone() });
                         case InvocationState.Returned:
                             return result;
                     }

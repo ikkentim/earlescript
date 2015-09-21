@@ -81,6 +81,8 @@ namespace EarleCode.Blocks
                     case InvocationState.Returned:
                         return result;
                 }
+
+                incompleteInvocationResult.Stage = -1;
             }
 
             return InvocationResult.Empty;

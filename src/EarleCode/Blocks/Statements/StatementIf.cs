@@ -32,11 +32,13 @@ namespace EarleCode.Blocks.Statements
 
         public override InvocationResult Invoke(Runtime runtime, IEarleContext context)
         {
+            Variables.Clear();
+
             {
                 var result = _expression.Invoke(runtime, context);
 
                 if(result.State == InvocationState.Incomplete)
-                    return new InvocationResult(new IncompleteInvocationResult(context, result.Result) { Stage = 0 });
+                    return new InvocationResult(new IncompleteInvocationResult(context, result.Result) { Stage = 0, Variables = Variables});
 
                 if (!result.ReturnValue.ToBoolean())
                     return InvocationResult.Empty;
@@ -46,19 +48,21 @@ namespace EarleCode.Blocks.Statements
                 var result = InvokeBlocks(runtime, context);
 
                 return result.State == InvocationState.Incomplete
-                    ? new InvocationResult(new IncompleteInvocationResult(context, result.Result) { Stage = 1 })
+                    ? new InvocationResult(new IncompleteInvocationResult(context, result.Result) { Stage = 1, Variables = Variables })
                     : result;
             }
         }
 
         public override InvocationResult Continue(Runtime runtime, IncompleteInvocationResult incompleteInvocationResult)
         {
+            Variables = incompleteInvocationResult.Variables;
+
             if (incompleteInvocationResult.Stage == 0)
             {
                 var result = _expression.Continue(runtime, incompleteInvocationResult.InnerResult);
 
                 if (result.State == InvocationState.Incomplete)
-                    return new InvocationResult(new IncompleteInvocationResult(incompleteInvocationResult.Context, result.Result) { Stage = 0 });
+                    return new InvocationResult(new IncompleteInvocationResult(incompleteInvocationResult.Context, result.Result) { Stage = 0, Variables = Variables });
 
                 if (!result.ReturnValue.ToBoolean())
                     return InvocationResult.Empty;
@@ -70,7 +74,7 @@ namespace EarleCode.Blocks.Statements
                     : ContinueBlocks(runtime, incompleteInvocationResult.InnerResult);
 
                 return result.State == InvocationState.Incomplete
-                    ? new InvocationResult(new IncompleteInvocationResult(incompleteInvocationResult.Context, result.Result) { Stage = 1 })
+                    ? new InvocationResult(new IncompleteInvocationResult(incompleteInvocationResult.Context, result.Result) { Stage = 1, Variables = Variables })
                     : result;
             }
         }

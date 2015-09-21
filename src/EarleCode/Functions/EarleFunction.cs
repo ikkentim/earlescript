@@ -51,16 +51,25 @@ namespace EarleCode.Functions
 
         public override InvocationResult Invoke(Runtime runtime, IEarleContext context)
         {
-            // todo parameters!
             var result = InvokeBlocks(runtime, context);
-            return result;
+
+            return result.State == InvocationState.Incomplete
+                ? new InvocationResult(new IncompleteInvocationResult(context, result.Result) {Variables = Variables.Clone()})
+                : result;
         }
 
         public override InvocationResult Continue(Runtime runtime, IncompleteInvocationResult incompleteInvocationResult)
         {
-            // todo parameters!
-            var result = ContinueBlocks(runtime, incompleteInvocationResult);
-            return result;
+            Variables = incompleteInvocationResult.Variables;
+
+            var result = ContinueBlocks(runtime, incompleteInvocationResult.InnerResult);
+
+            return result.State == InvocationState.Incomplete
+                ? new InvocationResult(new IncompleteInvocationResult(incompleteInvocationResult.Context, result.Result)
+                {
+                    Variables = Variables.Clone()
+                })
+                : result;
         }
         
         #endregion

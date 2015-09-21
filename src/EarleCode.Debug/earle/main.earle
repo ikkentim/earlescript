@@ -1,7 +1,6 @@
 ﻿init()
 { 
     println("s");
-    ::if(eleven);
     num = delayfive() + 4;
 
     vec = (0.5 + -delayfive(), 5.5 + delayfive(), 10.5 + delayfive());
@@ -13,10 +12,12 @@
         println("TEST!");
     }
 
+    message = "Hello";
     while(delayfive())
     {
-        wait .5;
-        println("Hello, World!");
+        message = message + ", World!";
+        wait .1;
+        println(message);
     }
 
     for(j=1;j<num;j++)
