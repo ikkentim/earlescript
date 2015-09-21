@@ -53,7 +53,7 @@ namespace EarleCode.Blocks
                 switch (result.State)
                 {
                     case InvocationState.Incomplete:
-                        return new InvocationResult(new IncompleteInvocationResult(context, result.Result) {Stage = i});
+                        return new InvocationResult(new IncompleteInvocationResult(context, result.IncompleteResult) {Stage = i});
                     case InvocationState.Returned:
                         return result;
                 }
@@ -77,7 +77,7 @@ namespace EarleCode.Blocks
                     case InvocationState.Incomplete:
                         return
                             new InvocationResult(new IncompleteInvocationResult(incompleteInvocationResult.Context,
-                                result.Result) {Stage = i});
+                                result.IncompleteResult) {Stage = i});
                     case InvocationState.Returned:
                         return result;
                 }

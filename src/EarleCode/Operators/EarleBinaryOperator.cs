@@ -29,7 +29,7 @@ namespace EarleCode.Operators
             var result1 = expression1.Invoke(runtime, context);
             if (result1.State == InvocationState.Incomplete)
                 return
-                    new InvocationResult(new OperatorIncompleteInvocationResult(context, result1.Result, expression1,
+                    new InvocationResult(new OperatorIncompleteInvocationResult(context, result1.IncompleteResult, expression1,
                         expression2, 0));
 
             if (!IsValue1Acceptable(result1.ReturnValue))
@@ -38,7 +38,7 @@ namespace EarleCode.Operators
             var result2 = expression2.Invoke(runtime, context);
             if (result2.State == InvocationState.Incomplete)
                 return
-                    new InvocationResult(new OperatorIncompleteInvocationResult(context, result2.Result, expression1,
+                    new InvocationResult(new OperatorIncompleteInvocationResult(context, result2.IncompleteResult, expression1,
                         expression2, result1.ReturnValue, 1));
 
             return new InvocationResult(InvocationState.None,
@@ -57,7 +57,7 @@ namespace EarleCode.Operators
                 var result1 = incomplete.Expression1.Continue(runtime, incomplete.InnerResult);
                 if (result1.State == InvocationState.Incomplete)
                     return
-                        new InvocationResult(new OperatorIncompleteInvocationResult(incomplete.Context, result1.Result,
+                        new InvocationResult(new OperatorIncompleteInvocationResult(incomplete.Context, result1.IncompleteResult,
                             incomplete.Expression1, incomplete.Expression2, 0));
 
                 if (!IsValue1Acceptable(result1.ReturnValue))
@@ -71,7 +71,7 @@ namespace EarleCode.Operators
                 : incomplete.Expression2.Invoke(runtime, incomplete.Context);
 
             return result2.State == InvocationState.Incomplete
-                ? new InvocationResult(new OperatorIncompleteInvocationResult(incomplete.Context, result2.Result,
+                ? new InvocationResult(new OperatorIncompleteInvocationResult(incomplete.Context, result2.IncompleteResult,
                     incomplete.Expression1, incomplete.Expression2, value1, 1))
                 : new InvocationResult(InvocationState.None,
                     Compute(value1, IsValue2Acceptable(result2.ReturnValue) ? (EarleValue?) result2.ReturnValue : null));

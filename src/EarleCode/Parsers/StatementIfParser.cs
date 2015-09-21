@@ -34,7 +34,7 @@ namespace EarleCode.Parsers
             tokenizer.SkipToken(TokenType.Token, ")");
 
             var statement = new StatementIf(scriptScope, expression);
-            compiler.CompileBlock(statement, tokenizer);
+            compiler.CompileToTarget(statement, tokenizer);
             
             return statement;
         }

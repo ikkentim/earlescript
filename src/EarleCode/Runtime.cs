@@ -114,7 +114,7 @@ namespace EarleCode
 
             //todo : check valid file name
 
-            var file = _compiler.Compile(this, fileName, script);
+            var file = _compiler.CompileFile(this, fileName, script);
             Files.Add(fileName, file);
         }
 
@@ -130,7 +130,7 @@ namespace EarleCode
 
             if (result.State == InvocationState.Incomplete)
             {
-                _waitingCalls.Add(new WaitingCall(earleFunction, result.Result));
+                _waitingCalls.Add(new WaitingCall(earleFunction, result.IncompleteResult));
             }
 
             // todo how to use result if result is incomplete
@@ -149,7 +149,7 @@ namespace EarleCode
 
                 if (result.State == InvocationState.Incomplete)
                 {
-                    _waitingCalls.Add(new WaitingCall(c.Function, result.Result));
+                    _waitingCalls.Add(new WaitingCall(c.Function, result.IncompleteResult));
                 }
             }
         }

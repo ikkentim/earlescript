@@ -35,7 +35,7 @@ namespace EarleCode.Blocks.Expressions
             var result = _expression.Invoke(runtime, context);
 
             return result.State == InvocationState.Incomplete
-                ? new InvocationResult(result.Result)
+                ? new InvocationResult(result.IncompleteResult)
                 : new InvocationResult(InvocationState.None, SetVariable(_name, result.ReturnValue));
         }
 
@@ -44,7 +44,7 @@ namespace EarleCode.Blocks.Expressions
             var result = _expression.Continue(runtime, incompleteInvocationResult);
             
             return result.State == InvocationState.Incomplete
-                ? new InvocationResult(result.Result)
+                ? new InvocationResult(result.IncompleteResult)
                 : new InvocationResult(InvocationState.None, SetVariable(_name, result.ReturnValue));
         }
 

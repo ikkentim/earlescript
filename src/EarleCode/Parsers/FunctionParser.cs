@@ -49,7 +49,7 @@ namespace EarleCode.Parsers
             tokenizer.SkipToken(TokenType.Token, ")");
 
             var function = new EarleFunction(scriptScope, name, parameters.ToArray());
-            compiler.CompileBlock(function, tokenizer);
+            compiler.CompileToTarget(function, tokenizer);
             return function;
         }
 

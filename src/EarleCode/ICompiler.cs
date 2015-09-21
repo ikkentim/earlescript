@@ -23,8 +23,8 @@ namespace EarleCode
     public interface ICompiler
     {
         GrammarProcessor Grammar { get; }
-        EarleFile Compile(Runtime runtime, string fileName, string script);
+        EarleFile CompileFile(Runtime runtime, string fileName, string script);
         IEnumerable<IBlock> Compile(IScriptScope scriptScope, ITokenizer tokenizer);
-        void CompileBlock(IBlock target, ITokenizer tokenizer);
+        void CompileToTarget(IBlock target, ITokenizer tokenizer);
     }
 }

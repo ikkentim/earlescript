@@ -33,7 +33,7 @@ namespace EarleCode.Parsers
             tokenizer.SkipToken(TokenType.Token, ")");
 
             var statement = new StatementWhile(scriptScope, expression);
-            compiler.CompileBlock(statement, tokenizer);
+            compiler.CompileToTarget(statement, tokenizer);
 
             return statement;
         }
@@ -89,7 +89,7 @@ namespace EarleCode.Parsers
             tokenizer.SkipToken(TokenType.Token, ")");
 
             var statement = new StatementFor(scriptScope, assignment, check, increment);
-            compiler.CompileBlock(statement, tokenizer);
+            compiler.CompileToTarget(statement, tokenizer);
 
             return statement;
         }

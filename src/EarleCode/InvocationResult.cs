@@ -22,14 +22,14 @@ namespace EarleCode
     {
         public static InvocationResult Empty { get; } = new InvocationResult(InvocationState.None, EarleValue.Null, null);
 
-        private InvocationResult(InvocationState state, EarleValue returnValue, IncompleteInvocationResult result)
+        private InvocationResult(InvocationState state, EarleValue returnValue, IncompleteInvocationResult incompleteResult)
         {
-            if(state == InvocationState.Incomplete && result == null)
-                throw new ArgumentNullException(nameof(result));
+            if(state == InvocationState.Incomplete && incompleteResult == null)
+                throw new ArgumentNullException(nameof(incompleteResult));
 
             State = state;
             ReturnValue = returnValue;
-            Result = result;
+            IncompleteResult = incompleteResult;
         }
 
         public InvocationResult(InvocationState state, EarleValue returnValue) : this(state, returnValue, null)
@@ -45,6 +45,6 @@ namespace EarleCode
 
         public InvocationState State { get; }
         public EarleValue ReturnValue { get; }
-        public IncompleteInvocationResult Result { get; }
+        public IncompleteInvocationResult IncompleteResult { get; }
     }
 }

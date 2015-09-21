@@ -33,6 +33,9 @@ namespace EarleCode
             ["IDENTIFIER_LIST"] = "IDENTIFIER",
         };
 
+        /// <summary>
+        /// Gets the grammar associated with this compiler.
+        /// </summary>
         public GrammarProcessor Grammar { get; } = new GrammarProcessor
         {
             // Function body grammar.
@@ -84,8 +87,8 @@ namespace EarleCode
             ["KEYWORD"] = "`null`",
             ["OPERATOR"] = "||",
             ["OPERATOR"] = "&&",
-//            ["OPERATOR"] = "<<",
-//            ["OPERATOR"] = ">>",
+            //            ["OPERATOR"] = "<<",
+            //            ["OPERATOR"] = ">>",
             ["OPERATOR"] = "<",
             ["OPERATOR"] = ">",
             ["OPERATOR"] = "<=",
@@ -96,7 +99,7 @@ namespace EarleCode
             ["OPERATOR"] = "-",
             ["OPERATOR"] = "*",
             ["OPERATOR"] = "/",
-//            ["OPERATOR"] = "^",
+            //            ["OPERATOR"] = "^",
             ["OPERATOR_UNARY"] = "+",
             ["OPERATOR_UNARY"] = "-",
             ["OPERATOR_UNARY"] = "!",
@@ -125,7 +128,7 @@ namespace EarleCode
         /// <param name="fileName">Name of the file.</param>
         /// <param name="script">The script.</param>
         /// <returns></returns>
-        public virtual EarleFile Compile(Runtime runtime, string fileName, string script)
+        public virtual EarleFile CompileFile(Runtime runtime, string fileName, string script)
         {
             if (fileName == null) throw new ArgumentNullException(nameof(fileName));
             if (script == null) throw new ArgumentNullException(nameof(script));
@@ -157,7 +160,7 @@ namespace EarleCode
         /// </summary>
         /// <param name="target">The target.</param>
         /// <param name="tokenizer">The tokenizer.</param>
-        public virtual void CompileBlock(IBlock target, ITokenizer tokenizer)
+        public virtual void CompileToTarget(IBlock target, ITokenizer tokenizer)
         {
             foreach (var block in Compile(target, tokenizer))
                 target.AddBlock(block);
