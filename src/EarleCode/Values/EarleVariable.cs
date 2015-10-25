@@ -15,15 +15,15 @@
 
 namespace EarleCode.Values
 {
-    public class Variable : IVariable
+    public class EarleVariable : IVariable
     {
         private EarleValue _value;
         
-        public Variable()
+        public EarleVariable()
         {
         }
         
-        public Variable(EarleValue value)
+        public EarleVariable(EarleValue value)
         {
             _value = value;
         }

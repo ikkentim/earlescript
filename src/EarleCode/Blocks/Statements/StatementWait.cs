@@ -32,7 +32,7 @@ namespace EarleCode.Blocks.Statements
         {
             return _time <= 0
                 ? InvocationResult.Empty
-                : new InvocationResult(new IncompleteInvocationResult(context, null)
+                : new InvocationResult(new IncompleteInvocationResult("wait 0", context, null)
                 {
                     Event = new WaitInvocationAwaitableEvent(_time)
                 });

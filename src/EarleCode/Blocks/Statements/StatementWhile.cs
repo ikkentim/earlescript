@@ -38,7 +38,7 @@ namespace EarleCode.Blocks.Statements
                     var result = _expression.Invoke(runtime, context);
 
                     if (result.State == InvocationState.Incomplete)
-                        return new InvocationResult(new IncompleteInvocationResult(context, result.IncompleteResult) {Stage=0,Variables =Variables.Clone()});
+                        return new InvocationResult(new IncompleteInvocationResult("while 0", context, result.IncompleteResult) {Stage=0,Variables =Variables.Clone()});
 
                     if (!result.ReturnValue.ToBoolean())
                         return InvocationResult.Empty;
@@ -50,7 +50,7 @@ namespace EarleCode.Blocks.Statements
                     switch (result.State)
                     {
                         case InvocationState.Incomplete:
-                            return new InvocationResult(new IncompleteInvocationResult(context, result.IncompleteResult) { Stage = 1,Variables = Variables.Clone()});
+                            return new InvocationResult(new IncompleteInvocationResult("while 1", context, result.IncompleteResult) { Stage = 1,Variables = Variables.Clone()});
                         case InvocationState.Returned:
                             return result;
                     }
@@ -73,7 +73,7 @@ namespace EarleCode.Blocks.Statements
 
                     if (result.State == InvocationState.Incomplete)
                         return
-                            new InvocationResult(new IncompleteInvocationResult(incompleteInvocationResult.Context, result.IncompleteResult) { Stage = 0,Variables=Variables.Clone() });
+                            new InvocationResult(new IncompleteInvocationResult("while c0", incompleteInvocationResult.Context, result.IncompleteResult) { Stage = 0,Variables=Variables.Clone() });
 
                     if (!result.ReturnValue.ToBoolean())
                         return InvocationResult.Empty;
@@ -87,7 +87,7 @@ namespace EarleCode.Blocks.Statements
                     switch (result.State)
                     {
                         case InvocationState.Incomplete:
-                            return new InvocationResult(new IncompleteInvocationResult(incompleteInvocationResult.Context, result.IncompleteResult) { Stage = 1,Variables=Variables.Clone() });
+                            return new InvocationResult(new IncompleteInvocationResult("while c1", incompleteInvocationResult.Context, result.IncompleteResult) { Stage = 1,Variables=Variables.Clone() });
                         case InvocationState.Returned:
                             return result;
                     }

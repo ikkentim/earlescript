@@ -1,19 +1,19 @@
 ﻿init()
 { 
-    println("s");
-    num = delayfive() + 4;
-
+    println("start!");
+    num = delayfive();
+    
     vec = (0.5 + -delayfive(), 5.5 + delayfive(), 10.5 + delayfive());
-
+     
     println(vec);
-
+    
     if((delayfive() + delayfive()) == (delayfive() + delayfive()))
     {
         println("TEST!");
     }
-
+    
     message = "Hello";
-    while(delayfive())
+    while(false) // (delayfive())
     {
         message = message + ", World!";
         wait .1;
@@ -22,20 +22,22 @@
 
     for(j=1;j<num;j++)
     {
-        println("j is " + j);
+       println("j is " + j);
     }
 
-    // println("waittest test:");
-    // waittest();
-    // println("");
+    println("waittest test:");
+    waittest();
+    println("");
 
-    // println("\ext::b test:");
-    // \ext::b();
-    // println("");
+    println("\ext::b test:");
+    \ext::b();
+    println("");
 
-    // println("testA test:");
-    // testA();
-    // println("");
+    println("testA test:");
+    testA();
+    println("");
+
+    println("done!");
 } 
 
 waittest()
@@ -54,6 +56,11 @@ delayfive()
 {
     wait .05;
     return 5;
+}
+
+a()
+{
+  println("A!");
 }
 
 testA()

@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Blocks\BlockUtil.cs" />
     <Compile Include="Blocks\Expressions\AssignmentExpression.cs" />
     <Compile Include="Blocks\Expressions\AssignmentUnaryExpression.cs" />
     <Compile Include="Blocks\Expressions\BinaryOperatorExpression.cs" />
@@ -56,6 +57,7 @@
     <Compile Include="IInvocationAwaitableEvent.cs" />
     <Compile Include="IncompleteInvocationResult.cs" />
     <Compile Include="Operators\EarleBinaryOperator.cs" />
+    <Compile Include="Values\EarleArray.cs" />
     <Compile Include="Values\EarleVector.cs" />
     <Compile Include="Functions\PrintFunction.cs" />
     <Compile Include="EarleFile.cs" />
@@ -114,7 +116,7 @@
     <Compile Include="Tokens\TokenType.cs" />
     <Compile Include="Tokens\TokenTypeData.cs" />
     <Compile Include="Tokens\TokenWalker.cs" />
-    <Compile Include="Values\Variable.cs" />
+    <Compile Include="Values\EarleVariable.cs" />
     <Compile Include="Values\VariablesTable.cs" />
     <Compile Include="WaitingCall.cs" />
   </ItemGroup>

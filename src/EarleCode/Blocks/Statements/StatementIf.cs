@@ -38,7 +38,7 @@ namespace EarleCode.Blocks.Statements
                 var result = _expression.Invoke(runtime, context);
 
                 if(result.State == InvocationState.Incomplete)
-                    return new InvocationResult(new IncompleteInvocationResult(context, result.IncompleteResult) { Stage = 0, Variables = Variables});
+                    return new InvocationResult(new IncompleteInvocationResult("if 0", context, result.IncompleteResult) { Stage = 0, Variables = Variables});
 
                 if (!result.ReturnValue.ToBoolean())
                     return InvocationResult.Empty;
@@ -48,7 +48,7 @@ namespace EarleCode.Blocks.Statements
                 var result = InvokeBlocks(runtime, context);
 
                 return result.State == InvocationState.Incomplete
-                    ? new InvocationResult(new IncompleteInvocationResult(context, result.IncompleteResult) { Stage = 1, Variables = Variables })
+                    ? new InvocationResult(new IncompleteInvocationResult("if 1", context, result.IncompleteResult) { Stage = 1, Variables = Variables })
                     : result;
             }
         }
@@ -62,7 +62,7 @@ namespace EarleCode.Blocks.Statements
                 var result = _expression.Continue(runtime, incompleteInvocationResult.InnerResult);
 
                 if (result.State == InvocationState.Incomplete)
-                    return new InvocationResult(new IncompleteInvocationResult(incompleteInvocationResult.Context, result.IncompleteResult) { Stage = 0, Variables = Variables });
+                    return new InvocationResult(new IncompleteInvocationResult("if c0", incompleteInvocationResult.Context, result.IncompleteResult) { Stage = 0, Variables = Variables });
 
                 if (!result.ReturnValue.ToBoolean())
                     return InvocationResult.Empty;
@@ -74,7 +74,7 @@ namespace EarleCode.Blocks.Statements
                     : ContinueBlocks(runtime, incompleteInvocationResult.InnerResult);
 
                 return result.State == InvocationState.Incomplete
-                    ? new InvocationResult(new IncompleteInvocationResult(incompleteInvocationResult.Context, result.IncompleteResult) { Stage = 1, Variables = Variables })
+                    ? new InvocationResult(new IncompleteInvocationResult("if c1", incompleteInvocationResult.Context, result.IncompleteResult) { Stage = 1, Variables = Variables })
                     : result;
             }
         }

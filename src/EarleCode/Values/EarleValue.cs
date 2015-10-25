@@ -35,25 +35,12 @@ namespace EarleCode.Values
                 if (Value is int) return EarleValueType.Integer;
                 if (Value is float) return EarleValueType.Float;
                 if (Value is string) return EarleValueType.String;
-                // if(Value is array) return EarleValueType.Array;
+                 if(Value is EarleArray) return EarleValueType.Array;
                 if (Value is EarleVector) return EarleValueType.Vector;
                 if (Value is EarleFunction) return EarleValueType.Function;
                 if (Value is IEarleContext) return EarleValueType.Context;
                 return EarleValueType.Void;
             }
-        }
-
-        public static EarleValue Subtract(EarleValue leftValue, EarleValue rightValue)
-        {
-            var leftType = leftValue.Type;
-            var rightType = rightValue.Type;
-
-            if (leftType == EarleValueType.Float || rightType == EarleValueType.Float)
-                return (float) leftValue.CastTo(EarleValueType.Float).Value -
-                       (float) rightValue.CastTo(EarleValueType.Float).Value;
-
-            return (int) leftValue.CastTo(EarleValueType.Integer).Value -
-                   (int) rightValue.CastTo(EarleValueType.Integer).Value;
         }
 
         public static EarleValue Positive(EarleValue value)
@@ -79,6 +66,19 @@ namespace EarleCode.Values
                 default:
                     return Null;
             }
+        }
+
+        public static EarleValue Subtract(EarleValue leftValue, EarleValue rightValue)
+        {
+            var leftType = leftValue.Type;
+            var rightType = rightValue.Type;
+
+            if (leftType == EarleValueType.Float || rightType == EarleValueType.Float)
+                return (float) leftValue.CastTo(EarleValueType.Float).Value -
+                       (float) rightValue.CastTo(EarleValueType.Float).Value;
+
+            return (int) leftValue.CastTo(EarleValueType.Integer).Value -
+                   (int) rightValue.CastTo(EarleValueType.Integer).Value;
         }
 
         public static EarleValue Add(EarleValue leftValue, EarleValue rightValue)
@@ -129,9 +129,6 @@ namespace EarleCode.Values
                     }
                 case EarleValueType.String:
                     return Type == EarleValueType.Void ? string.Empty : Value.ToString();
-                case EarleValueType.Array:
-                case EarleValueType.Function:
-                case EarleValueType.Void:
                 default:
                     return Null;
             }
@@ -147,7 +144,11 @@ namespace EarleCode.Values
                     return (float) Value != 0f;
                 case EarleValueType.String:
                     return !string.IsNullOrEmpty((string) Value);
+                case EarleValueType.Vector:
+                    var vector = (EarleVector) Value;
+                    return vector.X != 0 || vector.Y != 0 || vector.Z != 0;
                 case EarleValueType.Function:
+                case EarleValueType.Array:
                     return true;
                 default:
                     return false;
@@ -186,6 +187,7 @@ namespace EarleCode.Values
         public static explicit operator float (EarleValue value) => (float)value.CastTo(EarleValueType.Float).Value;
         public static explicit operator string (EarleValue value) => (string)value.CastTo(EarleValueType.String).Value;
         public static explicit operator EarleVector (EarleValue value) => (EarleVector)value.CastTo(EarleValueType.Vector).Value;
+        public static explicit operator EarleArray(EarleValue value) => (EarleArray)value.CastTo(EarleValueType.Array).Value;
         public static explicit operator EarleFunction (EarleValue value) => (EarleFunction)value.CastTo(EarleValueType.Function).Value;
     }
 }

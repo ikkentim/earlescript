@@ -19,8 +19,11 @@ namespace EarleCode
 {
     public class IncompleteInvocationResult
     {
-        public IncompleteInvocationResult(IEarleContext context, IncompleteInvocationResult innerResult)
+        private readonly string _name;
+
+        public IncompleteInvocationResult(string name, IEarleContext context, IncompleteInvocationResult innerResult)
         {
+            _name = name;
             Context = context;
             InnerResult = innerResult;
         }
@@ -31,5 +34,20 @@ namespace EarleCode
         public EarleValue[] Data { get; set; }
         public VariablesTable Variables { get; set; }
         public IInvocationAwaitableEvent Event { get; set; }
+
+        #region Overrides of Object
+
+        /// <summary>
+        /// Returns a string that represents the current object.
+        /// </summary>
+        /// <returns>
+        /// A string that represents the current object.
+        /// </returns>
+        public override string ToString()
+        {
+            return _name;
+        }
+
+        #endregion
     }
 }

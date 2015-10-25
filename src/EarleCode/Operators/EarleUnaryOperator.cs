@@ -30,7 +30,7 @@ namespace EarleCode.Operators
             var result = expression.Invoke(runtime, context);
 
             return result.State == InvocationState.Incomplete
-                ? new InvocationResult(new OperatorIncompleteInvocationResult(context, result.IncompleteResult, expression))
+                ? new InvocationResult(new OperatorIncompleteInvocationResult("unary op 0", context, result.IncompleteResult, expression))
                 : new InvocationResult(InvocationState.None, Compute(result.ReturnValue));
         }
 
@@ -41,7 +41,7 @@ namespace EarleCode.Operators
             var result = incomplete.Expression.Continue(runtime, incomplete.InnerResult);
 
             return result.State == InvocationState.Incomplete
-                ? new InvocationResult(new OperatorIncompleteInvocationResult(incomplete.Context, result.IncompleteResult,
+                ? new InvocationResult(new OperatorIncompleteInvocationResult("unary op c0", incomplete.Context, result.IncompleteResult,
                     incomplete.Expression))
                 : new InvocationResult(InvocationState.None, Compute(result.ReturnValue));
         }
@@ -50,8 +50,8 @@ namespace EarleCode.Operators
 
         private class OperatorIncompleteInvocationResult : IncompleteInvocationResult
         {
-            public OperatorIncompleteInvocationResult(IEarleContext context, IncompleteInvocationResult innerResult, IExpression expression)
-                : base(context, innerResult)
+            public OperatorIncompleteInvocationResult(string name, IEarleContext context, IncompleteInvocationResult innerResult, IExpression expression)
+                : base(name, context, innerResult)
             {
                 Expression = expression;
             }

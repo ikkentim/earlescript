@@ -30,7 +30,7 @@ namespace EarleCode.Blocks
 
         public override IVariable AddVariable(string variableName)
         {
-            var variable = new Variable();
+            var variable = new EarleVariable();
             Variables.Add(variableName, variable);
             return variable;
         }
@@ -53,7 +53,7 @@ namespace EarleCode.Blocks
                 switch (result.State)
                 {
                     case InvocationState.Incomplete:
-                        return new InvocationResult(new IncompleteInvocationResult(context, result.IncompleteResult) {Stage = i});
+                        return new InvocationResult(new IncompleteInvocationResult("invokeblocks 0", context, result.IncompleteResult) {Stage = i});
                     case InvocationState.Returned:
                         return result;
                 }
@@ -76,7 +76,7 @@ namespace EarleCode.Blocks
                 {
                     case InvocationState.Incomplete:
                         return
-                            new InvocationResult(new IncompleteInvocationResult(incompleteInvocationResult.Context,
+                            new InvocationResult(new IncompleteInvocationResult("invokeblocks c0", incompleteInvocationResult.Context,
                                 result.IncompleteResult) {Stage = i});
                     case InvocationState.Returned:
                         return result;
