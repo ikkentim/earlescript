@@ -13,13 +13,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Collections.Generic;
-using EarleCode.Tokens;
-
 namespace EarleCode.Grammar.RulesElements
 {
-    public interface IProductionRuleElement
+    public enum ProductionRuleMatchResult
     {
-        ProductionRuleMatchResult Matches(TokenWalker tokenWalker, IEnumerable<ProductionRule> rules);
+        True,
+        False,
+        Optional
     }
 }

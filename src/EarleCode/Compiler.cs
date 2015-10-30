@@ -52,7 +52,7 @@ namespace EarleCode
             ["ASSIGNMENT_UNARY"] = "OPERATOR_MOD_UNARY VARIABLE",
             ["ASSIGNMENT"] = "VARIABLE = EXPRESSION",
             ["ASSIGNMENT"] = "ASSIGNMENT_UNARY",
-            ["FUNCTION_CALL"] = "OPTIONAL TARGET_VARIABLE FUNCTION_CALL_PART",
+            ["FUNCTION_CALL"] = "OPTIONAL VARIABLE FUNCTION_CALL_PART",
             ["FUNCTION_CALL_PART"] = "FUNCTION_IDENTIFIER ( OPTIONAL EXPRESSION_LIST )",
 
             // Level 2: Expressions
@@ -64,7 +64,6 @@ namespace EarleCode
             ["EXPRESSION"] = "ASSIGNMENT",
 
             // Level 2 cont: Value types
-            ["EXPRESSION"] = "VARIABLE", // variable value
             ["EXPRESSION"] = "FUNCTION_IDENTIFIER", // function reference
             ["EXPRESSION"] = "KEYWORD",
             ["EXPRESSION"] = "VECTOR",

@@ -34,9 +34,9 @@ namespace EarleCode.Grammar.RulesElements
 
         #region Implementation of IProductionRuleElement
 
-        public PruductionRuleMatchResult Matches(TokenWalker tokenWalker, IEnumerable<ProductionRule> rules)
+        public ProductionRuleMatchResult Matches(TokenWalker tokenWalker, IEnumerable<ProductionRule> rules)
         {
-            return Matches(tokenWalker, rules, 0) ? PruductionRuleMatchResult.True : PruductionRuleMatchResult.False;
+            return Matches(tokenWalker, rules, 0) ? ProductionRuleMatchResult.True : ProductionRuleMatchResult.False;
         }
         #endregion
         
@@ -68,7 +68,7 @@ namespace EarleCode.Grammar.RulesElements
 
                 var r = element.Matches(tokenWalker, i == 0 && except != null ? rules.Except(new[] {except}) : rules);
 
-                if (r == PruductionRuleMatchResult.False)
+                if (r == ProductionRuleMatchResult.False)
                 {
                     if (!optional.Any())
                     {
@@ -87,7 +87,7 @@ namespace EarleCode.Grammar.RulesElements
                     continue;
                 }
 
-                if (r == PruductionRuleMatchResult.Optional)
+                if (r == ProductionRuleMatchResult.Optional)
                     optional.Push(i);
 
                 if (i != _conditions.Count - 1 && tokenWalker.Current == null)
