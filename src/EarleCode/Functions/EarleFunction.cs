@@ -48,7 +48,7 @@ namespace EarleCode.Functions
         }
 
         #region Overrides of Block
-
+        
         public override InvocationResult Invoke(Runtime runtime, IEarleContext context)
         {
             var result = InvokeBlocks(runtime, context);

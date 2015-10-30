@@ -25,5 +25,6 @@ namespace EarleCode.Values
         Vector = 5,
         Function = 6,
         Context = 7,
+        Variable = 8,
     }
 }

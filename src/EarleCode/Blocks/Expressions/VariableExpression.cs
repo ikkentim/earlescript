@@ -21,39 +21,37 @@ namespace EarleCode.Blocks.Expressions
 {
     public class VariableExpression : Block, IExpression
     {
-        private readonly IExpression[] _indexers;
-        private readonly string _name;
+        private readonly VariableNameExpression _variableNameExpression;
 
-        public VariableExpression(IScriptScope scriptScope, string name, IExpression[] indexers)
+        public VariableExpression(IScriptScope scriptScope, VariableNameExpression variableNameExpression)
             : base(scriptScope)
         {
-            if (name == null) throw new ArgumentNullException(nameof(name));
-            _name = name;
-            _indexers = indexers;
+            if (variableNameExpression == null) throw new ArgumentNullException(nameof(variableNameExpression));
+            _variableNameExpression = variableNameExpression;
         }
 
         #region Overrides of Block
 
         public override InvocationResult Invoke(Runtime runtime, IEarleContext context)
         {
-            var variable = ResolveVariable(_name);
+            InvocationResult result;
+            IVariable variable = null;
 
-            // TODO: Indexers
-//            if (_indexers != null)
-//                foreach (var indexer in _indexers.Where(indexer => indexer != null))
-//                {
-//                    variable = variable[indexer.Invoke(context).ReturnValue];
-//                    if (variable == null)
-//                        return new InvocationResult(InvocationState.None, EarleValue.Null);
-//                }
-
-            return new InvocationResult(InvocationState.None, variable?.Get() ?? EarleValue.Null);
+            return !ExpressionUtility.Invoke(_variableNameExpression, 0, runtime, context, out result, ref variable)
+                ? result
+                : new InvocationResult(InvocationState.None, variable?.Get() ?? EarleValue.Null);
         }
 
         public override InvocationResult Continue(Runtime runtime, IncompleteInvocationResult incompleteInvocationResult)
         {
-            // indexers have not yet been implemented
-            throw new NotImplementedException();
+            var result = InvocationResult.Empty;
+            IVariable variable = null;
+
+            return
+                !ExpressionUtility.Continue(_variableNameExpression, 0, runtime, incompleteInvocationResult, ref result,
+                    ref variable)
+                    ? result
+                    : new InvocationResult(InvocationState.None, variable?.Get() ?? EarleValue.Null);
         }
 
         #endregion
@@ -68,7 +66,7 @@ namespace EarleCode.Blocks.Expressions
         /// </returns>
         public override string ToString()
         {
-            return $"{_name}{string.Concat(_indexers.Select(i => $"[{i}]"))}";
+            return _variableNameExpression.ToString();
         }
 
         #endregion

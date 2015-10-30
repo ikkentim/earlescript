@@ -43,7 +43,7 @@ namespace EarleCode.Parsers
             tokenizer.SkipToken(TokenType.Token, "=");
 
             var expression = expressionParser.Parse(compiler, scriptScope, tokenizer);
-            return new AssignmentExpression(scriptScope, name, indexers.ToArray(), expression);
+            return new AssignmentExpression(scriptScope, new VariableNameExpression(scriptScope, name, indexers.ToArray()), expression);
         }
 
         #endregion

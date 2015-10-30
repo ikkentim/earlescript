@@ -31,14 +31,16 @@ namespace EarleCode.Grammar.RulesElements
 
         #region Implementation of IProductionRuleElement
 
-        public bool Matches(TokenWalker tokenWalker, IEnumerable<ProductionRule> rules)
+        public PruductionRuleMatchResult Matches(TokenWalker tokenWalker, IEnumerable<ProductionRule> rules)
         {
             if (tokenWalker.Current == null)
-                return true;
+                return PruductionRuleMatchResult.True;
 
             tokenWalker.CreateSession();
-            tokenWalker.FlushOrDropSession(_element.Matches(tokenWalker, rules));
-            return true;
+
+            return tokenWalker.FlushOrDropSession(_element.Matches(tokenWalker, rules) == PruductionRuleMatchResult.True)
+                ? PruductionRuleMatchResult.Optional
+                : PruductionRuleMatchResult.True;
         }
 
         #endregion

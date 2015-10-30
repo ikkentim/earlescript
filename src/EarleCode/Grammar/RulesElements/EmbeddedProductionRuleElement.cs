@@ -30,29 +30,31 @@ namespace EarleCode.Grammar.RulesElements
 
         #region Implementation of IProductionRuleElement
 
-        public bool Matches(TokenWalker tokenWalker, IEnumerable<ProductionRule> rules)
+        public PruductionRuleMatchResult Matches(TokenWalker tokenWalker, IEnumerable<ProductionRule> rules)
         {
             if (tokenWalker.Current == null)
-                return false;
+                return PruductionRuleMatchResult.False;
 
             var productionRules = rules as ProductionRule[] ?? rules.ToArray();
             return productionRules.Where(rule => rule.Name == Rule)
                 .Where(rule => !IsRecursiveProductionRule(rule.Rule.Conditions.First())).Any(rule =>
                 {
                     tokenWalker.CreateSession();
-                    if (rule.Rule.Matches(tokenWalker, productionRules))
+                    if (rule.Rule.Matches(tokenWalker, productionRules) == PruductionRuleMatchResult.True)
                     {
                         foreach (var rule2 in productionRules)
                             if (rule2.Name == Rule && IsRecursiveProductionRule(rule2.Rule.Conditions.First()) &&
                                 rule2.Rule.Matches(tokenWalker, productionRules, 1))
                                 break;
-                                
+
                         tokenWalker.FlushSession();
                         return true;
                     }
                     tokenWalker.DropSession();
                     return false;
-                });
+                })
+                ? PruductionRuleMatchResult.True
+                : PruductionRuleMatchResult.False;
         }
 
         #endregion

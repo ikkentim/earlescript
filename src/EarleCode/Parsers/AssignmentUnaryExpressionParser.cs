@@ -41,7 +41,7 @@ namespace EarleCode.Parsers
                 operatorToken = tokenizer.Current.Value;
                 tokenizer.AssertMoveNext();
             }
-            return new AssignmentUnaryExpression(scriptScope, name, indexers.ToArray(), operatorToken, isPostOperation);
+            return new AssignmentUnaryExpression(scriptScope, new VariableNameExpression(scriptScope, name, indexers.ToArray()), operatorToken, isPostOperation);
         }
 
         #endregion

@@ -45,6 +45,8 @@
     <Compile Include="Blocks\Expressions\AssignmentExpression.cs" />
     <Compile Include="Blocks\Expressions\AssignmentUnaryExpression.cs" />
     <Compile Include="Blocks\Expressions\BinaryOperatorExpression.cs" />
+    <Compile Include="Blocks\Expressions\ExpressionUtility.cs" />
+    <Compile Include="Blocks\Expressions\VariableNameExpression.cs" />
     <Compile Include="Blocks\Statements\StatementFor.cs" />
     <Compile Include="Blocks\Statements\StatementIf.cs" />
     <Compile Include="Blocks\Statements\StatementReturn.cs" />

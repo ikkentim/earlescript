@@ -25,61 +25,37 @@ namespace EarleCode.Blocks.Expressions
         public override InvocationResult Invoke(Runtime runtime, IEarleContext context)
         {
             var values = new EarleValue[2];
+            var z = EarleValue.Null;
+            InvocationResult result;
 
-            var xResult = _xExpression.Invoke(runtime, context);
-            if (xResult.State == InvocationState.Incomplete)
-                return new InvocationResult(new IncompleteInvocationResult("vector 0", context, xResult.IncompleteResult) { Stage = 0, Data=values });
-            values[0] = xResult.ReturnValue;
-            
-            var yResult = _yExpression.Invoke(runtime, context);
-            if (yResult.State == InvocationState.Incomplete)
-                return new InvocationResult(new IncompleteInvocationResult("vector 1", context, yResult.IncompleteResult) { Stage = 1, Data = values });
-            values[1] = yResult.ReturnValue;
-            
-            var zResult = _zExpression.Invoke(runtime, context);
-            if (zResult.State == InvocationState.Incomplete)
-                return new InvocationResult(new IncompleteInvocationResult("vector 2", context, zResult.IncompleteResult) { Stage = 2, Data = values });
-            var z = zResult.ReturnValue;
-            
+            if (!ExpressionUtility.Invoke(_xExpression, 0, runtime, context, out result, ref values[0]) ||
+                !ExpressionUtility.Invoke(_xExpression, 1, runtime, context, out result, ref values[1]) ||
+                !ExpressionUtility.Invoke(_xExpression, 2, runtime, context, out result, ref z))
+            {
+                result.IncompleteResult.Data = values;
+                return result;
+            }
+
             return new InvocationResult(InvocationState.None,
-                new EarleVector((float)values[0].CastTo(EarleValueType.Float).Value,
-                    (float)values[1].CastTo(EarleValueType.Float).Value, (float) z.CastTo(EarleValueType.Float).Value));
+                new EarleVector(values[0].Cast<float>(), values[1].Cast<float>(), z.Cast<float>()));
         }
 
         public override InvocationResult Continue(Runtime runtime, IncompleteInvocationResult incompleteInvocationResult)
         {
-            var values = incompleteInvocationResult.Data;
+            var values = new EarleValue[2];
+            var z = EarleValue.Null;
+            var result = InvocationResult.Empty;
 
-            if (incompleteInvocationResult.Stage == 0)
+            if (!ExpressionUtility.Continue(_xExpression, 0, runtime, incompleteInvocationResult, ref result, ref values[0]) ||
+                !ExpressionUtility.Continue(_xExpression, 1, runtime, incompleteInvocationResult, ref result, ref values[1]) ||
+                !ExpressionUtility.Continue(_xExpression, 2, runtime, incompleteInvocationResult, ref result, ref z))
             {
-                var xResult = _xExpression.Continue(runtime, incompleteInvocationResult.InnerResult);
-                if (xResult.State == InvocationState.Incomplete)
-                    return new InvocationResult(new IncompleteInvocationResult("vector c0", incompleteInvocationResult.Context, xResult.IncompleteResult) { Stage = 0, Data = values });
-                values[0] = xResult.ReturnValue;
+                result.IncompleteResult.Data = values;
+                return result;
             }
-
-            if (incompleteInvocationResult.Stage <= 1)
-            {
-                var yResult = incompleteInvocationResult.Stage == 0
-                    ? _yExpression.Invoke(runtime, incompleteInvocationResult.Context)
-                    : _yExpression.Continue(runtime, incompleteInvocationResult.InnerResult);
-
-                if (yResult.State == InvocationState.Incomplete)
-                    return new InvocationResult(new IncompleteInvocationResult("vector c1", incompleteInvocationResult.Context, yResult.IncompleteResult) { Stage = 1, Data = values });
-                values[1] = yResult.ReturnValue;
-            }
-
-            var zResult = incompleteInvocationResult.Stage == 2
-                ? _zExpression.Continue(runtime, incompleteInvocationResult.InnerResult)
-                : _zExpression.Invoke(runtime, incompleteInvocationResult.Context);
-
-            if (zResult.State == InvocationState.Incomplete)
-                return new InvocationResult(new IncompleteInvocationResult("vector c2", incompleteInvocationResult.Context, zResult.IncompleteResult) { Stage = 2, Data = values });
-            var z = zResult.ReturnValue;
 
             return new InvocationResult(InvocationState.None,
-                new EarleVector((float)values[0].CastTo(EarleValueType.Float).Value,
-                    (float)values[1].CastTo(EarleValueType.Float).Value, (float)z.CastTo(EarleValueType.Float).Value));
+                new EarleVector(values[0].Cast<float>(), values[1].Cast<float>(), z.Cast<float>()));
         }
 
         #endregion

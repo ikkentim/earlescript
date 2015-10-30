@@ -13,6 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Collections.Generic;
 using EarleCode.Blocks;
 using EarleCode.Blocks.Expressions;
@@ -28,6 +29,25 @@ namespace EarleCode.Parsers
         public override FunctionCallExpression Parse(ICompiler compiler, IScriptScope scriptScope, ITokenizer tokenizer)
         {
             string path = null;
+
+            VariableNameExpression variableNameExpression = null;
+
+            if (!compiler.Grammar.Matches(tokenizer, "FUNCTION_CALL_PART"))
+            {
+                var varName = tokenizer.Current.Value;
+                var indexers = new List<IExpression>();
+
+                tokenizer.AssertMoveNext();
+
+                var expressionParser = new ExpressionParser();
+                while (tokenizer.Current.Is(TokenType.Token, "["))
+                {
+                    indexers.Add(expressionParser.Parse(compiler, scriptScope, tokenizer));
+                    tokenizer.SkipToken(TokenType.Token, "]");
+                }
+
+                variableNameExpression = new VariableNameExpression(scriptScope, varName, indexers.ToArray());
+            }
 
             if (tokenizer.Current.Is(TokenType.Token, "::"))
             {
@@ -67,7 +87,8 @@ namespace EarleCode.Parsers
                 arguments.Add(expressionParser.Parse(compiler, scriptScope, tokenizer));
             }
 
-            var functionCall = new FunctionCallExpression(scriptScope, new EarleFunctionSignature(name, path), arguments.ToArray());
+            var functionCall = new FunctionCallExpression(scriptScope, variableNameExpression,
+                new EarleFunctionSignature(name, path), arguments.ToArray());
             compiler.Compile(functionCall, tokenizer);
             tokenizer.AssertMoveNext();
             return functionCall;

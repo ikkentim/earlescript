@@ -20,6 +20,13 @@ namespace EarleCode.Grammar.RulesElements
 {
     public interface IProductionRuleElement
     {
-        bool Matches(TokenWalker tokenWalker, IEnumerable<ProductionRule> rules);
+        PruductionRuleMatchResult Matches(TokenWalker tokenWalker, IEnumerable<ProductionRule> rules);
+    }
+
+    public enum PruductionRuleMatchResult
+    {
+        True,
+        False,
+        Optional
     }
 }

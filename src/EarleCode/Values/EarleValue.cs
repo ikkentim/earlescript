@@ -13,6 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using EarleCode.Functions;
 
 namespace EarleCode.Values
@@ -39,6 +40,7 @@ namespace EarleCode.Values
                 if (Value is EarleVector) return EarleValueType.Vector;
                 if (Value is EarleFunction) return EarleValueType.Function;
                 if (Value is IEarleContext) return EarleValueType.Context;
+                if (Value is IVariable) return EarleValueType.Variable;
                 return EarleValueType.Void;
             }
         }
@@ -98,6 +100,26 @@ namespace EarleCode.Values
                    (int) rightValue.CastTo(EarleValueType.Integer).Value;
         }
 
+        public static EarleValueType GetType(Type type)
+        {
+            if (type == typeof (IEarleContext)) return EarleValueType.Context;
+            if (type == typeof (EarleArray)) return EarleValueType.Array;
+            if (type == typeof (float)) return EarleValueType.Float;
+            if (type == typeof (EarleFunctionSignature)) return EarleValueType.Function;
+            if (type == typeof (int)) return EarleValueType.Integer;
+            if (type == typeof (string)) return EarleValueType.String;
+            if (type == typeof (IVariable)) return EarleValueType.Variable;
+            if (type == typeof (EarleVector)) return EarleValueType.Vector;
+
+            return EarleValueType.Void;
+        }
+
+        public T Cast<T>()
+        {
+            var value = CastTo(GetType(typeof (T))).Value;
+            return value is T ? (T) value : default(T);
+        }
+
         public EarleValue CastTo(EarleValueType targetType)
         {
             if (Type == targetType)
@@ -149,6 +171,7 @@ namespace EarleCode.Values
                     return vector.X != 0 || vector.Y != 0 || vector.Z != 0;
                 case EarleValueType.Function:
                 case EarleValueType.Array:
+                case EarleValueType.Context:
                     return true;
                 default:
                     return false;

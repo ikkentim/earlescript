@@ -14,63 +14,93 @@
 // limitations under the License.
 
 using System;
-using System.Linq;
 using EarleCode.Values;
 
 namespace EarleCode.Blocks.Expressions
 {
     public class AssignmentExpression : Block, IExpression
     {
+        private readonly VariableNameExpression _variableNameExpression;
         private readonly IExpression _expression;
-        private readonly IExpression[] _indexers;
-        private readonly string _name;
 
-        public AssignmentExpression(IScriptScope scriptScope, string name, IExpression[] indexers,
+        public AssignmentExpression(IScriptScope scriptScope, VariableNameExpression variableNameExpression,
             IExpression expression) : base(scriptScope)
         {
-            if (name == null) throw new ArgumentNullException(nameof(name));
-            if (indexers == null) throw new ArgumentNullException(nameof(indexers));
+            if (variableNameExpression == null) throw new ArgumentNullException(nameof(variableNameExpression));
             if (expression == null) throw new ArgumentNullException(nameof(expression));
-            _name = name;
-            _indexers = indexers;
+            _variableNameExpression = variableNameExpression;
             _expression = expression;
-        }
-        
-        private EarleValue SetVariable(string name, EarleValue value)
-        {
-            var variable = ResolveVariable(name) ?? AddVariable(name);
-            variable.Set(value);
-
-            return value;
         }
 
         #region Overrides of Block
 
         public override InvocationResult Invoke(Runtime runtime, IEarleContext context)
         {
-            var variable = ResolveVariable(_name) ?? AddVariable(_name);
-            for (var i = 0; i < _indexers.Length; i++)
+            InvocationResult result;
+            IVariable variable = null;
+
+            if (!ExpressionUtility.Invoke(_variableNameExpression, 0, runtime, context, out result, ref variable))
+                return result;
+
+            if (variable == null)
             {
-                
+                if (_variableNameExpression.Indexers.Length == 0)
+                {
+                    variable = AddVariable(_variableNameExpression.Name);
+                }
+                else
+                {
+                    // TODO find out if only last indexer is missing
+                    throw new NotImplementedException();
+                }
             }
 
-            var result = _expression.Invoke(runtime, context);
+            var setValue = EarleValue.Null;
+            if (!ExpressionUtility.Invoke(_expression, 1, runtime, context, out result, ref setValue))
+            {
+                result.IncompleteResult.Data = new[] {new EarleValue(variable)};
+                return result;
+            }
 
-            return result.State == InvocationState.Incomplete
-                ? new InvocationResult(new IncompleteInvocationResult("assignment 0", context, result.IncompleteResult)
-                {
-                    Stage = _indexers.Length
-                })
-                : new InvocationResult(InvocationState.None, SetVariable(_name, result.ReturnValue));
+            variable.Set(setValue);
+
+            return new InvocationResult(InvocationState.None, setValue);
         }
 
         public override InvocationResult Continue(Runtime runtime, IncompleteInvocationResult incompleteInvocationResult)
         {
-            var result = _expression.Continue(runtime, incompleteInvocationResult.InnerResult);
+            var result = InvocationResult.Empty;
+            var variable = result.IncompleteResult.Data?[0].Cast<IVariable>();
 
-            return result.State == InvocationState.Incomplete
-                ? new InvocationResult(new IncompleteInvocationResult("assignment c0", incompleteInvocationResult.Context, result.IncompleteResult))
-                : new InvocationResult(InvocationState.None, SetVariable(_name, result.ReturnValue));
+            if (
+                !ExpressionUtility.Continue(_variableNameExpression, 0, runtime, incompleteInvocationResult, ref result,
+                    ref variable))
+                return result;
+
+            if (variable == null)
+            {
+                if (_variableNameExpression.Indexers.Length == 0)
+                {
+                    variable = AddVariable(_variableNameExpression.Name);
+                }
+                else
+                {
+                    // TODO find out if only last indexer is missing
+                    throw new NotImplementedException();
+                }
+            }
+
+            var setValue = EarleValue.Null;
+            if (
+                !ExpressionUtility.Continue(_expression, 1, runtime, incompleteInvocationResult, ref result,
+                    ref setValue))
+            {
+                result.IncompleteResult.Data = new[] {new EarleValue(variable)};
+                return result;
+            }
+            variable.Set(setValue);
+
+            return new InvocationResult(InvocationState.None, setValue);
         }
 
         #endregion
@@ -85,7 +115,7 @@ namespace EarleCode.Blocks.Expressions
         /// </returns>
         public override string ToString()
         {
-            return $"{_name}{string.Concat(_indexers.Select(i => $"[{i}]"))} = {_expression};";
+            return $"{_variableNameExpression} = {_expression};";
         }
 
         #endregion

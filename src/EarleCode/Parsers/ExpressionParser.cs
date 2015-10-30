@@ -73,7 +73,7 @@ namespace EarleCode.Parsers
                             tokenizer.SkipToken(TokenType.Token, "]");
                         }
 
-                        expression = new VariableExpression(scriptScope, name, indexers.ToArray());
+                        expression = new VariableExpression(scriptScope, new VariableNameExpression(scriptScope, name, indexers.ToArray()));
                     }
                         break;
                     case TokenType.NumberLiteral:

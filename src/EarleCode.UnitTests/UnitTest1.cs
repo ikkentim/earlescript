@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace EarleCode.UnitTests
@@ -9,6 +11,16 @@ namespace EarleCode.UnitTests
         [TestMethod]
         public void TestMethod1()
         {
+            var runtime = new Runtime();
+
+            runtime.LoadFile(@"\main", @"
+init()
+{
+  println(""test"");
+}
+");
+
+            //runtime.Invoke(null, "init", @"\main");
         }
     }
 }

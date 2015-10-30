@@ -21,31 +21,20 @@ namespace EarleCode.Blocks.Expressions
 {
     public class AssignmentUnaryExpression : Block, IExpression
     {
-        private readonly IExpression[] _indexers; //todo
         private readonly bool _isPostOperation;
-        private readonly string _name;
+        private readonly VariableNameExpression _variableNameExpression;
         private readonly string _operatorToken;
 
-        public AssignmentUnaryExpression(IScriptScope scriptScope, string name, IExpression[] indexers,
+        public AssignmentUnaryExpression(IScriptScope scriptScope, VariableNameExpression variableNameExpression,
             string operatorToken, bool isPostOperation) : base(scriptScope)
         {
-            if (name == null) throw new ArgumentNullException(nameof(name));
-            if (indexers == null) throw new ArgumentNullException(nameof(indexers));
+            if (variableNameExpression == null) throw new ArgumentNullException(nameof(variableNameExpression));
             if (operatorToken == null) throw new ArgumentNullException(nameof(operatorToken));
-            _name = name;
-            _indexers = indexers;
+            _variableNameExpression = variableNameExpression;
             _operatorToken = operatorToken;
             _isPostOperation = isPostOperation;
         }
-
-        private EarleValue SetVariable(string name, EarleValue value)
-        {
-            var variable = ResolveVariable(name) ?? AddVariable(name);
-            variable.Set(value);
-
-            return value;
-        }
-
+        
         #region Overrides of Object
 
         /// <summary>
@@ -57,8 +46,8 @@ namespace EarleCode.Blocks.Expressions
         public override string ToString()
         {
             return _isPostOperation
-                ? $"{_name}{string.Concat(_indexers.Select(i => $"[{i}]"))}{_operatorToken};"
-                : $"{_operatorToken}{_name}{string.Concat(_indexers.Select(i => $"[{i}]"))}";
+                ? $"{_variableNameExpression}{_operatorToken};"
+                : $"{_operatorToken}{_variableNameExpression}";
         }
 
         #endregion
@@ -67,7 +56,16 @@ namespace EarleCode.Blocks.Expressions
 
         public override InvocationResult Invoke(Runtime runtime, IEarleContext context)
         {
-            var variable = ResolveVariable(_name) ?? AddVariable(_name);
+            InvocationResult result;
+            IVariable variable = null;
+
+            if (!ExpressionUtility.Invoke(_variableNameExpression, 0, runtime, context, out result, ref variable))
+                return result;
+
+            if (variable == null)
+            {
+                throw new Exception("variable not found");
+            }
 
             var preValue = variable.Get();
             var postValue = new EarleValue(null);

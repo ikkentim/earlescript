@@ -1,95 +1,18 @@
 ﻿init()
 { 
-    println("start!");
-    num = delayfive();
-    
-    vec = (0.5 + -delayfive(), 5.5 + delayfive(), 10.5 + delayfive());
-     
-    println(vec);
-    
-    if((delayfive() + delayfive()) == (delayfive() + delayfive()))
-    {
-        println("TEST!");
-    }
-    
-    message = "Hello";
-    while(false) // (delayfive())
-    {
-        message = message + ", World!";
-        wait .1;
-        println(message);
-    }
-
-    for(j=1;j<num;j++)
-    {
-       println("j is " + j);
-    }
-
-    println("waittest test:");
-    waittest();
-    println("");
-
-    println("\ext::b test:");
-    \ext::b();
-    println("");
-
-    println("testA test:");
-    testA();
-    println("");
-
-    println("done!");
+    println("a: " + self);
+    wait .5;
+    println("b: " + self);
+    other("c");
+    self other("d");
 } 
 
-waittest()
+other(c)
 {
-    println("Before");
-    wait 0.5;
-    println("After");
-}
- 
-testB()
-{
-    return "World";
-}
-
-delayfive()
-{
-    wait .05;
-    return 5;
+    println(c + ": " + self);
 }
 
 a()
 {
   println("A!");
-}
-
-testA()
-{
-    var1 = true;
-
-    var2 = 2.2;
-    var3 = "Hello";
-    var4 = var1 + var2;
-
-    i=0;
-
-    while(i < 5)
-    {
-        if(var1)
-        {
-            // Whoohoo unary assignment operators in expressions :D
-            println(++i + ": Hello, " + testB() + "! (var4: " + (var4 = var4 + i + 0.2) + ")");
-        }
-    }
-
-    for(j=0;j<2;j++)
-    {
-        println("j is " + j);
-    }
-    
-    up = (0,1,0);
-    backward = (-1,0,0);
-
-    println(up);
-    println(backward);
 }

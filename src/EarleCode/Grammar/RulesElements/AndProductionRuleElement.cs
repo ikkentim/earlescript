@@ -34,13 +34,12 @@ namespace EarleCode.Grammar.RulesElements
 
         #region Implementation of IProductionRuleElement
 
-        public bool Matches(TokenWalker tokenWalker, IEnumerable<ProductionRule> rules)
+        public PruductionRuleMatchResult Matches(TokenWalker tokenWalker, IEnumerable<ProductionRule> rules)
         {
-            return Matches(tokenWalker, rules, 0);
+            return Matches(tokenWalker, rules, 0) ? PruductionRuleMatchResult.True : PruductionRuleMatchResult.False;
         }
-
         #endregion
-
+        
         public void AddCondition(IProductionRuleElement condition)
         {
             if (condition == null) throw new ArgumentNullException(nameof(condition));
@@ -52,28 +51,79 @@ namespace EarleCode.Grammar.RulesElements
         {
             if (tokenWalker.Current == null)
                 return false;
-
-            tokenWalker.CreateSession();
+            
+            //tokenWalker.CreateSession();
 
             var result = true;
+            
+            Stack<int> optional = new Stack<int>();
+            int sessions = 0;
 
             for (var i = Math.Max(0, skip); i < _conditions.Count; i++)
             {
+                tokenWalker.CreateSession();
+                sessions++;
+
                 var element = _conditions[i];
-                if (!element.Matches(tokenWalker, i == 0 && except != null ? rules.Except(new[] {except}) : rules))
+
+                var r = element.Matches(tokenWalker, i == 0 && except != null ? rules.Except(new[] {except}) : rules);
+
+                if (r == PruductionRuleMatchResult.False)
                 {
-                    result = false;
-                    break;
+                    if (!optional.Any())
+                    {
+                        result = false;
+                        break;
+                    }
+
+                    var oi = optional.Pop();
+
+                    for (var j = 0; j < i - oi + 1; j++)
+                    {
+                        tokenWalker.DropSession();
+                        sessions--;
+                    }
+                    i = oi;
+                    continue;
                 }
+
+                if (r == PruductionRuleMatchResult.Optional)
+                    optional.Push(i);
 
                 if (i != _conditions.Count - 1 && tokenWalker.Current == null)
                 {
-                    result = false;
-                    break;
+                    if (!optional.Any())
+                    {
+                        result = false;
+                        break;
+                    }
+
+                    var oi = optional.Pop();
+
+                    if (i == oi)
+                    {
+                        tokenWalker.DropSession();
+                        sessions--;
+                        continue;
+                    }
+
+                    for (var j = 0; j < i - oi + 1; j++)
+                    {
+                        tokenWalker.DropSession();
+                        sessions--;
+                    }
+                    i = oi;
+                    continue;
                 }
             }
-            return
+
+            for (var j = 0; j < sessions; j++)
+            {
                 tokenWalker.FlushOrDropSession(result);
+            }
+
+            return result;
+            //return tokenWalker.FlushOrDropSession(result);
         }
 
         #region Overrides of Object

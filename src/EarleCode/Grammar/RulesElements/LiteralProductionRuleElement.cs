@@ -40,18 +40,18 @@ namespace EarleCode.Grammar.RulesElements
 
         #region Implementation of IProductionRuleElement
 
-        public bool Matches(TokenWalker tokenWalker, IEnumerable<ProductionRule> rules)
+        public PruductionRuleMatchResult Matches(TokenWalker tokenWalker, IEnumerable<ProductionRule> rules)
         {
             if (tokenWalker.Current == null)
-                return false;
+                return PruductionRuleMatchResult.False;
 
             if (_types.Contains(tokenWalker.Current.Type) && (_value == null || _value == tokenWalker.Current.Value))
             {
                 tokenWalker.MoveNext();
-                return true;
+                return PruductionRuleMatchResult.True;
             }
 
-            return false;
+            return PruductionRuleMatchResult.False;
         }
 
         #endregion

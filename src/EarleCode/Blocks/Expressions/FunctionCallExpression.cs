@@ -22,13 +22,15 @@ namespace EarleCode.Blocks.Expressions
     public class FunctionCallExpression : Block, IExpression
     {
         private readonly IExpression[] _arguments;
+        private readonly VariableNameExpression _variableNameExpression;
         private readonly EarleFunctionSignature _functionSignature;
 
-        public FunctionCallExpression(IScriptScope scriptScope, EarleFunctionSignature functionSignature,
+        public FunctionCallExpression(IScriptScope scriptScope, VariableNameExpression variableNameExpression, EarleFunctionSignature functionSignature,
             params IExpression[] arguments)
             : base(scriptScope)
         {
             if (arguments == null) throw new ArgumentNullException(nameof(arguments));
+            _variableNameExpression = variableNameExpression;
             _functionSignature = functionSignature;
             _arguments = arguments;
         }
@@ -55,15 +57,27 @@ namespace EarleCode.Blocks.Expressions
                 var result = argument.Invoke(runtime, context);
 
                 if (result.State == InvocationState.Incomplete)
-                    return new InvocationResult(new IncompleteInvocationResult("function call 0", context, result.IncompleteResult) {Stage=i, Data=parameters});
+                    return
+                        new InvocationResult(new IncompleteInvocationResult("function call 0", context,
+                            result.IncompleteResult) {Stage = i, Data = parameters});
 
                 parameters[i] = result.ReturnValue;
             }
 
-            var functionResult = GetFunction().Invoke(runtime, context, parameters);
+            InvocationResult callResult;
+            IVariable callContextVariable = null;
+            if (_variableNameExpression != null &&
+                !ExpressionUtility.Invoke(_variableNameExpression, _arguments.Length, runtime, context, out callResult,
+                    ref callContextVariable))
+                throw new Exception("resolving self can't be event dependent");
+
+            var callContext = callContextVariable?.Get().Cast<IEarleContext>();
+
+            var functionResult = GetFunction().Invoke(runtime, callContext, parameters);
 
             return functionResult.State == InvocationState.Incomplete
-                ? new InvocationResult(new IncompleteInvocationResult("function call 1", context, functionResult.IncompleteResult) {Stage = _arguments.Length, Data=parameters})
+                ? new InvocationResult(new IncompleteInvocationResult("function call 2", callContext,
+                    functionResult.IncompleteResult) {Stage = _arguments.Length + 1, Data = parameters})
                 : new InvocationResult(InvocationState.None, functionResult.ReturnValue);
         }
 
@@ -80,18 +94,31 @@ namespace EarleCode.Blocks.Expressions
 
                 if (result.State == InvocationState.Incomplete)
                     return
-                        new InvocationResult(new IncompleteInvocationResult("function call c0", incompleteInvocationResult.Context,
-                            result.IncompleteResult) {Stage=i,Data=parameters});
+                        new InvocationResult(new IncompleteInvocationResult("function call c0",
+                            incompleteInvocationResult.Context,
+                            result.IncompleteResult) {Stage = i, Data = parameters});
 
                 parameters[i] = result.ReturnValue;
             }
 
-            var functionResult = incompleteInvocationResult.Stage == _arguments.Length
+            InvocationResult callResult;
+            IVariable callContextVariable = null;
+            if (_variableNameExpression != null &&
+                incompleteInvocationResult.Stage < _arguments.Length &&
+                !ExpressionUtility.Invoke(_variableNameExpression, _arguments.Length, runtime,
+                    incompleteInvocationResult.Context, out callResult, ref callContextVariable))
+                throw new Exception("resolving self can't be event dependent");
+
+            var callContext = incompleteInvocationResult.Stage >= _arguments.Length
+                ? incompleteInvocationResult.Context
+                : callContextVariable?.Get().Cast<IEarleContext>();
+
+            var functionResult = incompleteInvocationResult.Stage == _arguments.Length + 1
                 ? GetFunction().Continue(runtime, incompleteInvocationResult.InnerResult)
-                : GetFunction().Invoke(runtime, incompleteInvocationResult.Context, parameters);
+                : GetFunction().Invoke(runtime, callContext, parameters);
 
             return functionResult.State == InvocationState.Incomplete
-                ? new InvocationResult(new IncompleteInvocationResult("function call c1", incompleteInvocationResult.Context,
+                ? new InvocationResult(new IncompleteInvocationResult("function call c2", callContext,
                     functionResult.IncompleteResult) {Stage=_arguments.Length, Data=parameters})
                 : new InvocationResult(InvocationState.None, functionResult.ReturnValue);
         }

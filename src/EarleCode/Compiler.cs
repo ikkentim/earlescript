@@ -52,7 +52,8 @@ namespace EarleCode
             ["ASSIGNMENT_UNARY"] = "OPERATOR_MOD_UNARY VARIABLE",
             ["ASSIGNMENT"] = "VARIABLE = EXPRESSION",
             ["ASSIGNMENT"] = "ASSIGNMENT_UNARY",
-            ["FUNCTION_CALL"] = "FUNCTION_IDENTIFIER ( OPTIONAL EXPRESSION_LIST )",
+            ["FUNCTION_CALL"] = "OPTIONAL TARGET_VARIABLE FUNCTION_CALL_PART",
+            ["FUNCTION_CALL_PART"] = "FUNCTION_IDENTIFIER ( OPTIONAL EXPRESSION_LIST )",
 
             // Level 2: Expressions
             ["EXPRESSION"] = "FUNCTION_CALL",
@@ -70,6 +71,7 @@ namespace EarleCode
             ["EXPRESSION"] = "NUMBER_LITERAL|STRING_LITERAL",
 
             // Level 3: Grammar strings
+            ["TARGET_VARIABLE"] = "VARIABLE",
             ["PATH"] = "\\IDENTIFIER",
             ["PATH"] = "PATH\\IDENTIFIER",
             ["PATH_PREFIX"] = "OPTIONAL PATH ::",
