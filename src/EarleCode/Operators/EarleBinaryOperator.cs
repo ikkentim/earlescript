@@ -1,110 +1,151 @@
-// EarleCode
-// Copyright 2015 Tim Potze
-// 
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-// 
-//     http://www.apache.org/licenses/LICENSE-2.0
-// 
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-using EarleCode.Blocks;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using System.Security.Policy;
+using System.Text;
+using System.Threading.Tasks;
 using EarleCode.Blocks.Expressions;
 using EarleCode.Values;
 
 namespace EarleCode.Operators
 {
-    public abstract class EarleBinaryOperator : IEarleBinaryOperator
+    public class EarleBinaryOperator : IEarleBinaryOperator
     {
+        private readonly Func<Func<EarleValue>, Func<EarleValue>, EarleValue> _func;
+
+        public EarleBinaryOperator(Func<Func<EarleValue>,Func<EarleValue>, EarleValue> func)
+        {
+            if (func == null) throw new ArgumentNullException(nameof(func));
+            _func = func;
+        }
+
         #region Implementation of IEarleBinaryOperator
 
-        public InvocationResult Invoke(Runtime runtime, IEarleContext context, IExpression expression1,
-            IExpression expression2)
+        public InvocationResult Invoke(Runtime runtime, IEarleContext context, IExpression expression1, IExpression expression2)
         {
-            var result1 = expression1.Invoke(runtime, context);
-            if (result1.State == InvocationState.Incomplete)
+            EarleValue? value1 = null, value2 = null;
+
+            Func<EarleValue> resolve1 = () =>
+            {
+                if (value1 != null)
+                    return value1.Value;
+
+                var result = expression1.Invoke(runtime, context);
+                if (result.State == InvocationState.Incomplete)
+                    throw new IncompleteExpressionResolveException(result.IncompleteResult, 0);
+
+                value1 = result.ReturnValue;
+                return result.ReturnValue;
+            };
+            Func<EarleValue> resolve2 = () =>
+            {
+                if (value2 != null)
+                    return value2.Value;
+
+                var result = expression2.Invoke(runtime, context);
+                if (result.State == InvocationState.Incomplete)
+                    throw new IncompleteExpressionResolveException(result.IncompleteResult, 1);
+
+                value2 = result.ReturnValue;
+                return result.ReturnValue;
+            };
+
+            try
+            {
+                return new InvocationResult(InvocationState.None, _func(resolve1, resolve2));
+            }
+            catch (IncompleteExpressionResolveException e)
+            {
                 return
-                    new InvocationResult(new OperatorIncompleteInvocationResult("binary op 0", context, result1.IncompleteResult, expression1,
-                        expression2, 0));
-
-            if (!IsValue1Acceptable(result1.ReturnValue))
-                return new InvocationResult(InvocationState.None, Compute(null, null));
-
-            var result2 = expression2.Invoke(runtime, context);
-            if (result2.State == InvocationState.Incomplete)
-                return
-                    new InvocationResult(new OperatorIncompleteInvocationResult("binary op 1", context, result2.IncompleteResult, expression1,
-                        expression2, result1.ReturnValue, 1));
-
-            return new InvocationResult(InvocationState.None,
-                Compute(result1.ReturnValue,
-                    IsValue2Acceptable(result2.ReturnValue) ? (EarleValue?) result2.ReturnValue : null));
+                    new InvocationResult(new OperatorIncompleteInvocationResult(context, e.IncompleteInvocationResult,
+                        expression1, expression2, value1 ?? EarleValue.Null, e.Stage));
+            }
         }
 
         public InvocationResult Continue(Runtime runtime, IncompleteInvocationResult incompleteInvocationResult)
         {
-            var incomplete = incompleteInvocationResult as OperatorIncompleteInvocationResult;
+            var r = incompleteInvocationResult as OperatorIncompleteInvocationResult;
 
-            var value1 = incomplete.Value1;
+            if(r == null)
+                throw new Exception("invalid type of IncompleteInvocationResult");
 
-            if (incomplete.Stage == 0)
+            var expression1 = r.Expression1;
+            var expression2 = r.Expression2;
+
+            EarleValue? value1 = r.Stage == 0 ? null : new EarleValue?(r.Value1), value2 = null;
+
+            Func<EarleValue> resolve1 = () =>
             {
-                var result1 = incomplete.Expression1.Continue(runtime, incomplete.InnerResult);
-                if (result1.State == InvocationState.Incomplete)
-                    return
-                        new InvocationResult(new OperatorIncompleteInvocationResult("binary op c0", incomplete.Context, result1.IncompleteResult,
-                            incomplete.Expression1, incomplete.Expression2, 0));
+                if (value1 != null)
+                    return value1.Value;
 
-                if (!IsValue1Acceptable(result1.ReturnValue))
-                    return new InvocationResult(InvocationState.None, Compute(null, null));
+                var result = r.Stage == 0
+                    ? expression1.Continue(runtime, r.InnerResult)
+                    : expression1.Invoke(runtime, r.Context);
 
-                value1 = result1.ReturnValue;
+                if (result.State == InvocationState.Incomplete)
+                    throw new IncompleteExpressionResolveException(result.IncompleteResult, 0);
+
+                value1 = result.ReturnValue;
+                return result.ReturnValue;
+            };
+            Func<EarleValue> resolve2 = () =>
+            {
+                if (value2 != null)
+                    return value2.Value;
+
+                var result = r.Stage == 1
+                    ? expression2.Continue(runtime, r.InnerResult)
+                    : expression2.Invoke(runtime, r.Context);
+                
+                if (result.State == InvocationState.Incomplete)
+                    throw new IncompleteExpressionResolveException(result.IncompleteResult, 1);
+
+                value2 = result.ReturnValue;
+                return result.ReturnValue;
+            };
+
+            try
+            {
+                return new InvocationResult(InvocationState.None, _func(resolve1, resolve2));
             }
-
-            var result2 = incomplete.Stage == 1
-                ? incomplete.Expression2.Continue(runtime, incomplete.InnerResult)
-                : incomplete.Expression2.Invoke(runtime, incomplete.Context);
-
-            return result2.State == InvocationState.Incomplete
-                ? new InvocationResult(new OperatorIncompleteInvocationResult("binary op c1", incomplete.Context, result2.IncompleteResult,
-                    incomplete.Expression1, incomplete.Expression2, value1, 1))
-                : new InvocationResult(InvocationState.None,
-                    Compute(value1, IsValue2Acceptable(result2.ReturnValue) ? (EarleValue?) result2.ReturnValue : null));
+            catch (IncompleteExpressionResolveException e)
+            {
+                return
+                    new InvocationResult(new OperatorIncompleteInvocationResult(incompleteInvocationResult.Context, e.IncompleteInvocationResult,
+                        expression1, expression2, value1 ?? EarleValue.Null, e.Stage));
+            }
         }
 
         #endregion
 
-        protected virtual bool IsValue1Acceptable(EarleValue value)
+        private class IncompleteExpressionResolveException : Exception
         {
-            return true;
-        }
+            public IncompleteExpressionResolveException(IncompleteInvocationResult incompleteInvocationResult, int stage)
+            {
+                IncompleteInvocationResult = incompleteInvocationResult;
+                Stage = stage;
+            }
 
-        protected virtual bool IsValue2Acceptable(EarleValue value)
-        {
-            return true;
+            public IncompleteInvocationResult IncompleteInvocationResult { get; }
+            public int Stage { get; }
         }
-
-        protected abstract EarleValue Compute(EarleValue? value1, EarleValue? value2);
 
         private class OperatorIncompleteInvocationResult : IncompleteInvocationResult
         {
-            public OperatorIncompleteInvocationResult(string name, IEarleContext context, IncompleteInvocationResult innerResult,
+            public OperatorIncompleteInvocationResult(IEarleContext context, IncompleteInvocationResult innerResult,
                 IExpression expression1, IExpression expression2, int stage)
-                : base(name, context, innerResult) 
+                : base(context, innerResult)
             {
                 Expression1 = expression1;
                 Expression2 = expression2;
                 Stage = stage;
             }
 
-            public OperatorIncompleteInvocationResult(string name, IEarleContext context, IncompleteInvocationResult innerResult,
+            public OperatorIncompleteInvocationResult(IEarleContext context, IncompleteInvocationResult innerResult,
                 IExpression expression1, IExpression expression2, EarleValue value1, int stage)
-                : base(name, context, innerResult)
+                : base(context, innerResult)
             {
                 Expression1 = expression1;
                 Expression2 = expression2;
@@ -117,4 +158,6 @@ namespace EarleCode.Operators
             public IExpression Expression2 { get; }
         }
     }
+
+
 }

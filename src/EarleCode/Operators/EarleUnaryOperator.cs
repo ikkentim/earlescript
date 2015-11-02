@@ -13,16 +13,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using EarleCode.Blocks;
+using System;
 using EarleCode.Blocks.Expressions;
 using EarleCode.Values;
 
 namespace EarleCode.Operators
 {
-    public abstract class EarleUnaryOperator : IEarleUnaryOperator
+    public class EarleUnaryOperator : IEarleUnaryOperator
     {
-        protected abstract EarleValue Compute(EarleValue value);
+        private readonly Func<EarleValue, EarleValue> _compute;
 
+        public EarleUnaryOperator(Func<EarleValue, EarleValue> compute)
+        {
+            if (compute == null) throw new ArgumentNullException(nameof(compute));
+            _compute = compute;
+        }
+        
         #region Implementation of IEarleBinaryOperator
 
         public InvocationResult Invoke(Runtime runtime, IEarleContext context, IExpression expression)
@@ -30,8 +36,8 @@ namespace EarleCode.Operators
             var result = expression.Invoke(runtime, context);
 
             return result.State == InvocationState.Incomplete
-                ? new InvocationResult(new OperatorIncompleteInvocationResult("unary op 0", context, result.IncompleteResult, expression))
-                : new InvocationResult(InvocationState.None, Compute(result.ReturnValue));
+                ? new InvocationResult(new OperatorIncompleteInvocationResult(context, result.IncompleteResult, expression))
+                : new InvocationResult(InvocationState.None, _compute(result.ReturnValue));
         }
 
         public InvocationResult Continue(Runtime runtime, IncompleteInvocationResult incompleteInvocationResult)
@@ -41,17 +47,17 @@ namespace EarleCode.Operators
             var result = incomplete.Expression.Continue(runtime, incomplete.InnerResult);
 
             return result.State == InvocationState.Incomplete
-                ? new InvocationResult(new OperatorIncompleteInvocationResult("unary op c0", incomplete.Context, result.IncompleteResult,
+                ? new InvocationResult(new OperatorIncompleteInvocationResult(incomplete.Context, result.IncompleteResult,
                     incomplete.Expression))
-                : new InvocationResult(InvocationState.None, Compute(result.ReturnValue));
+                : new InvocationResult(InvocationState.None, _compute(result.ReturnValue));
         }
 
         #endregion
 
         private class OperatorIncompleteInvocationResult : IncompleteInvocationResult
         {
-            public OperatorIncompleteInvocationResult(string name, IEarleContext context, IncompleteInvocationResult innerResult, IExpression expression)
-                : base(name, context, innerResult)
+            public OperatorIncompleteInvocationResult(IEarleContext context, IncompleteInvocationResult innerResult, IExpression expression)
+                : base(context, innerResult)
             {
                 Expression = expression;
             }

@@ -202,6 +202,7 @@ namespace EarleCode.Values
         #endregion
 
         public static implicit operator EarleValue(int value) => new EarleValue(value);
+        public static implicit operator EarleValue(bool value) => new EarleValue(value ? 1 : 0);
         public static implicit operator EarleValue(float value) => new EarleValue(value);
         public static implicit operator EarleValue(string value) => new EarleValue(value);
         public static implicit operator EarleValue(EarleFunction value) => new EarleValue(value);

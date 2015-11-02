@@ -85,7 +85,6 @@
     <Compile Include="Blocks\Block.cs" />
     <Compile Include="Functions\EarleFunctionSignature.cs" />
     <Compile Include="Values\IVariable.cs" />
-    <Compile Include="Operators\EarleUnaryOperator.cs" />
     <Compile Include="Operators\OperatorUtil.cs" />
     <Compile Include="Parsers\AssignmentExpressionParser.cs" />
     <Compile Include="Parsers\AssignmentUnaryExpressionParser.cs" />
@@ -108,8 +107,7 @@
     <Compile Include="Parsers\StatementWhileParser.cs" />
     <Compile Include="Parsers\VectorExpressionParser.cs" />
     <Compile Include="Runtime.cs" />
-    <Compile Include="Operators\SimpleBinaryOperator.cs" />
-    <Compile Include="Operators\SimpleUnaryOperator.cs" />
+    <Compile Include="Operators\EarleUnaryOperator.cs" />
     <Compile Include="Tokens\ITokenizer.cs" />
     <Compile Include="Tokens\TokenUtils.cs" />
     <Compile Include="Tokens\Tokenizer.cs" />

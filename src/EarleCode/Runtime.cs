@@ -33,22 +33,22 @@ namespace EarleCode
             if (compiler == null) throw new ArgumentNullException(nameof(compiler));
             _compiler = compiler;
 
+            
+            SetOperator("+",  new EarleBinaryOperator((l, r) => EarleValue.Add(l(), r())));
+            SetOperator("-",  new EarleBinaryOperator((l, r) => EarleValue.Subtract(l(), r())));
+            SetOperator("==", new EarleBinaryOperator((l, r) => l().Cast<float>() == r().Cast<float>()));//todo fix: float: lol?
+            SetOperator("!=", new EarleBinaryOperator((l, r) => l().Cast<float>() != r().Cast<float>() ));
+            SetOperator("<",  new EarleBinaryOperator((l, r) => l().Cast<float>() < r().Cast<float>() ));
+            SetOperator("<=", new EarleBinaryOperator((l, r) => l().Cast<float>() <= r().Cast<float>()));
+            SetOperator(">",  new EarleBinaryOperator((l, r) => l().Cast<float>() > r().Cast<float>()));
+            SetOperator(">=", new EarleBinaryOperator((l, r) => l().Cast<float>() >= r().Cast<float>()));
 
-            SetOperator("+",  new SimpleBinaryOperator((l, r) => EarleValue.Add(l ?? EarleValue.Null, r ?? EarleValue.Null)));
-            SetOperator("-",  new SimpleBinaryOperator((l, r) => EarleValue.Subtract(l ?? EarleValue.Null, r ?? EarleValue.Null)));
-            SetOperator("==", new SimpleBinaryOperator((l, r) => l?.Cast<float>() == r?.Cast<float>() ? 1 : 0));//todo fix: float: lol?
-            SetOperator("!=", new SimpleBinaryOperator((l, r) => l?.Cast<float>() != r?.Cast<float>() ? 1 : 0));
-            SetOperator("<",  new SimpleBinaryOperator((l, r) => l?.Cast<float>() < r?.Cast<float>() ? 1 : 0));
-            SetOperator("<=", new SimpleBinaryOperator((l, r) => l?.Cast<float>() <= r?.Cast<float>() ? 1 : 0));
-            SetOperator(">",  new SimpleBinaryOperator((l, r) => l?.Cast<float>() > r?.Cast<float>() ? 1 : 0));
-            SetOperator(">=", new SimpleBinaryOperator((l, r) => l?.Cast<float>() >= r?.Cast<float>() ? 1 : 0));
+            SetOperator("&&", new EarleBinaryOperator((l, r) => l().ToBoolean() && r().ToBoolean()));
+            SetOperator("||", new EarleBinaryOperator((l, r) => l().ToBoolean() || r().ToBoolean()));
 
-            SetOperator("&&", new SimpleBinaryOperator((l, r) => (l?.ToBoolean() ?? false) && (r?.ToBoolean() ?? false) ? 1 : 0, l => l.ToBoolean(), null));
-            SetOperator("||", new SimpleBinaryOperator((l, r) => (l?.ToBoolean() ?? false) || (r?.ToBoolean() ?? false) ? 1 : 0));
-
-            SetUnaryOperator("-", new SimpleUnaryOperator(EarleValue.Negative));
-            SetUnaryOperator("+", new SimpleUnaryOperator(EarleValue.Positive));
-            SetUnaryOperator("!", new SimpleUnaryOperator(v => (!v.ToBoolean()) ? 1 : 0));
+            SetUnaryOperator("-", new EarleUnaryOperator(EarleValue.Negative));
+            SetUnaryOperator("+", new EarleUnaryOperator(EarleValue.Positive));
+            SetUnaryOperator("!", new EarleUnaryOperator(v => !v.ToBoolean()));
         }
 
         public Runtime() : this(new Compiler())

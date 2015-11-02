@@ -29,7 +29,7 @@ namespace EarleCode.Blocks.Expressions
 
             result = innerResult.State == InvocationState.None
                 ? innerResult
-                : new InvocationResult(new IncompleteInvocationResult("expr_util", context, innerResult.IncompleteResult)
+                : new InvocationResult(new IncompleteInvocationResult(context, innerResult.IncompleteResult)
                 {
                     Stage = stage
                 });
@@ -76,7 +76,7 @@ namespace EarleCode.Blocks.Expressions
 
             result = innerResult.State == InvocationState.None
                 ? innerResult
-                : new InvocationResult(new IncompleteInvocationResult("expr_util", incompleteInvocationResult.Context,
+                : new InvocationResult(new IncompleteInvocationResult(incompleteInvocationResult.Context,
                     innerResult.IncompleteResult)
                 {Stage = stage});
 

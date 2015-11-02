@@ -13,17 +13,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Diagnostics;
+using System.Reflection;
 using EarleCode.Values;
 
 namespace EarleCode
 {
     public class IncompleteInvocationResult
     {
-        private readonly string _name;
+        private readonly string _callingClass;
 
-        public IncompleteInvocationResult(string name, IEarleContext context, IncompleteInvocationResult innerResult)
+        public IncompleteInvocationResult(IEarleContext context, IncompleteInvocationResult innerResult)
         {
-            _name = name;
+            _callingClass = new StackTrace().GetFrame(1).GetMethod().ReflectedType.Name;
+
             Context = context;
             InnerResult = innerResult;
         }
@@ -45,7 +48,7 @@ namespace EarleCode
         /// </returns>
         public override string ToString()
         {
-            return _name;
+            return _callingClass + (InnerResult != null ? " > " + InnerResult : null);
         }
 
         #endregion

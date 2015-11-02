@@ -54,7 +54,7 @@ namespace EarleCode.Functions
             var result = InvokeBlocks(runtime, context);
 
             return result.State == InvocationState.Incomplete
-                ? new InvocationResult(new IncompleteInvocationResult("func 0", context, result.IncompleteResult) {Variables = Variables.Clone()})
+                ? new InvocationResult(new IncompleteInvocationResult(context, result.IncompleteResult) {Variables = Variables.Clone()})
                 : result;
         }
 
@@ -65,7 +65,7 @@ namespace EarleCode.Functions
             var result = ContinueBlocks(runtime, incompleteInvocationResult.InnerResult);
 
             return result.State == InvocationState.Incomplete
-                ? new InvocationResult(new IncompleteInvocationResult("func c0", incompleteInvocationResult.Context, result.IncompleteResult)
+                ? new InvocationResult(new IncompleteInvocationResult(incompleteInvocationResult.Context, result.IncompleteResult)
                 {
                     Variables = Variables.Clone()
                 })

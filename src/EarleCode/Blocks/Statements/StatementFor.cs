@@ -30,7 +30,7 @@ namespace EarleCode.Blocks.Statements
                 var result = _assignmentExpression.Invoke(runtime, context);
 
                 if (result.State == InvocationState.Incomplete)
-                    return new InvocationResult(new IncompleteInvocationResult("for 0", context, result.IncompleteResult) {Stage=0, Variables = Variables.Clone() });
+                    return new InvocationResult(new IncompleteInvocationResult(context, result.IncompleteResult) {Stage=0, Variables = Variables.Clone() });
             }
 
             while (true)
@@ -39,7 +39,7 @@ namespace EarleCode.Blocks.Statements
                 {
                     var result = _checkExpression.Invoke(runtime, context);
                     if (result.State == InvocationState.Incomplete)
-                        return new InvocationResult(new IncompleteInvocationResult("for 1", context, result.IncompleteResult) { Stage = 1, Variables = Variables.Clone() });
+                        return new InvocationResult(new IncompleteInvocationResult(context, result.IncompleteResult) { Stage = 1, Variables = Variables.Clone() });
 
                     if (!result.ReturnValue.ToBoolean())
                         break;
@@ -48,14 +48,14 @@ namespace EarleCode.Blocks.Statements
                 {
                     var result = InvokeBlocks(runtime, context);
                     if (result.State == InvocationState.Incomplete)
-                        return new InvocationResult(new IncompleteInvocationResult("for 2", context, result.IncompleteResult) { Stage = 2, Variables = Variables.Clone() });
+                        return new InvocationResult(new IncompleteInvocationResult(context, result.IncompleteResult) { Stage = 2, Variables = Variables.Clone() });
                 }
 
                 if (_incrementExpression != null)
                 {
                     var result = _incrementExpression.Invoke(runtime, context);
                     if (result.State == InvocationState.Incomplete)
-                        return new InvocationResult(new IncompleteInvocationResult("for 3", context, result.IncompleteResult) { Stage = 3, Variables = Variables.Clone() });
+                        return new InvocationResult(new IncompleteInvocationResult(context, result.IncompleteResult) { Stage = 3, Variables = Variables.Clone() });
                 }
             }
 
@@ -72,7 +72,7 @@ namespace EarleCode.Blocks.Statements
 
                 if (result.State == InvocationState.Incomplete)
                     return
-                        new InvocationResult(new IncompleteInvocationResult("for c0", incompleteInvocationResult.Context,
+                        new InvocationResult(new IncompleteInvocationResult(incompleteInvocationResult.Context,
                             result.IncompleteResult) {Stage = 0, Variables = Variables.Clone()});
             }
 
@@ -87,7 +87,7 @@ namespace EarleCode.Blocks.Statements
 
                     if (result.State == InvocationState.Incomplete)
                         return
-                            new InvocationResult(new IncompleteInvocationResult("for c1", incompleteInvocationResult.Context,
+                            new InvocationResult(new IncompleteInvocationResult(incompleteInvocationResult.Context,
                                 result.IncompleteResult)
                             { Stage = 1, Variables = Variables.Clone() });
 
@@ -103,7 +103,7 @@ namespace EarleCode.Blocks.Statements
 
                     if (result.State == InvocationState.Incomplete)
                         return
-                            new InvocationResult(new IncompleteInvocationResult("for c2", incompleteInvocationResult.Context,
+                            new InvocationResult(new IncompleteInvocationResult(incompleteInvocationResult.Context,
                                 result.IncompleteResult)
                             { Stage = 2, Variables = Variables.Clone() });
                 }
@@ -116,7 +116,7 @@ namespace EarleCode.Blocks.Statements
 
                     if (result.State == InvocationState.Incomplete)
                         return
-                            new InvocationResult(new IncompleteInvocationResult("for c3", incompleteInvocationResult.Context,
+                            new InvocationResult(new IncompleteInvocationResult(incompleteInvocationResult.Context,
                                 result.IncompleteResult)
                             { Stage = 3, Variables = Variables.Clone() });
                 }

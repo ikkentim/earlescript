@@ -14,6 +14,7 @@
 // limitations under the License.
 
 using System;
+using System.Diagnostics;
 
 namespace EarleCode.Blocks.Statements
 {
@@ -32,7 +33,7 @@ namespace EarleCode.Blocks.Statements
         {
             return _time <= 0
                 ? InvocationResult.Empty
-                : new InvocationResult(new IncompleteInvocationResult("wait 0", context, null)
+                : new InvocationResult(new IncompleteInvocationResult(context, null)
                 {
                     Event = new WaitInvocationAwaitableEvent(_time)
                 });
