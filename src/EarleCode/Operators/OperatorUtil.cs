@@ -49,6 +49,10 @@ namespace EarleCode.Operators
                     return 11;
                 case "!":
                     return 12;
+                case "&&":
+                    return 13;
+                case "||":
+                    return 14;
                 default:
                     throw new NotImplementedException();
             }

@@ -185,6 +185,7 @@ namespace EarleCode
                 tokenizer.AssertMoveNext();
             }
 
+            Token lastToken = null;
             do
             {
                 var parserName = Grammar.GetMatch(tokenizer);
@@ -200,12 +201,17 @@ namespace EarleCode
                 if (result != null)
                     yield return result;
 
+                lastToken = tokenizer.Current;
                 tokenizer.AssertMoveNext();
             } while (multiLine && !tokenizer.Current.Is(TokenType.Token, "}"));
 
             if (multiLine)
             {
                 tokenizer.AssertToken(TokenType.Token, "}");
+            }
+            else
+            {
+                tokenizer.Push(lastToken);
             }
         }
     }
