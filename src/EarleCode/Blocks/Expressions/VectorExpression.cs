@@ -42,7 +42,7 @@ namespace EarleCode.Blocks.Expressions
 
         public override InvocationResult Continue(Runtime runtime, IncompleteInvocationResult incompleteInvocationResult)
         {
-            var values = new EarleValue[2];
+            var values = incompleteInvocationResult.Data;
             var z = EarleValue.Null;
             var result = InvocationResult.Empty;
 

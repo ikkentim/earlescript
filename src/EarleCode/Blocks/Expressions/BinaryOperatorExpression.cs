@@ -14,11 +14,13 @@
 // limitations under the License.
 
 using System;
+using EarleCode.Operators;
 
 namespace EarleCode.Blocks.Expressions
 {
     public class BinaryOperatorExpression : Block, IExpression
     {
+        private IEarleBinaryOperator _operator;
         public IExpression LeftExpression { get; }
         public string OperatorToken { get; }
         public IExpression RightExpression { get; }
@@ -38,14 +40,24 @@ namespace EarleCode.Blocks.Expressions
 
         public override InvocationResult Invoke(Runtime runtime, IEarleContext context)
         {
-            return runtime.GetOperator(OperatorToken)?.Invoke(runtime, context, LeftExpression, RightExpression) ??
-                   InvocationResult.Empty;
+            if (_operator == null)
+                _operator = runtime.GetOperator(OperatorToken);
+
+            if (_operator == null)
+                throw new Exception("Use of unknown operator");
+
+            return _operator.Invoke(runtime, context, LeftExpression, RightExpression);
         }
 
         public override InvocationResult Continue(Runtime runtime, IncompleteInvocationResult incompleteInvocationResult)
         {
-            return runtime.GetOperator(OperatorToken)?.Continue(runtime, incompleteInvocationResult) ??
-                   InvocationResult.Empty;
+            if (_operator == null)
+                _operator = runtime.GetOperator(OperatorToken);
+
+            if (_operator == null)
+                throw new Exception("Use of unknown operator");
+
+            return _operator.Continue(runtime, incompleteInvocationResult);
         }
 
         #endregion

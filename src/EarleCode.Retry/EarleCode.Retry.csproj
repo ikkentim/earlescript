@@ -1,0 +1,89 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{6ED00913-9BE1-4F02-97FE-25568D4EED27}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>EarleCode.Retry</RootNamespace>
+    <AssemblyName>EarleCode.Retry</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Compiler.cs" />
+    <Compile Include="Compiler.grammar.cs" />
+    <Compile Include="EarleFile.cs" />
+    <Compile Include="EarleFunction.cs" />
+    <Compile Include="EarleValue.cs" />
+    <Compile Include="EarleValueType.cs" />
+    <Compile Include="EarleVariableReference.cs" />
+    <Compile Include="EnumHelper.cs" />
+    <Compile Include="Instructions\OpCodeAttribute.cs" />
+    <Compile Include="Parsers\AssignmentExpressionParser.cs" />
+    <Compile Include="Parsers\ExtendedParser.cs" />
+    <Compile Include="Parsers\ParserUtilities.cs" />
+    <Compile Include="Parsers\VoidCallParser.cs" />
+    <Compile Include="Runtime.cs" />
+    <Compile Include="Grammar\GrammarProcessor.cs" />
+    <Compile Include="Grammar\GrammarRule.cs" />
+    <Compile Include="Grammar\RulesElements\AndGrammarRuleElement.cs" />
+    <Compile Include="Grammar\RulesElements\EmbeddedGrammarRuleElement.cs" />
+    <Compile Include="Grammar\RulesElements\IGrammarRuleElement.cs" />
+    <Compile Include="Grammar\RulesElements\LiteralGrammarRuleElement.cs" />
+    <Compile Include="Grammar\RulesElements\OptionalGrammarRuleElement.cs" />
+    <Compile Include="Grammar\RulesElements\ProductionRuleMatchResult.cs" />
+    <Compile Include="Instructions\OpCode.cs" />
+    <Compile Include="Parsers\IParser.cs" />
+    <Compile Include="Parsers\ParseException.cs" />
+    <Compile Include="Parsers\BaseCallParser.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Lexing\ILexer.cs" />
+    <Compile Include="Lexing\Token.cs" />
+    <Compile Include="Lexing\Lexer.cs" />
+    <Compile Include="Lexing\LexerUtils.cs" />
+    <Compile Include="Lexing\TokenType.cs" />
+    <Compile Include="Lexing\TokenTypeData.cs" />
+    <Compile Include="Lexing\TokenUtils.cs" />
+    <Compile Include="Lexing\TokenWalker.cs" />
+    <Compile Include="RuntimeLoop.cs" />
+    <Compile Include="RuntimeScope.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

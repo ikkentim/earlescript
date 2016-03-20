@@ -85,7 +85,6 @@
     <Compile Include="Blocks\Block.cs" />
     <Compile Include="Functions\EarleFunctionSignature.cs" />
     <Compile Include="Values\IVariable.cs" />
-    <Compile Include="Operators\OperatorUtil.cs" />
     <Compile Include="Parsers\AssignmentExpressionParser.cs" />
     <Compile Include="Parsers\AssignmentUnaryExpressionParser.cs" />
     <Compile Include="Parsers\ExpressionParser.cs" />

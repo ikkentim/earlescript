@@ -16,9 +16,10 @@
 using System.Diagnostics;
 using EarleCode.Blocks;
 using EarleCode.Blocks.Statements;
+using EarleCode.Parsers;
 using EarleCode.Tokens;
 
-namespace EarleCode.Parsers
+namespace EarleCode.Retry.Parsers
 {
     public class StatementIfParser : Parser<StatementIf>
     {

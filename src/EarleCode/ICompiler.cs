@@ -15,7 +15,7 @@
 
 using System.Collections.Generic;
 using EarleCode.Blocks;
-using EarleCode.Grammar;
+using EarleCode.Retry.Grammar;
 using EarleCode.Tokens;
 
 namespace EarleCode

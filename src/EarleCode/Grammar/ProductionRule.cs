@@ -13,9 +13,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using EarleCode.Grammar.RulesElements;
+using EarleCode.Retry.Grammar.RulesElements;
 
-namespace EarleCode.Grammar
+namespace EarleCode.Retry.Grammar
 {
     public class ProductionRule
     {

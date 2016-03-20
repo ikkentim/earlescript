@@ -17,11 +17,12 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using EarleCode.Grammar.RulesElements;
 using EarleCode.Parsers;
+using EarleCode.Retry.Grammar.RulesElements;
+using EarleCode.Retry.Parsers;
 using EarleCode.Tokens;
 
-namespace EarleCode.Grammar
+namespace EarleCode.Retry.Grammar
 {
     /// <summary>
     ///     Processes grammar instructions which can be used on tokenizers.

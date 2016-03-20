@@ -17,7 +17,7 @@ using System.Collections.Generic;
 using System.Linq;
 using EarleCode.Tokens;
 
-namespace EarleCode.Grammar.RulesElements
+namespace EarleCode.Retry.Grammar.RulesElements
 {
     public class EmbeddedProductionRuleElement : IProductionRuleElement
     {
