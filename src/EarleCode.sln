@@ -3,12 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EarleCode", "EarleCode\EarleCode.csproj", "{1356E12C-6A82-4CA3-8C77-34C5320870A9}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EarleCode.UnitTests", "EarleCode.UnitTests\EarleCode.UnitTests.csproj", "{58D44E15-A405-462B-B171-6EF1452F880B}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EarleCode.Debug", "EarleCode.Debug\EarleCode.Debug.csproj", "{47F24DC0-1EDE-47C7-AAAC-4C1F374E807C}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EarleCode.Retry", "EarleCode.Retry\EarleCode.Retry.csproj", "{6ED00913-9BE1-4F02-97FE-25568D4EED27}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EarleCode.Retry.Debug", "EarleCode.Retry.Debug\EarleCode.Retry.Debug.csproj", "{6DEBBF3C-9B9F-45DD-B2D5-96196B7A01AB}"
@@ -19,18 +13,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{1356E12C-6A82-4CA3-8C77-34C5320870A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1356E12C-6A82-4CA3-8C77-34C5320870A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1356E12C-6A82-4CA3-8C77-34C5320870A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1356E12C-6A82-4CA3-8C77-34C5320870A9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{58D44E15-A405-462B-B171-6EF1452F880B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{58D44E15-A405-462B-B171-6EF1452F880B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{58D44E15-A405-462B-B171-6EF1452F880B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{58D44E15-A405-462B-B171-6EF1452F880B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{47F24DC0-1EDE-47C7-AAAC-4C1F374E807C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{47F24DC0-1EDE-47C7-AAAC-4C1F374E807C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{47F24DC0-1EDE-47C7-AAAC-4C1F374E807C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{47F24DC0-1EDE-47C7-AAAC-4C1F374E807C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6ED00913-9BE1-4F02-97FE-25568D4EED27}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{6ED00913-9BE1-4F02-97FE-25568D4EED27}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6ED00913-9BE1-4F02-97FE-25568D4EED27}.Release|Any CPU.ActiveCfg = Release|Any CPU
