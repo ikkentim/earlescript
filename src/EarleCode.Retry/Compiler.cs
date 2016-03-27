@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Remoting.Channels;
 using EarleCode.Retry.Instructions;
@@ -17,12 +18,11 @@ namespace EarleCode.Retry
         private readonly Dictionary<string, IParser> _parsers = new Dictionary<string, IParser>
         {
             ["FUNCTION_CALL"] = new VoidCallParser(),
-//            ["STATEMENT_IF"] = new StatementIfParser(),
-//            ["STATEMENT_WHILE"] = new StatementWhileParser(),
+            ["STATEMENT_IF"] = new IfStatementParser(),
+            ["STATEMENT_WHILE"] = new WhileStatementParser(),
 //            ["STATEMENT_FOR"] = new StatementForParser(),
-//            ["STATEMENT_RETURN"] = new StatementReturnParser(),
+            ["STATEMENT_RETURN"] = new ReturnStatementParser(),
 //            ["STATEMENT_WAIT"] = new StatementWaitParser(),
-//            ["STATEMENT_END"] = new NopParser(),
             ["ASSIGNMENT"] = new AssignmentExpressionParser(),
 //            ["ASSIGNMENT_UNARY"] = new AssignmentUnaryExpressionParser(),
         };
@@ -64,34 +64,41 @@ namespace EarleCode.Retry
             return function;
         }
 
-        private void PrintCompiledPCode(EarleFunction function)
+        public void PrintCompiledPCode(EarleFunction function)
         {
             if (function == null) throw new ArgumentNullException(nameof(function));
             
             Console.WriteLine($"Function {function} compiled to:");
-            for (var index = 0; index < function.PCode.Length; index++)
-            {
-                var p = function.PCode[index];
-                var e = (OpCode) p;
-                var a = e.GetAttributeOfType<OpCodeAttribute>();
-                
-                Console.WriteLine(a.BuildString(function.PCode, ref index));
-            }
-
+            PrintCompiledPCode(function.PCode);
             Console.WriteLine();
+        }
+
+        public void PrintCompiledPCode(byte[] pCode)
+        {
+            for (var index = 0; index < pCode.Length; index++)
+            {
+                var p = pCode[index];
+                var e = (OpCode)p;
+                var a = e.GetAttributeOfType<OpCodeAttribute>();
+
+                Console.WriteLine(a.BuildString(pCode, ref index));
+            }
         }
 
         public IEnumerable<byte> Compile(ILexer lexer, EarleFile file, bool mustReturn)
         {
             var didReturnAnyValue = false;
             var multiLine = false;
+            Token lastToken = null;
+
             if (lexer.Current.Is(TokenType.Token, "{"))
             {
                 multiLine = true;
                 lexer.AssertMoveNext();
             }
 
-            Token lastToken = null;
+            yield return (byte)OpCode.PushScope;
+
             do
             {
                 var parserName = SyntaxGrammarProcessor.GetMatch(lexer);
@@ -105,8 +112,11 @@ namespace EarleCode.Retry
                 if (parserName == "END_BLOCK")
                     break;
 
+                if (parserName == "STATEMENT_RETURN")
+                    didReturnAnyValue = true;
+
                 if (parser == null)
-                    throw new Exception($"Expected token, found {parserName} {lexer.Current}.");
+                    throw new ParseException(lexer.Current, $"Expected token, found {parserName} {lexer.Current}");
 
                 var result = parser.Parse(_runtime, file, lexer);
 
@@ -124,11 +134,9 @@ namespace EarleCode.Retry
                 lexer.Push(lastToken);
 
             if (!didReturnAnyValue && mustReturn)
-            {
-                yield return (byte) OpCode.PushInteger;
-                foreach (var r in BitConverter.GetBytes(0))
-                    yield return r;
-            }
+                yield return (byte) OpCode.PushNull;
+
+            yield return (byte)OpCode.PopScope;
         } 
 
         /// <summary>

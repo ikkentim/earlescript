@@ -39,7 +39,6 @@ namespace EarleCode.Retry
             ["STATEMENT_FOR"] = "`for` ( OPTIONAL ASSIGNMENT ; OPTIONAL EXPRESSION ; OPTIONAL ASSIGNMENT )",
             ["STATEMENT_RETURN"] = "`return` OPTIONAL EXPRESSION ;",
             ["STATEMENT_WAIT"] = "`wait` NUMBER_LITERAL ;",
-            ["STATEMENT_END"] = ",",
             ["ASSIGNMENT_UNARY"] = "VARIABLE OPERATOR_MOD_UNARY",
             ["ASSIGNMENT_UNARY"] = "OPERATOR_MOD_UNARY VARIABLE",
             ["ASSIGNMENT"] = "VARIABLE = EXPRESSION",

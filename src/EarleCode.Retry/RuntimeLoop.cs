@@ -18,6 +18,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using EarleCode.Retry.Instructions;
+using EarleCode.Retry.Utilities;
 
 namespace EarleCode.Retry
 {
@@ -79,7 +80,12 @@ namespace EarleCode.Retry
             {
                 var instruction = _pCode[_cip++];
 
-                Debug.WriteLine($"RUN OP: {(OpCode) instruction}");
+                // debug
+//                var ins = (OpCode) instruction;
+//                var cpi = _cip - 1;
+//                var runop = ins.GetAttributeOfType<OpCodeAttribute>().BuildString(_pCode, ref cpi);
+//                Console.WriteLine($"RUN OP: {(OpCode) instruction}: {runop}");
+
                 switch ((OpCode) instruction)
                 {
                     case OpCode.Call:
@@ -98,14 +104,14 @@ namespace EarleCode.Retry
 
                             _subLoop = function.CreateLoop(_runtime, _stack);
                         }
-
+                        
                         var result = _subLoop.Run();
-
                         if (result == null)
                         {
                             return null;
                         }
 
+                        _subLoop = null;
                         _stack.Push(result.Value);
                         break;
                     }
@@ -251,27 +257,49 @@ namespace EarleCode.Retry
                             _stack.Push(new EarleValue(left.To<int>() + right.To<int>()));
 
                         break;
-                        }
+                    }
                     case OpCode.Multiply:
+                    {
+                        var right = _stack.Pop();
+                        var left = _stack.Pop();
+
+                        var supportedTypes = new[] {EarleValueType.Integer, EarleValueType.Float};
+
+                        if (!supportedTypes.Contains(right.Type))
+                            throw new Exception("Unsupported right value type");
+
+                        if (!supportedTypes.Contains(left.Type))
+                            throw new Exception("Unsupported left value type");
+
+                        if (left.Is<float>() || right.Is<float>())
+                            _stack.Push(new EarleValue(left.To<float>()*right.To<float>()));
+                        else
+                            _stack.Push(new EarleValue(left.To<int>()*right.To<int>()));
+
+                        break;
+                    }
+                    case OpCode.JumpIf:
+                    {
+                        if (!_stack.Pop().To<bool>())
                         {
-                            var right = _stack.Pop();
-                            var left = _stack.Pop();
-
-                            var supportedTypes = new[] { EarleValueType.Integer, EarleValueType.Float };
-
-                            if (!supportedTypes.Contains(right.Type))
-                                throw new Exception("Unsupported right value type");
-
-                            if (!supportedTypes.Contains(left.Type))
-                                throw new Exception("Unsupported left value type");
-
-                            if (left.Is<float>() || right.Is<float>())
-                                _stack.Push(new EarleValue(left.To<float>() * right.To<float>()));
-                            else
-                                _stack.Push(new EarleValue(left.To<int>() * right.To<int>()));
-
-                            break;
+                            var value = BitConverter.ToInt32(_pCode, _cip);
+                            _cip += value;
                         }
+
+                        _cip += 4;
+                        break;
+                    }
+                    case OpCode.Jump:
+                    {
+                        var value = BitConverter.ToInt32(_pCode, _cip);
+                        _cip += 4 + value;
+                        break;
+                    }
+                    case OpCode.Return:
+                    {
+                        _cip = _pCode.Length;
+                        break;
+                    }
                     default:
                         throw new Exception("Unkown opcode " + (OpCode) instruction);
                 }

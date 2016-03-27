@@ -29,10 +29,23 @@ namespace EarleCode.Retry.Debug
                 "   print(value1 + \" equals \" + value2);" +
                 "}\n"));
 
+
+            runtime.AddFile(runtime.CompileFile("\\file2",
+                "test(v){" +
+                "   if(v){" +
+                "       print(\"v has a value!\");" +
+                "   }" +
+                "}\n"));
+
             runtime.AddFile(runtime.CompileFile("\\main",
                 "init() {\n" +
-                "    alpha = 5 - -4 * 5 + 20;" +
+                "    \\file2::test(null);\n" +
+                "    alpha = 5 - -4 * 5 + 20;\n" +
                 "    \\file::bravo(\"alpha\", alpha);\n" +
+                "   while(alpha){" +
+                "       print(\"infinite \" + alpha);" +
+                "       alpha = alpha + 1;" +
+                "   }" +
                 "}"));
             
             runtime.Invoke(runtime.GetFile("\\main").GetFunction("init"));

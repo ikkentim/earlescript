@@ -62,5 +62,14 @@ namespace EarleCode.Retry.Instructions
         // Multiply
         [OpCode("MUL")]
         Multiply,
+        // Jump if true is on stack
+        [OpCode("JUMP_IF $int")]
+        JumpIf,
+        // Jump
+        [OpCode("JUMP $int")]
+        Jump,
+        // Return
+        [OpCode("RET")]
+        Return,
     }
 }

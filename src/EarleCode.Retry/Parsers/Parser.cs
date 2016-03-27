@@ -149,10 +149,17 @@ namespace EarleCode.Retry.Parsers
 
         #region Misc Helpers
 
-        public void Parse<T>() where T : IParser
+        public int Parse<T>() where T : IParser
+        {
+            var buffer = ParseToBuffer<T>();
+            Yield(buffer);
+            return buffer.Length;
+        }
+
+        public byte[] ParseToBuffer<T>() where T : IParser
         {
             var parser = Activator.CreateInstance<T>();
-            Yield(parser.Parse(Runtime, File, Lexer));
+            return parser.Parse(Runtime, File, Lexer).ToArray();
         }
 
         public bool SyntaxMatches(string rule)

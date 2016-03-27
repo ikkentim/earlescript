@@ -48,6 +48,9 @@
     <Compile Include="EarleValueType.cs" />
     <Compile Include="EarleVariableReference.cs" />
     <Compile Include="IRuntimeScope.cs" />
+    <Compile Include="Parsers\IfStatementParser.cs" />
+    <Compile Include="Parsers\ReturnStatementParser.cs" />
+    <Compile Include="Parsers\WhileStatementParser.cs" />
     <Compile Include="Utilities\EnumUtility.cs" />
     <Compile Include="Instructions\OpCodeAttribute.cs" />
     <Compile Include="NativeFunction.cs" />

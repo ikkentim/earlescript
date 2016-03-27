@@ -94,6 +94,24 @@ namespace EarleCode.Retry
 
         public object To(Type type)
         {
+            // Special case
+            if (type == typeof (bool))
+            {
+                switch (Type)
+                {
+                    case EarleValueType.Float:
+                        return As<float>() != 0;
+                    case EarleValueType.Integer:
+                        return As<int>() != 0;
+                    case EarleValueType.Null:
+                        return false;
+                    case EarleValueType.Function:
+                    case EarleValueType.Reference:
+                    case EarleValueType.String:
+                        return true;
+                }
+            }
+
             return To(GetValueTypeForType(type));
         }
 
