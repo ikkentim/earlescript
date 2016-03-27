@@ -17,7 +17,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using EarleCode.Retry.Grammar.RulesElements;
-using EarleCode.Retry.Grammar;
 using EarleCode.Retry.Parsers;
 using EarleCode.Retry.Lexing;
 

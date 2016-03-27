@@ -22,11 +22,17 @@ namespace EarleCode.Retry.Debug
         private static void Main(string[] args)
         {
             var runtime = new Runtime();
-            
+
+
+            runtime.AddFile(runtime.CompileFile("\\file",
+                "bravo(value1, value2) {" +
+                "   print(value1 + \" equals \" + value2);" +
+                "}\n"));
+
             runtime.AddFile(runtime.CompileFile("\\main",
                 "init() {\n" +
-                "    alpha = 4;" +
-                "    print();\n" +
+                "    alpha = 5 - -4 * 5 + 20;" +
+                "    \\file::bravo(\"alpha\", alpha);\n" +
                 "}"));
             
             runtime.Invoke(runtime.GetFile("\\main").GetFunction("init"));

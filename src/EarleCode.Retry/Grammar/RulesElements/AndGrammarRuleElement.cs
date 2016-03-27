@@ -52,12 +52,10 @@ namespace EarleCode.Retry.Grammar.RulesElements
             if (tokenWalker.Current == null)
                 return false;
             
-            //tokenWalker.CreateSession();
-
             var result = true;
             
-            Stack<int> optional = new Stack<int>();
-            int sessions = 0;
+            var optional = new Stack<int>();
+            var sessions = 0;
 
             for (var i = Math.Max(0, skip); i < _conditions.Count; i++)
             {
@@ -123,7 +121,6 @@ namespace EarleCode.Retry.Grammar.RulesElements
             }
 
             return result;
-            //return tokenWalker.FlushOrDropSession(result);
         }
 
         #region Overrides of Object

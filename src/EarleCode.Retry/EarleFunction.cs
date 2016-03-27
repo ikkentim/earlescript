@@ -15,6 +15,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace EarleCode.Retry
 {
@@ -43,58 +44,27 @@ namespace EarleCode.Retry
         {
             var locals = new Dictionary<string,EarleValue>();
 
-            foreach (var parameter in Parameters)
+            foreach (var parameter in Parameters.Reverse())
             {
                 locals[parameter] = stack.Pop();
             }
 
             return new RuntimeLoop(runtime, File, PCode, locals);
         }
-    }
 
-    public class NativeFunction : EarleFunction
-    {
-        private readonly Func<EarleValue[],EarleValue> _native;
+        #region Overrides of Object
 
-        public NativeFunction(string name, Func<EarleValue[],EarleValue> native, params string[] parameters)
-            : base(null, name, parameters, null)
+        /// <summary>
+        /// Returns a string that represents the current object.
+        /// </summary>
+        /// <returns>
+        /// A string that represents the current object.
+        /// </returns>
+        public override string ToString()
         {
-            _native = native;
-        }
-
-        #region Overrides of EarleFunction
-
-        public override RuntimeLoop CreateLoop(Runtime runtime, Stack<EarleValue> stack)
-        {
-            var pars = new List<EarleValue>();
-            for (var i = 0;   i <  Parameters.Length; i++)
-            {
-                pars.Add(stack.Pop());
-            }
-            return new NativeRuntimeLoop(runtime, _native, pars.ToArray());
+            return $"{File}::{Name}";
         }
 
         #endregion
-        
-        public class NativeRuntimeLoop : RuntimeLoop
-        {
-            private readonly Func<EarleValue[],EarleValue> _native;
-            private readonly EarleValue[] _arguments;
-
-            public NativeRuntimeLoop(Runtime runtime, Func<EarleValue[],EarleValue> native, EarleValue[] arguments) : base(runtime, null, null)
-            {
-                _native = native;
-                _arguments = arguments;
-            }
-
-            #region Overrides of RuntimeLoop
-
-            public override EarleValue? Run()
-            {
-                return _native(_arguments);
-            }
-
-            #endregion
-        }
     }
 }

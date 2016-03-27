@@ -1,8 +1,9 @@
+using System;
 using System.Collections.Generic;
 
 namespace EarleCode.Retry
 {
-    public class RuntimeScope
+    public class RuntimeScope : IRuntimeScope
     {
         private readonly Dictionary<string, EarleValue> _locals = new Dictionary<string, EarleValue>();
         private readonly RuntimeScope _superScope;

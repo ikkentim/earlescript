@@ -47,11 +47,13 @@
     <Compile Include="EarleValue.cs" />
     <Compile Include="EarleValueType.cs" />
     <Compile Include="EarleVariableReference.cs" />
-    <Compile Include="EnumHelper.cs" />
+    <Compile Include="IRuntimeScope.cs" />
+    <Compile Include="Utilities\EnumUtility.cs" />
     <Compile Include="Instructions\OpCodeAttribute.cs" />
+    <Compile Include="NativeFunction.cs" />
     <Compile Include="Parsers\AssignmentExpressionParser.cs" />
-    <Compile Include="Parsers\ExtendedParser.cs" />
-    <Compile Include="Parsers\ParserUtilities.cs" />
+    <Compile Include="Parsers\ExpressionParser.cs" />
+    <Compile Include="Parsers\Parser.cs" />
     <Compile Include="Parsers\VoidCallParser.cs" />
     <Compile Include="Runtime.cs" />
     <Compile Include="Grammar\GrammarProcessor.cs" />
@@ -77,6 +79,7 @@
     <Compile Include="Lexing\TokenWalker.cs" />
     <Compile Include="RuntimeLoop.cs" />
     <Compile Include="RuntimeScope.cs" />
+    <Compile Include="Utilities\StringUtility.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

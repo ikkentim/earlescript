@@ -4,13 +4,14 @@ using EarleCode.Retry.Lexing;
 
 namespace EarleCode.Retry.Parsers
 {
-    public class VoidCallParser : ExtendedParser<BaseCallParser>
+    public class VoidCallParser : BaseCallParser
     {
         #region Overrides of ExtendedParser<BaseCallParser>
 
-        protected override IEnumerable<byte> ParseMore(Runtime runtime, Compiler compiler, EarleFile file, ILexer lexer)
+        protected override void Parse()
         {
-            yield return (byte)OpCode.Pop;
+            base.Parse();
+            Yield(OpCode.Pop);
         }
 
         #endregion

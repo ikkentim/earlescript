@@ -3,64 +3,30 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using EarleCode.Retry;
 using EarleCode.Retry.Instructions;
 using EarleCode.Retry.Lexing;
 
 namespace EarleCode.Retry.Parsers
 {
-    class AssignmentExpressionParser : IParser
+    public class AssignmentExpressionParser : Parser
     {
         #region Implementation of IParser
 
-        public IEnumerable<byte> Parse(Runtime runtime, Compiler compiler, EarleFile file, ILexer lexer)
+        protected override void Parse()
         {
-            lexer.AssertToken(TokenType.Identifier);
+            // NAME = EXPRESSION;
 
-            var name = lexer.Current.Value;
-            lexer.AssertMoveNext();
-            
-            lexer.SkipToken(TokenType.Token, "=");
-            
-            // TODO: replace with expression parser
-            if (lexer.Current.Type == TokenType.NumberLiteral)
-            {
-                float fValue;
-                int iValue;
+            Lexer.AssertToken(TokenType.Identifier);
 
-                if (float.TryParse(lexer.Current.Value, out fValue))
-                {
-                    yield return (byte)OpCode.PushFloat;
-                    foreach (var b in BitConverter.GetBytes(fValue))
-                        yield return b;
-                }
-                else if (int.TryParse(lexer.Current.Value, out iValue))
-                {
-                    yield return (byte) OpCode.PushInteger;
-                    foreach (var b in BitConverter.GetBytes(iValue))
-                        yield return b;
-                }
-                else
-                {
-                    throw new Exception("Unknown number type");
-                }
-            }
-            else if (lexer.Current.Type == TokenType.StringLiteral)
-            {
-                yield return (byte) OpCode.PushString;
-                foreach (var c in lexer.Current.Value)
-                    yield return (byte) c;
-            }
+            var name = Lexer.Current.Value;
+            Lexer.AssertMoveNext();
 
-            lexer.AssertMoveNext();
-            
+            Lexer.SkipToken(TokenType.Token, "=");
 
-            yield return (byte)OpCode.PushReference;
-
-            foreach (var c in name)
-                yield return (byte)c;
-            yield return 0;
-
-            yield return (byte) OpCode.Assign;
+            Parse<ExpressionParser>();
+            PushReference(null, name);
+            Yield(OpCode.Write);
         }
 
         #endregion

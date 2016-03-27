@@ -1,5 +1,5 @@
-// EarleCode
-// Copyright 2015 Tim Potze
+﻿// EarleCode
+// Copyright 2016 Tim Potze
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,13 +13,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Collections.Generic;
-using EarleCode.Retry.Lexing;
+using System.Linq;
 
-namespace EarleCode.Retry.Parsers
+namespace EarleCode.Retry.Utilities
 {
-    public interface IParser
+    internal static class StringUtility
     {
-        IEnumerable<byte> Parse(Runtime runtime, EarleFile file, ILexer lexer);
+        public static string CreateOrList(this IEnumerable<string> values)
+        {
+            if (values == null) throw new ArgumentNullException(nameof(values));
+
+            var array = values.ToArray();
+
+            return array.Length <= 1
+                ? (array.FirstOrDefault() ?? string.Empty)
+                : $"{string.Join(", ", array.Take(array.Length - 1))} or {array.Last()}";
+        }
     }
 }

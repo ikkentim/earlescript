@@ -48,18 +48,19 @@ namespace EarleCode.Retry
             ["FUNCTION_CALL_PART"] = "FUNCTION_IDENTIFIER ( OPTIONAL EXPRESSION_LIST )",
 
             // Expressions
-            ["EXPRESSION"] = "FUNCTION_CALL",
-            ["EXPRESSION"] = "( EXPRESSION )",
+//            ["EXPRESSION"] = "FUNCTION_CALL",
+//            ["EXPRESSION"] = "( EXPRESSION )",
             ["EXPRESSION"] = "EXPRESSION OPERATOR EXPRESSION",
             ["EXPRESSION"] = "OPERATOR_UNARY EXPRESSION",
-            ["EXPRESSION"] = "ASSIGNMENT_UNARY",
-            ["EXPRESSION"] = "ASSIGNMENT",
+//            ["EXPRESSION"] = "ASSIGNMENT_UNARY",
+//            ["EXPRESSION"] = "ASSIGNMENT",
+//            ["EXPRESSION"] = "FUNCTION_IDENTIFIER", // function reference
+            ["EXPRESSION"] = "KEYWORD",//v
+//            ["EXPRESSION"] = "VECTOR",
+            ["EXPRESSION"] = "VARIABLE",
+            ["EXPRESSION"] = "NUMBER_LITERAL|STRING_LITERAL",//v
 
             // Value types
-            ["EXPRESSION"] = "FUNCTION_IDENTIFIER", // function reference
-            ["EXPRESSION"] = "KEYWORD",
-            ["EXPRESSION"] = "VECTOR",
-            ["EXPRESSION"] = "NUMBER_LITERAL|STRING_LITERAL",
             ["TARGET_VARIABLE"] = "VARIABLE",
             ["PATH"] = "\\IDENTIFIER",
             ["PATH"] = "PATH\\IDENTIFIER",
@@ -96,7 +97,7 @@ namespace EarleCode.Retry
             ["OPERATOR_UNARY"] = "+",
             ["OPERATOR_UNARY"] = "-",
             ["OPERATOR_UNARY"] = "!",
-            ["OPERATOR_UNARY"] = "~",
+//            ["OPERATOR_UNARY"] = "~",
             ["OPERATOR_MOD_UNARY"] = "++",
             ["OPERATOR_MOD_UNARY"] = "--",
             ["END_BLOCK"] = "}"

@@ -14,6 +14,7 @@
 // limitations under the License.
 
 using System;
+using EarleCode.Retry.Lexing;
 
 namespace EarleCode.Retry.Instructions
 {
@@ -26,5 +27,49 @@ namespace EarleCode.Retry.Instructions
         }
 
         public string Format { get; }
+
+        public string BuildString(byte[] pCode, ref int index)
+        {
+            var l = new Lexer(Format, Format);
+            var str = "";
+            while (l.MoveNext())
+            {
+                if (l.Current.Is(TokenType.Token, "$"))
+                {
+                    l.AssertMoveNext();
+                    l.AssertToken(TokenType.Identifier);
+
+                    switch (l.Current.Value)
+                    {
+                        case "int":
+                            str += BitConverter.ToInt32(pCode, index + 1);
+                            str += " ";
+                            index += 4;
+                            break;
+                        case "float":
+                            str += BitConverter.ToSingle(pCode, index + 1);
+                            str += " ";
+                            index += 4;
+                            break;
+                        case "string":
+                            str += '"';
+                            while (pCode[index + 1] != 0)
+                                str += (char)pCode[index++ + 1];
+                            str += "\" ";
+                            index++;
+                            break;
+                        default:
+                            throw new Exception();
+                    }
+                }
+                else
+                {
+                    str += $"{l.Current.Value} ";
+                }
+
+            }
+
+            return str;
+        }
     }
 }

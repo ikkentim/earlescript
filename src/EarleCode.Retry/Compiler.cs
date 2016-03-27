@@ -6,6 +6,7 @@ using EarleCode.Retry.Instructions;
 using EarleCode.Retry.Grammar;
 using EarleCode.Retry.Parsers;
 using EarleCode.Retry.Lexing;
+using EarleCode.Retry.Utilities;
 
 namespace EarleCode.Retry
 {
@@ -37,81 +38,47 @@ namespace EarleCode.Retry
             if (lexer == null) throw new ArgumentNullException(nameof(lexer));
             
             var name = lexer.Current.Value;
-            //var parameters = new List<string>();
+            var parameters = new List<string>();
 
             lexer.AssertMoveNext();
             lexer.SkipToken(TokenType.Token, "(");
 
-            if (!lexer.Current.Is(TokenType.Token, ")"))
-                while (true)
-                {
-                    if (lexer.Current.Is(TokenType.Identifier))
-                    {
-                        // todo parameters
-                        // parameters.Add(lexer.Current.Value);
-                    }
-
-                    lexer.SkipToken(TokenType.Identifier);
-
-                    if (!lexer.Current.Is(TokenType.Token, ","))
-                        break;
-
-                    lexer.AssertMoveNext();
-                }
-
-            lexer.SkipToken(TokenType.Token, ")");
-
-            // TODO: Make EarleFunction needs a scope in which parameters can be stored.
-            var func =  new EarleFunction(file, name, new string[0], Compile(lexer, file, true).ToArray());
-
-            // PRINT COMPILER OUTPUT
-            Console.WriteLine($"Function {name} compiled to:");
-            for (var index = 0; index < func.PCode.Length; index++)
+            while (!lexer.Current.Is(TokenType.Token, ")"))
             {
-                var p = func.PCode[index];
-                var e = (OpCode) p;
-                var a = e.GetAttributeOfType<OpCodeAttribute>();
+                lexer.AssertToken(TokenType.Identifier);
+                parameters.Add(lexer.Current.Value);
+                lexer.AssertMoveNext();
 
-                var str = "";
-                var l = new Lexer("descr", a.Format);
-                while (l.MoveNext())
-                {
-                    if (l.Current.Is(TokenType.Token, "$"))
-                    {
-                        l.AssertMoveNext();
-                        l.AssertToken(TokenType.Identifier);
-                        
-                        switch (l.Current.Value)
-                        {
-                            case "int":
-                                str += BitConverter.ToInt32(func.PCode, index + 1);
-                                str += " ";
-                                index += 4;
-                                break;
-                            case "float":
-                                str += BitConverter.ToSingle(func.PCode, index + 1);
-                                str += " ";
-                                index += 4;
-                                break;
-                            case "string":
-                                while (func.PCode[index] != 0)
-                                    str += (char) func.PCode[index++];
-                                str += " ";
-                                break;
-                            default:
-                                throw new Exception();
-                        }
-                    }
-                    else
-                    {
-                        str += $"{l.Current.Value} ";
-                    }
-
-                }
-                Console.WriteLine(str);
+                if (lexer.Current.Is(TokenType.Token, ")"))
+                    break;
+                
+                lexer.SkipToken(TokenType.Token, ",");
             }
 
-            return func;
+            lexer.SkipToken(TokenType.Token, ")");
+            
+            var function =  new EarleFunction(file, name, parameters.ToArray(), Compile(lexer, file, true).ToArray());
+
+            PrintCompiledPCode(function);
+
+            return function;
+        }
+
+        private void PrintCompiledPCode(EarleFunction function)
+        {
+            if (function == null) throw new ArgumentNullException(nameof(function));
+            
+            Console.WriteLine($"Function {function} compiled to:");
+            for (var index = 0; index < function.PCode.Length; index++)
+            {
+                var p = function.PCode[index];
+                var e = (OpCode) p;
+                var a = e.GetAttributeOfType<OpCodeAttribute>();
+                
+                Console.WriteLine(a.BuildString(function.PCode, ref index));
+            }
+
+            Console.WriteLine();
         }
 
         public IEnumerable<byte> Compile(ILexer lexer, EarleFile file, bool mustReturn)
@@ -129,6 +96,9 @@ namespace EarleCode.Retry
             {
                 var parserName = SyntaxGrammarProcessor.GetMatch(lexer);
 
+                if(parserName == null)
+                    throw new ParseException(lexer.Current, "Unexpected token");
+
                 IParser parser;
                 _parsers.TryGetValue(parserName, out parser);
 
@@ -136,9 +106,9 @@ namespace EarleCode.Retry
                     break;
 
                 if (parser == null)
-                    throw new Exception($"Expected instruction, found {parserName} {lexer.Current}.");
+                    throw new Exception($"Expected token, found {parserName} {lexer.Current}.");
 
-                var result = parser.Parse(_runtime, this, file, lexer);
+                var result = parser.Parse(_runtime, file, lexer);
 
                 if(result != null)
                     foreach (var r in result)

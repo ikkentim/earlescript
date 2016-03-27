@@ -22,30 +22,27 @@ using EarleCode.Retry.Lexing;
 
 namespace EarleCode.Retry.Parsers
 {
-    public class BaseCallParser : IParser
+    public class BaseCallParser : Parser
     {
-        #region Implementation of IParser
+        #region Overrides of Parser
 
-        public virtual IEnumerable<byte> Parse(Runtime runtime, Compiler compiler, EarleFile file,
-            ILexer lexer)
+        protected override void Parse()
         {
             string path = null;
-
-            // object variableNameExpression = null;
-
-            if (!compiler.SyntaxGrammarProcessor.Matches(lexer, "FUNCTION_CALL_PART"))
+            
+            if (!SyntaxMatches("FUNCTION_CALL_PART"))
             {
                 // a target is supplied
                 throw new NotImplementedException();
             }
 
             // optional token to specify function is part of current file
-            if (lexer.Current.Is(TokenType.Token, "::"))
+            if (Lexer.Current.Is(TokenType.Token, "::"))
             {
-                lexer.SkipToken(TokenType.Token, "::");
+                Lexer.SkipToken(TokenType.Token, "::");
             }
             // a specific path is supplied
-            else if (lexer.Current.Is(TokenType.Token, "\\"))
+            else if (Lexer.Current.Is(TokenType.Token, "\\"))
             {
                 // Construct path to the function
                 var identifier = false;
@@ -54,40 +51,40 @@ namespace EarleCode.Retry.Parsers
                 {
                     // check syntax
                     if (identifier)
-                        lexer.AssertToken(TokenType.Identifier);
+                        Lexer.AssertToken(TokenType.Identifier);
                     else
-                        lexer.AssertToken(TokenType.Token, "\\");
+                        Lexer.AssertToken(TokenType.Token, "\\");
                     identifier = !identifier;
 
-                    path += lexer.Current.Value;
+                    path += Lexer.Current.Value;
 
-                    lexer.AssertMoveNext();
-                } while (!lexer.Current.Is(TokenType.Token, "::"));
+                    Lexer.AssertMoveNext();
+                } while (!Lexer.Current.Is(TokenType.Token, "::"));
 
-                lexer.SkipToken(TokenType.Token, "::");
+                Lexer.SkipToken(TokenType.Token, "::");
             }
-            
-            lexer.AssertToken(TokenType.Identifier);
-            var name = lexer.Current.Value;
-            lexer.AssertMoveNext();
-            
-            lexer.SkipToken(TokenType.Token, "(");
 
-            // todo: arguments
-            yield return (byte)OpCode.PushString;
-            foreach (var c in "test")
-                yield return (byte) c;
-            yield return 0;
+            Lexer.AssertToken(TokenType.Identifier);
+            var name = Lexer.Current.Value;
+            Lexer.AssertMoveNext();
 
-            lexer.SkipToken(TokenType.Token, ")");
+            Lexer.SkipToken(TokenType.Token, "(");
 
-            yield return (byte) OpCode.PushReference;
-            
-            foreach (var b in $"{path}::{name}".Select(c => (byte)c))
-                yield return b;
-            yield return 0;
+            while (!Lexer.Current.Is(TokenType.Token, ")"))
+            {
+                Parse<ExpressionParser>();
 
-            yield return (byte)OpCode.Call;
+                if (Lexer.Current.Is(TokenType.Token, ")"))
+                    break;
+
+                Lexer.SkipToken(TokenType.Token, ",");
+            }
+
+            Lexer.SkipToken(TokenType.Token, ")");
+
+            PushReference(path, name);
+           
+            Yield(OpCode.Call);
         }
 
         #endregion

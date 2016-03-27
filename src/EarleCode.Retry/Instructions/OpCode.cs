@@ -20,9 +20,12 @@ namespace EarleCode.Retry.Instructions
         // Call to value on stack.
         [OpCode("CALL")]
         Call,
-        // Assign value on stack to var reference on stack.
-        [OpCode("ASSIGN")]
-        Assign,
+        // Write value on stack to var reference on stack.
+        [OpCode("WRITE")]
+        Write,
+        // Read value from var reference on stack to stack.
+        [OpCode("READ")]
+        Read,
         // Push specified int value.
         [OpCode("PUSH_INT $int")]
         PushInteger,
@@ -30,12 +33,15 @@ namespace EarleCode.Retry.Instructions
         [OpCode("PUSH_FLOAT $float")]
         PushFloat,
         // Push specified string value.
-        [OpCode("PUSH_STR, $string")]
+        [OpCode("PUSH_STR $string")]
         PushString,
         // Push name reference of function or variable
         [OpCode("PUSH_REF $string")]
         PushReference,
-        // Pop value from stack.
+        // Push null value
+        [OpCode("PUSH_NULL")]
+        PushNull,
+        // Pop value from stack
         [OpCode("POP")]
         Pop,
         // Add a scope to the scopes stack
@@ -44,5 +50,17 @@ namespace EarleCode.Retry.Instructions
         // Pop a scope from the scopes stack
         [OpCode("POPS")]
         PopScope,
+        // Binary invert
+        [OpCode("NOT")]
+        Not,
+        // Subtract values
+        [OpCode("SUB")]
+        Subtract,
+        // Add values
+        [OpCode("ADD")]
+        Add,
+        // Multiply
+        [OpCode("MUL")]
+        Multiply,
     }
 }

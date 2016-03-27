@@ -30,7 +30,7 @@ namespace EarleCode.Retry
 
             _natives["print"] = new NativeFunction("print", values =>
             {
-                Console.WriteLine(values.FirstOrDefault());
+                Console.WriteLine(values.FirstOrDefault().Value);
                 return new EarleValue();
             }, "value");
         }
@@ -60,9 +60,18 @@ namespace EarleCode.Retry
 
         public void Invoke(EarleFunction function)
         {
+            Invoke(function, null);
+        }
+
+        public void Invoke(EarleFunction function, IEnumerable<EarleValue> arguments)
+        {
             if (function == null) throw new ArgumentNullException(nameof(function));
-            
-            RunLoop(function.CreateLoop(this, new Stack<EarleValue>()));
+
+            var stack = arguments == null 
+                ? new Stack<EarleValue>() 
+                : new Stack<EarleValue>(arguments.Reverse());
+
+            RunLoop(function.CreateLoop(this, stack));
         }
 
         public void Invoke(byte[] pCode)
