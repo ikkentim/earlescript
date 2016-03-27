@@ -17,10 +17,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using EarleCode.Retry.Instructions;
-using EarleCode.Retry.Lexing;
+using EarleCode.Instructions;
+using EarleCode.Lexing;
 
-namespace EarleCode.Retry.Parsers
+namespace EarleCode.Parsers
 {
     public class BaseCallParser : Parser
     {

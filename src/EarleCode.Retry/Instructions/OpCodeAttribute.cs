@@ -14,9 +14,9 @@
 // limitations under the License.
 
 using System;
-using EarleCode.Retry.Lexing;
+using EarleCode.Lexing;
 
-namespace EarleCode.Retry.Instructions
+namespace EarleCode.Instructions
 {
     [AttributeUsage(AttributeTargets.Field)]
     public class OpCodeAttribute : Attribute

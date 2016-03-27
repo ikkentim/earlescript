@@ -18,7 +18,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace EarleCode.Retry.Lexing
+namespace EarleCode.Lexing
 {
     public class TokenWalker : IEnumerator<Token>
     {

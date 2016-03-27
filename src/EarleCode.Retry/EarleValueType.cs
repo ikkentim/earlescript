@@ -1,4 +1,4 @@
-namespace EarleCode.Retry
+namespace EarleCode
 {
     public enum EarleValueType
     {

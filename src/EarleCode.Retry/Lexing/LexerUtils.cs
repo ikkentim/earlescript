@@ -15,9 +15,9 @@
 
 using System.Diagnostics;
 using System.Linq;
-using EarleCode.Retry.Parsers;
+using EarleCode.Parsers;
 
-namespace EarleCode.Retry.Lexing
+namespace EarleCode.Lexing
 {
     public static class LexerUtils
     {

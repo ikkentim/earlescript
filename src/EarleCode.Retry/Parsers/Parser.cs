@@ -4,11 +4,11 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using EarleCode.Retry.Instructions;
-using EarleCode.Retry.Lexing;
-using EarleCode.Retry.Utilities;
+using EarleCode.Instructions;
+using EarleCode.Lexing;
+using EarleCode.Utilities;
 
-namespace EarleCode.Retry.Parsers
+namespace EarleCode.Parsers
 {
     public abstract class Parser : IParser
     {

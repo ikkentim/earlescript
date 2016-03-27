@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace EarleCode.Retry
+namespace EarleCode
 {
     public class EarleFile : RuntimeScope
     {

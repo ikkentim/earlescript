@@ -17,10 +17,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using EarleCode.Retry.Instructions;
-using EarleCode.Retry.Utilities;
+using EarleCode.Instructions;
+using EarleCode.Utilities;
 
-namespace EarleCode.Retry
+namespace EarleCode
 {
     public class RuntimeLoop : IRuntimeScope
     {

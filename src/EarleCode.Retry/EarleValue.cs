@@ -17,7 +17,7 @@ using System;
 using System.Diagnostics;
 using System.Globalization;
 
-namespace EarleCode.Retry
+namespace EarleCode
 {
     public struct EarleValue
     {

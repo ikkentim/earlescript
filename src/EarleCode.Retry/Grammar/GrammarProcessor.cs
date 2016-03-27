@@ -16,11 +16,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using EarleCode.Retry.Grammar.RulesElements;
-using EarleCode.Retry.Parsers;
-using EarleCode.Retry.Lexing;
+using EarleCode.Grammar.RulesElements;
+using EarleCode.Lexing;
+using EarleCode.Parsers;
 
-namespace EarleCode.Retry.Grammar
+namespace EarleCode.Grammar
 {
     /// <summary>
     ///     Processes grammar instructions which can be used on tokenizers.

@@ -17,7 +17,7 @@ using System;
 using System.Linq;
 using System.Reflection;
 
-namespace EarleCode.Retry.Utilities
+namespace EarleCode.Utilities
 {
     public static class EnumUtility
     {

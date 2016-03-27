@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Remoting.Channels;
-using EarleCode.Retry.Instructions;
-using EarleCode.Retry.Grammar;
-using EarleCode.Retry.Parsers;
-using EarleCode.Retry.Lexing;
-using EarleCode.Retry.Utilities;
+using EarleCode.Instructions;
+using EarleCode.Lexing;
+using EarleCode.Parsers;
+using EarleCode.Grammar;
+using EarleCode.Utilities;
 
-namespace EarleCode.Retry
+namespace EarleCode
 {
     public partial class Compiler
     {

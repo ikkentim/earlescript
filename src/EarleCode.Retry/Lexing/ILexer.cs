@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace EarleCode.Retry.Lexing
+namespace EarleCode.Lexing
 {
     public interface ILexer : IEnumerator<Token>
     {

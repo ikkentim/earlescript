@@ -17,7 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace EarleCode.Retry.Utilities
+namespace EarleCode.Utilities
 {
     internal static class StringUtility
     {

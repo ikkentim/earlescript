@@ -13,9 +13,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using EarleCode.Retry.Grammar;
+using EarleCode.Grammar;
 
-namespace EarleCode.Retry
+namespace EarleCode
 {
     public partial class Compiler
     {

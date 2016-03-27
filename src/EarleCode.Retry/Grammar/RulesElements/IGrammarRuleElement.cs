@@ -14,9 +14,9 @@
 // limitations under the License.
 
 using System.Collections.Generic;
-using EarleCode.Retry.Lexing;
+using EarleCode.Lexing;
 
-namespace EarleCode.Retry.Grammar.RulesElements
+namespace EarleCode.Grammar.RulesElements
 {
     public interface IGrammarRuleElement
     {

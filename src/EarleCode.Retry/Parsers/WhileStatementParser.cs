@@ -14,10 +14,10 @@
 // limitations under the License.
 
 using System.Linq;
-using EarleCode.Retry.Instructions;
-using EarleCode.Retry.Lexing;
+using EarleCode.Instructions;
+using EarleCode.Lexing;
 
-namespace EarleCode.Retry.Parsers
+namespace EarleCode.Parsers
 {
     public class WhileStatementParser : Parser
     {

@@ -7,8 +7,8 @@
     <ProjectGuid>{6DEBBF3C-9B9F-45DD-B2D5-96196B7A01AB}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>EarleCode.Retry.Debug</RootNamespace>
-    <AssemblyName>EarleCode.Retry.Debug</AssemblyName>
+    <RootNamespace>EarleCode.Debug</RootNamespace>
+    <AssemblyName>EarleCode.Debug</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -50,9 +50,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\EarleCode.Retry\EarleCode.Retry.csproj">
+    <ProjectReference Include="..\EarleCode.Retry\EarleCode.csproj">
       <Project>{6ED00913-9BE1-4F02-97FE-25568D4EED27}</Project>
-      <Name>EarleCode.Retry</Name>
+      <Name>EarleCode</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

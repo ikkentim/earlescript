@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace EarleCode.Retry
+namespace EarleCode
 {
     public class RuntimeScope : IRuntimeScope
     {

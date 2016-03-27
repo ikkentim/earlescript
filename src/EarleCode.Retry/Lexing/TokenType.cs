@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace EarleCode.Retry.Lexing
+namespace EarleCode.Lexing
 {
     public enum TokenType
     {

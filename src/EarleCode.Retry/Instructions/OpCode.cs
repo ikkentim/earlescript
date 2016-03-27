@@ -13,7 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace EarleCode.Retry.Instructions
+namespace EarleCode.Instructions
 {
     public enum OpCode : byte
     {

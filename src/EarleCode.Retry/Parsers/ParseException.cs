@@ -14,9 +14,9 @@
 // limitations under the License.
 
 using System;
-using EarleCode.Retry.Lexing;
+using EarleCode.Lexing;
 
-namespace EarleCode.Retry.Parsers
+namespace EarleCode.Parsers
 {
     public class ParseException : Exception
     {

@@ -16,9 +16,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using EarleCode.Retry.Lexing;
+using EarleCode.Lexing;
 
-namespace EarleCode.Retry.Grammar.RulesElements
+namespace EarleCode.Grammar.RulesElements
 {
     public class LiteralGrammarRuleElement : IGrammarRuleElement
     {

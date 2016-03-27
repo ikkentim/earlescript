@@ -15,7 +15,7 @@
 
 using System;
 
-namespace EarleCode.Retry.Debug
+namespace EarleCode.Debug
 {
     public class Program
     {

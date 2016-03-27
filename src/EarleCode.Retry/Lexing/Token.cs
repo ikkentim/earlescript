@@ -16,7 +16,7 @@
 using System;
 using System.Linq;
 
-namespace EarleCode.Retry.Lexing
+namespace EarleCode.Lexing
 {
     public class Token
     {

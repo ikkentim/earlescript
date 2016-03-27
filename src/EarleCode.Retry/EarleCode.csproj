@@ -7,8 +7,8 @@
     <ProjectGuid>{6ED00913-9BE1-4F02-97FE-25568D4EED27}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>EarleCode.Retry</RootNamespace>
-    <AssemblyName>EarleCode.Retry</AssemblyName>
+    <RootNamespace>EarleCode</RootNamespace>
+    <AssemblyName>EarleCode</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using EarleCode.Retry;
-using EarleCode.Retry.Instructions;
-using EarleCode.Retry.Lexing;
+using EarleCode.Instructions;
+using EarleCode.Lexing;
+using EarleCode;
 
-namespace EarleCode.Retry.Parsers
+namespace EarleCode.Parsers
 {
     public class AssignmentExpressionParser : Parser
     {

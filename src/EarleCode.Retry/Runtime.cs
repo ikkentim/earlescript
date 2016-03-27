@@ -18,7 +18,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-namespace EarleCode.Retry
+namespace EarleCode
 {
     public class Runtime : RuntimeScope
     {

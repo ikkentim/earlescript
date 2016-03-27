@@ -15,7 +15,7 @@
 
 using System.Text.RegularExpressions;
 
-namespace EarleCode.Retry.Lexing
+namespace EarleCode.Lexing
 {
     internal class TokenTypeData
     {

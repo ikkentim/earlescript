@@ -13,9 +13,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using EarleCode.Retry.Grammar.RulesElements;
+using EarleCode.Grammar.RulesElements;
 
-namespace EarleCode.Retry.Grammar
+namespace EarleCode.Grammar
 {
     public class GrammarRule
     {
