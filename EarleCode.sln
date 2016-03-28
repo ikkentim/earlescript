@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EarleCode", "EarleCode.Retry\EarleCode.csproj", "{6ED00913-9BE1-4F02-97FE-25568D4EED27}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EarleCode", "src\EarleCode\EarleCode.csproj", "{6ED00913-9BE1-4F02-97FE-25568D4EED27}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EarleCode.Debug", "EarleCode.Retry.Debug\EarleCode.Debug.csproj", "{6DEBBF3C-9B9F-45DD-B2D5-96196B7A01AB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EarleCode.Debug", "src\EarleCode.Debug\EarleCode.Debug.csproj", "{6DEBBF3C-9B9F-45DD-B2D5-96196B7A01AB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
