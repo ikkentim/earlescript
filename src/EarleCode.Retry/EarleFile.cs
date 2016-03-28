@@ -28,7 +28,8 @@ namespace EarleCode
         {
             if (runtime == null) throw new ArgumentNullException(nameof(runtime));
             if (name == null) throw new ArgumentNullException(nameof(name));
-            if (!IsValidName(name)) throw new ArgumentException("invalid name", nameof(name));;
+            if (!IsValidName(name)) throw new ArgumentException("invalid name", nameof(name));
+            ;
             _runtime = runtime;
             Name = name;
         }
@@ -81,8 +82,8 @@ namespace EarleCode
         public override EarleValue? GetValue(EarleVariableReference reference)
         {
             var baseResult = base.GetValue(reference);
-            
-            if(baseResult == null || baseResult.Value.Is<EarleFunctionCollection>())
+
+            if (baseResult == null || baseResult.Value.Is<EarleFunctionCollection>())
                 if (reference.File == Name || reference.File == null)
                 {
                     var functions = GetFunctions(reference.Name);

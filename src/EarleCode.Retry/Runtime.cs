@@ -21,70 +21,21 @@ using EarleCode.Values.ValueTypes;
 
 namespace EarleCode
 {
-    public class Runtime : RuntimeScope
+    public partial class Runtime : RuntimeScope
     {
         private readonly Dictionary<string, EarleFile> _files = new Dictionary<string, EarleFile>();
-        private readonly Dictionary<string, EarleFunctionCollection> _natives = new Dictionary<string, EarleFunctionCollection>();
+
+        private readonly Dictionary<string, EarleFunctionCollection> _natives =
+            new Dictionary<string, EarleFunctionCollection>();
+
         private readonly Dictionary<Type, IEarleValueType> _valueTypes = new Dictionary<Type, IEarleValueType>();
 
         public Runtime() : base(null)
         {
             Compiler = new Compiler(this);
 
-            RegisterNative(new NativeFunction("print", values =>
-            {
-                Console.WriteLine(values.FirstOrDefault().Value);
-                return EarleValue.Null;
-            }, "value"));
-            RegisterNative(new NativeFunction("operator*", values =>
-            {
-                var supportedTypes = new[] {typeof (int), typeof (float)};
-
-                var left = values[0];
-                var right = values[1];
-
-                left.AssertOfType(supportedTypes);
-                right.AssertOfType(supportedTypes);
-
-                return left.Is<float>() || right.Is<float>()
-                    ? new EarleValue(left.To<float>(this)*right.To<float>(this))
-                    : new EarleValue(left.To<int>(this)*right.To<int>(this));
-            }, "left", "right"));
-            RegisterNative(new NativeFunction("operator+", values =>
-            {
-                var supportedTypes = new[] {typeof (int), typeof (float), typeof (string)};
-
-                var left = values[0];
-                var right = values[1];
-
-                left.AssertOfType(supportedTypes);
-                right.AssertOfType(supportedTypes);
-
-                if (left.Is<string>() || right.Is<string>())
-                    return (new EarleValue(left.To<string>(this) + right.To<string>(this)));
-                if (left.Is<float>() || right.Is<float>())
-                    return (new EarleValue(left.To<float>(this) + right.To<float>(this)));
-                return (new EarleValue(left.To<int>(this) + right.To<int>(this)));
-            }, "left", "right"));
-            RegisterNative(new NativeFunction("operator-", values =>
-            {
-                var supportedTypes = new[] {typeof (int), typeof (float)};
-
-                var left = values[0];
-                var right = values[1];
-
-                left.AssertOfType(supportedTypes);
-                right.AssertOfType(supportedTypes);
-
-                return left.Is<float>() || right.Is<float>()
-                    ? new EarleValue(left.To<float>(this) - right.To<float>(this))
-                    : new EarleValue(left.To<int>(this) - right.To<int>(this));
-            }, "left", "right"));
-
-            RegisterValueType(new EarleIntegerValueType());
-            RegisterValueType(new EarleFloatValueType());
-            RegisterValueType(new EarleBoolValueType());
-            RegisterValueType(new EarleStringValueType());
+            RegisterDefaultNatives();
+            RegisterDefaultValueTypes();
         }
 
         public Compiler Compiler { get; }
@@ -96,7 +47,7 @@ namespace EarleCode
             if (native == null) throw new ArgumentNullException(nameof(native));
 
             EarleFunctionCollection collection;
-            if(!_natives.TryGetValue(native.Name, out collection))
+            if (!_natives.TryGetValue(native.Name, out collection))
                 _natives[native.Name] = collection = new EarleFunctionCollection();
 
             collection.Add(native);
@@ -167,7 +118,7 @@ namespace EarleCode
             if (function == null) throw new ArgumentNullException(nameof(function));
             RunLoop(function.CreateLoop(this, arguments?.ToArray() ?? new EarleValue[0]));
         }
-        
+
         #endregion
 
         #region Overrides of RuntimeScope

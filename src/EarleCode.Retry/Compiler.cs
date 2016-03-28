@@ -84,7 +84,7 @@ namespace EarleCode
             {
                 lexer.AssertToken(TokenType.Identifier);
 
-                if(parameters.Contains(lexer.Current.Value))
+                if (parameters.Contains(lexer.Current.Value))
                     throw new ParseException(lexer.Current, $"Duplicate parameter name in function \"{name}\"");
 
                 parameters.Add(lexer.Current.Value);

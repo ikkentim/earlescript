@@ -28,6 +28,10 @@ namespace EarleCode.Values
 
         public static EarleValue Null { get; } = new EarleValue();
 
+        public static EarleValue True { get; } = new EarleValue(1);
+
+        public static EarleValue False { get; } = new EarleValue(0);
+
         public object Value { get; }
 
         #region To

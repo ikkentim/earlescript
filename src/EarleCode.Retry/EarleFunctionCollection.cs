@@ -20,16 +20,19 @@ namespace EarleCode
     public class EarleFunctionCollection : List<EarleFunction>
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:System.Collections.Generic.List`1"/> class that is empty and has the default initial capacity.
+        ///     Initializes a new instance of the <see cref="T:System.Collections.Generic.List`1" /> class that is empty and has
+        ///     the default initial capacity.
         /// </summary>
         public EarleFunctionCollection()
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="T:System.Collections.Generic.List`1"/> class that contains elements copied from the specified collection and has sufficient capacity to accommodate the number of elements copied.
+        ///     Initializes a new instance of the <see cref="T:System.Collections.Generic.List`1" /> class that contains elements
+        ///     copied from the specified collection and has sufficient capacity to accommodate the number of elements copied.
         /// </summary>
-        /// <param name="collection">The collection whose elements are copied to the new list.</param><exception cref="T:System.ArgumentNullException"><paramref name="collection"/> is null.</exception>
+        /// <param name="collection">The collection whose elements are copied to the new list.</param>
+        /// <exception cref="T:System.ArgumentNullException"><paramref name="collection" /> is null.</exception>
         public EarleFunctionCollection(IEnumerable<EarleFunction> collection) : base(collection)
         {
         }

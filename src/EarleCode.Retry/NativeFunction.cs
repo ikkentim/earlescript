@@ -14,7 +14,6 @@
 // limitations under the License.
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using EarleCode.Values;
 
@@ -37,7 +36,7 @@ namespace EarleCode
             if (Parameters.Length < arguments.Length)
                 arguments =
                     arguments.Concat(Enumerable.Repeat(EarleValue.Null, Parameters.Length - arguments.Length)).ToArray();
-            
+
             return new NativeRuntimeLoop(runtime, _native, arguments);
         }
 

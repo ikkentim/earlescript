@@ -15,6 +15,7 @@
 
 using System;
 using System.IO;
+using EarleCode.Values;
 
 namespace EarleCode.Debug
 {
@@ -44,7 +45,7 @@ namespace EarleCode.Debug
                 rel = '\\' + rel.Substring(0, rel.Length - 6);
                 runtime.CompileFile(rel, File.ReadAllText(file));
             }
-
+            
             runtime.GetFile("\\main").Invoke("init");
 
             Console.WriteLine();

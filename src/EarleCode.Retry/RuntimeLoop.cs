@@ -84,14 +84,16 @@ namespace EarleCode
         public virtual EarleValue? Run()
         {
             // If a value is returned, loop is complete, if null is returned, the loop has not yet been completed.
-            
+
             if (!RunSubLoop())
                 return null;
 
             while (CIP < PCode.Length)
             {
                 var instructionIdentifier = PCode[CIP++];
-                var instruction = instructionIdentifier >= Instructions.Length ? null : Instructions[instructionIdentifier];
+                var instruction = instructionIdentifier >= Instructions.Length
+                    ? null
+                    : Instructions[instructionIdentifier];
 
 //                // Debug
 //                var debug = CIP - 1;

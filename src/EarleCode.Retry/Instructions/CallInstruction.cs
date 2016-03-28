@@ -33,8 +33,12 @@ namespace EarleCode.Instructions
             var functions = loop.GetValue(functionReference)?.Value as EarleFunctionCollection;
             var function = functions?.FirstOrDefault(f => f.Parameters.Length == argumentCount);
             if (function == null)
-                throw new Exception($"unknown function {functionReference}");
-
+            {
+                if (functions.Count == 0)
+                    throw new Exception($"unknown function {functionReference}");
+                throw new Exception(
+                    $"no overload of function {functionReference} found with {argumentCount} parameters.");
+            }
             var args = new List<EarleValue>();
             for (var i = 0; i < argumentCount; i++)
                 args.Add(loop.Stack.Pop());

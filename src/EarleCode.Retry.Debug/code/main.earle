@@ -1,8 +1,15 @@
-﻿overload(a) {
+﻿overload(a)
+{
     print("Overload A");
 }
-overload(a, b) {
+overload(a, b)
+{
     print("Overload B");
+}
+
+hello()
+{
+    print("Hello, World!");
 }
 
 init()
@@ -10,12 +17,11 @@ init()
     overload(1);
     overload(1,2);
 
-    
     \file2::test(null);
     alpha = 5 - -4 * 5 + 20;
     \file::bravo("alpha", alpha);
 
-    for(i=10;i;i=i-1)
+    for(i=0;i<10;i=i+1)
     {
         print("fooorr! i = " + i);
     }
