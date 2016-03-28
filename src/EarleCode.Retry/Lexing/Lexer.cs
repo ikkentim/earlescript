@@ -1,5 +1,5 @@
 ﻿// EarleCode
-// Copyright 2015 Tim Potze
+// Copyright 2016 Tim Potze
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -22,14 +22,14 @@ namespace EarleCode.Lexing
 {
     public class Lexer : ILexer
     {
-        private readonly TokenTypeData[] _tokenTypes;
         private readonly string _file;
         private readonly string _input;
         private readonly Stack<Token> _pushedTokens = new Stack<Token>();
+        private readonly TokenTypeData[] _tokenTypes;
         private int _caretPosition;
         private int _column;
-        private int _line; 
-        
+        private int _line;
+
         /// <summary>
         ///     Initializes a new instance of the <see cref="Lexer" /> class.
         /// </summary>
@@ -56,7 +56,33 @@ namespace EarleCode.Lexing
 
             Reset();
         }
-        
+
+        /// <summary>
+        ///     Pushes the specified token.
+        /// </summary>
+        /// <param name="token">The token.</param>
+        public void Push(Token token)
+        {
+            if (token == null) throw new ArgumentNullException(nameof(token));
+
+            // Push the current token to the stack and set the current token to the pushed token.
+            if (Current != null)
+                _pushedTokens.Push(Current);
+
+            Current = token;
+        }
+
+        #region Implementation of IDisposable
+
+        /// <summary>
+        ///     Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        public void Dispose()
+        {
+        }
+
+        #endregion
+
         private void SkipWhitespace()
         {
             // While the character at the caret is a white space character.
@@ -127,7 +153,7 @@ namespace EarleCode.Lexing
                 {
                     Current = new Token(tokenData.Type, match.Groups[tokenData.ContentGroup].Value, _file, _line,
                         _column);
-                    
+
                     MoveCaret(match.Groups[0].Length);
                     SkipWhitespace();
                     return;
@@ -141,20 +167,20 @@ namespace EarleCode.Lexing
             SkipWhitespace();
         }
 
+        #region Overrides of Object
+
         /// <summary>
-        ///     Pushes the specified token.
+        ///     Returns a string that represents the current object.
         /// </summary>
-        /// <param name="token">The token.</param>
-        public void Push(Token token)
+        /// <returns>
+        ///     A string that represents the current object.
+        /// </returns>
+        public override string ToString()
         {
-            if (token == null) throw new ArgumentNullException(nameof(token));
-
-            // Push the current token to the stack and set the current token to the pushed token.
-            if (Current != null)
-                _pushedTokens.Push(Current);
-
-            Current = token;
+            return $@"Lexer {{Current = ""{Current}""}}";
         }
+
+        #endregion
 
         #region Implementation of IEnumerator
 
@@ -201,33 +227,6 @@ namespace EarleCode.Lexing
         ///     Gets the element in the collection at the current position of the enumerator.
         /// </summary>
         object IEnumerator.Current => Current;
-
-        #endregion
-
-        #region Implementation of IDisposable
-
-        /// <summary>
-        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
-        /// </summary>
-        public void Dispose()
-        {
-            
-        }
-
-        #endregion
-
-        #region Overrides of Object
-
-        /// <summary>
-        /// Returns a string that represents the current object.
-        /// </summary>
-        /// <returns>
-        /// A string that represents the current object.
-        /// </returns>
-        public override string ToString()
-        {
-            return $@"Lexer {{Current = ""{Current}""}}";
-        }
 
         #endregion
     }

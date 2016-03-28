@@ -15,61 +15,85 @@
 
 namespace EarleCode.Instructions
 {
+    /// <summary>
+    ///     All OpCodes which can be handled by the <see cref="Runtime" />.
+    /// </summary>
     public enum OpCode : byte
     {
-        // Call to value on stack.
-        [OpCode("CALL")]
-        Call,
-        // Write value on stack to var reference on stack.
-        [OpCode("WRITE")]
-        Write,
-        // Read value from var reference on stack to stack.
-        [OpCode("READ")]
-        Read,
-        // Push specified int value.
-        [OpCode("PUSH_INT $int")]
-        PushInteger,
-        // Push specified float value.
-        [OpCode("PUSH_FLOAT $float")]
-        PushFloat,
-        // Push specified string value.
-        [OpCode("PUSH_STR $string")]
-        PushString,
-        // Push name reference of function or variable
-        [OpCode("PUSH_REF $string")]
-        PushReference,
-        // Push null value
-        [OpCode("PUSH_NULL")]
-        PushNull,
-        // Pop value from stack
-        [OpCode("POP")]
-        Pop,
-        // Add a scope to the scopes stack
-        [OpCode("PUSHS")]
-        PushScope,
-        // Pop a scope from the scopes stack
-        [OpCode("POPS")]
-        PopScope,
+        /// <summary>
+        ///     Call the function referenced by the value on top of the stack with the specified number of arguments.
+        /// </summary>
+        [OpCode("CALL $int", typeof (CallInstruction))] Call,
+
+        /// <summary>
+        ///     Write the value under the top of the stack to the variable referenced by the top of the stack.
+        /// </summary>
+        [OpCode("WRITE", typeof (WriteInstruction))] Write,
+
+        /// <summary>
+        ///     Read the value from the variable referenced by the top of the stack.
+        /// </summary>
+        [OpCode("READ", typeof (ReadInstruction))] Read,
+
+        /// <summary>
+        ///     Push the specified int to the stack.
+        /// </summary>
+        [OpCode("PUSH_INT $int", typeof (PushIntegerInstruction))] PushInteger,
+
+        /// <summary>
+        ///     Push the specified float to the stack.
+        /// </summary>
+        [OpCode("PUSH_FLOAT $float", typeof (PushFloatInstruction))] PushFloat,
+
+        /// <summary>
+        ///     Push the specified string to the stack.
+        /// </summary>
+        [OpCode("PUSH_STR $string", typeof (PushStringInstruction))] PushString,
+
+        /// <summary>
+        ///     Push the specified reference to a function or variable to the stack.
+        /// </summary>
+        [OpCode("PUSH_REF $string", typeof (PushReferenceInstruction))] PushReference,
+
+        /// <summary>
+        ///     Push a null value to the stack.
+        /// </summary>
+        [OpCode("PUSH_NULL", typeof (PushNullInstruction))] PushNull,
+
+        /// <summary>
+        ///     Pop a value off the stack.
+        /// </summary>
+        [OpCode("POP", typeof (PopInstruction))] Pop,
+
+        /// <summary>
+        ///     Push a new scope onto the scopes stack.
+        /// </summary>
+        [OpCode("PUSHS", typeof (PushScopeInstruction))] PushScope,
+
+        /// <summary>
+        ///     Pop a scope off the scopes stack.
+        /// </summary>
+        [OpCode("POPS", typeof (PopScopeInstruction))] PopScope,
         // Binary invert
-        [OpCode("NOT")]
-        Not,
-        // Subtract values
-        [OpCode("SUB")]
-        Subtract,
-        // Add values
-        [OpCode("ADD")]
-        Add,
-        // Multiply
-        [OpCode("MUL")]
-        Multiply,
-        // Jump if true is on stack
-        [OpCode("JUMP_IF $int")]
-        JumpIf,
-        // Jump
-        [OpCode("JUMP $int")]
-        Jump,
-        // Return
-        [OpCode("RET")]
-        Return,
+        /// <summary>
+        ///     Replace the value on top of the stack with its logical NOT value.
+        /// </summary>
+        [OpCode("NOT", typeof (NotInstruction))] Not,
+
+        /// <summary>
+        ///     Jump the specified number of instructions relative to the next instruction if the value on the top of the stack is
+        ///     false.
+        /// </summary>
+        [OpCode("JUMP_IF $int", typeof (JumpIfInstruction))] JumpIf,
+
+        /// <summary>
+        ///     Jump the specified number of instructions relative to the next instruction,
+        /// </summary>
+        [OpCode("JUMP $int", typeof (JumpInstruction))] Jump,
+
+        /// <summary>
+        ///     Move the CIP to the end of the P-code.
+        /// </summary>
+        [OpCode("RET", typeof (ReturnInstruction))] Return
     }
 }

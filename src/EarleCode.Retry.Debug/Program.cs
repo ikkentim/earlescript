@@ -14,43 +14,41 @@
 // limitations under the License.
 
 using System;
+using System.IO;
 
 namespace EarleCode.Debug
 {
     public class Program
     {
+        private static string GetRelativePath(string filespec, string folder)
+        {
+            Uri pathUri = new Uri(filespec);
+            // Folders must end in a slash
+            if (!folder.EndsWith(Path.DirectorySeparatorChar.ToString()))
+            {
+                folder += Path.DirectorySeparatorChar;
+            }
+            Uri folderUri = new Uri(folder);
+            return Uri.UnescapeDataString(folderUri.MakeRelativeUri(pathUri).ToString().Replace('/', Path.DirectorySeparatorChar));
+        }
+
         private static void Main(string[] args)
         {
             var runtime = new Runtime();
+            var codeDir = Path.Combine(Directory.GetCurrentDirectory(), "code");
+            var files = Directory.GetFiles(codeDir, "*.earle", SearchOption.AllDirectories);
 
+            foreach (var file in files)
+            {
+                var rel = GetRelativePath(file, codeDir).Replace('/', '\\');
+                rel = '\\' + rel.Substring(0, rel.Length - 6);
+                runtime.CompileFile(rel, File.ReadAllText(file));
+            }
 
-            runtime.AddFile(runtime.CompileFile("\\file",
-                "bravo(value1, value2) {" +
-                "   print(value1 + \" equals \" + value2);" +
-                "}\n"));
+            runtime.GetFile("\\main").Invoke("init");
 
-
-            runtime.AddFile(runtime.CompileFile("\\file2",
-                "test(v){" +
-                "   if(v){" +
-                "       print(\"v has a value!\");" +
-                "   }" +
-                "}\n"));
-
-            runtime.AddFile(runtime.CompileFile("\\main",
-                "init() {\n" +
-                "    \\file2::test(null);\n" +
-                "    alpha = 5 - -4 * 5 + 20;\n" +
-                "    \\file::bravo(\"alpha\", alpha);\n" +
-                "   while(alpha){" +
-                "       print(\"infinite \" + alpha);" +
-                "       alpha = alpha + 1;" +
-                "   }" +
-                "}"));
-            
-            runtime.Invoke(runtime.GetFile("\\main").GetFunction("init"));
-
-
+            Console.WriteLine();
+            Console.WriteLine("Code execution completed!");
             Console.ReadLine();
         }
     }

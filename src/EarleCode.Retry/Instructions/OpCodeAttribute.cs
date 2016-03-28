@@ -19,14 +19,21 @@ using EarleCode.Lexing;
 namespace EarleCode.Instructions
 {
     [AttributeUsage(AttributeTargets.Field)]
-    public class OpCodeAttribute : Attribute
+    internal class OpCodeAttribute : Attribute
     {
-        public OpCodeAttribute(string format)
+        public OpCodeAttribute(string format) : this(format, null)
+        {
+        }
+
+        public OpCodeAttribute(string format, Type instructionType)
         {
             Format = format;
+            InstructionType = instructionType;
         }
 
         public string Format { get; }
+
+        public Type InstructionType { get; }
 
         public string BuildString(byte[] pCode, ref int index)
         {
@@ -54,7 +61,7 @@ namespace EarleCode.Instructions
                         case "string":
                             str += '"';
                             while (pCode[index + 1] != 0)
-                                str += (char)pCode[index++ + 1];
+                                str += (char) pCode[index++ + 1];
                             str += "\" ";
                             index++;
                             break;
@@ -66,7 +73,6 @@ namespace EarleCode.Instructions
                 {
                     str += $"{l.Current.Value} ";
                 }
-
             }
 
             return str;

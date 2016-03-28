@@ -1,0 +1,28 @@
+﻿overload(a) {
+    print("Overload A");
+}
+overload(a, b) {
+    print("Overload B");
+}
+
+init()
+{
+    overload(1);
+    overload(1,2);
+
+    
+    \file2::test(null);
+    alpha = 5 - -4 * 5 + 20;
+    \file::bravo("alpha", alpha);
+
+    for(i=10;i;i=i-1)
+    {
+        print("fooorr! i = " + i);
+    }
+
+    while(alpha)
+    {
+        print("infinite " + alpha);
+        alpha = alpha - 1;
+    }
+ }

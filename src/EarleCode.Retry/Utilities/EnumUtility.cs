@@ -21,7 +21,7 @@ namespace EarleCode.Utilities
 {
     public static class EnumUtility
     {
-        public static TAttribute GetAttributeOfType<TAttribute>(this Enum enumValue) where TAttribute : Attribute
+        public static TAttribute GetCustomAttribute<TAttribute>(this Enum enumValue) where TAttribute : Attribute
         {
             return enumValue.GetType()
                 .GetMember(enumValue.ToString())

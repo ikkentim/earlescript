@@ -1,5 +1,5 @@
 ﻿// EarleCode
-// Copyright 2015 Tim Potze
+// Copyright 2016 Tim Potze
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -31,9 +31,13 @@ namespace EarleCode.Lexing
         }
 
         public int Line { get; }
+
         public int Column { get; private set; }
+
         public TokenType Type { get; }
+
         public string Value { get; }
+
         public string File { get; private set; }
 
         public bool Is(TokenType type, params string[] values)

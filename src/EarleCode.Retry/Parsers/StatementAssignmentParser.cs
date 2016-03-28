@@ -1,4 +1,4 @@
-// EarleCode
+﻿// EarleCode
 // Copyright 2016 Tim Potze
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,28 +13,29 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Linq;
 using EarleCode.Instructions;
 using EarleCode.Lexing;
 
 namespace EarleCode.Parsers
 {
-    public class WhileStatementParser : Parser
+    public class StatementAssignmentParser : Parser
     {
-        #region Overrides of Parser
+        #region Implementation of IParser
 
         protected override void Parse()
         {
-            Lexer.SkipToken(TokenType.Identifier, "while");
-            Lexer.SkipToken(TokenType.Token, "(");
-            var expressionLength = Parse<ExpressionParser>();
-            Lexer.SkipToken(TokenType.Token, ")");
-            var block = Runtime.Compiler.Compile(Lexer, File, false).ToArray();
-            Yield(OpCode.JumpIf);
-            Yield(block.Length + 5);
-            Yield(block);
-            Yield(OpCode.Jump);
-            Yield(-block.Length - expressionLength - 10);
+            // NAME = EXPRESSION;
+
+            Lexer.AssertToken(TokenType.Identifier);
+
+            var name = Lexer.Current.Value;
+            Lexer.AssertMoveNext();
+
+            Lexer.SkipToken(TokenType.Token, "=");
+
+            Parse<ExpressionParser>();
+            PushReference(null, name);
+            Yield(OpCode.Write);
         }
 
         #endregion

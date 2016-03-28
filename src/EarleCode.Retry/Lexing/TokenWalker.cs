@@ -1,5 +1,5 @@
 // EarleCode
-// Copyright 2015 Tim Potze
+// Copyright 2016 Tim Potze
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -31,31 +31,8 @@ namespace EarleCode.Lexing
 
             CreateSession();
         }
-        
+
         public ILexer Lexer { get; }
-
-        #region Implementation of IEnumerator
-
-        public bool MoveNext()
-        {
-            _sessions.Peek().Push(Lexer.Current);
-
-            var r = Lexer.MoveNext();
-
-            return r;
-        }
-
-        public void Reset()
-        {
-            _sessions.Clear();
-            Lexer.Reset();
-        }
-
-        public Token Current => Lexer.Current;
-
-        object IEnumerator.Current => Current;
-
-        #endregion
 
         #region Implementation of IDisposable
 
@@ -111,5 +88,28 @@ namespace EarleCode.Lexing
 
             CreateSession();
         }
+
+        #region Implementation of IEnumerator
+
+        public bool MoveNext()
+        {
+            _sessions.Peek().Push(Lexer.Current);
+
+            var r = Lexer.MoveNext();
+
+            return r;
+        }
+
+        public void Reset()
+        {
+            _sessions.Clear();
+            Lexer.Reset();
+        }
+
+        public Token Current => Lexer.Current;
+
+        object IEnumerator.Current => Current;
+
+        #endregion
     }
 }

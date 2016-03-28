@@ -24,7 +24,7 @@ namespace EarleCode
             // File contents grammar.
             ["FUNCTION_DECLARATION"] = "IDENTIFIER ( OPTIONAL IDENTIFIER_LIST )",
             ["IDENTIFIER_LIST"] = "IDENTIFIER_LIST , IDENTIFIER_LIST",
-            ["IDENTIFIER_LIST"] = "IDENTIFIER",
+            ["IDENTIFIER_LIST"] = "IDENTIFIER"
         };
 
         /// <summary>
@@ -39,10 +39,9 @@ namespace EarleCode
             ["STATEMENT_FOR"] = "`for` ( OPTIONAL ASSIGNMENT ; OPTIONAL EXPRESSION ; OPTIONAL ASSIGNMENT )",
             ["STATEMENT_RETURN"] = "`return` OPTIONAL EXPRESSION ;",
             ["STATEMENT_WAIT"] = "`wait` NUMBER_LITERAL ;",
-            ["ASSIGNMENT_UNARY"] = "VARIABLE OPERATOR_MOD_UNARY",
-            ["ASSIGNMENT_UNARY"] = "OPERATOR_MOD_UNARY VARIABLE",
+//            ["ASSIGNMENT"] = "VARIABLE OPERATOR_MOD_UNARY",
+//            ["ASSIGNMENT"] = "OPERATOR_MOD_UNARY VARIABLE",
             ["ASSIGNMENT"] = "VARIABLE = EXPRESSION",
-            ["ASSIGNMENT"] = "ASSIGNMENT_UNARY",
             ["FUNCTION_CALL"] = "OPTIONAL VARIABLE FUNCTION_CALL_PART",
             ["FUNCTION_CALL_PART"] = "FUNCTION_IDENTIFIER ( OPTIONAL EXPRESSION_LIST )",
 
@@ -51,13 +50,12 @@ namespace EarleCode
 //            ["EXPRESSION"] = "( EXPRESSION )",
             ["EXPRESSION"] = "EXPRESSION OPERATOR EXPRESSION",
             ["EXPRESSION"] = "OPERATOR_UNARY EXPRESSION",
-//            ["EXPRESSION"] = "ASSIGNMENT_UNARY",
 //            ["EXPRESSION"] = "ASSIGNMENT",
 //            ["EXPRESSION"] = "FUNCTION_IDENTIFIER", // function reference
-            ["EXPRESSION"] = "KEYWORD",//v
+            ["EXPRESSION"] = "KEYWORD", //v
 //            ["EXPRESSION"] = "VECTOR",
             ["EXPRESSION"] = "VARIABLE",
-            ["EXPRESSION"] = "NUMBER_LITERAL|STRING_LITERAL",//v
+            ["EXPRESSION"] = "NUMBER_LITERAL|STRING_LITERAL", //v
 
             // Value types
             ["TARGET_VARIABLE"] = "VARIABLE",

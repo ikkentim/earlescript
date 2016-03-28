@@ -22,12 +22,20 @@ namespace EarleCode.Parsers
 {
     public class ExpressionParser : Parser
     {
-        private readonly IDictionary<string, int> _binaryOperatorOrder = new Dictionary<string, int>
+        private readonly IDictionary<string, int> _operatorOrder = new Dictionary<string, int>
         {
             ["+"] = 1,
             ["-"] = 1,
             ["*"] = 2,
-            ["/"] = 2
+            ["/"] = 2,
+            ["<"] = 3,
+            [">"] = 3,
+            ["<="] = 3,
+            [">="] = 3,
+            ["=="] = 3,
+            ["!="] = 3,
+            ["||"] = 5,
+            ["&&"] = 5
         };
 
         #region Overrides of Parser
@@ -45,19 +53,11 @@ namespace EarleCode.Parsers
                     Lexer.AssertToken(TokenType.Token);
                     var op = Lexer.Current.Value;
 
-                    if (!_binaryOperatorOrder.ContainsKey(op))
+                    if (!_operatorOrder.ContainsKey(op))
                         ThrowUnexpectedToken("-OPERATOR-");
 
-                    if (operators.Any())
-                    {
-                        if (_binaryOperatorOrder[operators.Peek()] >= _binaryOperatorOrder[op])
-                        {
-                            do
-                            {
-                                ParseBinaryOperator(operators.Pop());
-                            } while (operators.Any());
-                        }
-                    }
+                    if (operators.Any() && _operatorOrder[operators.Peek()] >= _operatorOrder[op])
+                        do ParseBinaryOperator(operators.Pop()); while (operators.Any());
 
                     operators.Push(op);
                     Lexer.AssertMoveNext();
@@ -77,6 +77,13 @@ namespace EarleCode.Parsers
         }
 
         #endregion
+
+        protected virtual void ParseBinaryOperator(string op)
+        {
+            PushReference(null, $"operator{op}");
+            Yield(OpCode.Call);
+            Yield(2);
+        }
 
         private void ParseValue()
         {
@@ -115,32 +122,13 @@ namespace EarleCode.Parsers
             {
                 case "-":
                     PushInteger(-1);
-                    Yield(OpCode.Multiply);
+                    ParseBinaryOperator("*");
                     break;
                 case "!":
                     Yield(OpCode.Not);
                     break;
                 default:
                     ThrowUnexpectedToken("UNARY_OPERATOR");
-                    break;
-            }
-        }
-
-        private void ParseBinaryOperator(string op)
-        {
-            switch (op)
-            {
-                case "-":
-                    Yield(OpCode.Subtract);
-                    break;
-                case "+":
-                    Yield(OpCode.Add);
-                    break;
-                case "*":
-                    Yield(OpCode.Multiply);
-                    break;
-                default:
-                    ThrowUnexpectedToken("OPERATOR");
                     break;
             }
         }

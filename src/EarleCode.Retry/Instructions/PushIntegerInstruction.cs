@@ -1,5 +1,5 @@
-// EarleCode
-// Copyright 2015 Tim Potze
+﻿// EarleCode
+// Copyright 2016 Tim Potze
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,19 +13,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Collections.Generic;
-using EarleCode.Blocks;
-using EarleCode.Tokens;
+using System;
+using EarleCode.Values;
 
-namespace EarleCode.Parsers
+namespace EarleCode.Instructions
 {
-    public interface IParser<out T> : IParser where T : IBlock
+    internal class PushIntegerInstruction : IInstruction
     {
-        T Parse(ICompiler compiler, IScriptScope scriptScope, ITokenizer tokenizer);
-    }
+        #region Implementation of IInstruction
 
-    public interface IParser
-    {
-        IBlock Parse(ICompiler compiler, IScriptScope scriptScope, ITokenizer tokenizer);
+        public void Handle(RuntimeLoop loop)
+        {
+            var value = BitConverter.ToInt32(loop.PCode, loop.CIP);
+            loop.CIP += 4;
+            loop.Stack.Push(value.ToEarleValue());
+        }
+
+        #endregion
     }
 }

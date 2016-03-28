@@ -16,13 +16,15 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using EarleCode.Values;
 
 namespace EarleCode
 {
     public class EarleFunction
     {
         public EarleFunction(EarleFile file, string name, string[] parameters, byte[] pCode)
-        {;
+        {
+            ;
             if (name == null) throw new ArgumentNullException(nameof(name));
             if (parameters == null) throw new ArgumentNullException(nameof(parameters));
 
@@ -40,13 +42,16 @@ namespace EarleCode
 
         public string[] Parameters { get; }
 
-        public virtual RuntimeLoop CreateLoop(Runtime runtime, Stack<EarleValue> stack)
+        public virtual RuntimeLoop CreateLoop(Runtime runtime, EarleValue[] arguments)
         {
-            var locals = new Dictionary<string,EarleValue>();
+            if (arguments == null) throw new ArgumentNullException(nameof(arguments));
+            var locals = new Dictionary<string, EarleValue>();
 
-            foreach (var parameter in Parameters.Reverse())
+            var index = 0;
+            foreach (var parameter in Parameters)
             {
-                locals[parameter] = stack.Pop();
+                locals[parameter] = index>= arguments.Length ? EarleValue.Null : arguments[index];
+                index++;
             }
 
             return new RuntimeLoop(runtime, File, PCode, locals);
@@ -55,10 +60,10 @@ namespace EarleCode
         #region Overrides of Object
 
         /// <summary>
-        /// Returns a string that represents the current object.
+        ///     Returns a string that represents the current object.
         /// </summary>
         /// <returns>
-        /// A string that represents the current object.
+        ///     A string that represents the current object.
         /// </returns>
         public override string ToString()
         {

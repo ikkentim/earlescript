@@ -1,5 +1,5 @@
 ﻿// EarleCode
-// Copyright 2015 Tim Potze
+// Copyright 2016 Tim Potze
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,26 +13,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using EarleCode.Tokens;
+using EarleCode.Values;
 
-namespace EarleCode.Parsers
+namespace EarleCode.Instructions
 {
-    public class ParseException : Exception
+    internal class PushStringInstruction : IInstruction
     {
-        public ParseException(Token token, string error)
-            : this(token?.File ?? string.Empty, token?.Line ?? -1, token?.Column ?? -1, error)
+        #region Implementation of IInstruction
+
+        public void Handle(RuntimeLoop loop)
         {
+            var value = "";
+
+            while (loop.PCode[loop.CIP] != 0)
+                value += (char) loop.PCode[loop.CIP++];
+            loop.CIP++;
+
+            loop.Stack.Push(value.ToEarleValue());
         }
 
-        public ParseException(string file, int line, int column, string error)
-            : this(string.Format("{3}:{0}:{1}: {2}", line, column, error, file))
-        {
-        }
-
-        public ParseException(string message)
-            : base(message)
-        {
-        }
+        #endregion
     }
 }

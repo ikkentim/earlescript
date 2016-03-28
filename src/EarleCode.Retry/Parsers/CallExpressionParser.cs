@@ -14,22 +14,19 @@
 // limitations under the License.
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using EarleCode.Instructions;
 using EarleCode.Lexing;
 
 namespace EarleCode.Parsers
 {
-    public class BaseCallParser : Parser
+    public class CallExpressionParser : Parser
     {
         #region Overrides of Parser
 
         protected override void Parse()
         {
             string path = null;
-            
+
             if (!SyntaxMatches("FUNCTION_CALL_PART"))
             {
                 // a target is supplied
@@ -70,9 +67,11 @@ namespace EarleCode.Parsers
 
             Lexer.SkipToken(TokenType.Token, "(");
 
+            var arguments = 0;
             while (!Lexer.Current.Is(TokenType.Token, ")"))
             {
                 Parse<ExpressionParser>();
+                arguments++;
 
                 if (Lexer.Current.Is(TokenType.Token, ")"))
                     break;
@@ -83,8 +82,9 @@ namespace EarleCode.Parsers
             Lexer.SkipToken(TokenType.Token, ")");
 
             PushReference(path, name);
-           
+
             Yield(OpCode.Call);
+            Yield(arguments);
         }
 
         #endregion

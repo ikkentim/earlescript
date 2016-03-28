@@ -13,27 +13,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Linq;
-using EarleCode.Instructions;
-using EarleCode.Lexing;
-
-namespace EarleCode.Parsers
+namespace EarleCode.Instructions
 {
-    public class IfStatementParser : Parser
+    internal class ReturnInstruction : IInstruction
     {
-        #region Overrides of Parser
+        #region Implementation of IInstruction
 
-        protected override void Parse()
+        public void Handle(RuntimeLoop loop)
         {
-            Lexer.SkipToken(TokenType.Identifier, "if");
-            Lexer.SkipToken(TokenType.Token, "(");
-            Parse<ExpressionParser>();
-            Lexer.SkipToken(TokenType.Token, ")");
-            var block = Runtime.Compiler.Compile(Lexer, File, false).ToArray();
-            Yield(OpCode.JumpIf);
-            Yield(block.Length);
-            Yield(block);
+            loop.CIP = loop.PCode.Length;
         }
 
         #endregion

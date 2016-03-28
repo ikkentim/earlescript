@@ -1,5 +1,5 @@
-﻿// EarleCode
-// Copyright 2015 Tim Potze
+// EarleCode
+// Copyright 2016 Tim Potze
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,18 +13,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using EarleCode.Blocks;
-using EarleCode.Tokens;
-
-namespace EarleCode.Parsers
+namespace EarleCode.Instructions
 {
-    public abstract class Parser<T> : IParser<T> where T : IBlock
+    internal class PushScopeInstruction : IInstruction
     {
-        IBlock IParser.Parse(ICompiler compiler, IScriptScope scriptScope, ITokenizer tokenizer)
+        #region Implementation of IInstruction
+
+        public void Handle(RuntimeLoop loop)
         {
-            return Parse(compiler, scriptScope, tokenizer);
+            var super = loop.Scopes.Peek();
+            loop.Scopes.Push(new RuntimeScope(super));
         }
 
-        public abstract T Parse(ICompiler compiler, IScriptScope scriptScope, ITokenizer tokenizer);
+        #endregion
     }
 }

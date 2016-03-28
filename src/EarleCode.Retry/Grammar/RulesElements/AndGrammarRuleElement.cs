@@ -1,5 +1,5 @@
 ﻿// EarleCode
-// Copyright 2015 Tim Potze
+// Copyright 2016 Tim Potze
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -38,8 +38,9 @@ namespace EarleCode.Grammar.RulesElements
         {
             return Matches(tokenWalker, rules, 0) ? ProductionRuleMatchResult.True : ProductionRuleMatchResult.False;
         }
+
         #endregion
-        
+
         public void AddCondition(IGrammarRuleElement condition)
         {
             if (condition == null) throw new ArgumentNullException(nameof(condition));
@@ -51,9 +52,9 @@ namespace EarleCode.Grammar.RulesElements
         {
             if (tokenWalker.Current == null)
                 return false;
-            
+
             var result = true;
-            
+
             var optional = new Stack<int>();
             var sessions = 0;
 
@@ -111,7 +112,6 @@ namespace EarleCode.Grammar.RulesElements
                         sessions--;
                     }
                     i = oi;
-                    continue;
                 }
             }
 

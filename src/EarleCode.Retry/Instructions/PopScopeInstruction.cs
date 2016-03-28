@@ -1,5 +1,5 @@
 ﻿// EarleCode
-// Copyright 2015 Tim Potze
+// Copyright 2016 Tim Potze
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,19 +13,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Diagnostics;
-using EarleCode.Blocks;
-using EarleCode.Tokens;
-
-namespace EarleCode.Parsers
+namespace EarleCode.Instructions
 {
-    public class NopParser : Parser<IBlock>
+    internal class PopScopeInstruction : IInstruction
     {
-        #region Overrides of Parser<IBlock>
+        #region Implementation of IInstruction
 
-        public override IBlock Parse(ICompiler compiler, IScriptScope scriptScope, ITokenizer tokenizer)
+        public void Handle(RuntimeLoop loop)
         {
-            return null;
+            loop.Scopes.Pop();
         }
 
         #endregion
