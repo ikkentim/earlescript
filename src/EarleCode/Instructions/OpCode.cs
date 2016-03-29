@@ -94,6 +94,11 @@ namespace EarleCode.Instructions
         /// <summary>
         ///     Move the CIP to the end of the P-code.
         /// </summary>
-        [OpCode("RET", typeof (ReturnInstruction))] Return
+        [OpCode("RET", typeof (ReturnInstruction))] Return,
+
+        /// <summary>
+        ///     Duplicates the top value on the stack.
+        /// </summary>
+        [OpCode("DUP", typeof(DuplicateInstruction))]Duplicate
     }
 }

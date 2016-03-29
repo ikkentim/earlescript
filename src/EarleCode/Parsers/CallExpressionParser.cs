@@ -34,9 +34,10 @@ namespace EarleCode.Parsers
             }
 
             // optional token to specify function is part of current file
-            if (Lexer.Current.Is(TokenType.Token, "::"))
+            if (Lexer.Current.Is(TokenType.Token, ":"))
             {
-                Lexer.SkipToken(TokenType.Token, "::");
+                Lexer.SkipToken(TokenType.Token, ":");
+                Lexer.SkipToken(TokenType.Token, ":");
             }
             // a specific path is supplied
             else if (Lexer.Current.Is(TokenType.Token, "\\"))
@@ -56,9 +57,10 @@ namespace EarleCode.Parsers
                     path += Lexer.Current.Value;
 
                     Lexer.AssertMoveNext();
-                } while (!Lexer.Current.Is(TokenType.Token, "::"));
+                } while (!Lexer.Current.Is(TokenType.Token, ":"));
 
-                Lexer.SkipToken(TokenType.Token, "::");
+                Lexer.SkipToken(TokenType.Token, ":");
+                Lexer.SkipToken(TokenType.Token, ":");
             }
 
             Lexer.AssertToken(TokenType.Identifier);

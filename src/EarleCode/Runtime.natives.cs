@@ -120,6 +120,7 @@ namespace EarleCode
                     ? (right.Is(null) ? EarleValue.True : EarleValue.False)
                     : (left.Value.Equals(right.Value) ? EarleValue.True : EarleValue.False);
             }));
+
             RegisterNative(new BinaryOperatorNativeFunction("!=", (left, right) =>
             {
                 if (left.Is<int>() && right.Is<float>())
@@ -131,6 +132,14 @@ namespace EarleCode
                     ? (!right.Is(null) ? EarleValue.True : EarleValue.False)
                     : (!left.Value.Equals(right.Value) ? EarleValue.True : EarleValue.False);
             }));
+
+            RegisterNative(new UnaryOperatorNativeFunction("++",
+                v => v.Is<int>() ? (v.As<int>() + 1).ToEarleValue() : (v.As<float>() + 1).ToEarleValue(), typeof(int),
+                typeof(float)));
+
+            RegisterNative(new UnaryOperatorNativeFunction("--",
+                v => v.Is<int>() ? (v.As<int>() - 1).ToEarleValue() : (v.As<float>() - 1).ToEarleValue(), typeof(int),
+                typeof(float)));
         }
 
         private void RegisterDefaultValueTypes()
@@ -158,6 +167,25 @@ namespace EarleCode
 
                     return operation(left, right);
                 }, "left", "right")
+            {
+                if (@operator == null) throw new ArgumentNullException(nameof(@operator));
+                if (operation == null) throw new ArgumentNullException(nameof(operation));
+                if (supportedTypes == null) throw new ArgumentNullException(nameof(supportedTypes));
+            }
+        }
+        private class UnaryOperatorNativeFunction : NativeFunction
+        {
+            public UnaryOperatorNativeFunction(string @operator, Func<EarleValue, EarleValue> operation,
+                params Type[] supportedTypes)
+                : base($"operator{@operator}", values =>
+                {
+                    var value = values[0];
+
+                    if (supportedTypes.Length > 0)
+                        value.AssertOfType(supportedTypes);
+                    
+                    return operation(value);
+                }, "value")
             {
                 if (@operator == null) throw new ArgumentNullException(nameof(@operator));
                 if (operation == null) throw new ArgumentNullException(nameof(operation));

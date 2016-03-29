@@ -14,6 +14,24 @@ hello()
 
 init()
 {
+    i=0;
+    i++;
+    ++i;
+    i--;
+    --i;
+    i=2;
+    i = 120 --i;
+    
+    print("i = " + i);
+    i += 5;
+    print("i = " + i);
+    print("i = "+ i++ + ++i + ";");
+
+    //print("----");
+    //init2();
+}
+init2()
+{
     overload(1);
     overload(1,2);
 
@@ -21,7 +39,7 @@ init()
     alpha = 5 - -4 * 5 + 20;
     \file::bravo("alpha", alpha);
 
-    for(i=0;i<10;i=i+1)
+    for(i=0;i<10;i++)
     {
         print("fooorr! i = " + i);
     }

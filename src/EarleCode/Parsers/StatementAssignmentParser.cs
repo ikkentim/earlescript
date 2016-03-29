@@ -14,28 +14,17 @@
 // limitations under the License.
 
 using EarleCode.Instructions;
-using EarleCode.Lexing;
 
 namespace EarleCode.Parsers
 {
     public class StatementAssignmentParser : Parser
     {
-        #region Implementation of IParser
+        #region Overrides of Parser
 
         protected override void Parse()
         {
-            // NAME = EXPRESSION;
-
-            Lexer.AssertToken(TokenType.Identifier);
-
-            var name = Lexer.Current.Value;
-            Lexer.AssertMoveNext();
-
-            Lexer.SkipToken(TokenType.Token, "=");
-
-            Parse<ExpressionParser>();
-            PushReference(null, name);
-            Yield(OpCode.Write);
+            Parse<AssignmentExpressionParser>();
+            Yield(OpCode.Pop);
         }
 
         #endregion

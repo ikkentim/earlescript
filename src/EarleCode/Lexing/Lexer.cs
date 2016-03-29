@@ -44,9 +44,7 @@ namespace EarleCode.Lexing
                 new TokenTypeData(@"\G[a-zA-Z_][a-zA-Z0-9_]*", TokenType.Identifier),
                 new TokenTypeData(@"\G([0-9]*\.?[0-9]+)", TokenType.NumberLiteral, 1),
                 new TokenTypeData(@"\G([""])((?:\\\1|.)*?)\1", TokenType.StringLiteral, 2)
-            }.Concat(new[] {"++", "--", "<<", ">>", "==", "!=", "<=", ">=", "&&", "||", "::"}
-                .Select(s => new TokenTypeData(@"\G\" + string.Join(@"\", s.ToCharArray()), TokenType.Token)))
-                .ToArray();
+            };
 
             if (file == null) throw new ArgumentNullException(nameof(file));
             if (input == null) throw new ArgumentNullException(nameof(input));

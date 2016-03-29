@@ -88,6 +88,13 @@ namespace EarleCode.Parsers
         private void ParseValue()
         {
             string unaryOperator = null;
+
+            if (SyntaxMatches("ASSIGNMENT"))
+            {
+                Parse<AssignmentExpressionParser>();
+                return;
+            }
+
             if (SyntaxMatches("OPERATOR_UNARY"))
             {
                 Lexer.AssertToken(TokenType.Token);

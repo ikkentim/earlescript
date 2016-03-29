@@ -1,5 +1,5 @@
-// EarleCode
-// Copyright 2015 Tim Potze
+﻿// EarleCode
+// Copyright 2016 Tim Potze
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,13 +13,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace EarleCode.Tokens
+namespace EarleCode.Instructions
 {
-    public enum TokenType
+    public class DuplicateInstruction : IInstruction
     {
-        Identifier,
-        NumberLiteral,
-        StringLiteral,
-        Token
+        #region Implementation of IInstruction
+
+        public void Handle(RuntimeLoop loop)
+        {
+            loop.Stack.Push(loop.Stack.Peek());
+        }
+
+        #endregion
     }
 }
