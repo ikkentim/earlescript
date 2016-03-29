@@ -46,10 +46,11 @@ namespace EarleCode.Debug
                 runtime.CompileFile(rel, File.ReadAllText(file));
             }
             
-            runtime.GetFile("\\main").Invoke("init");
+            var result = runtime.GetFile("\\main").Invoke("init");
 
             Console.WriteLine();
             Console.WriteLine("Code execution completed!");
+            Console.WriteLine("Result: " + result);
             Console.ReadLine();
         }
     }

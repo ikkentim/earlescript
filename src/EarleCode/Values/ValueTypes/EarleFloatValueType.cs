@@ -22,7 +22,7 @@ namespace EarleCode.Values.ValueTypes
         protected override EarleValue ParseOtherValueToType(EarleValue value)
         {
             if (value.Is<int>())
-                return value.As<int>().ToEarleValue<float>();
+                return ((float)value.As<int>()).ToEarleValue();
 
             return 0.0f.ToEarleValue();
         }

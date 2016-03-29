@@ -34,7 +34,7 @@ namespace EarleCode.Instructions
             var function = functions?.FirstOrDefault(f => f.Parameters.Length == argumentCount);
             if (function == null)
             {
-                if (functions.Count == 0)
+                if ((functions?.Count ?? 0) == 0)
                     throw new Exception($"unknown function {functionReference}");
                 throw new Exception(
                     $"no overload of function {functionReference} found with {argumentCount} parameters.");

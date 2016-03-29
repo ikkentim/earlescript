@@ -24,11 +24,5 @@ namespace EarleCode.Values
         {
             return new EarleValue(value);
         }
-
-        [DebuggerHidden]
-        public static EarleValue ToEarleValue<T>(this object value)
-        {
-            return ((T) value).ToEarleValue();
-        }
     }
 }

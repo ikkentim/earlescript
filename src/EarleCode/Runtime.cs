@@ -57,10 +57,10 @@ namespace EarleCode
 
         #region Running
 
-        private void RunLoop(RuntimeLoop loop)
+        private EarleValue? RunLoop(RuntimeLoop loop)
         {
             // TODO: Store loop if execution did not complete.
-            loop.Run();
+            return loop.Run();
         }
 
         #endregion
@@ -108,15 +108,15 @@ namespace EarleCode
 
         #region Invoking
 
-        public void Invoke(EarleFunction function)
+        public EarleValue? Invoke(EarleFunction function)
         {
-            Invoke(function, null);
+            return Invoke(function, null);
         }
 
-        public void Invoke(EarleFunction function, IEnumerable<EarleValue> arguments)
+        public EarleValue? Invoke(EarleFunction function, IEnumerable<EarleValue> arguments)
         {
             if (function == null) throw new ArgumentNullException(nameof(function));
-            RunLoop(function.CreateLoop(this, arguments?.ToArray() ?? new EarleValue[0]));
+            return RunLoop(function.CreateLoop(this, arguments?.ToArray() ?? new EarleValue[0]));
         }
 
         #endregion
