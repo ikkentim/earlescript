@@ -14,6 +14,7 @@
 // limitations under the License.
 
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using EarleCode.Instructions;
 using EarleCode.Lexing;
@@ -170,7 +171,7 @@ namespace EarleCode.Parsers
 
                     if (int.TryParse(Lexer.Current.Value, out iValue))
                         PushInteger(iValue);
-                    else if (float.TryParse(Lexer.Current.Value, out fValue))
+                    else if (float.TryParse(Lexer.Current.Value, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out fValue))
                         PushFloat(fValue);
                     else
                         ThrowUnexpectedToken(TokenType.NumberLiteral);

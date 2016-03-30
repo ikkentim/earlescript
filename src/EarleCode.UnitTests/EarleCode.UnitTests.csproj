@@ -54,7 +54,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\src\EarleCode\EarleCode.csproj">
+    <ProjectReference Include="..\EarleCode\EarleCode.csproj">
       <Project>{6ED00913-9BE1-4F02-97FE-25568D4EED27}</Project>
       <Name>EarleCode</Name>
     </ProjectReference>
