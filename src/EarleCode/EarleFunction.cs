@@ -49,7 +49,7 @@ namespace EarleCode
             var index = 0;
             foreach (var parameter in Parameters)
             {
-                locals[parameter] = index >= arguments.Length ? EarleValue.Null : arguments[index];
+                locals[parameter] = index >= arguments.Length ? EarleValue.Undefined : arguments[index];
                 index++;
             }
 

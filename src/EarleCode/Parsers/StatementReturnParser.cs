@@ -27,7 +27,7 @@ namespace EarleCode.Parsers
             Lexer.SkipToken(TokenType.Identifier, "return");
 
             if (Lexer.Current.Is(TokenType.Token, ";"))
-                Yield(OpCode.PushNull);
+                Yield(OpCode.PushUndefined);
             else
                 Parse<ExpressionParser>();
 

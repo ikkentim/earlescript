@@ -43,6 +43,8 @@ namespace EarleCode
         {
             if (runtime == null) throw new ArgumentNullException(nameof(runtime));
             _runtime = runtime;
+
+            InitializeGrammarProcessor();
         }
 
         #region Compiling
@@ -155,7 +157,7 @@ namespace EarleCode
                 lexer.Push(lastToken);
 
             if (!didReturnAnyValue && mustReturn)
-                yield return (byte) OpCode.PushNull;
+                yield return (byte) OpCode.PushUndefined;
 
             yield return (byte) OpCode.PopScope;
         }

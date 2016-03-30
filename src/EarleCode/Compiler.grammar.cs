@@ -13,6 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Linq;
 using EarleCode.Grammar;
 
 namespace EarleCode
@@ -30,77 +31,70 @@ namespace EarleCode
         /// <summary>
         ///     Gets the grammar associated with this compiler.
         /// </summary>
-        public GrammarProcessor SyntaxGrammarProcessor { get; } = new GrammarProcessor
+        public GrammarProcessor SyntaxGrammarProcessor { get; private set; }
+
+        private void InitializeGrammarProcessor()
         {
-            // Statements
-            ["STATEMENT_IF"] = "`if` ( EXPRESSION )",
-            ["STATEMENT_DO"] = "`do`",
-            ["STATEMENT_WHILE"] = "`while` ( EXPRESSION )",
-            ["STATEMENT_FOR"] = "`for` ( OPTIONAL ASSIGNMENT ; OPTIONAL EXPRESSION ; OPTIONAL ASSIGNMENT )",
-            ["STATEMENT_RETURN"] = "`return` OPTIONAL EXPRESSION ;",
-            ["STATEMENT_WAIT"] = "`wait` NUMBER_LITERAL ;",
-//            ["ASSIGNMENT"] = "VARIABLE OPERATOR_MOD_UNARY",
-//            ["ASSIGNMENT"] = "OPERATOR_MOD_UNARY VARIABLE",
-            ["ASSIGNMENT"] = "VARIABLE = EXPRESSION",
-            ["ASSIGNMENT"] = "VARIABLE OPERATOR_UNARY = EXPRESSION",
-            ["ASSIGNMENT"] = "VARIABLE OPERATOR_MOD_UNARY",
-            ["ASSIGNMENT"] = "OPERATOR_MOD_UNARY VARIABLE",
-            ["FUNCTION_CALL"] = "OPTIONAL VARIABLE FUNCTION_CALL_PART",
-            ["FUNCTION_CALL_PART"] = "FUNCTION_IDENTIFIER ( OPTIONAL EXPRESSION_LIST )",
+            SyntaxGrammarProcessor = new GrammarProcessor
+            {
+                // Statements
+                ["STATEMENT_IF"] = "`if` ( EXPRESSION )",
+                ["STATEMENT_DO"] = "`do`",
+                ["STATEMENT_WHILE"] = "`while` ( EXPRESSION )",
+                ["STATEMENT_FOR"] = "`for` ( OPTIONAL ASSIGNMENT ; OPTIONAL EXPRESSION ; OPTIONAL ASSIGNMENT )",
+                ["STATEMENT_RETURN"] = "`return` OPTIONAL EXPRESSION ;",
+                ["STATEMENT_WAIT"] = "`wait` NUMBER_LITERAL ;",
+                //            ["ASSIGNMENT"] = "VARIABLE OPERATOR_MOD_UNARY",
+                //            ["ASSIGNMENT"] = "OPERATOR_MOD_UNARY VARIABLE",
+                ["ASSIGNMENT"] = "VARIABLE = EXPRESSION",
+                ["ASSIGNMENT"] = "VARIABLE OPERATOR_UNARY = EXPRESSION",
+                ["ASSIGNMENT"] = "VARIABLE OPERATOR_MOD_UNARY",
+                ["ASSIGNMENT"] = "OPERATOR_MOD_UNARY VARIABLE",
+                ["FUNCTION_CALL"] = "OPTIONAL VARIABLE FUNCTION_CALL_PART",
+                ["FUNCTION_CALL_PART"] = "FUNCTION_IDENTIFIER ( OPTIONAL EXPRESSION_LIST )",
 
-            // Expressions
-//            ["EXPRESSION"] = "FUNCTION_CALL",
-//            ["EXPRESSION"] = "( EXPRESSION )",
-            ["EXPRESSION"] = "EXPRESSION OPERATOR EXPRESSION",
-            ["EXPRESSION"] = "OPERATOR_UNARY EXPRESSION",
-//            ["EXPRESSION"] = "ASSIGNMENT",
-//            ["EXPRESSION"] = "FUNCTION_IDENTIFIER", // function reference
-            ["EXPRESSION"] = "KEYWORD", //v
-//            ["EXPRESSION"] = "VECTOR",
-            ["EXPRESSION"] = "VARIABLE",
-            ["EXPRESSION"] = "NUMBER_LITERAL|STRING_LITERAL", //v
+                // Expressions
+                //            ["EXPRESSION"] = "FUNCTION_CALL",
+                //            ["EXPRESSION"] = "( EXPRESSION )",
+                ["EXPRESSION"] = "EXPRESSION OPERATOR EXPRESSION",
+                ["EXPRESSION"] = "OPERATOR_UNARY EXPRESSION",
+                //            ["EXPRESSION"] = "ASSIGNMENT",
+                //            ["EXPRESSION"] = "FUNCTION_IDENTIFIER", // function reference
+                ["EXPRESSION"] = "KEYWORD", //v
+                //            ["EXPRESSION"] = "VECTOR",
+                ["EXPRESSION"] = "VARIABLE",
+                ["EXPRESSION"] = "NUMBER_LITERAL|STRING_LITERAL", //v
 
-            // Value types
-            ["TARGET_VARIABLE"] = "VARIABLE",
-            ["PATH"] = "\\IDENTIFIER",
-            ["PATH"] = "PATH\\IDENTIFIER",
-            ["PATH_PREFIX"] = "OPTIONAL PATH ::",
-            ["FUNCTION_IDENTIFIER"] = "OPTIONAL PATH_PREFIX IDENTIFIER",
-            ["EXPRESSION_LIST"] = "EXPRESSION_LIST , EXPRESSION_LIST",
-            ["EXPRESSION_LIST"] = "EXPRESSION",
-            ["INDEXER_LIST"] = "INDEXER_LIST INDEXER_LIST",
-            ["INDEXER_LIST"] = "[ EXPRESSION ]",
-            ["VARIABLE"] = "IDENTIFIER OPTIONAL INDEXER_LIST",
-            ["VECTOR"] = "( EXPRESSION , EXPRESSION , EXPRESSION )",
+                // Value types
+                ["TARGET_VARIABLE"] = "VARIABLE",
+                ["PATH"] = "\\IDENTIFIER",
+                ["PATH"] = "PATH\\IDENTIFIER",
+                ["PATH_PREFIX"] = "OPTIONAL PATH ::",
+                ["FUNCTION_IDENTIFIER"] = "OPTIONAL PATH_PREFIX IDENTIFIER",
+                ["EXPRESSION_LIST"] = "EXPRESSION_LIST , EXPRESSION_LIST",
+                ["EXPRESSION_LIST"] = "EXPRESSION",
+                ["INDEXER_LIST"] = "INDEXER_LIST INDEXER_LIST",
+                ["INDEXER_LIST"] = "[ EXPRESSION ]",
+                ["VARIABLE"] = "IDENTIFIER OPTIONAL INDEXER_LIST",
+                ["VECTOR"] = "( EXPRESSION , EXPRESSION , EXPRESSION )",
 
-            // Value keywords
-            ["KEYWORD"] = "`true`",
-            ["KEYWORD"] = "`false`",
-            ["KEYWORD"] = "`null`",
+                // Value keywords
+                ["KEYWORD"] = "`true`",
+                ["KEYWORD"] = "`false`",
+                ["KEYWORD"] = "`undefined`",
+                
+                ["END_BLOCK"] = "}"
+            };
 
-            // Operators
-            ["OPERATOR"] = "||",
-            ["OPERATOR"] = "&&",
-            ["OPERATOR"] = "<<",
-            ["OPERATOR"] = ">>",
-            ["OPERATOR"] = "<=",
-            ["OPERATOR"] = ">=",
-            ["OPERATOR"] = "==",
-            ["OPERATOR"] = "!=",
-            ["OPERATOR"] = "<",
-            ["OPERATOR"] = ">",
-            ["OPERATOR"] = "+",
-            ["OPERATOR"] = "-",
-            ["OPERATOR"] = "*",
-            ["OPERATOR"] = "/",
-            ["OPERATOR"] = "^",
-            ["OPERATOR_UNARY"] = "+",
-            ["OPERATOR_UNARY"] = "-",
-            ["OPERATOR_UNARY"] = "!",
-            ["OPERATOR_UNARY"] = "~",
-            ["OPERATOR_MOD_UNARY"] = "++",
-            ["OPERATOR_MOD_UNARY"] = "--",
-            ["END_BLOCK"] = "}"
-        };
+            // Add all operators
+            foreach (var o in EarleOperators.BinaryOperators.Keys.OrderByDescending(o => o.Length))
+                SyntaxGrammarProcessor["OPERATOR"] = o;
+
+            foreach (var o in EarleOperators.UnaryOperators.OrderByDescending(o => o.Length))
+                SyntaxGrammarProcessor["OPERATOR_UNARY"] = o;
+
+            foreach (var o in EarleOperators.UnaryAssignmentModOperators.OrderByDescending(o => o.Length))
+                SyntaxGrammarProcessor["OPERATOR_MOD_UNARY"] = o;
+        }
     }
 }

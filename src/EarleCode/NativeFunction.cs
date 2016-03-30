@@ -35,7 +35,7 @@ namespace EarleCode
         {
             if (Parameters.Length < arguments.Length)
                 arguments =
-                    arguments.Concat(Enumerable.Repeat(EarleValue.Null, Parameters.Length - arguments.Length)).ToArray();
+                    arguments.Concat(Enumerable.Repeat(EarleValue.Undefined, Parameters.Length - arguments.Length)).ToArray();
 
             return new NativeRuntimeLoop(runtime, _native, arguments);
         }

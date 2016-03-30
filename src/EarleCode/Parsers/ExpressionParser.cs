@@ -23,22 +23,6 @@ namespace EarleCode.Parsers
 {
     public class ExpressionParser : Parser
     {
-        private readonly IDictionary<string, int> _operatorOrder = new Dictionary<string, int>
-        {
-            ["+"] = 1,
-            ["-"] = 1,
-            ["*"] = 2,
-            ["/"] = 2,
-            ["<"] = 3,
-            [">"] = 3,
-            ["<="] = 3,
-            [">="] = 3,
-            ["=="] = 3,
-            ["!="] = 3,
-            ["||"] = 5,
-            ["&&"] = 5
-        };
-
         #region Overrides of Parser
 
         protected override void Parse()
@@ -54,10 +38,10 @@ namespace EarleCode.Parsers
                     Lexer.AssertToken(TokenType.Token);
                     var op = Lexer.Current.Value;
 
-                    if (!_operatorOrder.ContainsKey(op))
+                    if (!EarleOperators.BinaryOperators.ContainsKey(op))
                         ThrowUnexpectedToken("-OPERATOR-");
 
-                    if (operators.Any() && _operatorOrder[operators.Peek()] >= _operatorOrder[op])
+                    if (operators.Any() && EarleOperators.BinaryOperators[operators.Peek()] >= EarleOperators.BinaryOperators[op])
                         do ParseBinaryOperator(operators.Pop()); while (operators.Any());
 
                     operators.Push(op);
@@ -101,6 +85,9 @@ namespace EarleCode.Parsers
                 Lexer.AssertToken(TokenType.Token);
                 unaryOperator = Lexer.Current.Value;
                 Lexer.AssertMoveNext();
+
+                if(!EarleOperators.IsUnaryOpertorTargetValid(unaryOperator, Lexer.Current.Type))
+                    ThrowUnexpectedToken("Unexpected target for operator " + unaryOperator);
             }
 
             if (SyntaxMatches("KEYWORD"))
@@ -151,8 +138,8 @@ namespace EarleCode.Parsers
                 case "false":
                     PushInteger(0);
                     break;
-                case "null":
-                    Yield(OpCode.PushNull);
+                case "undefined":
+                    Yield(OpCode.PushUndefined);
                     break;
                 default:
                     ThrowUnexpectedToken("-KEYWORD-");

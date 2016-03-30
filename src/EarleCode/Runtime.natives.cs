@@ -27,7 +27,7 @@ namespace EarleCode
             RegisterNative(new NativeFunction("print", values =>
             {
                 Console.WriteLine(values.FirstOrDefault().Value);
-                return EarleValue.Null;
+                return EarleValue.Undefined;
             }, "value"));
 
             RegisterNative(new BinaryOperatorNativeFunction("*", (left, right) =>

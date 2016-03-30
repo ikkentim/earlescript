@@ -58,7 +58,7 @@ namespace EarleCode.Instructions
         /// <summary>
         ///     Push a null value to the stack.
         /// </summary>
-        [OpCode("PUSH_NULL", typeof (PushNullInstruction))] PushNull,
+        [OpCode("PUSH_NULL", typeof (PushNullInstruction))] PushUndefined,
 
         /// <summary>
         ///     Pop a value off the stack.

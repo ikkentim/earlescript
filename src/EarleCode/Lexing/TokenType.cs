@@ -15,11 +15,11 @@
 
 namespace EarleCode.Lexing
 {
-    public enum TokenType
+    public enum TokenType : byte
     {
-        Identifier,
-        NumberLiteral,
-        StringLiteral,
-        Token
+        Identifier = 1,
+        NumberLiteral = 2,
+        StringLiteral = 4,
+        Token = 8
     }
 }

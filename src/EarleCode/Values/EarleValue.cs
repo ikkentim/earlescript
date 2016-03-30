@@ -26,7 +26,7 @@ namespace EarleCode.Values
             Value = value;
         }
 
-        public static EarleValue Null { get; } = new EarleValue();
+        public static EarleValue Undefined { get; } = new EarleValue();
 
         public static EarleValue True { get; } = new EarleValue(1);
 
@@ -123,7 +123,7 @@ namespace EarleCode.Values
         /// </returns>
         public override string ToString()
         {
-            return $@"EarleValue (Value = ""{Value?.ToString() ?? "NULL"}"")";
+            return $@"EarleValue (Value = ""{Value?.ToString() ?? "undefined"}"")";
         }
 
         #endregion

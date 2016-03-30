@@ -21,17 +21,6 @@ namespace EarleCode.Parsers
 {
     public class AssignmentExpressionParser : Parser
     {
-        private readonly string[] _unaryOperators =
-        {
-            "+",
-            "-",
-        };
-        private readonly string[] _unaryModOperators =
-        {
-            "++",
-            "--"
-        };
-
         private string GetUnaryOperators(string[] opList)
         {
             var str = "";
@@ -57,7 +46,7 @@ namespace EarleCode.Parsers
 
             if (SyntaxMatches("OPERATOR_MOD_UNARY"))
             {
-                unaryModOperator = GetUnaryOperators(_unaryModOperators);
+                unaryModOperator = GetUnaryOperators(EarleOperators.UnaryAssignmentModOperators);
             }
 
             Lexer.AssertToken(TokenType.Identifier);
@@ -67,7 +56,7 @@ namespace EarleCode.Parsers
 
             if (unaryModOperator == null && SyntaxMatches("OPERATOR_MOD_UNARY"))
             {
-                unaryModOperator = GetUnaryOperators(_unaryModOperators);
+                unaryModOperator = GetUnaryOperators(EarleOperators.UnaryAssignmentModOperators);
                 unaryModOperatorIsPrefix = false;
             }
 
@@ -98,7 +87,7 @@ namespace EarleCode.Parsers
             {
                 string unaryOperator = null;
                 if (SyntaxMatches("OPERATOR_UNARY"))
-                    unaryOperator = GetUnaryOperators(_unaryOperators);
+                    unaryOperator = GetUnaryOperators(EarleOperators.UnaryAssignmentOperators);
 
                 Lexer.SkipToken(TokenType.Token, "=");
 

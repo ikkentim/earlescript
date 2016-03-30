@@ -45,11 +45,11 @@
     <Compile Include="EarleFile.cs" />
     <Compile Include="EarleFunction.cs" />
     <Compile Include="EarleFunctionCollection.cs" />
+    <Compile Include="EarleOperators.cs" />
     <Compile Include="Instructions\DuplicateInstruction.cs" />
     <Compile Include="Parsers\AssignmentExpressionParser.cs" />
     <Compile Include="Runtime.natives.cs" />
     <Compile Include="Values\EarleValue.cs" />
-    <Compile Include="EarleValueType.cs" />
     <Compile Include="EarleVariableReference.cs" />
     <Compile Include="Instructions\CallInstruction.cs" />
     <Compile Include="Instructions\IInstruction.cs" />
