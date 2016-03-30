@@ -123,7 +123,9 @@ namespace EarleCode.Parsers
                     Yield(OpCode.Not);
                     break;
                 default:
-                    ThrowUnexpectedToken("UNARY_OPERATOR");
+                    PushReference(null, $"operator{op}");
+                    Yield(OpCode.Call);
+                    Yield(1);
                     break;
             }
         }

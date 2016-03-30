@@ -15,6 +15,7 @@
 
 using System;
 using System.IO;
+using EarleCode.Localization;
 using EarleCode.Values;
 
 namespace EarleCode.Debug
@@ -37,15 +38,23 @@ namespace EarleCode.Debug
         {
             var runtime = new Runtime();
             var codeDir = Path.Combine(Directory.GetCurrentDirectory(), "code");
-            var files = Directory.GetFiles(codeDir, "*.earle", SearchOption.AllDirectories);
 
-            foreach (var file in files)
+            foreach (var file in Directory.GetFiles(codeDir, "*.earle", SearchOption.AllDirectories))
             {
                 var rel = GetRelativePath(file, codeDir).Replace('/', '\\');
                 rel = '\\' + rel.Substring(0, rel.Length - 6);
                 runtime.CompileFile(rel, File.ReadAllText(file));
             }
             
+            var loc = new Localizer();
+            foreach (var file in Directory.GetFiles(codeDir, "*.estr", SearchOption.AllDirectories))
+            {
+                var rel = GetRelativePath(file, codeDir).Replace('/', '\\');
+                rel = rel.Substring(0, rel.Length - 5);
+                loc.LoadFromFile(rel, File.ReadAllText(file), Path.GetFileNameWithoutExtension(file).ToUpper() + "_");
+            }
+            loc.AddToRuntime(runtime);
+
             var result = runtime.GetFile("\\main").Invoke("init");
 
             Console.WriteLine();

@@ -24,7 +24,7 @@ namespace EarleCode
     {
         private void RegisterDefaultNatives()
         {
-            RegisterNative(new NativeFunction("print", values =>
+            RegisterNative(new EarleInlineNativeFunction("print", values =>
             {
                 Console.WriteLine(values.FirstOrDefault().Value);
                 return EarleValue.Undefined;
@@ -150,7 +150,7 @@ namespace EarleCode
             RegisterValueType(new EarleStringValueType());
         }
 
-        private class BinaryOperatorNativeFunction : NativeFunction
+        private class BinaryOperatorNativeFunction : EarleInlineNativeFunction
         {
             public BinaryOperatorNativeFunction(string @operator, Func<EarleValue, EarleValue, EarleValue> operation,
                 params Type[] supportedTypes)
@@ -173,7 +173,7 @@ namespace EarleCode
                 if (supportedTypes == null) throw new ArgumentNullException(nameof(supportedTypes));
             }
         }
-        private class UnaryOperatorNativeFunction : NativeFunction
+        private class UnaryOperatorNativeFunction : EarleInlineNativeFunction
         {
             public UnaryOperatorNativeFunction(string @operator, Func<EarleValue, EarleValue> operation,
                 params Type[] supportedTypes)

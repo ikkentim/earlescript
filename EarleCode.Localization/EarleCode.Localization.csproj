@@ -4,17 +4,15 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{6DEBBF3C-9B9F-45DD-B2D5-96196B7A01AB}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <ProjectGuid>{83D449C1-4507-4BFF-AD4D-831E84CF121B}</ProjectGuid>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>EarleCode.Debug</RootNamespace>
-    <AssemblyName>EarleCode.Debug</AssemblyName>
+    <RootNamespace>EarleCode.Localization</RootNamespace>
+    <AssemblyName>EarleCode.Localization</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -24,7 +22,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -43,30 +40,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.cs" />
+    <Compile Include="Class1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
-    <None Include="code\file.earle">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="code\file2.earle">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="code\main.earle">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="code\test.estr">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\EarleCode.Localization\EarleCode.Localization.csproj">
-      <Project>{83d449c1-4507-4bff-ad4d-831e84cf121b}</Project>
-      <Name>EarleCode.Localization</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\EarleCode\EarleCode.csproj">
+    <ProjectReference Include="..\src\EarleCode\EarleCode.csproj">
       <Project>{6ED00913-9BE1-4F02-97FE-25568D4EED27}</Project>
       <Name>EarleCode</Name>
     </ProjectReference>

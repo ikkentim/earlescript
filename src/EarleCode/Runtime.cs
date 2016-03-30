@@ -42,7 +42,7 @@ namespace EarleCode
 
         #region Natives
 
-        public void RegisterNative(NativeFunction native)
+        public void RegisterNative(EarleNativeFunction native)
         {
             if (native == null) throw new ArgumentNullException(nameof(native));
 

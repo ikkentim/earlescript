@@ -1,0 +1,7 @@
+﻿REFERENCE       TEST_STRING
+LANG_ENGLISH    "This is a test string."
+LANG_DUTCH      "Dit is een test regel."
+
+REFERENCE       HELLO_WORLD
+LANG_ENGLISH    "Hello, World!"
+LANG_DUTCH      "Hallo, Wereld!"

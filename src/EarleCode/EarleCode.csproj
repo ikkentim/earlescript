@@ -45,6 +45,7 @@
     <Compile Include="EarleFile.cs" />
     <Compile Include="EarleFunction.cs" />
     <Compile Include="EarleFunctionCollection.cs" />
+    <Compile Include="EarleNativeFunction.cs" />
     <Compile Include="EarleOperators.cs" />
     <Compile Include="Instructions\DuplicateInstruction.cs" />
     <Compile Include="Parsers\AssignmentExpressionParser.cs" />
@@ -74,7 +75,7 @@
     <Compile Include="Parsers\StatementWhileParser.cs" />
     <Compile Include="Utilities\EnumUtility.cs" />
     <Compile Include="Instructions\OpCodeAttribute.cs" />
-    <Compile Include="NativeFunction.cs" />
+    <Compile Include="EarleInlineNativeFunction.cs" />
     <Compile Include="Parsers\StatementAssignmentParser.cs" />
     <Compile Include="Parsers\ExpressionParser.cs" />
     <Compile Include="Parsers\Parser.cs" />

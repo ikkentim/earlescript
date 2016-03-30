@@ -14,6 +14,15 @@ hello()
 
 init()
 {
+    setActiveLanguage("LANG_ENGLISH");
+    print(@"TEST_TEST_STRING");
+    print(@"TEST_HELLO_WORLD");
+    
+    setActiveLanguage("LANG_DUTCH");
+    print(@"TEST_TEST_STRING");
+    print(@"TEST_HELLO_WORLD");
+
+    return;
     i=0;
     i++;
     ++i;
