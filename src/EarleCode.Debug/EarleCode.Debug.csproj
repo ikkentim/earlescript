@@ -62,7 +62,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\EarleCode.Localization\EarleCode.Localization.csproj">
+    <ProjectReference Include="..\EarleCode.Localization\EarleCode.Localization.csproj">
       <Project>{83d449c1-4507-4bff-ad4d-831e84cf121b}</Project>
       <Name>EarleCode.Localization</Name>
     </ProjectReference>

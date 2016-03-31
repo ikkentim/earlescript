@@ -30,6 +30,22 @@ namespace EarleCode
                 return EarleValue.Undefined;
             }, "value"));
 
+            RegisterNative(new EarleInlineNativeFunction("createVector2",
+                values => new EarleVector2(
+                    values[0].Is<float>() ? values[0].As<float>() : values[0].As<int>(),
+                    values[1].Is<float>() ? values[1].As<float>() : values[1].As<int>()
+                    ).ToEarleValue()
+                , "x", "y"));
+
+            RegisterNative(new EarleInlineNativeFunction("createVector3",
+                values =>
+                    new EarleVector3(
+                    values[0].Is<float>() ? values[0].As<float>() : values[0].As<int>(),
+                    values[1].Is<float>() ? values[1].As<float>() : values[1].As<int>(),
+                    values[2].Is<float>() ? values[2].As<float>() : values[2].As<int>()
+                    ).ToEarleValue(),
+                "x", "y", "z"));
+
             RegisterNative(new BinaryOperatorNativeFunction("*", (left, right) =>
             {
                 return left.Is<float>() || right.Is<float>()

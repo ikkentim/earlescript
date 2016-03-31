@@ -49,6 +49,7 @@
     <Compile Include="EarleOperators.cs" />
     <Compile Include="Instructions\DuplicateInstruction.cs" />
     <Compile Include="Parsers\AssignmentExpressionParser.cs" />
+    <Compile Include="Parsers\FunctionReferenceExpressionParser.cs" />
     <Compile Include="Runtime.natives.cs" />
     <Compile Include="Values\EarleValue.cs" />
     <Compile Include="EarleVariableReference.cs" />
@@ -106,11 +107,15 @@
     <Compile Include="RuntimeScope.cs" />
     <Compile Include="Utilities\StringUtility.cs" />
     <Compile Include="Values\EarleValueUtility.cs" />
+    <Compile Include="Values\EarleVector2.cs" />
+    <Compile Include="Values\EarleVector3.cs" />
     <Compile Include="Values\ValueTypes\EarleBoolValueType.cs" />
     <Compile Include="Values\ValueTypes\EarleFloatValueType.cs" />
     <Compile Include="Values\ValueTypes\EarleIntegerValueType.cs" />
     <Compile Include="Values\ValueTypes\EarleStringValueType.cs" />
     <Compile Include="Values\ValueTypes\EarleValueType.cs" />
+    <Compile Include="Values\ValueTypes\EarleVector2ValueType.cs" />
+    <Compile Include="Values\ValueTypes\EarleVector3ValueType.cs" />
     <Compile Include="Values\ValueTypes\IEarleValueType.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -42,7 +42,7 @@ namespace EarleCode.Parsers
                         ThrowUnexpectedToken("-OPERATOR-");
 
                     if (operators.Any() && EarleOperators.BinaryOperators[operators.Peek()] >= EarleOperators.BinaryOperators[op])
-                        do ParseBinaryOperator(operators.Pop()); while (operators.Any());
+                        do YieldBinaryOperator(operators.Pop()); while (operators.Any());
 
                     operators.Push(op);
                     Lexer.AssertMoveNext();
@@ -50,7 +50,7 @@ namespace EarleCode.Parsers
                 else
                 {
                     if (operators.Any())
-                        ParseBinaryOperator(operators.Pop());
+                        YieldBinaryOperator(operators.Pop());
                     break;
                 }
             }
@@ -63,7 +63,7 @@ namespace EarleCode.Parsers
 
         #endregion
 
-        protected virtual void ParseBinaryOperator(string op)
+        protected virtual void YieldBinaryOperator(string op)
         {
             PushReference(null, $"operator{op}");
             Yield(OpCode.Call);
@@ -74,12 +74,27 @@ namespace EarleCode.Parsers
         {
             string unaryOperator = null;
 
+            // Sub-parsers (unary operators are not applicable)
             if (SyntaxMatches("ASSIGNMENT"))
             {
                 Parse<AssignmentExpressionParser>();
                 return;
             }
 
+            if (SyntaxMatches("FUNCTION_CALL"))
+            {
+                Parse<CallExpressionParser>();
+                return;
+            }
+
+            if (SyntaxMatches("EXPLICIT_FUNCTION_IDENTIFIER"))
+            {
+                Parse<FunctionReferenceExpressionParser>();
+                return;
+            }
+
+
+            // Unary operator parsing
             if (SyntaxMatches("OPERATOR_UNARY"))
             {
                 Lexer.AssertToken(TokenType.Token);
@@ -92,9 +107,37 @@ namespace EarleCode.Parsers
 
             if (SyntaxMatches("KEYWORD"))
                 ParseKeyword();
+            else if (SyntaxMatches("VECTOR"))
+            {
+                var vectorSize = 3;
+                Lexer.SkipToken(TokenType.Token, "(");
+                Parse<ExpressionParser>();
+                Lexer.SkipToken(TokenType.Token, ",");
+                Parse<ExpressionParser>();
+                if (Lexer.Current.Is(TokenType.Token, ")"))
+                {
+                    vectorSize = 2;
+                }
+                else
+                {
+                    Lexer.SkipToken(TokenType.Token, ",");
+                    Parse<ExpressionParser>();
+                }
+
+                PushReference(null, $"createVector{vectorSize}");
+                Yield(OpCode.Call);
+                Yield(vectorSize);
+
+                Lexer.SkipToken(TokenType.Token, ")");
+            }
+            else if (Lexer.Current.Is(TokenType.Token, "("))
+            {
+                Lexer.AssertMoveNext();
+                Parse<ExpressionParser>();
+                Lexer.SkipToken(TokenType.Token, ")");
+            }
             else if (Lexer.Current.Is(TokenType.NumberLiteral) || Lexer.Current.Is(TokenType.StringLiteral))
             {
-                // TODO: If unaryOperator is set, reduce opcodes by not having to parse unary op.
                 ParseLiteral();
             }
             else if (Lexer.Current.Is(TokenType.Identifier))
@@ -108,16 +151,16 @@ namespace EarleCode.Parsers
                 ThrowUnexpectedToken("-VALUE-");
 
             if (unaryOperator != null)
-                ParseUnaryOperator(unaryOperator);
+                YieldUnaryOperator(unaryOperator);
         }
 
-        private void ParseUnaryOperator(string op)
+        private void YieldUnaryOperator(string op)
         {
             switch (op)
             {
                 case "-":
                     PushInteger(-1);
-                    ParseBinaryOperator("*");
+                    YieldBinaryOperator("*");
                     break;
                 case "!":
                     Yield(OpCode.Not);

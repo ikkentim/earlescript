@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EarleCode.Debug", "src\Earl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EarleCode.UnitTests", "src\EarleCode.UnitTests\EarleCode.UnitTests.csproj", "{B7B2469C-7799-40D9-96F2-92A886616BDE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EarleCode.Localization", "EarleCode.Localization\EarleCode.Localization.csproj", "{83D449C1-4507-4BFF-AD4D-831E84CF121B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EarleCode.Localization", "src\EarleCode.Localization\EarleCode.Localization.csproj", "{83D449C1-4507-4BFF-AD4D-831E84CF121B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

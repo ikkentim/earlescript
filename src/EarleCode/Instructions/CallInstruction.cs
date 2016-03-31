@@ -30,7 +30,12 @@ namespace EarleCode.Instructions
             loop.CIP += 4;
 
             var functionReference = loop.Stack.Pop().As<EarleVariableReference>();
-            var functions = loop.GetValue(functionReference)?.Value as EarleFunctionCollection;
+
+            object value = functionReference;
+            while (value is EarleVariableReference)
+                value = loop.GetValue((EarleVariableReference)value)?.Value;
+            
+            var functions = value as EarleFunctionCollection;
             var function = functions?.FirstOrDefault(f => f.Parameters.Length == argumentCount);
             if (function == null)
             {

@@ -25,48 +25,14 @@ namespace EarleCode.Parsers
 
         protected override void Parse()
         {
-            string path = null;
-
             if (!SyntaxMatches("FUNCTION_CALL_PART"))
             {
                 // a target is supplied
                 throw new NotImplementedException();
             }
 
-            // optional token to specify function is part of current file
-            if (Lexer.Current.Is(TokenType.Token, ":"))
-            {
-                Lexer.SkipToken(TokenType.Token, ":");
-                Lexer.SkipToken(TokenType.Token, ":");
-            }
-            // a specific path is supplied
-            else if (Lexer.Current.Is(TokenType.Token, "\\"))
-            {
-                // Construct path to the function
-                var identifier = false;
-                path = "";
-                do
-                {
-                    // check syntax
-                    if (identifier)
-                        Lexer.AssertToken(TokenType.Identifier);
-                    else
-                        Lexer.AssertToken(TokenType.Token, "\\");
-                    identifier = !identifier;
-
-                    path += Lexer.Current.Value;
-
-                    Lexer.AssertMoveNext();
-                } while (!Lexer.Current.Is(TokenType.Token, ":"));
-
-                Lexer.SkipToken(TokenType.Token, ":");
-                Lexer.SkipToken(TokenType.Token, ":");
-            }
-
-            Lexer.AssertToken(TokenType.Identifier);
-            var name = Lexer.Current.Value;
-            Lexer.AssertMoveNext();
-
+            var referenceBuffer = ParseToBuffer<FunctionReferenceExpressionParser>();
+           
             Lexer.SkipToken(TokenType.Token, "(");
 
             var arguments = 0;
@@ -83,7 +49,7 @@ namespace EarleCode.Parsers
 
             Lexer.SkipToken(TokenType.Token, ")");
 
-            PushReference(path, name);
+            Yield(referenceBuffer);
 
             Yield(OpCode.Call);
             Yield(arguments);
