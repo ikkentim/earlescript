@@ -37,9 +37,7 @@ namespace EarleCode
             ["<="] = 4,
             [">="] = 4,
             ["=="] = 4,
-            ["!="] = 4,
-            ["||"] = 5,
-            ["&&"] = 5
+            ["!="] = 4
         };
 
         public static readonly string[] UnaryOperators =

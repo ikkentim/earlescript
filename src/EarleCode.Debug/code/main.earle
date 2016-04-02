@@ -1,72 +1,12 @@
-﻿overload(a)
+﻿init()
 {
-    print("Overload A");
+    a = false;
+
+    b = true;
+
+    c = b || (a = true);
+
+    print("A: " + a);
+    print("B: " + b);
+    print("C: " + c);
 }
-overload(a, b)
-{
-    print("Overload B");
-}
-
-hello()
-{
-    print("Hello, World!");
-}
-
-init()
-{
-    vec3 = (1,2,3);
-    print(vec3);
-    testref = \file2::test;
-    testref(1);
-
-    return;
-    somevar = -(42 + 4) * 2;
-    print("somevar: " + someothervar = somevar);
-    print("someothervar: " + someothervar);
-
-    setActiveLanguage("LANG_ENGLISH");
-    print(@"TEST_TEST_STRING");
-    print(@"TEST_HELLO_WORLD");
-    
-    setActiveLanguage("LANG_DUTCH");
-    print(@"TEST_TEST_STRING");
-    print(@"TEST_HELLO_WORLD");
-
-
-    return;
-    i=0;
-    i++;
-    ++i;
-    i--;
-    --i;
-    i=2;
-    i = 120 --i;
-    
-    print("i = " + i);
-    i += 5;
-    print("i = " + i);
-    print("i = "+ i++ + ++i + ";");
-
-    //print("----");
-    //init2();
-}
-init2()
-{
-    overload(1);
-    overload(1,2);
-
-    \file2::test(null);
-    alpha = 5 - -4 * 5 + 20;
-    \file::bravo("alpha", alpha);
-
-    for(i=0;i<10;i++)
-    {
-        print("fooorr! i = " + i);
-    }
-
-    while(alpha)
-    {
-        print("infinite " + alpha);
-        alpha = alpha - 1;
-    }
- }

@@ -1,7 +1,0 @@
-﻿test(v)
-{
-    if(v)
-    {
-        print("v has a value!");
-    }
-}
