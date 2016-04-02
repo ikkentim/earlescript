@@ -34,6 +34,8 @@ namespace EarleCode.Values
 
         public object Value { get; }
 
+        public bool HasValue => Value != null;
+
         #region To
 
         public T To<T>(Runtime runtime)
@@ -47,7 +49,7 @@ namespace EarleCode.Values
             if (runtime == null) throw new ArgumentNullException(nameof(runtime));
             var valueType = runtime.GetValueTypeForType(type);
 
-            return valueType?.ParseValueToType(this).Value;
+            return valueType?.ParseValueToType(this);
         }
 
         #endregion

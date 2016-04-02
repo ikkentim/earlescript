@@ -19,15 +19,19 @@ namespace EarleCode.Values.ValueTypes
 {
     public abstract class EarleValueType<T> : IEarleValueType
     {
-        protected abstract EarleValue ParseOtherValueToType(EarleValue value);
+        protected abstract T ParseOtherValueToType(EarleValue value);
 
         #region Implementation of IEarleValueType
 
         public virtual Type Type { get; } = typeof (T);
 
-        public virtual EarleValue ParseValueToType(EarleValue value)
+        public virtual object ParseValueToType(EarleValue value)
         {
-            return value.Is(Type) ? value : ParseOtherValueToType(value);
+            if (value.Is(Type)) return value;
+
+            var parsedValue = ParseOtherValueToType(value);
+
+            return parsedValue != null ? (object)parsedValue : null;
         }
 
         #endregion

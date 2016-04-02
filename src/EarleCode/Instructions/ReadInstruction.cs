@@ -23,7 +23,7 @@ namespace EarleCode.Instructions
 
         public void Handle(RuntimeLoop loop)
         {
-            loop.Stack.Push(loop.GetValue(loop.Stack.Pop().As<EarleVariableReference>()) ?? EarleValue.Undefined);
+            loop.Stack.Push(loop.GetValue(loop.Stack.Pop().As<EarleVariableReference>()));
         }
 
         #endregion

@@ -79,19 +79,19 @@ namespace EarleCode
 
         #region Overrides of RuntimeScope
 
-        public override EarleValue? GetValue(EarleVariableReference reference)
+        public override EarleValue GetValue(EarleVariableReference reference)
         {
             var baseResult = base.GetValue(reference);
 
-            if (baseResult == null || baseResult.Value.Is<EarleFunctionCollection>())
+            if (!baseResult.HasValue || baseResult.Is<EarleFunctionCollection>())
                 if (reference.File == Name || reference.File == null)
                 {
                     var functions = GetFunctions(reference.Name);
 
                     if (functions != null)
                     {
-                        if (baseResult != null && baseResult.Value.Is<EarleFunctionCollection>())
-                            functions.AddRange(baseResult.Value.As<EarleFunctionCollection>());
+                        if (baseResult.HasValue && baseResult.Is<EarleFunctionCollection>())
+                            functions.AddRange(baseResult.As<EarleFunctionCollection>());
 
                         return new EarleValue(functions);
                     }

@@ -71,7 +71,7 @@ namespace EarleCode
 
         public RuntimeLoop SubLoop { get; set; }
 
-        public virtual EarleValue? GetValue(EarleVariableReference reference)
+        public virtual EarleValue GetValue(EarleVariableReference reference)
         {
             return Scopes.Peek().GetValue(reference);
         }

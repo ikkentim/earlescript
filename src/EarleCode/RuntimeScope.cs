@@ -38,12 +38,12 @@ namespace EarleCode
             }
         }
 
-        public virtual EarleValue? GetValue(EarleVariableReference reference)
+        public virtual EarleValue GetValue(EarleVariableReference reference)
         {
             var value = _superScope?.GetValue(reference);
 
-            if (value != null)
-                return value;
+            if (value?.HasValue ?? false)
+                return value.Value;
 
             if (value == null)
             {
@@ -52,7 +52,7 @@ namespace EarleCode
                     return local;
             }
 
-            return null;
+            return EarleValue.Undefined;
         }
 
         public virtual bool SetValue(EarleVariableReference reference, EarleValue value)
@@ -64,7 +64,10 @@ namespace EarleCode
 
             if (CanAssignReferenceAsLocal(reference))
             {
-                _locals[reference.Name] = value;
+                if (value.Is(null))
+                    _locals.Remove(reference.Name);
+                else
+                    _locals[reference.Name] = value;
                 return true;
             }
 

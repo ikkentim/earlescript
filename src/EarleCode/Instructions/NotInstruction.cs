@@ -27,10 +27,12 @@ namespace EarleCode.Instructions
             var value = loop.Stack.Pop();
 
             if (value.Is<int>())
-                value = value.As<int>() == 0 ? 1.ToEarleValue() : 0.ToEarleValue();
+                value = value.As<int>() == 0 ? EarleValue.True : EarleValue.False;
+            else if(!value.HasValue)
+                    value = EarleValue.True;
             else
-                throw new Exception("Invalid type to .Not");
-
+                value = EarleValue.False;
+            
             loop.Stack.Push(value);
         }
 

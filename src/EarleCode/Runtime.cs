@@ -123,10 +123,10 @@ namespace EarleCode
 
         #region Overrides of RuntimeScope
 
-        public override EarleValue? GetValue(EarleVariableReference reference)
+        public override EarleValue GetValue(EarleVariableReference reference)
         {
             if (!string.IsNullOrEmpty(reference.File))
-                return GetFile(reference.File)?.GetFunctions(reference.Name)?.ToEarleValue();
+                return GetFile(reference.File)?.GetFunctions(reference.Name)?.ToEarleValue() ?? EarleValue.Undefined;
 
             EarleFunctionCollection natives;
             if (_natives.TryGetValue(reference.Name, out natives))
@@ -134,7 +134,7 @@ namespace EarleCode
 
             // TODO: Check global variables
 
-            return null;
+            return EarleValue.Undefined;
         }
 
         protected override bool CanAssignReferenceAsLocal(EarleVariableReference reference)
@@ -143,5 +143,10 @@ namespace EarleCode
         }
 
         #endregion
+
+        public virtual void HandleWarning(string warning)
+        {
+            Console.WriteLine(warning);
+        }
     }
 }

@@ -19,9 +19,9 @@ namespace EarleCode.Values.ValueTypes
     {
         #region Overrides of EarleValueType<string>
 
-        protected override EarleValue ParseOtherValueToType(EarleValue value)
+        protected override string ParseOtherValueToType(EarleValue value)
         {
-            return (value.Value?.ToString() ?? string.Empty).ToEarleValue();
+            return value.Value?.ToString() ?? string.Empty;
         }
 
         #endregion

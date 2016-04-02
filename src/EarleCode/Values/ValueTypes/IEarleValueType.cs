@@ -21,6 +21,6 @@ namespace EarleCode.Values.ValueTypes
     {
         Type Type { get; }
 
-        EarleValue ParseValueToType(EarleValue value);
+        object ParseValueToType(EarleValue value);
     }
 }

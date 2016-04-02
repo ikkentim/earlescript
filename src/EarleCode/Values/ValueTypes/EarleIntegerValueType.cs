@@ -19,12 +19,9 @@ namespace EarleCode.Values.ValueTypes
     {
         #region Overrides of EarleValueType<int>
 
-        protected override EarleValue ParseOtherValueToType(EarleValue value)
+        protected override int ParseOtherValueToType(EarleValue value)
         {
-            if (value.Is<float>())
-                return ((int)value.As<float>()).ToEarleValue();
-
-            return 0.ToEarleValue();
+            return value.Is<float>() ? (int) value.As<float>() : 0;
         }
 
         #endregion

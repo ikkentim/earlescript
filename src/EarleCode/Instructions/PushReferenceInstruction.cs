@@ -42,7 +42,7 @@ namespace EarleCode.Instructions
             else
                 name = refString;
 
-            loop.Stack.Push(new EarleVariableReference(file.Length == 0 ? null : file, name).ToEarleValue());
+            loop.Stack.Push(new EarleVariableReference((file?.Length ?? 0) == 0 ? null : file, name).ToEarleValue());
         }
 
         #endregion

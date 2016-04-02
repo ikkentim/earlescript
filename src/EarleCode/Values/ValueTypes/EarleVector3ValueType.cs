@@ -15,18 +15,18 @@
 
 namespace EarleCode.Values.ValueTypes
 {
-    public class EarleVector3ValueType : EarleValueType<EarleVector2>
+    public class EarleVector3ValueType : EarleValueType<EarleVector3>
     {
         #region Overrides of EarleValueType<bool>
 
-        protected override EarleValue ParseOtherValueToType(EarleValue value)
+        protected override EarleVector3 ParseOtherValueToType(EarleValue value)
         {
             if (value.Is<EarleVector2>())
             {
                 var vector = value.As<EarleVector2>();
-                return new EarleVector3(vector.X, vector.Y, 0).ToEarleValue();
+                return new EarleVector3(vector.X, vector.Y, 0);
             }
-            return EarleValue.Undefined;
+            return null;
         }
 
         #endregion

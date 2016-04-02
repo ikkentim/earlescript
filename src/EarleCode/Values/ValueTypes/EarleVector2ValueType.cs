@@ -19,9 +19,9 @@ namespace EarleCode.Values.ValueTypes
     {
         #region Overrides of EarleValueType<bool>
 
-        protected override EarleValue ParseOtherValueToType(EarleValue value)
+        protected override EarleVector2 ParseOtherValueToType(EarleValue value)
         {
-            return EarleValue.Undefined;
+            return null;
         }
 
         #endregion
