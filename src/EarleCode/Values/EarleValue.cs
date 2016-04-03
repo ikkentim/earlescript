@@ -41,15 +41,16 @@ namespace EarleCode.Values
         public T To<T>(Runtime runtime)
         {
             if (runtime == null) throw new ArgumentNullException(nameof(runtime));
-            return (T) To(typeof (T), runtime);
+            var typedTo = To(typeof (T), runtime);
+            return (T) (typedTo ?? default(T));
         }
 
         public object To(Type type, Runtime runtime)
         {
             if (runtime == null) throw new ArgumentNullException(nameof(runtime));
             var valueType = runtime.GetValueTypeForType(type);
-
-            return valueType?.ParseValueToType(this);
+            var retval = valueType?.ParseValueToType(this);
+            return retval;
         }
 
         #endregion

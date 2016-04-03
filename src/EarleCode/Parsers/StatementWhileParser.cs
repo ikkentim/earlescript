@@ -30,7 +30,7 @@ namespace EarleCode.Parsers
             var expressionLength = Parse<ExpressionParser>();
             Lexer.SkipToken(TokenType.Token, ")");
             var block = Runtime.Compiler.Compile(Lexer, File, false).ToArray();
-            Yield(OpCode.JumpIf);
+            Yield(OpCode.JumpIfFalse);
             Yield(block.Length + 5);
             Yield(block);
             Yield(OpCode.Jump);

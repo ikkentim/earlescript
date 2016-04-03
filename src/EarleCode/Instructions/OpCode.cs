@@ -84,7 +84,15 @@ namespace EarleCode.Instructions
         ///     Jump the specified number of instructions relative to the next instruction if the value on the top of the stack is
         ///     false.
         /// </summary>
-        [OpCode("JUMP_IF $int", typeof (JumpIfInstruction))] JumpIf,
+        [OpCode("JUMP_FALSE $int", typeof(JumpIfFalseInstruction))]
+        JumpIfFalse,
+
+        /// <summary>
+        ///     Jump the specified number of instructions relative to the next instruction if the value on the top of the stack is
+        ///     true.
+        /// </summary>
+        [OpCode("JUMP_TRUE $int", typeof(JumpIfTrueInstruction))]
+        JumpIfTrue,
 
         /// <summary>
         ///     Jump the specified number of instructions relative to the next instruction,

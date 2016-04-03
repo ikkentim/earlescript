@@ -28,8 +28,8 @@ namespace EarleCode.Instructions
 
             if (value.Is<int>())
                 value = value.As<int>() == 0 ? EarleValue.True : EarleValue.False;
-            else if(!value.HasValue)
-                    value = EarleValue.True;
+            else if (!value.HasValue)
+                value = EarleValue.True;
             else
                 value = EarleValue.False;
             

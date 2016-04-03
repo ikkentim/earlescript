@@ -119,7 +119,32 @@ namespace EarleCode.Parsers
         {
             if (name == null) throw new ArgumentNullException(nameof(name));
             Yield(OpCode.PushReference);
-            Yield($"{path}::{name}");
+            Yield($"{path}::{name}".ToLower());
+        }
+
+        public void PushCall(int arguments)
+        {
+            Yield(OpCode.Call);
+            Yield(arguments);
+        }
+
+        public void PushCall(string path, string name, int arguments)
+        {
+            PushReference(path, name);
+            Yield(OpCode.Call);
+            Yield(arguments);
+        }
+
+        public void PushJump(bool condition, int count)
+        {
+            Yield(condition ? OpCode.JumpIfTrue : OpCode.JumpIfFalse);
+            Yield(count);
+        }
+
+        public void PushJump(int count)
+        {
+            Yield(OpCode.Jump);
+            Yield(count);
         }
 
         public void PushString(string value)

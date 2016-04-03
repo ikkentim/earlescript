@@ -34,7 +34,6 @@ namespace EarleCode
             ["STATEMENT_RETURN"] = new StatementReturnParser(),
 //            ["STATEMENT_WAIT"] = new StatementWaitParser(),
             ["ASSIGNMENT"] = new StatementAssignmentParser()
-//            ["ASSIGNMENT_UNARY"] = new AssignmentUnaryExpressionParser(),
         };
 
         private readonly Runtime _runtime;
@@ -54,6 +53,7 @@ namespace EarleCode
             if (fileName == null) throw new ArgumentNullException(nameof(fileName));
             if (script == null) throw new ArgumentNullException(nameof(script));
 
+            fileName = fileName.ToLower();
             var tokenizer = new Lexer(fileName, script);
             var file = new EarleFile(_runtime, fileName);
 
@@ -76,7 +76,7 @@ namespace EarleCode
         {
             if (lexer == null) throw new ArgumentNullException(nameof(lexer));
 
-            var name = lexer.Current.Value;
+            var name = lexer.Current.Value.ToLower();
             var parameters = new List<string>();
 
             lexer.AssertMoveNext();
@@ -131,8 +131,8 @@ namespace EarleCode
                 IParser parser;
                 _parsers.TryGetValue(parserName, out parser);
 
-                if (parserName == "END_BLOCK")
-                    break;
+//                if (parserName == "END_BLOCK")
+//                    break;
 
                 if (parserName == "STATEMENT_RETURN")
                     didReturnAnyValue = true;
@@ -148,7 +148,7 @@ namespace EarleCode
 
                 lastToken = lexer.Current;
 
-                lexer.SkipToken(TokenType.Token, ";", "}");
+                lexer.SkipToken(TokenType.Token, ";");
             } while (multiLine && !lexer.Current.Is(TokenType.Token, "}"));
 
             if (multiLine)

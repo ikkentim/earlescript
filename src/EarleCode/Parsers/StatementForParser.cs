@@ -56,7 +56,7 @@ namespace EarleCode.Parsers
             // todo: break and continue
             var block = Runtime.Compiler.Compile(Lexer, File, false).ToArray();
 
-            Yield(OpCode.JumpIf);
+            Yield(OpCode.JumpIfFalse);
             Yield(block.Length + 5 + incrementBlock.Length);
 
             Yield(block);

@@ -1,12 +1,17 @@
-﻿init()
+﻿yes()
 {
-    a = false;
+    print("getting yes");
+    return true;
+}
 
-    b = true;
+no()
+{
+    print("getting no");
+    return false;
+}
 
-    c = b || (a = true);
-
-    print("A: " + a);
-    print("B: " + b);
-    print("C: " + c);
+init()
+{
+    value = yes() && no() || yes() && yes();
+    print("value: " + value);
 }

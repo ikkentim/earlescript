@@ -50,9 +50,7 @@ namespace EarleCode.Parsers
             Lexer.SkipToken(TokenType.Token, ")");
 
             Yield(referenceBuffer);
-
-            Yield(OpCode.Call);
-            Yield(arguments);
+            PushCall(arguments);
         }
 
         #endregion

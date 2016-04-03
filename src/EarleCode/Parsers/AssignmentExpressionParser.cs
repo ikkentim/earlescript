@@ -21,7 +21,7 @@ namespace EarleCode.Parsers
 {
     public class AssignmentExpressionParser : Parser
     {
-        private string GetUnaryOperators(string[] opList)
+        private string GetOperator(string[] opList)
         {
             var str = "";
             do
@@ -46,7 +46,7 @@ namespace EarleCode.Parsers
 
             if (SyntaxMatches("OPERATOR_MOD_UNARY"))
             {
-                unaryModOperator = GetUnaryOperators(EarleOperators.UnaryAssignmentModOperators);
+                unaryModOperator = GetOperator(EarleOperators.UnaryAssignmentModOperators);
             }
 
             Lexer.AssertToken(TokenType.Identifier);
@@ -56,12 +56,15 @@ namespace EarleCode.Parsers
 
             if (unaryModOperator == null && SyntaxMatches("OPERATOR_MOD_UNARY"))
             {
-                unaryModOperator = GetUnaryOperators(EarleOperators.UnaryAssignmentModOperators);
+                unaryModOperator = GetOperator(EarleOperators.UnaryAssignmentModOperators);
                 unaryModOperatorIsPrefix = false;
             }
 
             if (unaryModOperator != null)
             {
+                if (unaryModOperator.Length == 0)
+                    ThrowUnexpectedToken("-OPERATOR-");
+
                 // Read
                 PushReference(null, name);
                 Yield(OpCode.Read);
@@ -71,9 +74,7 @@ namespace EarleCode.Parsers
                     Yield(OpCode.Duplicate);
 
                 // Operator call
-                PushReference(null, $"operator{unaryModOperator}");
-                Yield(OpCode.Call);
-                Yield(1);
+                PushCall(null, $"operator{unaryModOperator}", 1);
 
                 // Prefix dupelicate
                 if (unaryModOperatorIsPrefix)
@@ -87,7 +88,7 @@ namespace EarleCode.Parsers
             {
                 string unaryOperator = null;
                 if (SyntaxMatches("OPERATOR_UNARY"))
-                    unaryOperator = GetUnaryOperators(EarleOperators.UnaryAssignmentOperators);
+                    unaryOperator = GetOperator(EarleOperators.UnaryAssignmentOperators);
 
                 Lexer.SkipToken(TokenType.Token, "=");
 
@@ -100,11 +101,7 @@ namespace EarleCode.Parsers
                 Parse<ExpressionParser>();
 
                 if (unaryOperator != null)
-                {
-                    PushReference(null, $"operator{unaryOperator}");
-                    Yield(OpCode.Call);
-                    Yield(2);
-                }
+                    PushCall(null, $"operator{unaryOperator}", 1);
 
                 Yield(OpCode.Duplicate);
                 PushReference(null, name);

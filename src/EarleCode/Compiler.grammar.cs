@@ -62,6 +62,10 @@ namespace EarleCode
                 ["EXPRESSION"] = "VECTOR",
                 ["EXPRESSION"] = "VARIABLE",
                 ["EXPRESSION"] = "NUMBER_LITERAL|STRING_LITERAL",
+                ["OPERATOR"] = "OPERATOR_AND",
+                ["OPERATOR_AND"] = "&&",
+                ["OPERATOR"] = "OPERATOR_OR",
+                ["OPERATOR_OR"] = "||",
 
                 // Value types
                 ["TARGET_VARIABLE"] = "VARIABLE",

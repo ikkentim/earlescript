@@ -27,7 +27,7 @@ namespace EarleCode.Values.ValueTypes
 
         public virtual object ParseValueToType(EarleValue value)
         {
-            if (value.Is(Type)) return value;
+            if (value.Is(Type)) return value.Value;
 
             var parsedValue = ParseOtherValueToType(value);
 

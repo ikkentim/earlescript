@@ -48,6 +48,7 @@
     <Compile Include="EarleNativeFunction.cs" />
     <Compile Include="EarleOperators.cs" />
     <Compile Include="Instructions\DuplicateInstruction.cs" />
+    <Compile Include="Instructions\JumpIfTrueInstruction.cs" />
     <Compile Include="Parsers\AssignmentExpressionParser.cs" />
     <Compile Include="Parsers\FunctionReferenceExpressionParser.cs" />
     <Compile Include="Runtime.natives.cs" />
@@ -55,7 +56,7 @@
     <Compile Include="EarleVariableReference.cs" />
     <Compile Include="Instructions\CallInstruction.cs" />
     <Compile Include="Instructions\IInstruction.cs" />
-    <Compile Include="Instructions\JumpIfInstruction.cs" />
+    <Compile Include="Instructions\JumpIfFalseInstruction.cs" />
     <Compile Include="Instructions\JumpInstruction.cs" />
     <Compile Include="Instructions\NotInstruction.cs" />
     <Compile Include="Instructions\PopInstruction.cs" />

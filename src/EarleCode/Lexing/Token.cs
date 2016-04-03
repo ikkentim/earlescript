@@ -32,13 +32,13 @@ namespace EarleCode.Lexing
 
         public int Line { get; }
 
-        public int Column { get; private set; }
+        public int Column { get; }
 
         public TokenType Type { get; }
 
         public string Value { get; }
 
-        public string File { get; private set; }
+        public string File { get; }
 
         public bool Is(TokenType type, params string[] values)
         {
@@ -59,7 +59,7 @@ namespace EarleCode.Lexing
 
         public override string ToString()
         {
-            return $"{Type} `{Value}` at line {Line}, column {Column}";
+            return $"{Line}:{Column}: {Type} `{Value}`";
         }
 
         #endregion

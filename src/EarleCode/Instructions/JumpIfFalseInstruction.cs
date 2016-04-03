@@ -13,18 +13,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using EarleCode.Instructions;
+using System;
 
-namespace EarleCode.Parsers
+namespace EarleCode.Instructions
 {
-    public class StatementAssignmentParser : AssignmentExpressionParser
+    internal class JumpIfFalseInstruction : IInstruction
     {
-        #region Overrides of AssignmentExpressionParser
+        #region Implementation of IInstruction
 
-        protected override void Parse()
+        public void Handle(RuntimeLoop loop)
         {
-            base.Parse();
-            Yield(OpCode.Pop);
+            if (!loop.Stack.Pop().To<bool>(loop.Runtime))
+            {
+                var value = BitConverter.ToInt32(loop.PCode, loop.CIP);
+                loop.CIP += value;
+            }
+
+            loop.CIP += 4;
         }
 
         #endregion

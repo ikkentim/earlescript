@@ -1,4 +1,4 @@
-﻿// EarleCode
+// EarleCode
 // Copyright 2016 Tim Potze
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,13 +17,13 @@ using System;
 
 namespace EarleCode.Instructions
 {
-    internal class JumpIfInstruction : IInstruction
+    internal class JumpIfTrueInstruction : IInstruction
     {
         #region Implementation of IInstruction
 
         public void Handle(RuntimeLoop loop)
         {
-            if (!loop.Stack.Pop().To<bool>(loop.Runtime))
+            if (loop.Stack.Pop().To<bool>(loop.Runtime))
             {
                 var value = BitConverter.ToInt32(loop.PCode, loop.CIP);
                 loop.CIP += value;

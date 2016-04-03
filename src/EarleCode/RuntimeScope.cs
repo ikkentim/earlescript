@@ -44,20 +44,14 @@ namespace EarleCode
 
             if (value?.HasValue ?? false)
                 return value.Value;
-
-            if (value == null)
-            {
-                EarleValue local;
-                if (_locals.TryGetValue(reference.Name, out local))
-                    return local;
-            }
-
-            return EarleValue.Undefined;
+            
+            EarleValue local;
+            return _locals.TryGetValue(reference.Name, out local) ? local : EarleValue.Undefined;
         }
 
         public virtual bool SetValue(EarleVariableReference reference, EarleValue value)
         {
-            if (_superScope?.GetValue(reference) != null)
+            if ((_superScope?.GetValue(reference) ?? EarleValue.Undefined).HasValue)
             {
                 return _superScope.SetValue(reference, value);
             }

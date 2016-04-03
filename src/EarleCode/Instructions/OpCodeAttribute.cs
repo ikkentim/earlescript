@@ -39,6 +39,7 @@ namespace EarleCode.Instructions
         {
             var l = new Lexer(Format, Format);
             var str = "";
+            var size = 1;
             while (l.MoveNext())
             {
                 if (l.Current.Is(TokenType.Token, "$"))
@@ -52,18 +53,24 @@ namespace EarleCode.Instructions
                             str += BitConverter.ToInt32(pCode, index + 1);
                             str += " ";
                             index += 4;
+                            size += 4;
                             break;
                         case "float":
                             str += BitConverter.ToSingle(pCode, index + 1);
                             str += " ";
                             index += 4;
+                            size += 4;
                             break;
                         case "string":
                             str += '"';
                             while (pCode[index + 1] != 0)
+                            {
                                 str += (char) pCode[index++ + 1];
+                                size++;
+                            }
                             str += "\" ";
                             index++;
+                            size++;
                             break;
                         default:
                             throw new Exception();
@@ -75,7 +82,7 @@ namespace EarleCode.Instructions
                 }
             }
 
-            return str;
+            return $"[{size}]" + str;
         }
     }
 }

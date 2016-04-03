@@ -15,6 +15,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using EarleCode.Instructions;
 using EarleCode.Utilities;
@@ -95,10 +96,11 @@ namespace EarleCode
                     ? null
                     : Instructions[instructionIdentifier];
 
-//                // Debug
+                // Debug
 //                var debug = CIP - 1;
 //                var str = ((OpCode) instructionIdentifier).GetCustomAttribute<OpCodeAttribute>().BuildString(PCode, ref debug);
 //                Console.WriteLine("RUNNING " + str);
+//                Debug.WriteLine("RUNNING " + str);
 
                 if (instruction == null)
                     throw new Exception("Unkown opcode " + (OpCode) instructionIdentifier);

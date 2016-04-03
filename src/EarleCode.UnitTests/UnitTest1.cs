@@ -18,7 +18,7 @@ namespace EarleCode.UnitTests
             Assert.AreEqual(true, result.HasValue);
 
             if (expectedValue != null)
-                Assert.AreEqual(typeof (T), result.Value.Value.GetType());
+                Assert.AreEqual(typeof (T), result?.Value?.GetType());
 
             Assert.AreEqual(expectedValue, (T) result.Value.Value);
         }

@@ -17,9 +17,9 @@ namespace EarleCode.Lexing
 {
     public enum TokenType : byte
     {
-        Identifier = 1,
-        NumberLiteral = 2,
-        StringLiteral = 4,
-        Token = 8
+        Identifier,
+        NumberLiteral,
+        StringLiteral,
+        Token
     }
 }

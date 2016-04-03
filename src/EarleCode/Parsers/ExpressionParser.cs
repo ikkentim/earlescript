@@ -13,6 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -23,6 +24,19 @@ namespace EarleCode.Parsers
 {
     public class ExpressionParser : Parser
     {
+        private string GetOperator(string[] opList)
+        {
+            var str = "";
+            do
+            {
+                str += Lexer.Current.Value;
+                Lexer.AssertMoveNext();
+            } while (Lexer.Current.Is(TokenType.Token) && opList.Any(o => o.StartsWith(str)) &&
+                     opList.Where(o => o.StartsWith(str)).Max(o => o.Length) > str.Length);
+
+            return str;
+        }
+
         #region Overrides of Parser
 
         protected override void Parse()
@@ -33,42 +47,59 @@ namespace EarleCode.Parsers
             {
                 ParseValue();
 
+                if (SyntaxMatches("OPERATOR_AND"))
+                {
+                    Lexer.SkipToken(TokenType.Token, "&");
+                    Lexer.SkipToken(TokenType.Token, "&");
+                    
+                    var block = ParseToBuffer<ExpressionParser>();
+                    PushJump(false, block.Length + 5);
+                    Yield(block);
+                    PushJump(5);
+                    PushInteger(0);
+
+                    return;
+                }
+
+                if (SyntaxMatches("OPERATOR_OR"))
+                {
+                    Lexer.SkipToken(TokenType.Token, "|");
+                    Lexer.SkipToken(TokenType.Token, "|");
+                    
+                    var block = ParseToBuffer<ExpressionParser>();
+                    PushJump(true, block.Length + 5);
+                    Yield(block);
+                    PushJump(5);
+                    PushInteger(0);
+
+                    return;
+                }
+
                 if (SyntaxMatches("OPERATOR"))
                 {
                     Lexer.AssertToken(TokenType.Token);
-                    var op = Lexer.Current.Value;
 
-                    if (!EarleOperators.BinaryOperators.ContainsKey(op))
+                    var op = GetOperator(EarleOperators.BinaryOperators.Keys.ToArray());
+
+                    if (op.Length == 0)
                         ThrowUnexpectedToken("-OPERATOR-");
 
                     if (operators.Any() && EarleOperators.BinaryOperators[operators.Peek()] >= EarleOperators.BinaryOperators[op])
                         do YieldBinaryOperator(operators.Pop()); while (operators.Any());
 
                     operators.Push(op);
-                    Lexer.AssertMoveNext();
                 }
                 else
                 {
-                    if (operators.Any())
-                        YieldBinaryOperator(operators.Pop());
-                    break;
+                    YieldBinaryOperators(operators);
+                    return;
                 }
-            }
-
-            if (operators.Any())
-            {
-                ThrowParseException("Invalid expression");
             }
         }
 
         #endregion
 
-        protected virtual void YieldBinaryOperator(string op)
-        {
-            PushReference(null, $"operator{op}");
-            Yield(OpCode.Call);
-            Yield(2);
-        }
+        #region Parse
 
         private void ParseValue()
         {
@@ -154,25 +185,6 @@ namespace EarleCode.Parsers
                 YieldUnaryOperator(unaryOperator);
         }
 
-        private void YieldUnaryOperator(string op)
-        {
-            switch (op)
-            {
-                case "-":
-                    PushInteger(-1);
-                    YieldBinaryOperator("*");
-                    break;
-                case "!":
-                    Yield(OpCode.Not);
-                    break;
-                default:
-                    PushReference(null, $"operator{op}");
-                    Yield(OpCode.Call);
-                    Yield(1);
-                    break;
-            }
-        }
-
         private void ParseKeyword()
         {
             switch (Lexer.Current.Value)
@@ -218,5 +230,40 @@ namespace EarleCode.Parsers
 
             Lexer.AssertMoveNext();
         }
+
+        #endregion
+
+        #region Yield
+
+        private void YieldBinaryOperator(string op)
+        {
+            PushCall(null, $"operator{op}", 2);
+        }
+
+        protected void YieldBinaryOperators(Stack<string> operators)
+        {
+            while (operators.Count > 0)
+                YieldBinaryOperator(operators.Pop());
+        }
+
+        private void YieldUnaryOperator(string op)
+        {
+            switch (op)
+            {
+                case "-":
+                    PushInteger(-1);
+                    YieldBinaryOperator("*");
+                    break;
+                case "!":
+                    Yield(OpCode.Not);
+                    break;
+                default:
+                    PushCall(null, $"operator{op}", 1);
+                    break;
+            }
+        }
+
+        #endregion
+
     }
 }
