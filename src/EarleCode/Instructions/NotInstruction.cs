@@ -13,27 +13,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
 using EarleCode.Values;
 
 namespace EarleCode.Instructions
 {
-    internal class NotInstruction : IInstruction
+    internal class NotInstruction : Instruction
     {
-        #region Implementation of IInstruction
+        #region Overrides of Instruction
 
-        public void Handle(RuntimeLoop loop)
+        protected override void Handle()
         {
-            var value = loop.Stack.Pop();
+            var value = Pop();
 
             if (value.Is<int>())
                 value = value.As<int>() == 0 ? EarleValue.True : EarleValue.False;
-            else if (!value.HasValue)
-                value = EarleValue.True;
             else
-                value = EarleValue.False;
-            
-            loop.Stack.Push(value);
+                value = value.HasValue ? EarleValue.True : EarleValue.False;
+
+            Push(value);
         }
 
         #endregion

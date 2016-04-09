@@ -46,7 +46,7 @@ namespace EarleCode
             "-",
             "!",
             "~",
-            "@",
+            "@"
         };
 
         public static readonly string[] UnaryAssignmentOperators =
@@ -60,7 +60,7 @@ namespace EarleCode
             "++",
             "--"
         };
-        
+
         public static readonly IDictionary<string, TokenType> UnaryOperatorTargets = new Dictionary<string, TokenType>
         {
             ["@"] = TokenType.StringLiteral

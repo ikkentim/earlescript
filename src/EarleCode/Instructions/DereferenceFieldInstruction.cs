@@ -13,13 +13,30 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Collections.Generic;
-using EarleCode.Lexing;
+using EarleCode.Values;
 
-namespace EarleCode.Grammar.RulesElements
+namespace EarleCode.Instructions
 {
-    public interface IGrammarRuleElement
+    internal class DereferenceFieldInstruction : Instruction
     {
-        ProductionRuleMatchResult Matches(TokenWalker tokenWalker, IEnumerable<GrammarRule> rules);
+        #region Overrides of Instruction
+
+        protected override void Handle()
+        {
+            var fieldName = GetString();
+            var value = Pop();
+
+            if (value.Is<IEarleStructure>())
+            {
+                var obj = value.As<IEarleStructure>();
+                Push(new EarleBoxedField(obj, fieldName).ToEarleValue());
+            }
+            else
+            {
+                Push(EarleValue.Undefined);
+            }
+        }
+
+        #endregion
     }
 }

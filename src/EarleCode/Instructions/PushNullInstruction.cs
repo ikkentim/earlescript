@@ -17,13 +17,13 @@ using EarleCode.Values;
 
 namespace EarleCode.Instructions
 {
-    internal class PushNullInstruction : IInstruction
+    internal class PushNullInstruction : Instruction
     {
-        #region Implementation of IInstruction
+        #region Overrides of Instruction
 
-        public void Handle(RuntimeLoop loop)
+        protected override void Handle()
         {
-            loop.Stack.Push(EarleValue.Undefined);
+            Push(EarleValue.Undefined);
         }
 
         #endregion

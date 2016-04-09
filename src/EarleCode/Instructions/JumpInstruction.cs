@@ -13,18 +13,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-
 namespace EarleCode.Instructions
 {
-    internal class JumpInstruction : IInstruction
+    internal class JumpInstruction : Instruction
     {
-        #region Implementation of IInstruction
+        #region Overrides of Instruction
 
-        public void Handle(RuntimeLoop loop)
+        protected override void Handle()
         {
-            var value = BitConverter.ToInt32(loop.PCode, loop.CIP);
-            loop.CIP += 4 + value;
+            Jump(GetInt32());
         }
 
         #endregion

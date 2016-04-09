@@ -15,7 +15,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using EarleCode.Instructions;
 using EarleCode.Utilities;
@@ -50,7 +49,7 @@ namespace EarleCode
         }
 
         public RuntimeLoop(Runtime runtime, RuntimeScope superScope, byte[] instructions,
-            IDictionary<string, EarleValue> initialLocals)
+            EarleDictionary initialLocals)
         {
             if (runtime == null) throw new ArgumentNullException(nameof(runtime));
             Runtime = runtime;

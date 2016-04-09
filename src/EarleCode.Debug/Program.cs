@@ -15,6 +15,7 @@
 
 using System;
 using System.IO;
+using EarleCode.Lexing;
 using EarleCode.Localization;
 using EarleCode.Values;
 
@@ -37,6 +38,7 @@ namespace EarleCode.Debug
         private static void Main(string[] args)
         {
             var runtime = new Runtime();
+            
             var codeDir = Path.Combine(Directory.GetCurrentDirectory(), "code");
 
             foreach (var file in Directory.GetFiles(codeDir, "*.earle", SearchOption.AllDirectories))
@@ -60,6 +62,13 @@ namespace EarleCode.Debug
             Console.WriteLine();
             Console.WriteLine("Code execution completed!");
             Console.WriteLine("Result: " + result);
+
+            if (result?.Is<IEarleStructure>() ?? false)
+            {
+                var struc = result.Value.As<IEarleStructure>();
+                foreach(var kv in struc)
+                    Console.WriteLine($"> {kv.Key} = {kv.Value}");
+            }
             Console.ReadLine();
         }
     }

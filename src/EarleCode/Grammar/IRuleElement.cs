@@ -13,29 +13,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using EarleCode.Grammar.RulesElements;
+using System.Collections.Generic;
+using EarleCode.Lexing;
 
 namespace EarleCode.Grammar
 {
-    public class GrammarRule
+    internal interface IRuleElement
     {
-        public GrammarRule(string name, AndGrammarRuleElement rule)
-        {
-            Name = name;
-            Rule = rule;
-        }
-
-        public string Name { get; }
-
-        public AndGrammarRuleElement Rule { get; }
-
-        #region Overrides of Object
-
-        public override string ToString()
-        {
-            return $"{Name} => {Rule}";
-        }
-
-        #endregion
+        IEnumerable<ILexer> GetMatches(ILexer lexer, ProductionRuleTable rules);
     }
 }

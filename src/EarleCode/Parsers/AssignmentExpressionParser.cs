@@ -13,6 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Collections.Generic;
 using System.Linq;
 using EarleCode.Instructions;
 using EarleCode.Lexing;
@@ -33,14 +34,16 @@ namespace EarleCode.Parsers
 
             return str;
         }
+
+        protected virtual void YieldDuplicate()
+        {
+            Yield(OpCode.Duplicate);
+        }
+
         #region Overrides of Parser
 
         protected override void Parse()
         {
-            // NAME = EXPRESSION
-            // OPERATOR_MOD_UNARY NAME
-            // NAME OPERATOR_MOD_UNARY
-
             string unaryModOperator = null;
             var unaryModOperatorIsPrefix = true;
 
@@ -52,7 +55,16 @@ namespace EarleCode.Parsers
             Lexer.AssertToken(TokenType.Identifier);
 
             var name = Lexer.Current.Value;
+            var fields = new List<string>();
             Lexer.AssertMoveNext();
+
+            while (Lexer.Current.Is(TokenType.Token, "."))
+            {
+                Lexer.AssertMoveNext();
+                Lexer.AssertToken(TokenType.Identifier);
+                fields.Add(Lexer.Current.Value);
+                Lexer.AssertMoveNext();
+            }
 
             if (unaryModOperator == null && SyntaxMatches("OPERATOR_MOD_UNARY"))
             {
@@ -67,21 +79,32 @@ namespace EarleCode.Parsers
 
                 // Read
                 PushReference(null, name);
+                foreach (var f in fields)
+                {
+                    Yield(OpCode.Read);
+                    PushDereference(f);
+                }
+
                 Yield(OpCode.Read);
 
                 // Postfix duplicate
                 if (!unaryModOperatorIsPrefix)
-                    Yield(OpCode.Duplicate);
+                    YieldDuplicate();
 
                 // Operator call
                 PushCall(null, $"operator{unaryModOperator}", 1);
 
                 // Prefix dupelicate
                 if (unaryModOperatorIsPrefix)
-                    Yield(OpCode.Duplicate);
+                    YieldDuplicate();
 
                 // Write
                 PushReference(null, name);
+                foreach (var f in fields)
+                {
+                    Yield(OpCode.Read);
+                    PushDereference(f);
+                }
                 Yield(OpCode.Write);
             }
             else
@@ -95,6 +118,11 @@ namespace EarleCode.Parsers
                 if (unaryOperator != null)
                 {
                     PushReference(null, name);
+                    foreach (var f in fields)
+                    {
+                        Yield(OpCode.Read);
+                        PushDereference(f);
+                    }
                     Yield(OpCode.Read);
                 }
 
@@ -103,8 +131,13 @@ namespace EarleCode.Parsers
                 if (unaryOperator != null)
                     PushCall(null, $"operator{unaryOperator}", 1);
 
-                Yield(OpCode.Duplicate);
+                YieldDuplicate();
                 PushReference(null, name);
+                foreach (var f in fields)
+                {
+                    Yield(OpCode.Read);
+                    PushDereference(f);
+                }
                 Yield(OpCode.Write);
             }
         }

@@ -18,17 +18,13 @@ using EarleCode.Values;
 
 namespace EarleCode.Instructions
 {
-    internal class PushReferenceInstruction : IInstruction
+    internal class PushReferenceInstruction : Instruction
     {
-        #region Implementation of IInstruction
+        #region Overrides of Instruction
 
-        public void Handle(RuntimeLoop loop)
+        protected override void Handle()
         {
-            var refString = "";
-
-            while (loop.PCode[loop.CIP] != 0)
-                refString += (char) loop.PCode[loop.CIP++];
-            loop.CIP++;
+            var refString = GetString();
 
             string file = null,
                 name;
@@ -42,7 +38,7 @@ namespace EarleCode.Instructions
             else
                 name = refString;
 
-            loop.Stack.Push(new EarleVariableReference((file?.Length ?? 0) == 0 ? null : file, name).ToEarleValue());
+            Push(new EarleVariableReference((file?.Length ?? 0) == 0 ? null : file, name).ToEarleValue());
         }
 
         #endregion

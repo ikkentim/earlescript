@@ -15,13 +15,13 @@
 
 namespace EarleCode.Instructions
 {
-    public class DuplicateInstruction : IInstruction
+    internal class DuplicateInstruction : Instruction
     {
-        #region Implementation of IInstruction
+        #region Overrides of Instruction
 
-        public void Handle(RuntimeLoop loop)
+        protected override void Handle()
         {
-            loop.Stack.Push(loop.Stack.Peek());
+            Push(Peek());
         }
 
         #endregion

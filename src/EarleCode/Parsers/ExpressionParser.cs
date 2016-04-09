@@ -13,7 +13,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -47,11 +46,20 @@ namespace EarleCode.Parsers
             {
                 ParseValue();
 
+                if (Lexer.Current.Is(TokenType.Token, "."))
+                {
+                    Lexer.AssertMoveNext();
+                    Lexer.AssertToken(TokenType.Identifier);
+                    PushDereference(Lexer.Current.Value);
+                    Yield(OpCode.Read);
+                    Lexer.AssertMoveNext();
+                }
+
                 if (SyntaxMatches("OPERATOR_AND"))
                 {
                     Lexer.SkipToken(TokenType.Token, "&");
                     Lexer.SkipToken(TokenType.Token, "&");
-                    
+
                     var block = ParseToBuffer<ExpressionParser>();
                     PushJump(false, block.Length + 5);
                     Yield(block);
@@ -65,7 +73,7 @@ namespace EarleCode.Parsers
                 {
                     Lexer.SkipToken(TokenType.Token, "|");
                     Lexer.SkipToken(TokenType.Token, "|");
-                    
+
                     var block = ParseToBuffer<ExpressionParser>();
                     PushJump(true, block.Length + 5);
                     Yield(block);
@@ -84,7 +92,8 @@ namespace EarleCode.Parsers
                     if (op.Length == 0)
                         ThrowUnexpectedToken("-OPERATOR-");
 
-                    if (operators.Any() && EarleOperators.BinaryOperators[operators.Peek()] >= EarleOperators.BinaryOperators[op])
+                    if (operators.Any() &&
+                        EarleOperators.BinaryOperators[operators.Peek()] >= EarleOperators.BinaryOperators[op])
                         do YieldBinaryOperator(operators.Pop()); while (operators.Any());
 
                     operators.Push(op);
@@ -132,7 +141,7 @@ namespace EarleCode.Parsers
                 unaryOperator = Lexer.Current.Value;
                 Lexer.AssertMoveNext();
 
-                if(!EarleOperators.IsUnaryOpertorTargetValid(unaryOperator, Lexer.Current.Type))
+                if (!EarleOperators.IsUnaryOpertorTargetValid(unaryOperator, Lexer.Current.Type))
                     ThrowUnexpectedToken("Unexpected target for operator " + unaryOperator);
             }
 
@@ -155,9 +164,7 @@ namespace EarleCode.Parsers
                     Parse<ExpressionParser>();
                 }
 
-                PushReference(null, $"createVector{vectorSize}");
-                Yield(OpCode.Call);
-                Yield(vectorSize);
+                PushCall(null, $"createVector{vectorSize}", vectorSize);
 
                 Lexer.SkipToken(TokenType.Token, ")");
             }
@@ -215,7 +222,8 @@ namespace EarleCode.Parsers
 
                     if (int.TryParse(Lexer.Current.Value, out iValue))
                         PushInteger(iValue);
-                    else if (float.TryParse(Lexer.Current.Value, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out fValue))
+                    else if (float.TryParse(Lexer.Current.Value, NumberStyles.AllowDecimalPoint,
+                        CultureInfo.InvariantCulture, out fValue))
                         PushFloat(fValue);
                     else
                         ThrowUnexpectedToken(TokenType.NumberLiteral);
@@ -264,6 +272,5 @@ namespace EarleCode.Parsers
         }
 
         #endregion
-
     }
 }

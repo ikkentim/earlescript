@@ -65,6 +65,11 @@ namespace EarleCode
 
         #endregion
 
+        public virtual void HandleWarning(string warning)
+        {
+            Console.WriteLine(warning);
+        }
+
         #region Value types
 
         public void RegisterValueType(IEarleValueType valueType)
@@ -143,10 +148,5 @@ namespace EarleCode
         }
 
         #endregion
-
-        public virtual void HandleWarning(string warning)
-        {
-            Console.WriteLine(warning);
-        }
     }
 }

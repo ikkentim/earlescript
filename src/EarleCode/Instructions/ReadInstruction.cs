@@ -17,13 +17,22 @@ using EarleCode.Values;
 
 namespace EarleCode.Instructions
 {
-    internal class ReadInstruction : IInstruction
+    internal class ReadInstruction : Instruction
     {
-        #region Implementation of IInstruction
+        #region Overrides of Instruction
 
-        public void Handle(RuntimeLoop loop)
+        protected override void Handle()
         {
-            loop.Stack.Push(loop.GetValue(loop.Stack.Pop().As<EarleVariableReference>()));
+            var value = Pop().Value;
+            if (value is EarleVariableReference)
+                Push(Loop.GetValue((EarleVariableReference) value));
+            else if (value is EarleBoxedField)
+                Push(((EarleBoxedField) value).GetField());
+            else
+            {
+                Runtime.HandleWarning($"Value {value} is not a reference");
+                Push(EarleValue.Undefined);
+            }
         }
 
         #endregion

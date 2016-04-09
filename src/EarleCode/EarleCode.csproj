@@ -42,18 +42,28 @@
   <ItemGroup>
     <Compile Include="Compiler.cs" />
     <Compile Include="Compiler.grammar.cs" />
+    <Compile Include="Grammar\EmbedRuleElement.cs" />
+    <Compile Include="GrammarProcessor.cs" />
+    <Compile Include="Grammar\IRuleElement.cs" />
+    <Compile Include="Grammar\LiteralRuleElement.cs" />
+    <Compile Include="Grammar\OptionalRuleElement.cs" />
+    <Compile Include="Grammar\ProductionRule.cs" />
+    <Compile Include="Grammar\ProductionRuleTable.cs" />
+    <Compile Include="Values\EarleDictionary.cs" />
     <Compile Include="EarleFile.cs" />
     <Compile Include="EarleFunction.cs" />
     <Compile Include="EarleFunctionCollection.cs" />
     <Compile Include="EarleNativeFunction.cs" />
     <Compile Include="EarleOperators.cs" />
+    <Compile Include="Instructions\DereferenceFieldInstruction.cs" />
     <Compile Include="Instructions\DuplicateInstruction.cs" />
+    <Compile Include="Instructions\Instruction.cs" />
     <Compile Include="Instructions\JumpIfTrueInstruction.cs" />
     <Compile Include="Parsers\AssignmentExpressionParser.cs" />
     <Compile Include="Parsers\FunctionReferenceExpressionParser.cs" />
     <Compile Include="Runtime.natives.cs" />
     <Compile Include="Values\EarleValue.cs" />
-    <Compile Include="EarleVariableReference.cs" />
+    <Compile Include="Values\EarleVariableReference.cs" />
     <Compile Include="Instructions\CallInstruction.cs" />
     <Compile Include="Instructions\IInstruction.cs" />
     <Compile Include="Instructions\JumpIfFalseInstruction.cs" />
@@ -83,14 +93,6 @@
     <Compile Include="Parsers\Parser.cs" />
     <Compile Include="Parsers\StatementCallParser.cs" />
     <Compile Include="Runtime.cs" />
-    <Compile Include="Grammar\GrammarProcessor.cs" />
-    <Compile Include="Grammar\GrammarRule.cs" />
-    <Compile Include="Grammar\RulesElements\AndGrammarRuleElement.cs" />
-    <Compile Include="Grammar\RulesElements\EmbeddedGrammarRuleElement.cs" />
-    <Compile Include="Grammar\RulesElements\IGrammarRuleElement.cs" />
-    <Compile Include="Grammar\RulesElements\LiteralGrammarRuleElement.cs" />
-    <Compile Include="Grammar\RulesElements\OptionalGrammarRuleElement.cs" />
-    <Compile Include="Grammar\RulesElements\ProductionRuleMatchResult.cs" />
     <Compile Include="Instructions\OpCode.cs" />
     <Compile Include="Parsers\IParser.cs" />
     <Compile Include="Parsers\ParseException.cs" />
@@ -103,13 +105,13 @@
     <Compile Include="Lexing\TokenType.cs" />
     <Compile Include="Lexing\TokenTypeData.cs" />
     <Compile Include="Lexing\TokenUtils.cs" />
-    <Compile Include="Lexing\TokenWalker.cs" />
     <Compile Include="RuntimeLoop.cs" />
     <Compile Include="RuntimeScope.cs" />
     <Compile Include="Utilities\StringUtility.cs" />
     <Compile Include="Values\EarleValueUtility.cs" />
     <Compile Include="Values\EarleVector2.cs" />
     <Compile Include="Values\EarleVector3.cs" />
+    <Compile Include="Values\IEarleStructure.cs" />
     <Compile Include="Values\ValueTypes\EarleBoolValueType.cs" />
     <Compile Include="Values\ValueTypes\EarleFloatValueType.cs" />
     <Compile Include="Values\ValueTypes\EarleIntegerValueType.cs" />
@@ -119,6 +121,7 @@
     <Compile Include="Values\ValueTypes\EarleVector3ValueType.cs" />
     <Compile Include="Values\ValueTypes\IEarleValueType.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

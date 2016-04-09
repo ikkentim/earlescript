@@ -19,7 +19,7 @@ namespace EarleCode
 {
     public interface IRuntimeScope
     {
-        EarleValue GetValue(EarleVariableReference reference);
-        bool SetValue(EarleVariableReference reference, EarleValue value);
+        EarleValue GetValue(EarleVariableReference field);
+        bool SetValue(EarleVariableReference field, EarleValue value);
     }
 }

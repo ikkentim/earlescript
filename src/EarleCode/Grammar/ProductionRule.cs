@@ -14,45 +14,32 @@
 // limitations under the License.
 
 using System;
-using EarleCode.Values;
+using System.Collections.Generic;
+using System.Linq;
+using EarleCode.Lexing;
 
-namespace EarleCode
+namespace EarleCode.Grammar
 {
-    public class EarleFunction
+    internal class ProductionRule
     {
-        public EarleFunction(EarleFile file, string name, string[] parameters, byte[] pCode)
+        public ProductionRule(string name, IRuleElement[] conditions)
         {
-            ;
             if (name == null) throw new ArgumentNullException(nameof(name));
-            if (parameters == null) throw new ArgumentNullException(nameof(parameters));
-
-            File = file;
-            Parameters = parameters;
-            PCode = pCode;
+            if (conditions == null) throw new ArgumentNullException(nameof(conditions));
             Name = name;
+            Conditions = conditions;
         }
-
-        public EarleFile File { get; }
-
-        public byte[] PCode { get; }
 
         public string Name { get; }
 
-        public string[] Parameters { get; }
+        public IRuleElement[] Conditions { get; }
 
-        public virtual RuntimeLoop CreateLoop(Runtime runtime, EarleValue[] arguments)
+        public IEnumerable<ILexer> GetMatches(ILexer lexer, ProductionRuleTable rules, int skip = 0)
         {
-            if (arguments == null) throw new ArgumentNullException(nameof(arguments));
-            var locals = new EarleDictionary();
-
-            var index = 0;
-            foreach (var parameter in Parameters)
-            {
-                locals[parameter] = index >= arguments.Length ? EarleValue.Undefined : arguments[index];
-                index++;
-            }
-
-            return new RuntimeLoop(runtime, File, PCode, locals);
+            return Conditions.Skip(skip)
+                .Aggregate((IEnumerable<ILexer>) new[] {lexer},
+                    (current, condition) => current.SelectMany(l => condition.GetMatches(l, rules).ToArray())) /*nope*/
+                .ToArray();
         }
 
         #region Overrides of Object
@@ -65,7 +52,7 @@ namespace EarleCode
         /// </returns>
         public override string ToString()
         {
-            return $"{File}::{Name}";
+            return $"{Name} = {string.Join(" ", (object[]) Conditions)}";
         }
 
         #endregion

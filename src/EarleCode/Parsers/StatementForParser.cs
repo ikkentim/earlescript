@@ -13,7 +13,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Linq;
 using EarleCode.Instructions;
 using EarleCode.Lexing;
 
@@ -54,7 +53,7 @@ namespace EarleCode.Parsers
             Lexer.SkipToken(TokenType.Token, ")");
 
             // todo: break and continue
-            var block = Runtime.Compiler.Compile(Lexer, File, false).ToArray();
+            var block = Runtime.Compiler.Compile(Lexer, File, false);
 
             Yield(OpCode.JumpIfFalse);
             Yield(block.Length + 5 + incrementBlock.Length);

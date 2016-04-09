@@ -1,4 +1,4 @@
-// EarleCode
+﻿// EarleCode
 // Copyright 2016 Tim Potze
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,38 +15,40 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using EarleCode.Lexing;
 
-namespace EarleCode.Grammar.RulesElements
+namespace EarleCode.Grammar
 {
-    public class OptionalGrammarRuleElement : IGrammarRuleElement
+    internal class OptionalRuleElement : IRuleElement
     {
-        private readonly IGrammarRuleElement _element;
+        private readonly IRuleElement _element;
 
-        public OptionalGrammarRuleElement(IGrammarRuleElement element)
+        public OptionalRuleElement(IRuleElement element)
         {
             if (element == null) throw new ArgumentNullException(nameof(element));
             _element = element;
         }
 
-        #region Implementation of IGrammarRuleElement
+        #region Implementation of IRuleElement
 
-        public ProductionRuleMatchResult Matches(TokenWalker tokenWalker, IEnumerable<GrammarRule> rules)
+        public IEnumerable<ILexer> GetMatches(ILexer lexer, ProductionRuleTable rules)
         {
-            if (tokenWalker.Current == null)
-                return ProductionRuleMatchResult.True;
-
-            tokenWalker.CreateSession();
-
-            return tokenWalker.FlushOrDropSession(_element.Matches(tokenWalker, rules) == ProductionRuleMatchResult.True)
-                ? ProductionRuleMatchResult.Optional
-                : ProductionRuleMatchResult.True;
+            return _element.GetMatches(lexer, rules)
+                .Select(l => l.Clone())
+                .Concat(new[] {lexer.Clone()});
         }
 
         #endregion
 
         #region Overrides of Object
 
+        /// <summary>
+        ///     Returns a string that represents the current object.
+        /// </summary>
+        /// <returns>
+        ///     A string that represents the current object.
+        /// </returns>
         public override string ToString()
         {
             return $"OPTIONAL {_element}";

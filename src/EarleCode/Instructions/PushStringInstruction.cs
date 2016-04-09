@@ -17,19 +17,13 @@ using EarleCode.Values;
 
 namespace EarleCode.Instructions
 {
-    internal class PushStringInstruction : IInstruction
+    internal class PushStringInstruction : Instruction
     {
-        #region Implementation of IInstruction
+        #region Overrides of Instruction
 
-        public void Handle(RuntimeLoop loop)
+        protected override void Handle()
         {
-            var value = "";
-
-            while (loop.PCode[loop.CIP] != 0)
-                value += (char) loop.PCode[loop.CIP++];
-            loop.CIP++;
-
-            loop.Stack.Push(value.ToEarleValue());
+            Push(GetString().ToEarleValue());
         }
 
         #endregion

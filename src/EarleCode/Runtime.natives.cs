@@ -40,11 +40,14 @@ namespace EarleCode
             RegisterNative(new EarleInlineNativeFunction("createVector3",
                 values =>
                     new EarleVector3(
-                    values[0].Is<float>() ? values[0].As<float>() : values[0].As<int>(),
-                    values[1].Is<float>() ? values[1].As<float>() : values[1].As<int>(),
-                    values[2].Is<float>() ? values[2].As<float>() : values[2].As<int>()
-                    ).ToEarleValue(),
+                        values[0].Is<float>() ? values[0].As<float>() : values[0].As<int>(),
+                        values[1].Is<float>() ? values[1].As<float>() : values[1].As<int>(),
+                        values[2].Is<float>() ? values[2].As<float>() : values[2].As<int>()
+                        ).ToEarleValue(),
                 "x", "y", "z"));
+
+            RegisterNative(new EarleInlineNativeFunction("spawnstruct",
+                values => new EarleBasicStructure().ToEarleValue()));
 
             RegisterNative(new BinaryOperatorFunction("*", (left, right) => left.Is<float>() || right.Is<float>()
                 ? new EarleValue(left.To<float>(this)*right.To<float>(this))
@@ -74,7 +77,7 @@ namespace EarleCode
                     return left.As<float>() < right.As<int>();
                 if (left.Is<float>() && right.Is<float>())
                     return left.As<float>() < right.As<float>();
-                
+
                 return false;
             }, typeof (int), typeof (float)));
 
@@ -145,12 +148,12 @@ namespace EarleCode
             }));
 
             RegisterNative(new UnaryOperatorFunction("++",
-                v => v.Is<int>() ? (v.As<int>() + 1).ToEarleValue() : (v.As<float>() + 1).ToEarleValue(), typeof(int),
-                typeof(float)));
+                v => v.Is<int>() ? (v.As<int>() + 1).ToEarleValue() : (v.As<float>() + 1).ToEarleValue(), typeof (int),
+                typeof (float)));
 
             RegisterNative(new UnaryOperatorFunction("--",
-                v => v.Is<int>() ? (v.As<int>() - 1).ToEarleValue() : (v.As<float>() - 1).ToEarleValue(), typeof(int),
-                typeof(float)));
+                v => v.Is<int>() ? (v.As<int>() - 1).ToEarleValue() : (v.As<float>() - 1).ToEarleValue(), typeof (int),
+                typeof (float)));
         }
 
         private void RegisterDefaultValueTypes()
@@ -164,7 +167,8 @@ namespace EarleCode
         private class BinaryBooleanOperatorFunction : BinaryOperatorFunction
         {
             public BinaryBooleanOperatorFunction(string @operator, Func<EarleValue, EarleValue, bool> operation,
-                params Type[] supportedTypes) : base(@operator, (l,r) => operation(l,r) ? EarleValue.True : EarleValue.False, supportedTypes)
+                params Type[] supportedTypes)
+                : base(@operator, (l, r) => operation(l, r) ? EarleValue.True : EarleValue.False, supportedTypes)
             {
             }
         }
@@ -188,6 +192,7 @@ namespace EarleCode
                 if (supportedTypes == null) throw new ArgumentNullException(nameof(supportedTypes));
             }
         }
+
         private class UnaryOperatorFunction : EarleInlineNativeFunction
         {
             public UnaryOperatorFunction(string @operator, Func<EarleValue, EarleValue> operation,
@@ -195,7 +200,7 @@ namespace EarleCode
                 : base($"operator{@operator}", values =>
                 {
                     var value = values[0];
-                    
+
                     return supportedTypes.Length > 0 && !value.IsAny(supportedTypes)
                         ? EarleValue.Undefined
                         : operation(value);

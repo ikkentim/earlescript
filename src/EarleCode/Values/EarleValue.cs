@@ -24,6 +24,25 @@ namespace EarleCode.Values
         public EarleValue(object value) : this()
         {
             Value = value;
+
+            if (HasValue)
+            {
+                if (!(
+                    Value is int ||
+                    Value is float ||
+                    Value is string ||
+                    Value is EarleVector2 ||
+                    Value is EarleVector3 ||
+                    Value is EarleFunction ||
+                    Value is EarleVariableReference ||
+                    Value is EarleFunctionCollection ||
+                    Value is IEarleStructure ||
+                    Value is EarleBoxedField
+                    ))
+                {
+                    throw new Exception("Invalid value type boxed in EarleValue");
+                }
+            }
         }
 
         public static EarleValue Undefined { get; } = new EarleValue();
@@ -58,21 +77,6 @@ namespace EarleCode.Values
         #region As
 
         [DebuggerHidden]
-        public void AssertOfType<T>()
-        {
-            AssertOfType(typeof (T));
-        }
-
-        [DebuggerHidden]
-        public void AssertOfType(Type type)
-        {
-            if (type == null) throw new ArgumentNullException(nameof(type));
-
-            if (!Is(type))
-                throw new Exception("Unexpected earle value type");
-        }
-
-        [DebuggerHidden]
         public void AssertOfType(params Type[] types)
         {
             if (types == null) throw new ArgumentNullException(nameof(types));
@@ -83,13 +87,12 @@ namespace EarleCode.Values
 
         public T As<T>()
         {
-            return (T) As(typeof (T));
+            return Value is T ? (T) Value : default(T);
         }
 
         public object As(Type type)
         {
-            AssertOfType(type);
-            return Value;
+            return Is(type) ? Value : null;
         }
 
         #endregion
@@ -98,15 +101,12 @@ namespace EarleCode.Values
 
         public bool Is<T>()
         {
-            return Is(typeof (T));
+            return Value is T;
         }
 
         public bool Is(Type type)
         {
-            if (type == null)
-                return Value == null;
-
-            return type.IsInstanceOfType(Value);
+            return type?.IsInstanceOfType(Value) ?? Value == null;
         }
 
         public bool IsAny(params Type[] types)

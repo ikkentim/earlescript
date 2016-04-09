@@ -15,13 +15,13 @@
 
 namespace EarleCode.Instructions
 {
-    internal class PopInstruction : IInstruction
+    internal class PopInstruction : Instruction
     {
-        #region Implementation of IInstruction
+        #region Overrides of Instruction
 
-        public void Handle(RuntimeLoop loop)
+        protected override void Handle()
         {
-            loop.Stack.Pop();
+            Pop();
         }
 
         #endregion

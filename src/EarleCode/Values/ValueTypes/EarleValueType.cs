@@ -31,7 +31,7 @@ namespace EarleCode.Values.ValueTypes
 
             var parsedValue = ParseOtherValueToType(value);
 
-            return parsedValue != null ? (object)parsedValue : null;
+            return parsedValue != null ? (object) parsedValue : null;
         }
 
         #endregion

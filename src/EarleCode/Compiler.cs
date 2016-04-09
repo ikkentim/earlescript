@@ -15,7 +15,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using EarleCode.Instructions;
 using EarleCode.Lexing;
 using EarleCode.Parsers;
@@ -100,18 +99,19 @@ namespace EarleCode
 
             lexer.SkipToken(TokenType.Token, ")");
 
-            var function = new EarleFunction(file, name, parameters.ToArray(), Compile(lexer, file, true).ToArray());
+            var function = new EarleFunction(file, name, parameters.ToArray(), Compile(lexer, file, true));
 
             PrintCompiledPCode(function);
 
             return function;
         }
 
-        public IEnumerable<byte> Compile(ILexer lexer, EarleFile file, bool mustReturn)
+        public byte[] Compile(ILexer lexer, EarleFile file, bool mustReturn)
         {
+            var result = new List<byte>();
             var didReturnAnyValue = false;
             var multiLine = false;
-            Token lastToken = null;
+            Token lastToken;
 
             if (lexer.Current.Is(TokenType.Token, "{"))
             {
@@ -119,32 +119,23 @@ namespace EarleCode
                 lexer.AssertMoveNext();
             }
 
-            yield return (byte) OpCode.PushScope;
+            result.Add((byte) OpCode.PushScope);
 
             do
             {
                 var parserName = SyntaxGrammarProcessor.GetMatch(lexer);
-
                 if (parserName == null)
-                    throw new ParseException(lexer.Current, "Unexpected token");
+                    throw new ParseException(lexer.Current, $"Expected statement, found token `{lexer.Current.Value}`");
 
                 IParser parser;
-                _parsers.TryGetValue(parserName, out parser);
+                if (!_parsers.TryGetValue(parserName, out parser))
+                    throw new ParseException(lexer.Current,
+                        $"Expected statement, found {parserName.ToLower()} `{lexer.Current.Value}`");
 
-//                if (parserName == "END_BLOCK")
-//                    break;
-
-                if (parserName == "STATEMENT_RETURN")
+                if (parser is StatementReturnParser)
                     didReturnAnyValue = true;
 
-                if (parser == null)
-                    throw new ParseException(lexer.Current, $"Expected token, found {parserName} {lexer.Current}");
-
-                var result = parser.Parse(_runtime, file, lexer);
-
-                if (result != null)
-                    foreach (var r in result)
-                        yield return r;
+                result.AddRange(parser.Parse(_runtime, file, lexer));
 
                 lastToken = lexer.Current;
 
@@ -157,9 +148,11 @@ namespace EarleCode
                 lexer.Push(lastToken);
 
             if (!didReturnAnyValue && mustReturn)
-                yield return (byte) OpCode.PushUndefined;
+                result.Add((byte) OpCode.PushUndefined);
 
-            yield return (byte) OpCode.PopScope;
+            result.Add((byte) OpCode.PopScope);
+
+            return result.ToArray();
         }
 
         #endregion

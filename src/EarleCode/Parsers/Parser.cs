@@ -130,6 +130,7 @@ namespace EarleCode.Parsers
 
         public void PushCall(string path, string name, int arguments)
         {
+            if (name == null) throw new ArgumentNullException(nameof(name));
             PushReference(path, name);
             Yield(OpCode.Call);
             Yield(arguments);
@@ -145,6 +146,13 @@ namespace EarleCode.Parsers
         {
             Yield(OpCode.Jump);
             Yield(count);
+        }
+
+        public void PushDereference(string field)
+        {
+            if (field == null) throw new ArgumentNullException(nameof(field));
+            Yield(OpCode.DereferenceField);
+            Yield(field);
         }
 
         public void PushString(string value)

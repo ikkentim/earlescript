@@ -24,5 +24,7 @@ namespace EarleCode.Lexing
         /// </summary>
         /// <param name="token">The token.</param>
         void Push(Token token);
+
+        ILexer Clone();
     }
 }

@@ -10,8 +10,22 @@ no()
     return false;
 }
 
+astruct()
+{
+    result = spawnstruct();
+    result.a = 222;
+    return result;
+}
+
 init()
 {
-    value = yes() && no() || yes() && yes();
-    print("value: " + value);
+    struct = spawnstruct();
+
+    struct.bar = 42;
+    struct.foo = 42;
+    struct.test = astruct().a;
+    struct.bar = yes() && no() || yes() && yes();
+    struct.foobar = "" + struct.bar + struct.foo;
+
+    return struct;
 }

@@ -13,21 +13,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Collections.Generic;
 using EarleCode.Values;
 
 namespace EarleCode
 {
     public class RuntimeScope : IRuntimeScope
     {
-        private readonly Dictionary<string, EarleValue> _locals = new Dictionary<string, EarleValue>();
+        private readonly EarleDictionary _locals = new EarleDictionary();
         private readonly RuntimeScope _superScope;
 
         public RuntimeScope(RuntimeScope superScope) : this(superScope, null)
         {
         }
 
-        public RuntimeScope(RuntimeScope superScope, IDictionary<string, EarleValue> initialLocals)
+        public RuntimeScope(RuntimeScope superScope, EarleDictionary initialLocals)
         {
             _superScope = superScope;
 
@@ -44,9 +43,8 @@ namespace EarleCode
 
             if (value?.HasValue ?? false)
                 return value.Value;
-            
-            EarleValue local;
-            return _locals.TryGetValue(reference.Name, out local) ? local : EarleValue.Undefined;
+
+            return _locals[reference.Name];
         }
 
         public virtual bool SetValue(EarleVariableReference reference, EarleValue value)
@@ -58,10 +56,7 @@ namespace EarleCode
 
             if (CanAssignReferenceAsLocal(reference))
             {
-                if (value.Is(null))
-                    _locals.Remove(reference.Name);
-                else
-                    _locals[reference.Name] = value;
+                _locals[reference.Name] = value;
                 return true;
             }
 

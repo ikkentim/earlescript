@@ -13,18 +13,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using EarleCode.Instructions;
-
 namespace EarleCode.Parsers
 {
     public class StatementAssignmentParser : AssignmentExpressionParser
     {
         #region Overrides of AssignmentExpressionParser
 
-        protected override void Parse()
+        protected override void YieldDuplicate()
         {
-            base.Parse();
-            Yield(OpCode.Pop);
+            // Do nothing.
         }
 
         #endregion

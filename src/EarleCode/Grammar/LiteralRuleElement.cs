@@ -1,4 +1,4 @@
-// EarleCode
+﻿// EarleCode
 // Copyright 2016 Tim Potze
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,49 +18,50 @@ using System.Collections.Generic;
 using System.Linq;
 using EarleCode.Lexing;
 
-namespace EarleCode.Grammar.RulesElements
+namespace EarleCode.Grammar
 {
-    public class LiteralGrammarRuleElement : IGrammarRuleElement
+    internal class LiteralRuleElement : IRuleElement
     {
         private readonly TokenType[] _types;
         private readonly string _value;
 
-        public LiteralGrammarRuleElement(params TokenType[] types)
+        public LiteralRuleElement(TokenType[] types, string value)
         {
             if (types == null) throw new ArgumentNullException(nameof(types));
             _types = types;
-        }
-
-        public LiteralGrammarRuleElement(string value, params TokenType[] types)
-        {
-            if (types == null) throw new ArgumentNullException(nameof(types));
             _value = value;
-            _types = types;
         }
 
-        #region Implementation of IGrammarRuleElement
+        #region Implementation of IRuleElement
 
-        public ProductionRuleMatchResult Matches(TokenWalker tokenWalker, IEnumerable<GrammarRule> rules)
+        public IEnumerable<ILexer> GetMatches(ILexer lexer, ProductionRuleTable rules)
         {
-            if (tokenWalker.Current == null)
-                return ProductionRuleMatchResult.False;
+            var isMatch = lexer.Current != null && (_value == null || _value == lexer.Current.Value) &&
+                          _types.Contains(lexer.Current.Type);
 
-            if (_types.Contains(tokenWalker.Current.Type) && (_value == null || _value == tokenWalker.Current.Value))
+            if (isMatch)
             {
-                tokenWalker.MoveNext();
-                return ProductionRuleMatchResult.True;
+                var clone = lexer.Clone();
+                clone.MoveNext();
+                return new[] {clone};
             }
 
-            return ProductionRuleMatchResult.False;
+            return new ILexer[0];
         }
 
         #endregion
 
         #region Overrides of Object
 
+        /// <summary>
+        ///     Returns a string that represents the current object.
+        /// </summary>
+        /// <returns>
+        ///     A string that represents the current object.
+        /// </returns>
         public override string ToString()
         {
-            return string.Format("{0}{2}{1}{2}", string.Join("|", _types), _value, _value != null ? "`" : "");
+            return _value ?? string.Join("|", _types);
         }
 
         #endregion

@@ -13,16 +13,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using EarleCode.Values;
+
 namespace EarleCode.Instructions
 {
-    internal class WriteInstruction : IInstruction
+    internal class WriteInstruction : Instruction
     {
-        #region Implementation of IInstruction
+        #region Overrides of Instruction
 
-        public void Handle(RuntimeLoop loop)
+        protected override void Handle()
         {
-            loop.SetValue(loop.Stack.Pop().As<EarleVariableReference>(),
-                loop.Stack.Pop());
+            var value = Pop().Value;
+            var setValue = Pop();
+            if (value is EarleVariableReference)
+                Loop.SetValue((EarleVariableReference) value, setValue);
+            else if (value is EarleBoxedField)
+                ((EarleBoxedField) value).SetField(setValue);
+            else
+                Runtime.HandleWarning($"Value {value} is not a reference");
         }
 
         #endregion

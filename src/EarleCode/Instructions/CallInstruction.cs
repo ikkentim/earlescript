@@ -13,47 +13,77 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using EarleCode.Values;
 
 namespace EarleCode.Instructions
 {
-    internal class CallInstruction : IInstruction
+    internal class CallInstruction : Instruction
     {
-        #region Implementation of IInstruction
+        #region Overrides of Instruction
 
-        public void Handle(RuntimeLoop loop)
+        protected override void Handle()
         {
-            var argumentCount = BitConverter.ToInt32(loop.PCode, loop.CIP);
-            loop.CIP += 4;
+            var argumentCount = GetInt32();
+            var value = Pop().Value;
+            var initialValue = value;
+            var hasOverloads = false;
+            EarleFunction function;
 
-            var functionReference = loop.Stack.Pop().As<EarleVariableReference>();
+            while (value is EarleVariableReference || value is EarleBoxedField)
+            {
+                if (value is EarleVariableReference)
+                    value = Loop.GetValue((EarleVariableReference) value).Value;
+                else if (value is EarleBoxedField)
+                    value = ((EarleBoxedField) value).GetField().Value;
+            }
 
-            object value = functionReference;
-            while (value is EarleVariableReference)
-                value = loop.GetValue((EarleVariableReference)value).Value;
-            
-            var functions = value as EarleFunctionCollection;
-            var function = functions?.FirstOrDefault(f => f.Parameters.Length == argumentCount);
+            if (value is EarleFunctionCollection)
+            {
+                var functions = (EarleFunctionCollection) value;
+                hasOverloads = functions.Count > 0;
+                function = functions.FirstOrDefault(f => f.Parameters.Length == argumentCount);
+            }
+            else
+            {
+                function = value as EarleFunction;
+            }
+//            var functionReference = Pop<EarleVariableReference>();
+//
+//            object value = functionReference;
+//            while (value is EarleVariableReference)
+//                value = Loop.GetValue((EarleVariableReference)value).Value;
+//            
+//            var functions = value as EarleFunctionCollection;
+//            var function = functions?.FirstOrDefault(f => f.Parameters.Length == argumentCount);  
             if (function == null)
             {
-                loop.Runtime.HandleWarning("");
-                loop.Runtime.HandleWarning((functions?.Count ?? 0) == 0
-                    ? $"unknown function {functionReference}"
-                    : $"no overload of function {functionReference} found with {argumentCount} parameters.");
+                if (initialValue is EarleVariableReference)
+                {
+                    var functionReference = (EarleVariableReference) initialValue;
+
+                    Runtime.HandleWarning(!hasOverloads
+                        ? $"unknown function {functionReference}"
+                        : $"no overload of function {functionReference} found with {argumentCount} parameters.");
+                }
+                else
+                {
+                    Runtime.HandleWarning($"{initialValue?.GetType()} cannot be invoked.");
+                }
 
                 for (var i = 0; i < argumentCount; i++)
-                    loop.Stack.Pop();
-                loop.Stack.Push(EarleValue.Undefined);
+                    Pop();
+
+                Push(EarleValue.Undefined);
+                return;
             }
             var args = new List<EarleValue>();
             for (var i = 0; i < argumentCount; i++)
-                args.Add(loop.Stack.Pop());
+                args.Add(Pop());
             args.Reverse();
 
-            loop.SubLoop = function.CreateLoop(loop.Runtime, args.ToArray());
+            Loop.SubLoop = function.CreateLoop(Runtime, args.ToArray());
         }
 
         #endregion

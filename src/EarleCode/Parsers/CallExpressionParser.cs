@@ -14,7 +14,6 @@
 // limitations under the License.
 
 using System;
-using EarleCode.Instructions;
 using EarleCode.Lexing;
 
 namespace EarleCode.Parsers
@@ -32,7 +31,7 @@ namespace EarleCode.Parsers
             }
 
             var referenceBuffer = ParseToBuffer<FunctionReferenceExpressionParser>();
-           
+
             Lexer.SkipToken(TokenType.Token, "(");
 
             var arguments = 0;

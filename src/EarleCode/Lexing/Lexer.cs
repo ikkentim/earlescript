@@ -16,7 +16,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
+using System.Diagnostics;
 
 namespace EarleCode.Lexing
 {
@@ -24,11 +24,11 @@ namespace EarleCode.Lexing
     {
         private readonly string _file;
         private readonly string _input;
-        private readonly Stack<Token> _pushedTokens = new Stack<Token>();
         private readonly TokenTypeData[] _tokenTypes;
         private int _caretPosition;
         private int _column;
         private int _line;
+        private Stack<Token> _pushedTokens = new Stack<Token>();
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="Lexer" /> class.
@@ -68,6 +68,19 @@ namespace EarleCode.Lexing
                 _pushedTokens.Push(Current);
 
             Current = token;
+        }
+
+        [DebuggerHidden]
+        public ILexer Clone()
+        {
+            return new Lexer(_file, _input)
+            {
+                _pushedTokens = new Stack<Token>(_pushedTokens),
+                _caretPosition = _caretPosition,
+                _column = _column,
+                _line = _line,
+                Current = Current
+            };
         }
 
         #region Implementation of IDisposable

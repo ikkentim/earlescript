@@ -15,14 +15,14 @@
 
 namespace EarleCode.Instructions
 {
-    internal class PushScopeInstruction : IInstruction
+    internal class PushScopeInstruction : Instruction
     {
-        #region Implementation of IInstruction
+        #region Overrides of Instruction
 
-        public void Handle(RuntimeLoop loop)
+        protected override void Handle()
         {
-            var super = loop.Scopes.Peek();
-            loop.Scopes.Push(new RuntimeScope(super));
+            var super = Loop.Scopes.Peek();
+            Loop.Scopes.Push(new RuntimeScope(super));
         }
 
         #endregion

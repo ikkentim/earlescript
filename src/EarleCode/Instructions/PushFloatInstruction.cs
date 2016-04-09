@@ -13,20 +13,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
 using EarleCode.Values;
 
 namespace EarleCode.Instructions
 {
-    internal class PushFloatInstruction : IInstruction
+    internal class PushFloatInstruction : Instruction
     {
-        #region Implementation of IInstruction
+        #region Overrides of Instruction
 
-        public void Handle(RuntimeLoop loop)
+        protected override void Handle()
         {
-            var value = BitConverter.ToSingle(loop.PCode, loop.CIP);
-            loop.CIP += 4;
-            loop.Stack.Push(value.ToEarleValue());
+            Push(GetSingle().ToEarleValue());
         }
 
         #endregion
