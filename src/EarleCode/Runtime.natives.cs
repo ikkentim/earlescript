@@ -57,11 +57,11 @@ namespace EarleCode
             {
                 if (left.Is<string>() || right.Is<string>())
                     return (new EarleValue(left.To<string>(this) + right.To<string>(this)));
-                if (left.Is<float>() || right.Is<float>())
+                if (left.Is<float>() && right.Is<float>())
                     return (new EarleValue(left.To<float>(this) + right.To<float>(this)));
-                if (left.Is<int>() || right.Is<float>())
+                if (left.Is<int>() && right.Is<float>())
                     return (new EarleValue(left.To<int>(this) + right.To<float>(this)));
-                if (left.Is<float>() || right.Is<int>())
+                if (left.Is<float>() && right.Is<int>())
                     return (new EarleValue(left.To<float>(this) + right.To<int>(this)));
                 if (left.Is<int>() && right.Is<int>())
                     return (new EarleValue(left.To<int>(this) + right.To<int>(this)));
