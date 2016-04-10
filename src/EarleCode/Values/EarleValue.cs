@@ -37,7 +37,7 @@ namespace EarleCode.Values
                     Value is EarleVariableReference ||
                     Value is EarleFunctionCollection ||
                     Value is IEarleStructure ||
-                    Value is EarleBoxedField
+                    Value is EarleBoxedValueReference
                     ))
                 {
                     throw new Exception("Invalid value type boxed in EarleValue");

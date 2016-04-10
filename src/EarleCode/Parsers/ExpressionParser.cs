@@ -45,15 +45,7 @@ namespace EarleCode.Parsers
             for (;;)
             {
                 ParseValue();
-
-                if (Lexer.Current.Is(TokenType.Token, "."))
-                {
-                    Lexer.AssertMoveNext();
-                    Lexer.AssertToken(TokenType.Identifier);
-                    PushDereference(Lexer.Current.Value);
-                    Yield(OpCode.Read);
-                    Lexer.AssertMoveNext();
-                }
+                
 
                 if (SyntaxMatches("OPERATOR_AND"))
                 {
@@ -124,6 +116,7 @@ namespace EarleCode.Parsers
             if (SyntaxMatches("FUNCTION_CALL"))
             {
                 Parse<CallExpressionParser>();
+                Parse<DereferenceParser>();
                 return;
             }
 
@@ -173,6 +166,7 @@ namespace EarleCode.Parsers
                 Lexer.AssertMoveNext();
                 Parse<ExpressionParser>();
                 Lexer.SkipToken(TokenType.Token, ")");
+                Parse<DereferenceParser>();
             }
             else if (Lexer.Current.Is(TokenType.NumberLiteral) || Lexer.Current.Is(TokenType.StringLiteral))
             {
@@ -183,6 +177,7 @@ namespace EarleCode.Parsers
                 var name = Lexer.Current.Value;
                 Lexer.AssertMoveNext();
                 PushReference(null, name);
+                Parse<DereferenceParser>();
                 Yield(OpCode.Read);
             }
             else
@@ -204,6 +199,11 @@ namespace EarleCode.Parsers
                     break;
                 case "undefined":
                     Yield(OpCode.PushUndefined);
+                    break;
+                case "[":
+                    Lexer.AssertMoveNext();
+                    Lexer.AssertToken(TokenType.Token, "]");
+                    Yield(OpCode.PushArray);
                     break;
                 default:
                     ThrowUnexpectedToken("-KEYWORD-");

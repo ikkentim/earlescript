@@ -26,8 +26,8 @@ namespace EarleCode.Instructions
             var value = Pop().Value;
             if (value is EarleVariableReference)
                 Push(Loop.GetValue((EarleVariableReference) value));
-            else if (value is EarleBoxedField)
-                Push(((EarleBoxedField) value).GetField());
+            else if (value is EarleBoxedValueReference)
+                Push(((EarleBoxedValueReference) value).GetField());
             else
             {
                 Runtime.HandleWarning($"Value {value} is not a reference");

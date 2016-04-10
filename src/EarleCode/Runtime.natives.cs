@@ -30,14 +30,14 @@ namespace EarleCode
                 return EarleValue.Undefined;
             }, "value"));
 
-            RegisterNative(new EarleInlineNativeFunction("createVector2",
+            RegisterNative(new EarleInlineNativeFunction("createvector2",
                 values => new EarleVector2(
                     values[0].Is<float>() ? values[0].As<float>() : values[0].As<int>(),
                     values[1].Is<float>() ? values[1].As<float>() : values[1].As<int>()
                     ).ToEarleValue()
                 , "x", "y"));
 
-            RegisterNative(new EarleInlineNativeFunction("createVector3",
+            RegisterNative(new EarleInlineNativeFunction("createvector3",
                 values =>
                     new EarleVector3(
                         values[0].Is<float>() ? values[0].As<float>() : values[0].As<int>(),
@@ -47,7 +47,7 @@ namespace EarleCode
                 "x", "y", "z"));
 
             RegisterNative(new EarleInlineNativeFunction("spawnstruct",
-                values => new EarleBasicStructure().ToEarleValue()));
+                values => new EarleStructure().ToEarleValue()));
 
             RegisterNative(new BinaryOperatorFunction("*", (left, right) => left.Is<float>() || right.Is<float>()
                 ? new EarleValue(left.To<float>(this)*right.To<float>(this))
@@ -59,8 +59,15 @@ namespace EarleCode
                     return (new EarleValue(left.To<string>(this) + right.To<string>(this)));
                 if (left.Is<float>() || right.Is<float>())
                     return (new EarleValue(left.To<float>(this) + right.To<float>(this)));
-                return (new EarleValue(left.To<int>(this) + right.To<int>(this)));
-            }, typeof (int), typeof (float), typeof (string)));
+                if (left.Is<int>() || right.Is<float>())
+                    return (new EarleValue(left.To<int>(this) + right.To<float>(this)));
+                if (left.Is<float>() || right.Is<int>())
+                    return (new EarleValue(left.To<float>(this) + right.To<int>(this)));
+                if (left.Is<int>() && right.Is<int>())
+                    return (new EarleValue(left.To<int>(this) + right.To<int>(this)));
+
+                return EarleValue.Undefined;
+            }));
 
             RegisterNative(new BinaryOperatorFunction("-", (left, right) => left.Is<float>() || right.Is<float>()
                 ? new EarleValue(left.To<float>(this) - right.To<float>(this))

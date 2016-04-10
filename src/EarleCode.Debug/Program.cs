@@ -63,12 +63,20 @@ namespace EarleCode.Debug
             Console.WriteLine("Code execution completed!");
             Console.WriteLine("Result: " + result);
 
-            if (result?.Is<IEarleStructure>() ?? false)
+            if (result?.Is<EarleStructure>() ?? false)
             {
-                var struc = result.Value.As<IEarleStructure>();
+                var struc = result.Value.As<EarleStructure>();
                 foreach(var kv in struc)
                     Console.WriteLine($"> {kv.Key} = {kv.Value}");
             }
+
+            if (result?.Is<EarleArray>() ?? false)
+            {
+                var arr = result.Value.As<EarleArray>();
+                foreach (var v in arr)
+                    Console.WriteLine(v);
+            }
+
             Console.ReadLine();
         }
     }

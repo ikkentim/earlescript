@@ -49,6 +49,12 @@
     <Compile Include="Grammar\OptionalRuleElement.cs" />
     <Compile Include="Grammar\ProductionRule.cs" />
     <Compile Include="Grammar\ProductionRuleTable.cs" />
+    <Compile Include="Instructions\DereferenceIndexInstruction.cs" />
+    <Compile Include="Instructions\PushArrayInstruction.cs" />
+    <Compile Include="Parsers\DereferenceParser.cs" />
+    <Compile Include="Values\EarleArray.cs" />
+    <Compile Include="Values\EarleStructure.cs" />
+    <Compile Include="Values\EarleBoxedValueReference.cs" />
     <Compile Include="Values\EarleDictionary.cs" />
     <Compile Include="EarleFile.cs" />
     <Compile Include="EarleFunction.cs" />

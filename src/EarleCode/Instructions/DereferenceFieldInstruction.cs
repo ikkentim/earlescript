@@ -29,10 +29,11 @@ namespace EarleCode.Instructions
             if (value.Is<IEarleStructure>())
             {
                 var obj = value.As<IEarleStructure>();
-                Push(new EarleBoxedField(obj, fieldName).ToEarleValue());
+                Push(new EarleBoxedValueReference(obj, fieldName).ToEarleValue());
             }
             else
             {
+                Loop.Runtime.HandleWarning("Value is not a structure.");
                 Push(EarleValue.Undefined);
             }
         }

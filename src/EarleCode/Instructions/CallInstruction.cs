@@ -31,12 +31,12 @@ namespace EarleCode.Instructions
             var hasOverloads = false;
             EarleFunction function;
 
-            while (value is EarleVariableReference || value is EarleBoxedField)
+            while (value is EarleVariableReference || value is EarleBoxedValueReference)
             {
                 if (value is EarleVariableReference)
                     value = Loop.GetValue((EarleVariableReference) value).Value;
-                else if (value is EarleBoxedField)
-                    value = ((EarleBoxedField) value).GetField().Value;
+                else if (value is EarleBoxedValueReference)
+                    value = ((EarleBoxedValueReference) value).GetField().Value;
             }
 
             if (value is EarleFunctionCollection)

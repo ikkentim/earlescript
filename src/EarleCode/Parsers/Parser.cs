@@ -148,7 +148,7 @@ namespace EarleCode.Parsers
             Yield(count);
         }
 
-        public void PushDereference(string field)
+        public void PushDereferenceField(string field)
         {
             if (field == null) throw new ArgumentNullException(nameof(field));
             Yield(OpCode.DereferenceField);

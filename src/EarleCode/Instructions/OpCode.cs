@@ -60,6 +60,8 @@ namespace EarleCode.Instructions
         /// </summary>
         [OpCode("PUSH_NULL", typeof (PushNullInstruction))] PushUndefined,
 
+        [OpCode("PUSH_ARRAY", typeof(PushArrayInstruction))]PushArray,
+
         /// <summary>
         ///     Pop a value off the stack.
         /// </summary>
@@ -110,6 +112,10 @@ namespace EarleCode.Instructions
         /// <summary>
         ///     Dereference the specified argument from the structure on the top of the stack.
         /// </summary>
-        [OpCode("DEREF $string", typeof (DereferenceFieldInstruction))] DereferenceField
+        [OpCode("DEREF_F $string", typeof (DereferenceFieldInstruction))] DereferenceField,
+        /// <summary>
+        ///     Dereference the specified argument from the structure on the top of the stack.
+        /// </summary>
+        [OpCode("DEREF_I", typeof(DereferenceIndexInstruction))] DereferenceIndex,
     }
 }

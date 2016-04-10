@@ -38,8 +38,7 @@ namespace EarleCode.Grammar
         {
             return Conditions.Skip(skip)
                 .Aggregate((IEnumerable<ILexer>) new[] {lexer},
-                    (current, condition) => current.SelectMany(l => condition.GetMatches(l, rules).ToArray())) /*nope*/
-                .ToArray();
+                    (current, condition) => current.SelectMany(l => condition.GetMatches(l, rules)));
         }
 
         #region Overrides of Object

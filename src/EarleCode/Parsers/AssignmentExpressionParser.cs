@@ -55,16 +55,9 @@ namespace EarleCode.Parsers
             Lexer.AssertToken(TokenType.Identifier);
 
             var name = Lexer.Current.Value;
-            var fields = new List<string>();
             Lexer.AssertMoveNext();
 
-            while (Lexer.Current.Is(TokenType.Token, "."))
-            {
-                Lexer.AssertMoveNext();
-                Lexer.AssertToken(TokenType.Identifier);
-                fields.Add(Lexer.Current.Value);
-                Lexer.AssertMoveNext();
-            }
+            var derefBuffer = ParseToBuffer<DereferenceParser>();
 
             if (unaryModOperator == null && SyntaxMatches("OPERATOR_MOD_UNARY"))
             {
@@ -79,14 +72,10 @@ namespace EarleCode.Parsers
 
                 // Read
                 PushReference(null, name);
-                foreach (var f in fields)
-                {
-                    Yield(OpCode.Read);
-                    PushDereference(f);
-                }
+                Yield(derefBuffer);
 
                 Yield(OpCode.Read);
-
+                
                 // Postfix duplicate
                 if (!unaryModOperatorIsPrefix)
                     YieldDuplicate();
@@ -100,11 +89,7 @@ namespace EarleCode.Parsers
 
                 // Write
                 PushReference(null, name);
-                foreach (var f in fields)
-                {
-                    Yield(OpCode.Read);
-                    PushDereference(f);
-                }
+                Yield(derefBuffer);
                 Yield(OpCode.Write);
             }
             else
@@ -118,11 +103,7 @@ namespace EarleCode.Parsers
                 if (unaryOperator != null)
                 {
                     PushReference(null, name);
-                    foreach (var f in fields)
-                    {
-                        Yield(OpCode.Read);
-                        PushDereference(f);
-                    }
+                    Yield(derefBuffer);
                     Yield(OpCode.Read);
                 }
 
@@ -132,12 +113,9 @@ namespace EarleCode.Parsers
                     PushCall(null, $"operator{unaryOperator}", 1);
 
                 YieldDuplicate();
+
                 PushReference(null, name);
-                foreach (var f in fields)
-                {
-                    Yield(OpCode.Read);
-                    PushDereference(f);
-                }
+                Yield(derefBuffer);
                 Yield(OpCode.Write);
             }
         }

@@ -29,7 +29,7 @@ namespace EarleCode
             File = file;
             Parameters = parameters;
             PCode = pCode;
-            Name = name;
+            Name = name.ToLower();
         }
 
         public EarleFile File { get; }

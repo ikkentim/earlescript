@@ -1,31 +1,20 @@
-﻿yes()
+﻿init()
 {
-    print("getting yes");
-    return true;
-}
 
-no()
-{
-    print("getting no");
-    return false;
-}
-
-astruct()
-{
-    result = spawnstruct();
-    result.a = 222;
-    return result;
-}
-
-init()
-{
     struct = spawnstruct();
 
-    struct.bar = 42;
-    struct.foo = 42;
-    struct.test = astruct().a;
-    struct.bar = yes() && no() || yes() && yes();
+    struct.bar = 13;
+    struct.foo = 37;
     struct.foobar = "" + struct.bar + struct.foo;
 
-    return struct;
+    arr = [];
+    arr[1] = "test 1";
+    arr["info"] = spawnstruct();
+    arr["info"].name = "someName";
+    arr["info"].level = 339;
+    arr["info"].position = (34.2, 11.22, 50.0);
+    arr[45.11] = struct;
+    print("Info: " + arr["info"].name + " of level " + arr["info"].level + " at position " + arr["info"].position);
+
+    return arr;
 }

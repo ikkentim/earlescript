@@ -17,21 +17,13 @@ using EarleCode.Values;
 
 namespace EarleCode.Instructions
 {
-    internal class WriteInstruction : Instruction
+    internal class PushArrayInstruction : Instruction
     {
         #region Overrides of Instruction
 
         protected override void Handle()
         {
-            var vvalue = Pop();
-            var value = vvalue.Value;
-            var setValue = Pop();
-            if (value is EarleVariableReference)
-                Loop.SetValue((EarleVariableReference) value, setValue);
-            else if (value is EarleBoxedValueReference)
-                ((EarleBoxedValueReference) value).SetField(setValue);
-            else
-                Runtime.HandleWarning($"Value {value} is not a reference");
+            Push(new EarleArray().ToEarleValue());
         }
 
         #endregion
