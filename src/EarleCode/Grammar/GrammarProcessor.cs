@@ -1,20 +1,7 @@
-// EarleCode
-// Copyright 2016 Tim Potze
-// 
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-// 
-//     http://www.apache.org/licenses/LICENSE-2.0
-// 
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-using System;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using EarleCode.Lexing;
 
@@ -22,116 +9,110 @@ namespace EarleCode.Grammar
 {
     public class GrammarProcessor
     {
-        private readonly ProductionRuleTable _rules = new ProductionRuleTable();
+        private readonly GrammarRuleTable _table = new GrammarRuleTable();
 
-        public string this[string key]
+        public void AddRule(GrammarRule rule)
         {
-            set { AddRule(key, key.StartsWith("STATEMENT_"), value); }
+            _table.Add(rule);
         }
 
-        public void AddRule(string key, bool isStatement, string rule)
+        public void AddRule(string name, bool isStatement, string rule)
         {
-            _rules.Add(Compile(key, isStatement, rule.Replace('`', '"')));
+            AddRule(new GrammarRule(name, isStatement, rule));
         }
-
-        public IEnumerable<string> GetMatches(ILexer lexer, bool onlyStatements = true)
+        public string GetMatch(ILexer lexer, bool onlyStatements = false)
         {
-            return
-                _rules.Where(r => (!onlyStatements || r.IsStatement) && r.GetMatches(lexer, _rules).Any())
-                    .Select(r => r.Name);
-        }
-
-        public string GetMatch(ILexer lexer, bool onlyStatements = true)
-        {
-            return GetMatches(lexer, onlyStatements).FirstOrDefault();
-        }
-
-        public bool Matches(ILexer lexer, string rule)
-        {
-            return _rules.Get(rule).Any(r => r.GetMatches(lexer, _rules).Any());
-        }
-
-        private ProductionRule Compile(string key, bool isStatement, string rule)
-        {
-            if (rule == null) throw new ArgumentNullException(nameof(rule));
-
-            var lexer = new Lexer("production_rule", rule);
-
-            var conditions = new List<IRuleElement>();
-            var nextConditionIsOptional = false;
-            var add = new Action<IRuleElement>(element =>
+            foreach(var ruleName in _table.Where(rule => !onlyStatements || rule.IsStatement).Select(r => r.Name).Distinct())
             {
-                element = nextConditionIsOptional ? new OptionalRuleElement(element) : element;
-                nextConditionIsOptional = false;
-                conditions.Add(element);
-            });
-
-            var types =
-                typeof (TokenType).GetEnumValues()
-                    .OfType<TokenType>()
-                    .Select(value => new KeyValuePair<string, TokenType>(value.ToUpperString(), value))
-                    .ToDictionary(p => p.Key, p => p.Value);
-
-            while (lexer.MoveNext())
-            {
-                switch (lexer.Current.Type)
+                if(IsMatch(lexer, ruleName))
                 {
-                    case TokenType.Token:
-                        add(new LiteralRuleElement(new[] {TokenType.Token}, lexer.Current.Value));
-                        break;
-                    case TokenType.Identifier:
-                        if (lexer.Current.Value == "OPTIONAL")
-                        {
-                            nextConditionIsOptional = true;
-                            break;
-                        }
-
-                        TokenType tokenType;
-                        if (types.TryGetValue(lexer.Current.Value, out tokenType))
-                        {
-                            var tokenTypes = new List<TokenType>(new[] {tokenType});
-                            for (;;)
-                            {
-                                var previous = lexer.Current;
-                                if (!lexer.MoveNext())
-                                {
-                                    add(new LiteralRuleElement(tokenTypes.ToArray(), null));
-                                    break;
-                                }
-
-                                if (!lexer.Current.Is(TokenType.Token, "|"))
-                                {
-                                    lexer.Push(previous);
-                                    add(new LiteralRuleElement(tokenTypes.ToArray(), null));
-                                    break;
-                                }
-
-                                if (!lexer.MoveNext())
-                                {
-                                    add(new LiteralRuleElement(tokenTypes.ToArray(), null));
-                                    break;
-                                }
-
-                                lexer.AssertToken(TokenType.Identifier);
-                                if (types.TryGetValue(lexer.Current.Value, out tokenType))
-                                    tokenTypes.Add(tokenType);
-                                else
-                                    throw new Exception("Expected token type");
-                            }
-                            break;
-                        }
-
-                        add(new EmbedRuleElement(lexer.Current.Value));
-                        break;
-                    case TokenType.StringLiteral:
-                        add(new LiteralRuleElement(new[] {TokenType.Identifier}, lexer.Current.Value));
-                        break;
-                    default:
-                        throw new Exception("Invalid token");
+                    return ruleName;
                 }
             }
 
-            return new ProductionRule(key, isStatement, conditions.ToArray());
+            return null;
+        }
+
+        public bool IsMatch(ILexer lexer, string ruleName)
+        {
+            // TODO: Optimize any ( don't need to find all results first )
+            return GetMatches(lexer, ruleName).Any();
+        }
+
+        public IEnumerable<ILexer> GetMatches(ILexer lexer, string ruleName)
+        {
+            var wrapRules = new List<GrammarRule>();
+            var results = new List<ILexer>();
+
+            foreach(var rule in _table.Get(ruleName))
+            {
+                if(rule.Elements[0] is GrammarRuleElementEmbed && ((GrammarRuleElementEmbed)rule.Elements[0]).RuleName == ruleName)
+                {
+                    if(rule.Elements.Length > 1)
+                        wrapRules.Add(rule);
+                }
+                else
+                {
+                    foreach(var match in GetMatches(lexer, rule))
+                    {
+                        yield return match;
+                        results.Add(match);
+                    }
+                }
+            }
+
+            foreach(var start in results)
+                foreach(var match in MatchesRecursive(start, wrapRules))
+                    yield return match;
+        }
+
+        private IEnumerable<ILexer> MatchesRecursive(ILexer lexer, IEnumerable<GrammarRule> rules)
+        {
+            var last = new List<ILexer>(new[] { lexer });
+            for(;;)
+            {
+                var newLast = new List<ILexer>();
+
+                foreach(var l in last)
+                    foreach(var rule in rules)
+                        foreach(var match in GetMatches(l, rule, 1))
+                        {
+                            yield return match;
+                            newLast.Add(match);
+                        }
+
+
+                if(!newLast.Any())
+                    yield break;
+
+                last = newLast;
+            }
+        }
+
+        private IEnumerable<ILexer> GetMatches(ILexer lexer, GrammarRule rule, int startElement = 0)
+        {
+            if(lexer.Current == null)
+                yield break;
+
+            var element = rule.Elements[startElement];
+
+            if(rule.Elements.Length - 1 == startElement)
+            { // Last element
+                foreach(var match in element.Match(this, lexer))
+                    yield return match;
+
+            }
+            else
+            { // Not last element
+                foreach(var match in element.Match(this, lexer))
+                {
+                    if(match.Current == null)
+                        continue;
+
+                    foreach(var match2 in GetMatches(match, rule, startElement + 1))
+                        yield return match2;
+                }
+            }
         }
     }
 }

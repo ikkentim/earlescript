@@ -18,7 +18,7 @@ using System.IO;
 using EarleCode.Lexing;
 using EarleCode.Localization;
 using EarleCode.Values;
-using EarleCode.GrammarX;
+using EarleCode.Grammar;
 using System.Diagnostics;
 
 namespace EarleCode.Debug

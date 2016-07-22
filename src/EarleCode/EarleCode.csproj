@@ -42,13 +42,6 @@
   <ItemGroup>
     <Compile Include="Compiler.cs" />
     <Compile Include="Compiler.grammar.cs" />
-    <Compile Include="Grammar\EmbedRuleElement.cs" />
-    <Compile Include="GrammarProcessor.cs" />
-    <Compile Include="Grammar\IRuleElement.cs" />
-    <Compile Include="Grammar\LiteralRuleElement.cs" />
-    <Compile Include="Grammar\OptionalRuleElement.cs" />
-    <Compile Include="Grammar\ProductionRule.cs" />
-    <Compile Include="Grammar\ProductionRuleTable.cs" />
     <Compile Include="Instructions\DereferenceIndexInstruction.cs" />
     <Compile Include="Instructions\PushArrayInstruction.cs" />
     <Compile Include="Parsers\DereferenceParser.cs" />
@@ -126,11 +119,17 @@
     <Compile Include="Values\ValueTypes\EarleVector2ValueType.cs" />
     <Compile Include="Values\ValueTypes\EarleVector3ValueType.cs" />
     <Compile Include="Values\ValueTypes\IEarleValueType.cs" />
-    <Compile Include="GrammarX\GrammarX.cs" />
+    <Compile Include="Grammar\GrammarProcessor.cs" />
+    <Compile Include="Grammar\IGrammarRuleElement.cs" />
+    <Compile Include="Grammar\GrammarRuleElementOptional.cs" />
+    <Compile Include="Grammar\GrammarRuleElementEmbed.cs" />
+    <Compile Include="Grammar\GrammarRuleElementLiteral.cs" />
+    <Compile Include="Grammar\GrammarRuleTable.cs" />
+    <Compile Include="Grammar\GrammarRule.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <Folder Include="GrammarX\" />
+    <Folder Include="Grammar\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

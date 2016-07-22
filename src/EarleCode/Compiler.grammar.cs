@@ -14,28 +14,28 @@
 // limitations under the License.
 
 using System.Linq;
+using EarleCode.Grammar;
 
 namespace EarleCode
 {
     public partial class Compiler
     {
-        private readonly GrammarProcessor _fileGrammarProcessor = new GrammarProcessor
-        {
-            // File contents grammar.
-            ["FUNCTION_DECLARATION"] = "IDENTIFIER ( OPTIONAL IDENTIFIER_LIST )",
-            ["IDENTIFIER_LIST"] = "IDENTIFIER_LIST , IDENTIFIER_LIST",
-            ["IDENTIFIER_LIST"] = "IDENTIFIER"
-        };
+        private GrammarProcessor _fileGrammarProcessor;
 
         /// <summary>
         ///     Gets the grammar associated with this compiler.
         /// </summary>
-        public GrammarX.GrammarX SyntaxGrammarProcessor { get; private set; }
+        public Grammar.GrammarProcessor SyntaxGrammarProcessor { get; private set; }
 
         private void InitializeGrammarProcessor()
         {
+            _fileGrammarProcessor = new GrammarProcessor();
+            _fileGrammarProcessor.AddRule("FUNCTION_DECLARATION", true, "IDENTIFIER ( OPTIONAL IDENTIFIER_LIST )");
+            _fileGrammarProcessor.AddRule("IDENTIFIER_LIST", false, "IDENTIFIER_LIST , IDENTIFIER_LIST");
+            _fileGrammarProcessor.AddRule("IDENTIFIER_LIST", false, "IDENTIFIER");
+          
             // Statements
-            SyntaxGrammarProcessor = new GrammarX.GrammarX();
+            SyntaxGrammarProcessor = new Grammar.GrammarProcessor();
             SyntaxGrammarProcessor.AddRule("STATEMENT_IF", true, "`if` ( EXPRESSION )");
             SyntaxGrammarProcessor.AddRule("STATEMENT_DO", true, "`do`");
             SyntaxGrammarProcessor.AddRule("STATEMENT_WHILE", true, "`while` ( EXPRESSION )");
@@ -98,74 +98,6 @@ namespace EarleCode
 
             foreach (var o in EarleOperators.UnaryAssignmentModOperators.OrderByDescending(o => o.Length))
                 SyntaxGrammarProcessor.AddRule("OPERATOR_MOD_UNARY", false, o);
-
-            //SyntaxGrammarProcessor = new GrammarProcessor
-            //{
-            //    // Statements
-            //    ["STATEMENT_IF"] = "`if` ( EXPRESSION )",
-            //    ["STATEMENT_DO"] = "`do`",
-            //    ["STATEMENT_WHILE"] = "`while` ( EXPRESSION )",
-            //    ["STATEMENT_FOR"] = "`for` ( OPTIONAL ASSIGNMENT ; OPTIONAL EXPRESSION ; OPTIONAL ASSIGNMENT )",
-            //    ["STATEMENT_RETURN"] = "`return` OPTIONAL EXPRESSION ;",
-            //    ["STATEMENT_WAIT"] = "`wait` NUMBER_LITERAL ;",
-            //    ["ASSIGNMENT"] = "VARIABLE = EXPRESSION",
-            //    ["ASSIGNMENT"] = "VARIABLE OPERATOR_UNARY = EXPRESSION",
-            //    ["ASSIGNMENT"] = "VARIABLE OPERATOR_MOD_UNARY",
-            //    ["ASSIGNMENT"] = "OPERATOR_MOD_UNARY VARIABLE",
-            //    ["FUNCTION_CALL"] = "OPTIONAL VARIABLE FUNCTION_CALL_PART",
-            //    ["FUNCTION_CALL_PART"] = "FUNCTION_IDENTIFIER ( OPTIONAL EXPRESSION_LIST )",
-
-            //    // Expressions
-            //    ["EXPRESSION"] = "NUMBER_LITERAL|STRING_LITERAL",
-            //    ["EXPRESSION"] = "VECTOR",
-            //    ["EXPRESSION"] = "FUNCTION_CALL",
-            //    ["EXPRESSION"] = "( EXPRESSION )",
-            //    ["EXPRESSION"] = "VARIABLE",
-            //    ["EXPRESSION"] = "EXPRESSION OPERATOR EXPRESSION",
-            //    ["EXPRESSION"] = "OPERATOR_UNARY EXPRESSION",
-            //    ["EXPRESSION"] = "ASSIGNMENT",
-            //    ["EXPRESSION"] = "KEYWORD",
-            //    ["EXPRESSION"] = "FUNCTION_IDENTIFIER", // function reference
-
-            //    // Additional operators
-            //    ["OPERATOR"] = "OPERATOR_AND",
-            //    ["OPERATOR_AND"] = "&&",
-            //    ["OPERATOR"] = "OPERATOR_OR",
-            //    ["OPERATOR_OR"] = "||",
-
-            //    // Value types
-            //    ["PATH"] = "\\IDENTIFIER",
-            //    ["PATH"] = "PATH\\IDENTIFIER",
-            //    ["PATH_PREFIX"] = "OPTIONAL PATH ::",
-            //    ["FUNCTION_IDENTIFIER"] = "OPTIONAL PATH_PREFIX IDENTIFIER",
-            //    ["EXPLICIT_FUNCTION_IDENTIFIER"] = "PATH_PREFIX IDENTIFIER",
-            //    ["EXPRESSION_LIST"] = "EXPRESSION_LIST , EXPRESSION_LIST",
-            //    ["EXPRESSION_LIST"] = "EXPRESSION",
-            //    ["INDEXER_LIST"] = "INDEXER_LIST INDEXER_LIST",
-            //    ["INDEXER_LIST"] = "[ EXPRESSION ]",
-            //    ["VARIABLE"] = "VARIABLE INDEXER_LIST",
-            //    ["VARIABLE"] = "VARIABLE . IDENTIFIER",
-            //    ["VARIABLE"] = "IDENTIFIER",
-            //    ["VECTOR"] = "( EXPRESSION , EXPRESSION , EXPRESSION )",
-            //    ["VECTOR"] = "( EXPRESSION , EXPRESSION )",
-
-            //    // Value keywords
-            //    ["KEYWORD"] = "`true`",
-            //    ["KEYWORD"] = "`false`",
-            //    ["KEYWORD"] = "`undefined`",
-            //    ["KEYWORD"] = "[]"
-            //};
-            //
-            //// Add all operators
-            //foreach (var o in EarleOperators.BinaryOperators.Keys.OrderByDescending(o => o.Length))
-            //    SyntaxGrammarProcessor["OPERATOR"] = o;
-
-            //foreach (var o in EarleOperators.UnaryOperators.OrderByDescending(o => o.Length))
-            //    SyntaxGrammarProcessor["OPERATOR_UNARY"] = o;
-
-            //foreach (var o in EarleOperators.UnaryAssignmentModOperators.OrderByDescending(o => o.Length))
-            //    SyntaxGrammarProcessor["OPERATOR_MOD_UNARY"] = o;
-
         }
     }
 }
