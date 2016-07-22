@@ -227,7 +227,7 @@ namespace EarleCode.Parsers
 
         public bool SyntaxMatches(string rule)
         {
-            return Runtime.Compiler.SyntaxGrammarProcessor.Matches(Lexer, rule);
+            return Runtime.Compiler.SyntaxGrammarProcessor.IsMatch(Lexer, rule);
         }
 
         #endregion

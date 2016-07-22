@@ -126,8 +126,12 @@
     <Compile Include="Values\ValueTypes\EarleVector2ValueType.cs" />
     <Compile Include="Values\ValueTypes\EarleVector3ValueType.cs" />
     <Compile Include="Values\ValueTypes\IEarleValueType.cs" />
+    <Compile Include="GrammarX\GrammarX.cs" />
   </ItemGroup>
   <ItemGroup />
+  <ItemGroup>
+    <Folder Include="GrammarX\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

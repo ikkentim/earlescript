@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EarleCode", "src\EarleCode\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EarleCode.Debug", "src\EarleCode.Debug\EarleCode.Debug.csproj", "{6DEBBF3C-9B9F-45DD-B2D5-96196B7A01AB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EarleCode.UnitTests", "src\EarleCode.UnitTests\EarleCode.UnitTests.csproj", "{B7B2469C-7799-40D9-96F2-92A886616BDE}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EarleCode.Localization", "src\EarleCode.Localization\EarleCode.Localization.csproj", "{83D449C1-4507-4BFF-AD4D-831E84CF121B}"
 EndProject
 Global
@@ -25,10 +23,6 @@ Global
 		{6DEBBF3C-9B9F-45DD-B2D5-96196B7A01AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6DEBBF3C-9B9F-45DD-B2D5-96196B7A01AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6DEBBF3C-9B9F-45DD-B2D5-96196B7A01AB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B7B2469C-7799-40D9-96F2-92A886616BDE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B7B2469C-7799-40D9-96F2-92A886616BDE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B7B2469C-7799-40D9-96F2-92A886616BDE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B7B2469C-7799-40D9-96F2-92A886616BDE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{83D449C1-4507-4BFF-AD4D-831E84CF121B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{83D449C1-4507-4BFF-AD4D-831E84CF121B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{83D449C1-4507-4BFF-AD4D-831E84CF121B}.Release|Any CPU.ActiveCfg = Release|Any CPU

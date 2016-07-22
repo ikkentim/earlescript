@@ -18,20 +18,36 @@ using System.IO;
 using EarleCode.Lexing;
 using EarleCode.Localization;
 using EarleCode.Values;
+using EarleCode.GrammarX;
+using System.Diagnostics;
 
 namespace EarleCode.Debug
 {
+    public class Measure : IDisposable
+    {
+        private Stopwatch sw;
+        public Measure()
+        {
+            sw = new Stopwatch();
+            sw.Start();
+        }
+        public void Dispose()
+        {
+            sw.Stop();
+            Console.WriteLine($"Took: {sw.Elapsed}");
+        }
+    }
+
     public class Program
     {
         private static string GetRelativePath(string filespec, string folder)
         {
-            Uri pathUri = new Uri(filespec);
-            // Folders must end in a slash
-            if (!folder.EndsWith(Path.DirectorySeparatorChar.ToString()))
-            {
+            var pathUri = new Uri(filespec);
+
+            if(!folder.EndsWith(Path.DirectorySeparatorChar.ToString(), StringComparison.Ordinal))
                 folder += Path.DirectorySeparatorChar;
-            }
-            Uri folderUri = new Uri(folder);
+            
+            var folderUri = new Uri(folder);
             return Uri.UnescapeDataString(folderUri.MakeRelativeUri(pathUri).ToString().Replace('/', Path.DirectorySeparatorChar));
         }
 
@@ -56,6 +72,7 @@ namespace EarleCode.Debug
                 loc.LoadFromFile(rel, File.ReadAllText(file), Path.GetFileNameWithoutExtension(file).ToUpper() + "_");
             }
             loc.AddToRuntime(runtime);
+            loc.Key = "LANG_ENGLISH";
 
             var result = runtime.GetFile("\\main").Invoke("init");
 
@@ -77,7 +94,7 @@ namespace EarleCode.Debug
                     Console.WriteLine(v);
             }
 
-            Console.ReadLine();
+//            Console.ReadLine();
         }
     }
 }

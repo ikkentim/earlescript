@@ -14,6 +14,7 @@
     arr["info"].level = 339;
     arr["info"].position = (34.2, 11.22, 50.0);
     arr[45.11] = struct;
+    print(@"TEST_TEST_STRING");
     print("Info: " + arr["info"].name + " of level " + arr["info"].level + " at position " + arr["info"].position);
 
     return arr;
