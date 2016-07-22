@@ -123,6 +123,9 @@ namespace EarleCode
 
             do
             {
+                if(multiLine && lexer.Current.Is(TokenType.Token, "}"))
+                    break;
+                
                 var parserName = SyntaxGrammarProcessor.GetMatch(lexer, true);
                 if (parserName == null)
                     throw new ParseException(lexer.Current, $"Expected statement, found token `{lexer.Current.Value}`");

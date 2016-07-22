@@ -19,3 +19,7 @@
 
     return arr;
 }
+
+somefunc()
+{
+}
