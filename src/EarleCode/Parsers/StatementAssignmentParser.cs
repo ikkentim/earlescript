@@ -17,16 +17,10 @@ using EarleCode.Lexing;
 
 namespace EarleCode.Parsers
 {
-    public class StatementAssignmentParser : AssignmentExpressionParser
+    public class StatementAssignmentParser : AssignmentExpressionParser, ISimpleStatement
     {
         #region Overrides of AssignmentExpressionParser
 
-        protected override void Parse()
-        {
-            base.Parse();
-
-            Lexer.SkipToken(TokenType.Token, ";");
-        }
         protected override void YieldDuplicate()
         {
             // Do nothing.

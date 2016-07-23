@@ -138,11 +138,16 @@ namespace EarleCode
                     throw new ParseException(lexer.Current,
                         $"Expected statement, found {parserName.ToLower()} `{lexer.Current.Value}`");
 
-                if (parser is StatementReturnParser)
+                if(parser is StatementReturnParser)
                     didReturnAnyValue = true;
-
+                else
+                    didReturnAnyValue = false;
+                
                 result.AddRange(parser.Parse(_runtime, file, lexer));
 
+                if(parser is ISimpleStatement)
+                    lexer.SkipToken(TokenType.Token, ";");
+                
                 lastToken = lexer.Current;
             } while (multiLine && !lexer.Current.Is(TokenType.Token, "}"));
 

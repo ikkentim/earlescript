@@ -18,7 +18,7 @@ using EarleCode.Lexing;
 
 namespace EarleCode.Parsers
 {
-    public class StatementCallParser : CallExpressionParser
+    public class StatementCallParser : CallExpressionParser, ISimpleStatement
     {
         #region Overrides of CallExpressionParser
 
@@ -26,8 +26,6 @@ namespace EarleCode.Parsers
         {
             base.Parse();
             Yield(OpCode.Pop);
-
-            Lexer.SkipToken(TokenType.Token, ";");
         }
 
         #endregion

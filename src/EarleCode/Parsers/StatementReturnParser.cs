@@ -18,7 +18,7 @@ using EarleCode.Lexing;
 
 namespace EarleCode.Parsers
 {
-    public class StatementReturnParser : Parser
+    public class StatementReturnParser : Parser, ISimpleStatement
     {
         #region Overrides of Parser
 
@@ -32,8 +32,6 @@ namespace EarleCode.Parsers
                 Parse<ExpressionParser>();
 
             Yield(OpCode.Return);
-
-            Lexer.SkipToken(TokenType.Token, ";");
         }
 
         #endregion

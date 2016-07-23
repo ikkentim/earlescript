@@ -127,6 +127,7 @@
     <Compile Include="Grammar\GrammarRuleTable.cs" />
     <Compile Include="Grammar\GrammarRule.cs" />
     <Compile Include="Parsers\StatementWaitParser.cs" />
+    <Compile Include="Parsers\ISimpleStatement.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

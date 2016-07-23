@@ -25,16 +25,22 @@ init()
 	init2();
 
 	count = 0;
+
+
+    for(i=0;i<10;i++)
+    {
+    	print("i is " + i);
+    }
+
     for( ;; )
     {
     	count++;
     	print(". " + count);
 
     	if(count >= 10)
-    	{
     		count = 0;
-    	}
-
+    	
+    	print(", " + count);
     	//wait 0.1;
     	return;
     }

@@ -18,7 +18,7 @@ using EarleCode.Lexing;
 
 namespace EarleCode.Parsers
 {
-    public class StatementWaitParser : Parser
+    public class StatementWaitParser : Parser, ISimpleStatement
     {
         #region Overrides of Parser
 
@@ -28,8 +28,6 @@ namespace EarleCode.Parsers
             Parse<ExpressionParser>();
             PushReference(null, "wait");
             PushCall(1);
-
-            Lexer.SkipToken(TokenType.Token, ";");
         }
 
         #endregion
