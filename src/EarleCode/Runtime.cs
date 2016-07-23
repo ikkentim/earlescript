@@ -42,7 +42,7 @@ namespace EarleCode
 
         #region Natives
 
-        public void RegisterNative(EarleNativeFunction native)
+        public void RegisterNative(EarleFunction native)
         {
             if (native == null) throw new ArgumentNullException(nameof(native));
 
@@ -57,12 +57,33 @@ namespace EarleCode
 
         #region Running
 
+        private Queue<RuntimeLoop> queuedLoops = new Queue<RuntimeLoop>();
         private EarleValue? RunLoop(RuntimeLoop loop)
         {
-            // TODO: Store loop if execution did not complete.
-            return loop.Run();
+            var result = loop.Run();
+
+            if(result == null)
+            {
+                queuedLoops.Enqueue(loop);
+            }
+            return result;
         }
 
+        public bool Tick(int ticks = int.MaxValue)
+        {
+            if(queuedLoops.Count < ticks)
+                ticks = queuedLoops.Count;
+            
+            int count = 0;
+            while(queuedLoops.Any() && count < ticks)
+            {
+                var loop = queuedLoops.Dequeue();
+
+                RunLoop(loop);
+            }
+
+            return !queuedLoops.Any();
+        }
         #endregion
 
         public virtual void HandleWarning(string warning)

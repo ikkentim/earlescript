@@ -31,7 +31,7 @@ namespace EarleCode
             ["STATEMENT_WHILE"] = new StatementWhileParser(),
             ["STATEMENT_FOR"] = new StatementForParser(),
             ["STATEMENT_RETURN"] = new StatementReturnParser(),
-//            ["STATEMENT_WAIT"] = new StatementWaitParser(),
+            ["STATEMENT_WAIT"] = new StatementWaitParser(),
             ["ASSIGNMENT"] = new StatementAssignmentParser()
         };
 
@@ -56,8 +56,10 @@ namespace EarleCode
             var tokenizer = new Lexer(fileName, script);
             var file = new EarleFile(_runtime, fileName);
 
+            tokenizer.MoveNext();
+
             // Recursively look foor function declarations
-            while (tokenizer.MoveNext())
+            while (tokenizer.Current != null)
             {
                 var match = _fileGrammarProcessor.GetMatch(tokenizer);
                 if (match != "FUNCTION_DECLARATION")
@@ -79,6 +81,7 @@ namespace EarleCode
             var parameters = new List<string>();
 
             lexer.AssertMoveNext();
+
             lexer.SkipToken(TokenType.Token, "(");
 
             while (!lexer.Current.Is(TokenType.Token, ")"))
@@ -141,14 +144,15 @@ namespace EarleCode
                 result.AddRange(parser.Parse(_runtime, file, lexer));
 
                 lastToken = lexer.Current;
-
-                lexer.SkipToken(TokenType.Token, ";");
             } while (multiLine && !lexer.Current.Is(TokenType.Token, "}"));
 
-            if (multiLine)
+            if(multiLine)
+            {
                 lexer.AssertToken(TokenType.Token, "}");
-            else
-                lexer.Push(lastToken);
+                lexer.MoveNext();
+            }
+            //else
+            //    lexer.Push(lastToken);
 
             if (!didReturnAnyValue && mustReturn)
                 result.Add((byte) OpCode.PushUndefined);

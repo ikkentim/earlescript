@@ -14,6 +14,7 @@
 // limitations under the License.
 
 using System;
+using System.Diagnostics;
 using System.Linq;
 using EarleCode.Values;
 using EarleCode.Values.ValueTypes;
@@ -24,6 +25,7 @@ namespace EarleCode
     {
         private void RegisterDefaultNatives()
         {
+            RegisterNative(new WaitFunction());
             RegisterNative(new EarleInlineNativeFunction("print", values =>
             {
                 Console.WriteLine(values.FirstOrDefault().Value);
@@ -180,6 +182,36 @@ namespace EarleCode
             }
         }
 
+        private class WaitFunction : EarleFunction
+        {
+            public WaitFunction() : base(null, "wait", new[] { "seconds" }, null)
+            {
+            }
+
+            public override RuntimeLoop CreateLoop(Runtime runtime, EarleValue[] arguments)
+            {
+                var seconds = arguments.Length >= 1 ? arguments[0].To<float>(runtime) : 0;
+                return new WaitLoop(runtime, seconds);
+            }
+
+            private class WaitLoop : RuntimeLoop
+            {
+                private Stopwatch _stopwatch;
+                private long _miliseconds;
+
+                public WaitLoop(Runtime runtime, float seconds) : base(runtime, null, null)
+                {
+                    _stopwatch = new Stopwatch();
+                    _stopwatch.Start();
+                    _miliseconds = (long)(seconds * 1000);
+                }
+
+                public override EarleValue? Run()
+                {
+                    return _stopwatch.ElapsedMilliseconds >= _miliseconds ? (EarleValue?)EarleValue.Undefined : null;
+                }
+            }
+        }
         private class BinaryOperatorFunction : EarleInlineNativeFunction
         {
             public BinaryOperatorFunction(string @operator, Func<EarleValue, EarleValue, EarleValue> operation,

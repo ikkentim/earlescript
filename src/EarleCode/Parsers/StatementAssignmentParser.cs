@@ -13,12 +13,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using EarleCode.Lexing;
+
 namespace EarleCode.Parsers
 {
     public class StatementAssignmentParser : AssignmentExpressionParser
     {
         #region Overrides of AssignmentExpressionParser
 
+        protected override void Parse()
+        {
+            base.Parse();
+
+            Lexer.SkipToken(TokenType.Token, ";");
+        }
         protected override void YieldDuplicate()
         {
             // Do nothing.

@@ -20,6 +20,7 @@ using EarleCode.Localization;
 using EarleCode.Values;
 using EarleCode.Grammar;
 using System.Diagnostics;
+using System.Threading;
 
 namespace EarleCode.Debug
 {
@@ -94,6 +95,13 @@ namespace EarleCode.Debug
                     Console.WriteLine(v);
             }
 
+            do
+            {
+                Thread.Sleep(1000 / 30);
+
+            } while(!runtime.Tick());
+
+            Console.WriteLine("Done!");
 //            Console.ReadLine();
         }
     }

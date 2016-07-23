@@ -1,4 +1,4 @@
-﻿init()
+﻿init2()
 {
 
     struct = spawnstruct();
@@ -20,6 +20,26 @@
     return arr;
 }
 
-somefunc()
+init()
 {
+	init2();
+
+	count = 0;
+    for( ;; )
+    {
+    	count++;
+    	print(". " + count);
+
+    	if(count >= 10)
+    	{
+    		count = 0;
+    	}
+
+    	//wait 0.1;
+    	return;
+    }
 }
+
+/*somefunc()
+{
+}*/

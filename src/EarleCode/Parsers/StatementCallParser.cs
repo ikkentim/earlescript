@@ -14,6 +14,7 @@
 // limitations under the License.
 
 using EarleCode.Instructions;
+using EarleCode.Lexing;
 
 namespace EarleCode.Parsers
 {
@@ -25,6 +26,8 @@ namespace EarleCode.Parsers
         {
             base.Parse();
             Yield(OpCode.Pop);
+
+            Lexer.SkipToken(TokenType.Token, ";");
         }
 
         #endregion

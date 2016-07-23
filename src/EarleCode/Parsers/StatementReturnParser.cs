@@ -32,6 +32,8 @@ namespace EarleCode.Parsers
                 Parse<ExpressionParser>();
 
             Yield(OpCode.Return);
+
+            Lexer.SkipToken(TokenType.Token, ";");
         }
 
         #endregion
