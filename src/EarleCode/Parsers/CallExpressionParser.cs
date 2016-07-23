@@ -24,6 +24,9 @@ namespace EarleCode.Parsers
 
         protected override void Parse()
         {
+            // Output:
+            // ?
+
             if (!SyntaxMatches("FUNCTION_CALL_PART"))
             {
                 // a target is supplied

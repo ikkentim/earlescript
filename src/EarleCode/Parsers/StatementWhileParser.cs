@@ -24,6 +24,12 @@ namespace EarleCode.Parsers
 
         protected override void Parse()
         {
+            // Output:
+            // EXPRESSION   (expressionLength)
+            // JUMP_FALSE N (5)
+            // CODE_BLOCK   (block.Length)
+            // JUMP N       (5)
+
             Lexer.SkipToken(TokenType.Identifier, "while");
             Lexer.SkipToken(TokenType.Token, "(");
             var expressionLength = Parse<ExpressionParser>();

@@ -24,6 +24,11 @@ namespace EarleCode.Parsers
 
         protected override void Parse()
         {
+            // Output:
+            // EXPRESSION   (?)
+            // PUSH_R       (?)
+            // CALL N       (4)
+
             Lexer.SkipToken(TokenType.Identifier, "wait");
             Parse<ExpressionParser>();
             PushReference(null, "wait");

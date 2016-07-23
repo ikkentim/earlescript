@@ -40,6 +40,9 @@ namespace EarleCode.Parsers
 
         protected override void Parse()
         {
+            // Output:
+            // ?
+
             var operators = new Stack<string>();
 
             for (;;)

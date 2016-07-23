@@ -24,6 +24,11 @@ namespace EarleCode.Parsers
 
         protected override void Parse()
         {
+            // Output:
+            // EXPRESSION   (?)
+            // JUMP_FALSE N (5)
+            // CODE_BLOCK   (block.Length)
+
             Lexer.SkipToken(TokenType.Identifier, "if");
             Lexer.SkipToken(TokenType.Token, "(");
             Parse<ExpressionParser>();

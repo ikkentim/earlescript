@@ -24,6 +24,16 @@ namespace EarleCode.Parsers
 
         protected override void Parse()
         {
+            // Output:
+            // PUSH_S       (1)
+            // ASSIGNMENT   (?)
+            // EXPRESSION   (checkLength)
+            // JUMP_FALSE N (5)
+            // CODE_BLOCK   (block.Length)
+            // ASSIGNMENT   (incrementBlock.Length)
+            // JUMP N       (5)
+            // POP_S        (1)
+
             int checkLength;
             var incrementBlock = new byte[0];
 

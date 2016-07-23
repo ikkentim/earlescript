@@ -24,6 +24,10 @@ namespace EarleCode.Parsers
 
         protected override void Parse()
         {
+            // Output:
+            // EXPRESSION   (?)
+            // RETURN       (1)
+
             Lexer.SkipToken(TokenType.Identifier, "return");
 
             if (Lexer.Current.Is(TokenType.Token, ";"))

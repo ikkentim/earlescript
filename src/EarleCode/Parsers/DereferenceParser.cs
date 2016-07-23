@@ -24,6 +24,9 @@ namespace EarleCode.Parsers
 
         protected override void Parse()
         {
+            // Output:
+            // ?
+
             for (;;)
             {
                 if (Lexer.Current.Is(TokenType.Token, "."))

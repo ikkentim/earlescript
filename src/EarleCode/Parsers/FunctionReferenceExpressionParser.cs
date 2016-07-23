@@ -23,6 +23,9 @@ namespace EarleCode.Parsers
 
         protected override void Parse()
         {
+            // Output:
+            // PUSH_R       (?)
+
             string path = null;
 
             // optional token to specify function is part of current file

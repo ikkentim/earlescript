@@ -44,6 +44,9 @@ namespace EarleCode.Parsers
 
         protected override void Parse()
         {
+            // Output:
+            // ?
+
             string unaryModOperator = null;
             var unaryModOperatorIsPrefix = true;
 

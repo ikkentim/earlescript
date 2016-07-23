@@ -24,6 +24,10 @@ namespace EarleCode.Parsers
 
         protected override void Parse()
         {
+            // Output:
+            // CALL         (?)
+            // POP          (1)
+
             base.Parse();
             Yield(OpCode.Pop);
         }
