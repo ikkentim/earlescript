@@ -15,6 +15,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using EarleCode.Instructions;
 using EarleCode.Lexing;
 using EarleCode.Parsers;
@@ -22,6 +23,27 @@ using EarleCode.Utilities;
 
 namespace EarleCode
 {
+    public class CompiledBlock
+    {
+        public CompiledBlock(byte[] pCode, int[] breaks, int[] continues)
+        {
+            if(pCode == null) throw new ArgumentNullException(nameof(pCode));
+            if(breaks == null) throw new ArgumentNullException(nameof(breaks));
+            if(continues == null) throw new ArgumentNullException(nameof(continues));
+            
+            PCode = pCode;
+            Breaks = breaks;
+            Continues = continues;
+        }
+
+        public byte[] PCode { get; }
+        public int[] Breaks { get; }
+        public int[] Continues { get; }
+        public int Length => PCode.Length;
+
+        public static CompiledBlock Empty { get; } = new CompiledBlock(new byte[0], new int[0], new int[0]);
+    }
+
     public partial class Compiler
     {
         private readonly Dictionary<string, IParser> _parsers = new Dictionary<string, IParser>
@@ -102,19 +124,21 @@ namespace EarleCode
 
             lexer.SkipToken(TokenType.Token, ")");
 
-            var function = new EarleFunction(file, name, parameters.ToArray(), Compile(lexer, file, true));
+            var function = new EarleFunction(file, name, parameters.ToArray(), Compile(lexer, file, true, false, false).PCode);
 
             PrintCompiledPCode(function);
 
             return function;
         }
 
-        public byte[] Compile(ILexer lexer, EarleFile file, bool mustReturn)
+        public CompiledBlock Compile(ILexer lexer, EarleFile file, bool mustReturn, bool canBreak, bool canContinue)
         {
-            var result = new List<byte>();
+            var pCode = new List<byte>();
+            var breaks = new List<int>();
+            var continues = new List<int>();
+
             var didReturnAnyValue = false;
             var multiLine = false;
-            Token lastToken;
 
             if (lexer.Current.Is(TokenType.Token, "{"))
             {
@@ -122,7 +146,7 @@ namespace EarleCode
                 lexer.AssertMoveNext();
             }
 
-            result.Add((byte) OpCode.PushScope);
+            pCode.Add((byte) OpCode.PushScope);
 
             do
             {
@@ -133,22 +157,43 @@ namespace EarleCode
                 if (parserName == null)
                     throw new ParseException(lexer.Current, $"Expected statement, found token `{lexer.Current.Value}`");
 
-                IParser parser;
-                if (!_parsers.TryGetValue(parserName, out parser))
-                    throw new ParseException(lexer.Current,
-                        $"Expected statement, found {parserName.ToLower()} `{lexer.Current.Value}`");
-
-                if(parser is StatementReturnParser)
-                    didReturnAnyValue = true;
-                else
-                    didReturnAnyValue = false;
-                
-                result.AddRange(parser.Parse(_runtime, file, lexer));
-
-                if(parser is ISimpleStatement)
+                if(parserName == "STATEMENT_BREAK" && canBreak)
+                {
+                    lexer.SkipToken(TokenType.Identifier, "break");
                     lexer.SkipToken(TokenType.Token, ";");
-                
-                lastToken = lexer.Current;
+
+                    breaks.Add(pCode.Count);
+                    pCode.Add((byte)OpCode.Jump);
+                    pCode.AddRange(ArrayUtility.Repeat((byte) 0xaa, 4));
+                    didReturnAnyValue = false;
+                }
+                else if(parserName == "STATEMENT_CONTINUE" && canContinue)
+                {
+                    lexer.SkipToken(TokenType.Identifier, "continue");
+                    lexer.SkipToken(TokenType.Token, ";");
+
+                    continues.Add(pCode.Count);
+                    pCode.Add((byte)OpCode.Jump);
+                    pCode.AddRange(ArrayUtility.Repeat((byte)0xaa, 4));
+                    didReturnAnyValue = false;
+                }
+                else
+                {
+                    IParser parser;
+                    if(!_parsers.TryGetValue(parserName, out parser))
+                        throw new ParseException(lexer.Current,
+                            $"Expected statement, found {parserName.ToLower()} `{lexer.Current.Value}`");
+
+                    var block = parser.Parse(_runtime, file, lexer, canBreak, canContinue);
+                    breaks.AddRange(block.Breaks.Select(b => b + pCode.Count));
+                    continues.AddRange(block.Continues.Select(c => c + pCode.Count));
+                    pCode.AddRange(block.PCode);
+
+                    if(parser is ISimpleStatement)
+                        lexer.SkipToken(TokenType.Token, ";");
+
+                    didReturnAnyValue = parser is StatementReturnParser;
+                }
             } while (multiLine && !lexer.Current.Is(TokenType.Token, "}"));
 
             if(multiLine)
@@ -156,15 +201,13 @@ namespace EarleCode
                 lexer.AssertToken(TokenType.Token, "}");
                 lexer.MoveNext();
             }
-            //else
-            //    lexer.Push(lastToken);
 
             if (!didReturnAnyValue && mustReturn)
-                result.Add((byte) OpCode.PushUndefined);
+                pCode.Add((byte) OpCode.PushUndefined);
 
-            result.Add((byte) OpCode.PopScope);
+            pCode.Add((byte) OpCode.PopScope);
 
-            return result.ToArray();
+            return new CompiledBlock(pCode.ToArray(), breaks.ToArray(), continues.ToArray());
         }
 
         #endregion

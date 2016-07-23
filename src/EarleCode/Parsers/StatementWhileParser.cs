@@ -34,10 +34,10 @@ namespace EarleCode.Parsers
             Lexer.SkipToken(TokenType.Token, "(");
             var expressionLength = Parse<ExpressionParser>();
             Lexer.SkipToken(TokenType.Token, ")");
-            var block = Runtime.Compiler.Compile(Lexer, File, false);
+            var block = CompileBlock(true, true);
             Yield(OpCode.JumpIfFalse);
             Yield(block.Length + 5);
-            Yield(block);
+            Yield(block, true, 5, true, -block.Length - expressionLength - 5);
             Yield(OpCode.Jump);
             Yield(-block.Length - expressionLength - 10);
         }

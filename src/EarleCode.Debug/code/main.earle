@@ -1,51 +1,17 @@
-﻿init2()
+﻿init()
 {
+	for(test=1;test<100;test++)
+	{
+		print("begin with test " + test);
 
-    struct = spawnstruct();
-
-    struct.bar = 13;
-    struct.foo = 37;
-    struct.foobar = "" + struct.bar + struct.foo;
-
-    arr = [];
-    arr[1] = "test 1";
-    arr["info"] = spawnstruct();
-    arr["info"].name = "someName";
-    arr["info"].level = 339;
-    arr["info"].position = (34.2, 11.22, 50.0);
-    arr[45.11] = struct;
-    print(@"TEST_TEST_STRING");
-    print("Info: " + arr["info"].name + " of level " + arr["info"].level + " at position " + arr["info"].position);
-
-    return arr;
+		if(test > 10)
+		{
+			break;
+		}
+		if(test > 5)
+		{
+			continue;
+		}
+		print("end with test " + test);
+	}
 }
-
-init()
-{
-	init2();
-
-	count = 0;
-
-
-    for(i=0;i<10;i++)
-    {
-    	print("i is " + i);
-    }
-
-    for( ;; )
-    {
-    	count++;
-    	print(". " + count);
-
-    	if(count >= 10)
-    		count = 0;
-    	
-    	print(", " + count);
-    	//wait 0.1;
-    	return;
-    }
-}
-
-/*somefunc()
-{
-}*/

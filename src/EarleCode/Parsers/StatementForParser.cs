@@ -35,7 +35,7 @@ namespace EarleCode.Parsers
             // POP_S        (1)
 
             int checkLength;
-            var incrementBlock = new byte[0];
+            var incrementBlock = CompiledBlock.Empty;
 
             Yield(OpCode.PushScope);
 
@@ -63,12 +63,12 @@ namespace EarleCode.Parsers
             Lexer.SkipToken(TokenType.Token, ")");
 
             // todo: break and continue
-            var block = Runtime.Compiler.Compile(Lexer, File, false);
+            var block = CompileBlock(true, true);
 
             Yield(OpCode.JumpIfFalse);
             Yield(block.Length + 5 + incrementBlock.Length);
 
-            Yield(block);
+            Yield(block, true, incrementBlock.Length + 5, true, 0);
 
             Yield(incrementBlock);
 

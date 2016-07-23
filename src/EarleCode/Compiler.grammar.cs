@@ -41,6 +41,8 @@ namespace EarleCode
             SyntaxGrammarProcessor.AddRule("STATEMENT_WHILE", true, "`while` ( EXPRESSION )");
             SyntaxGrammarProcessor.AddRule("STATEMENT_FOR", true, "`for` ( OPTIONAL ASSIGNMENT ; OPTIONAL EXPRESSION ; OPTIONAL ASSIGNMENT )");
             SyntaxGrammarProcessor.AddRule("STATEMENT_RETURN", true, "`return` OPTIONAL EXPRESSION ;");
+            SyntaxGrammarProcessor.AddRule("STATEMENT_BREAK", true, "`break` ;");
+            SyntaxGrammarProcessor.AddRule("STATEMENT_CONTINUE", true, "`continue` ;");
             SyntaxGrammarProcessor.AddRule("STATEMENT_WAIT", true, "`wait` EXPRESSION ;");
             SyntaxGrammarProcessor.AddRule("ASSIGNMENT", true, "VARIABLE = EXPRESSION");
             SyntaxGrammarProcessor.AddRule("ASSIGNMENT", true, "VARIABLE OPERATOR_UNARY = EXPRESSION");

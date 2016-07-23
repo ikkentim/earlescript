@@ -31,9 +31,9 @@ namespace EarleCode.Parsers
 
             Lexer.SkipToken(TokenType.Identifier, "if");
             Lexer.SkipToken(TokenType.Token, "(");
-            Parse<ExpressionParser>();
+            Parse<ExpressionParser>(false, false);
             Lexer.SkipToken(TokenType.Token, ")");
-            var block = Runtime.Compiler.Compile(Lexer, File, false);
+            var block = CompileBlock();
             Yield(OpCode.JumpIfFalse);
             Yield(block.Length);
             Yield(block);

@@ -20,6 +20,6 @@ namespace EarleCode.Parsers
 {
     public interface IParser
     {
-        IEnumerable<byte> Parse(Runtime runtime, EarleFile file, ILexer lexer);
+        CompiledBlock Parse(Runtime runtime, EarleFile file, ILexer lexer, bool canBreak, bool canContinue);
     }
 }

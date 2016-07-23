@@ -26,7 +26,10 @@ namespace EarleCode.Parsers
     public abstract class Parser : IParser
     {
         private readonly List<byte> _result = new List<byte>();
-
+        private readonly List<int> _breaks = new List<int>();
+        private readonly List<int> _continues = new List<int>();
+        private bool _canBreak;
+        private bool _canContinue;
         protected Runtime Runtime { get; private set; }
 
         protected EarleFile File { get; private set; }
@@ -35,7 +38,7 @@ namespace EarleCode.Parsers
 
         #region Implementation of IParser
 
-        public IEnumerable<byte> Parse(Runtime runtime, EarleFile file, ILexer lexer)
+        public CompiledBlock Parse(Runtime runtime, EarleFile file, ILexer lexer, bool canBreak, bool canContinue)
         {
             if (runtime == null) throw new ArgumentNullException(nameof(runtime));
             if (file == null) throw new ArgumentNullException(nameof(file));
@@ -43,11 +46,16 @@ namespace EarleCode.Parsers
             Runtime = runtime;
             File = file;
             Lexer = lexer;
+            _canBreak = canBreak;
+            _canContinue = canContinue;
+
             _result.Clear();
+            _breaks.Clear();
+            _continues.Clear();
 
             Parse();
 
-            return _result.ToArray();
+            return new CompiledBlock(_result.ToArray(), _breaks.ToArray(), _continues.ToArray());
         }
 
         #endregion
@@ -76,9 +84,47 @@ namespace EarleCode.Parsers
             _result.Add(value);
         }
 
-        public void Yield(IEnumerable<byte> values)
+        public void Yield(CompiledBlock block, bool breaks = false, int breakOffset = 0, bool continues = false, int continueOffset = 0)
         {
-            if (values == null) throw new ArgumentNullException(nameof(values));
+            if(block == null) throw new ArgumentNullException(nameof(block));
+
+            int startIndex = _result.Count;
+            _result.AddRange(block.PCode);
+
+            if(breaks)
+            {
+                foreach(var b in block.Breaks)
+                {
+                    var jump = block.Length - b - 5 + breakOffset;
+                    var bytes = BitConverter.GetBytes(jump);
+                    for(var i = 0; i < bytes.Length; i++)
+                        _result[startIndex + b + 1 + i] = bytes[i];
+                }
+            }
+            else
+            {
+                _breaks.AddRange(block.Breaks.Select(b => b + startIndex));
+            }
+
+            if(continues)
+            {
+                foreach(var c in block.Continues)
+                {
+                    var jump = block.Length - c - 5 + continueOffset;
+                    var bytes = BitConverter.GetBytes(jump);
+                    for(var i = 0; i < bytes.Length; i++)
+                        _result[startIndex + c + 1 + i] = bytes[i];
+                }
+            }
+            else
+            {
+                _continues.AddRange(block.Continues.Select(c => c + startIndex));
+            }
+        }
+
+        private void Yield(byte[] values)
+        {
+            if(values == null) throw new ArgumentNullException(nameof(values));
             _result.AddRange(values);
         }
 
@@ -212,17 +258,17 @@ namespace EarleCode.Parsers
 
         #region Misc Helpers
 
-        public int Parse<T>() where T : IParser
+        public int Parse<T>(bool canBreak = false, bool canContinue = false) where T : IParser
         {
-            var buffer = ParseToBuffer<T>();
-            Yield(buffer);
-            return buffer.Length;
+            var block = ParseToBuffer<T>(canBreak, canContinue);
+            Yield(block);
+            return block.PCode.Length;
         }
 
-        public byte[] ParseToBuffer<T>() where T : IParser
+        public CompiledBlock ParseToBuffer<T>(bool canBreak = false, bool canContinue = false) where T : IParser
         {
             var parser = Activator.CreateInstance<T>();
-            return parser.Parse(Runtime, File, Lexer).ToArray();
+            return parser.Parse(Runtime, File, Lexer, _canBreak || canBreak, _canContinue || canContinue);
         }
 
         public bool SyntaxMatches(string rule)
@@ -230,6 +276,10 @@ namespace EarleCode.Parsers
             return Runtime.Compiler.SyntaxGrammarProcessor.IsMatch(Lexer, rule);
         }
 
+        public CompiledBlock CompileBlock(bool canBreak = false, bool canContinue = false)
+        {
+            return Runtime.Compiler.Compile(Lexer, File, false, canBreak || _canBreak, canContinue || _canContinue);
+        }
         #endregion
     }
 }

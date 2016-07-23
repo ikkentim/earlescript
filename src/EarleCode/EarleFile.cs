@@ -29,7 +29,7 @@ namespace EarleCode
             if (runtime == null) throw new ArgumentNullException(nameof(runtime));
             if (name == null) throw new ArgumentNullException(nameof(name));
             if (!IsValidName(name)) throw new ArgumentException("invalid name", nameof(name));
-            ;
+
             _runtime = runtime;
             Name = name;
         }
