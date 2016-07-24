@@ -15,10 +15,8 @@
 
 using System;
 using System.IO;
-using EarleCode.Lexing;
 using EarleCode.Localization;
 using EarleCode.Values;
-using EarleCode.Grammar;
 using System.Diagnostics;
 using System.Threading;
 
@@ -26,7 +24,7 @@ namespace EarleCode.Debug
 {
     public class Measure : IDisposable
     {
-        private Stopwatch sw;
+        private readonly Stopwatch sw;
         public Measure()
         {
             sw = new Stopwatch();
@@ -75,7 +73,7 @@ namespace EarleCode.Debug
             loc.AddToRuntime(runtime);
             loc.Key = "LANG_ENGLISH";
 
-            var result = runtime.GetFile("\\main").Invoke("init");
+            var result = runtime.GetFile("\\main").Invoke("init", EarleValue.Undefined);
 
             Console.WriteLine();
             Console.WriteLine("Code execution completed!");

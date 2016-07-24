@@ -174,12 +174,18 @@ namespace EarleCode.Parsers
             Yield(arguments);
         }
 
-        public void PushCall(string path, string name, int arguments)
+        public void PushCallWithoutTarget(int arguments)
         {
-            if (name == null) throw new ArgumentNullException(nameof(name));
-            PushReference(path, name);
-            Yield(OpCode.Call);
+            Yield(OpCode.CallNoTarget);
             Yield(arguments);
+        }
+
+        public void PushCallWithoutTarget(string path, string name, int arguments)
+        {
+            if(name == null) throw new ArgumentNullException(nameof(name));
+
+            PushReference(path, name);
+            PushCallWithoutTarget(arguments);
         }
 
         public void PushJump(bool condition, int count)

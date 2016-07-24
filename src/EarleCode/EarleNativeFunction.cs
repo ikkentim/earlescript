@@ -26,14 +26,14 @@ namespace EarleCode
 
         #region Overrides of EarleFunction
 
-        public override RuntimeLoop CreateLoop(Runtime runtime, EarleValue[] arguments)
+        public override RuntimeLoop CreateLoop(Runtime runtime, EarleValue[] arguments, EarleValue target)
         {
             if (Parameters.Length < arguments.Length)
                 arguments =
                     arguments.Concat(Enumerable.Repeat(EarleValue.Undefined, Parameters.Length - arguments.Length))
                         .ToArray();
 
-            return new NativeRuntimeLoop(runtime, this, arguments);
+            return new NativeRuntimeLoop(runtime, this, arguments, target);
         }
 
         #endregion
@@ -45,8 +45,8 @@ namespace EarleCode
             private readonly EarleValue[] _arguments;
             private readonly EarleNativeFunction _native;
 
-            public NativeRuntimeLoop(Runtime runtime, EarleNativeFunction native, EarleValue[] arguments)
-                : base(runtime, null, null)
+            public NativeRuntimeLoop(Runtime runtime, EarleNativeFunction native, EarleValue[] arguments, EarleValue target)
+                : base(runtime, null, null, target)
             {
                 _native = native;
                 _arguments = arguments;

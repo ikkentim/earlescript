@@ -40,7 +40,7 @@ namespace EarleCode
 
         public string[] Parameters { get; }
 
-        public virtual RuntimeLoop CreateLoop(Runtime runtime, EarleValue[] arguments)
+        public virtual RuntimeLoop CreateLoop(Runtime runtime, EarleValue[] arguments, EarleValue target)
         {
             if (arguments == null) throw new ArgumentNullException(nameof(arguments));
             var locals = new EarleDictionary();
@@ -52,7 +52,7 @@ namespace EarleCode
                 index++;
             }
 
-            return new RuntimeLoop(runtime, File, PCode, locals);
+            return new RuntimeLoop(runtime, File, PCode, locals, target);
         }
 
         #region Overrides of Object

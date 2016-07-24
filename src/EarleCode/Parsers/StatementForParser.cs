@@ -65,15 +65,13 @@ namespace EarleCode.Parsers
             // todo: break and continue
             var block = CompileBlock(true, true);
 
-            Yield(OpCode.JumpIfFalse);
-            Yield(block.Length + 5 + incrementBlock.Length);
+            PushJump(false, block.Length + 5 + incrementBlock.Length);
 
             Yield(block, true, incrementBlock.Length + 5, true, 0);
 
             Yield(incrementBlock);
 
-            Yield(OpCode.Jump);
-            Yield(-5 - block.Length - incrementBlock.Length - 5 - checkLength);
+            PushJump(-5 - block.Length - incrementBlock.Length - 5 - checkLength);
 
 
             Yield(OpCode.PopScope);

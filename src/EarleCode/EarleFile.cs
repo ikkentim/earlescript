@@ -56,10 +56,10 @@ namespace EarleCode
             return funcs.Length == 0 ? null : new EarleFunctionCollection(funcs);
         }
 
-        public EarleValue? Invoke(string functionName, params EarleValue[] arguments)
+        public EarleValue? Invoke(string functionName, EarleValue target, params EarleValue[] arguments)
         {
             var function = GetFunctions(functionName).FirstOrDefault(f => f.Parameters.Length == arguments.Length);
-            return _runtime.Invoke(function, arguments);
+            return _runtime.Invoke(function, arguments, target);
         }
 
         #region Overrides of Object

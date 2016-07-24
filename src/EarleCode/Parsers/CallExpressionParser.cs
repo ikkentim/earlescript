@@ -14,6 +14,7 @@
 // limitations under the License.
 
 using System;
+using EarleCode.Instructions;
 using EarleCode.Lexing;
 
 namespace EarleCode.Parsers
@@ -25,34 +26,42 @@ namespace EarleCode.Parsers
         protected override void Parse()
         {
             // Output:
-            // ?
+            // TARGET       (?)
+            // ARGUMENTS    (?)
+            // REFERENCE    (?)
+            // CALL N       (5)
 
-            if (!SyntaxMatches("FUNCTION_CALL_PART"))
+            if(!SyntaxMatches("FUNCTION_CALL_PART"))
             {
-                // a target is supplied
-                throw new NotImplementedException();
+                Parse<FunctionTargetExpressionParser>();
+            }
+            else
+            {
+                Yield(OpCode.PushUndefined);
             }
 
-            var referenceBuffer = ParseToBuffer<FunctionReferenceExpressionParser>();
-
-            Lexer.SkipToken(TokenType.Token, "(");
-
-            var arguments = 0;
-            while (!Lexer.Current.Is(TokenType.Token, ")"))
+            while(SyntaxMatches("FUNCTION_CALL_PART"))
             {
-                Parse<ExpressionParser>();
-                arguments++;
+                var referenceBuffer = ParseToBuffer<FunctionReferenceExpressionParser>();
 
-                if (Lexer.Current.Is(TokenType.Token, ")"))
-                    break;
+                Lexer.SkipToken(TokenType.Token, "(");
 
-                Lexer.SkipToken(TokenType.Token, ",");
+                var arguments = 0;
+                while(!Lexer.Current.Is(TokenType.Token, ")"))
+                {
+                    Parse<ExpressionParser>();
+                    arguments++;
+
+                    if(Lexer.Current.Is(TokenType.Token, ")"))
+                        break;
+
+                    Lexer.SkipToken(TokenType.Token, ",");
+                }
+
+                Lexer.SkipToken(TokenType.Token, ")");
+                Yield(referenceBuffer);
+                PushCall(arguments);
             }
-
-            Lexer.SkipToken(TokenType.Token, ")");
-
-            Yield(referenceBuffer);
-            PushCall(arguments);
         }
 
         #endregion

@@ -21,9 +21,17 @@ namespace EarleCode.Instructions
     public enum OpCode : byte
     {
         /// <summary>
-        ///     Call the function referenced by the value on top of the stack with the specified number of arguments.
+        ///     Call the function referenced by the value below the top of the stack and with the value on the top of the stack as a 
+        ///     target with the specified number of arguments.
         /// </summary>
-        [OpCode("CALL $int", typeof (CallInstruction))] Call,
+        [OpCode("CALL $int", typeof(CallInstruction))]
+        Call,
+
+        /// <summary>
+        ///     Call the function referenced by the value on the top of the stack with the specified number of arguments.
+        /// </summary>
+        [OpCode("CALL_T $int", typeof(CallWithoutTargetInstruction))]
+        CallNoTarget,
 
         /// <summary>
         ///     Write the value under the top of the stack to the variable referenced by the top of the stack.

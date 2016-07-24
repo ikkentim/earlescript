@@ -188,7 +188,7 @@ namespace EarleCode
             {
             }
 
-            public override RuntimeLoop CreateLoop(Runtime runtime, EarleValue[] arguments)
+            public override RuntimeLoop CreateLoop(Runtime runtime, EarleValue[] arguments, EarleValue target)
             {
                 var seconds = arguments.Length >= 1 ? arguments[0].To<float>(runtime) : 0;
                 return new WaitLoop(runtime, seconds);
@@ -199,7 +199,7 @@ namespace EarleCode
                 private Stopwatch _stopwatch;
                 private long _miliseconds;
 
-                public WaitLoop(Runtime runtime, float seconds) : base(runtime, null, null)
+                public WaitLoop(Runtime runtime, float seconds) : base(runtime, null, null, EarleValue.Undefined)
                 {
                     _stopwatch = new Stopwatch();
                     _stopwatch.Start();

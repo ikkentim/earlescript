@@ -105,7 +105,15 @@ namespace EarleCode.Parsers
 
         #region Parse
 
-        private void ParseValue()
+        protected virtual bool ParseFunctionCall()
+        {
+            Parse<CallExpressionParser>();
+            Parse<DereferenceParser>();
+
+            return true;
+        }
+
+        protected virtual void ParseValue()
         {
             string unaryOperator = null;
 
@@ -113,13 +121,6 @@ namespace EarleCode.Parsers
             if (SyntaxMatches("ASSIGNMENT"))
             {
                 Parse<AssignmentExpressionParser>();
-                return;
-            }
-
-            if (SyntaxMatches("FUNCTION_CALL"))
-            {
-                Parse<CallExpressionParser>();
-                Parse<DereferenceParser>();
                 return;
             }
 
@@ -141,7 +142,11 @@ namespace EarleCode.Parsers
                     ThrowUnexpectedToken("Unexpected target for operator " + unaryOperator);
             }
 
-            if (SyntaxMatches("KEYWORD"))
+            if (SyntaxMatches("FUNCTION_CALL") && ParseFunctionCall())
+            {
+                // If parse is not allowed, move on to next else-if case
+            }
+            else if (SyntaxMatches("KEYWORD"))
                 ParseKeyword();
             else if (SyntaxMatches("VECTOR"))
             {
@@ -160,7 +165,7 @@ namespace EarleCode.Parsers
                     Parse<ExpressionParser>();
                 }
 
-                PushCall(null, $"createVector{vectorSize}", vectorSize);
+                PushCallWithoutTarget(null, $"createVector{vectorSize}", vectorSize);
 
                 Lexer.SkipToken(TokenType.Token, ")");
             }
@@ -190,7 +195,7 @@ namespace EarleCode.Parsers
                 YieldUnaryOperator(unaryOperator);
         }
 
-        private void ParseKeyword()
+        protected virtual void ParseKeyword()
         {
             switch (Lexer.Current.Value)
             {
@@ -215,7 +220,7 @@ namespace EarleCode.Parsers
             Lexer.AssertMoveNext();
         }
 
-        private void ParseLiteral()
+        protected virtual void ParseLiteral()
         {
             switch (Lexer.Current.Type)
             {
@@ -246,18 +251,18 @@ namespace EarleCode.Parsers
 
         #region Yield
 
-        private void YieldBinaryOperator(string op)
+        protected virtual void YieldBinaryOperator(string op)
         {
-            PushCall(null, $"operator{op}", 2);
+            PushCallWithoutTarget(null, $"operator{op}", 2);
         }
 
-        protected void YieldBinaryOperators(Stack<string> operators)
+        protected virtual void YieldBinaryOperators(Stack<string> operators)
         {
             while (operators.Count > 0)
                 YieldBinaryOperator(operators.Pop());
         }
 
-        private void YieldUnaryOperator(string op)
+        protected virtual void YieldUnaryOperator(string op)
         {
             switch (op)
             {
@@ -269,7 +274,7 @@ namespace EarleCode.Parsers
                     Yield(OpCode.Not);
                     break;
                 default:
-                    PushCall(null, $"operator{op}", 1);
+                    PushCallWithoutTarget(null, $"operator{op}", 1);
                     break;
             }
         }

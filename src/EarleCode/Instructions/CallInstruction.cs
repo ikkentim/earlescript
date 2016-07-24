@@ -21,6 +21,8 @@ namespace EarleCode.Instructions
 {
     internal class CallInstruction : Instruction
     {
+        protected virtual bool HasTarget => true;
+
         #region Overrides of Instruction
 
         protected override void Handle()
@@ -83,7 +85,8 @@ namespace EarleCode.Instructions
                 args.Add(Pop());
             args.Reverse();
 
-            Loop.SubLoop = function.CreateLoop(Runtime, args.ToArray());
+            var target = HasTarget ? Pop() : EarleValue.Undefined;
+            Loop.SubLoop = function.CreateLoop(Runtime, args.ToArray(), target);
         }
 
         #endregion

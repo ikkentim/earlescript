@@ -1,5 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -89,6 +88,7 @@
     <Compile Include="EarleInlineNativeFunction.cs" />
     <Compile Include="Parsers\StatementAssignmentParser.cs" />
     <Compile Include="Parsers\ExpressionParser.cs" />
+    <Compile Include="Parsers\FunctionTargetExpressionParser.cs" />
     <Compile Include="Parsers\Parser.cs" />
     <Compile Include="Parsers\StatementCallParser.cs" />
     <Compile Include="Runtime.cs" />
@@ -129,6 +129,8 @@
     <Compile Include="Parsers\StatementWaitParser.cs" />
     <Compile Include="Parsers\ISimpleStatement.cs" />
     <Compile Include="Utilities\ArrayUtility.cs" />
+    <Compile Include="Instructions\CallWithoutTargetInstruction.cs" />
+    <Compile Include="CompiledBlock.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

@@ -13,27 +13,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
 using EarleCode.Instructions;
 using EarleCode.Lexing;
 
 namespace EarleCode.Parsers
 {
-    public class StatementWaitParser : Parser, ISimpleStatement
+    public class FunctionTargetExpressionParser : ExpressionParser
     {
-        #region Overrides of Parser
-
-        protected override void Parse()
+        protected override bool ParseFunctionCall()
         {
-            // Output:
-            // EXPRESSION   (?)
-            // PUSH_R       (?)
-            // CALL N       (4)
-
-            Lexer.SkipToken(TokenType.Identifier, "wait");
-            Parse<ExpressionParser>();
-            PushCallWithoutTarget(null, "wait", 1);
+            return false;
         }
-
-        #endregion
     }
+    
 }

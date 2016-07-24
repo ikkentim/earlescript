@@ -28,33 +28,34 @@ namespace EarleCode
 
         static RuntimeLoop()
         {
-            var values = typeof (OpCode).GetEnumValues().OfType<OpCode>().ToArray();
-            var count = values.Max(v => (byte) v) + 1;
+            var values = typeof(OpCode).GetEnumValues().OfType<OpCode>().ToArray();
+            var count = values.Max(v => (byte)v) + 1;
             Instructions = new IInstruction[count];
 
-            foreach (var value in values)
+            foreach(var value in values)
             {
                 var attribute = value.GetCustomAttribute<OpCodeAttribute>();
 
-                if (attribute?.InstructionType == null)
+                if(attribute?.InstructionType == null)
                     continue;
 
-                Instructions[(byte) value] = Activator.CreateInstance(attribute.InstructionType) as IInstruction;
+                Instructions[(byte)value] = Activator.CreateInstance(attribute.InstructionType) as IInstruction;
             }
         }
 
-        public RuntimeLoop(Runtime runtime, RuntimeScope superScope, byte[] instructions)
-            : this(runtime, superScope, instructions, null)
+        public RuntimeLoop(Runtime runtime, RuntimeScope superScope, byte[] instructions, EarleValue target)
+            : this(runtime, superScope, instructions, null, target)
         {
         }
 
         public RuntimeLoop(Runtime runtime, RuntimeScope superScope, byte[] instructions,
-            EarleDictionary initialLocals)
+            EarleDictionary initialLocals, EarleValue target)
         {
-            if (runtime == null) throw new ArgumentNullException(nameof(runtime));
+            if(runtime == null) throw new ArgumentNullException(nameof(runtime));
             Runtime = runtime;
             PCode = instructions;
             Stack = new Stack<EarleValue>();
+            Target = target;
 
             Scopes.Push(new RuntimeScope(superScope, initialLocals));
         }
@@ -67,17 +68,28 @@ namespace EarleCode
 
         public Stack<EarleValue> Stack { get; }
 
+        public EarleValue Target { get; }
+
         public int CIP { get; set; }
 
         public RuntimeLoop SubLoop { get; set; }
 
         public virtual EarleValue GetValue(EarleVariableReference reference)
         {
+            if(reference.Name == "self")
+                return string.IsNullOrEmpty(reference.File) ? Target : EarleValue.Undefined;
+            
             return Scopes.Peek().GetValue(reference);
         }
 
         public virtual bool SetValue(EarleVariableReference reference, EarleValue value)
         {
+            if(reference.Name == "self")
+            {
+                Runtime.HandleWarning("'self' cannot be set!");
+                return false;
+            }
+
             return Scopes.Peek().SetValue(reference, value);
         }
 

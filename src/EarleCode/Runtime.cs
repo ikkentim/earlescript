@@ -134,15 +134,15 @@ namespace EarleCode
 
         #region Invoking
 
-        public EarleValue? Invoke(EarleFunction function)
+        public EarleValue? Invoke(EarleFunction function, EarleValue target)
         {
-            return Invoke(function, null);
+            return Invoke(function, null, target);
         }
 
-        public EarleValue? Invoke(EarleFunction function, IEnumerable<EarleValue> arguments)
+        public EarleValue? Invoke(EarleFunction function, IEnumerable<EarleValue> arguments, EarleValue target)
         {
             if (function == null) throw new ArgumentNullException(nameof(function));
-            return RunLoop(function.CreateLoop(this, arguments?.ToArray() ?? new EarleValue[0]));
+            return RunLoop(function.CreateLoop(this, arguments?.ToArray() ?? new EarleValue[0], target));
         }
 
         #endregion
