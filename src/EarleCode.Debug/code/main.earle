@@ -1,18 +1,7 @@
 ﻿init()
 {
-	for(test=1;test<100;test++)
-	{
-		print("begin with test " + test);
-
-		if(test > 10)
-		{
-			break;
-		}
-
-		if(test > 5)
-		{
-			continue;
-		}
-		print("end with test " + test);
-	}
+	test = 1;
+	print("test: " + test);
+	test -= 5;
+	print("test: " + test);
 }

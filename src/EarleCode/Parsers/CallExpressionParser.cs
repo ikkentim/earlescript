@@ -26,20 +26,15 @@ namespace EarleCode.Parsers
         protected override void Parse()
         {
             // Output:
-            // TARGET       (?)
+            // TARGET?      (?)
             // ARGUMENTS    (?)
             // REFERENCE    (?)
-            // CALL N       (5)
+            // CALL(_T) N   (5)
 
+            bool hasTarget = !SyntaxMatches("FUNCTION_CALL_PART");
             if(!SyntaxMatches("FUNCTION_CALL_PART"))
-            {
                 Parse<FunctionTargetExpressionParser>();
-            }
-            else
-            {
-                Yield(OpCode.PushUndefined);
-            }
-
+            
             while(SyntaxMatches("FUNCTION_CALL_PART"))
             {
                 var referenceBuffer = ParseToBuffer<FunctionReferenceExpressionParser>();
@@ -60,7 +55,10 @@ namespace EarleCode.Parsers
 
                 Lexer.SkipToken(TokenType.Token, ")");
                 Yield(referenceBuffer);
-                PushCall(arguments);
+                if(hasTarget)
+                    PushCall(arguments);
+                else
+                    PushCallWithoutTarget(arguments);
             }
         }
 

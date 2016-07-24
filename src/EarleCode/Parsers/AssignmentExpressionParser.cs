@@ -113,7 +113,7 @@ namespace EarleCode.Parsers
                 Parse<ExpressionParser>();
 
                 if (unaryOperator != null)
-                    PushCallWithoutTarget(null, $"operator{unaryOperator}", 1);
+                    PushCallWithoutTarget(null, $"operator{unaryOperator}", 2);
 
                 YieldDuplicate();
 
