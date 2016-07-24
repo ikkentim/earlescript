@@ -14,11 +14,12 @@
 // limitations under the License.
 
 using System;
-using System.IO;
-using EarleCode.Localization;
-using EarleCode.Values;
 using System.Diagnostics;
+using System.IO;
 using System.Threading;
+using EarleCode.Localization;
+using EarleCode.Runtime;
+using EarleCode.Runtime.Values;
 
 namespace EarleCode.Debug
 {
@@ -52,7 +53,7 @@ namespace EarleCode.Debug
 
         private static void Main(string[] args)
         {
-            var runtime = new Runtime();
+            var runtime = new EarleRuntime();
             
             var codeDir = Path.Combine(Directory.GetCurrentDirectory(), "code");
 

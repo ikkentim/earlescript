@@ -24,9 +24,9 @@ namespace EarleCode.Utilities
         public static TAttribute GetCustomAttribute<TAttribute>(this Enum enumValue) where TAttribute : Attribute
         {
             return enumValue.GetType()
-                .GetMember(enumValue.ToString())
-                .FirstOrDefault()
-                ?.GetCustomAttribute<TAttribute>();
+                     .GetMember(enumValue.ToString()).FirstOrDefault()
+                     .GetCustomAttributes(false).OfType<TAttribute>()
+                     .FirstOrDefault();
         }
     }
 }

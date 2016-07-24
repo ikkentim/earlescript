@@ -15,10 +15,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using EarleCode.Lexing;
-using EarleCode.Values;
+using EarleCode.Compiler.Lexing;
+using EarleCode.Runtime;
+using EarleCode.Runtime.Values;
 
 namespace EarleCode.Localization
 {
@@ -29,7 +29,7 @@ namespace EarleCode.Localization
 
         public string Key { get; set; }
 
-        public void AddToRuntime(Runtime runtime)
+        public void AddToRuntime(EarleRuntime runtime)
         {
             runtime.RegisterNative(new LocalizeOperator(this));
             runtime.RegisterNative(new EarleInlineNativeFunction("setActiveLanguage", values =>
