@@ -5,7 +5,13 @@
 	test -= 5;
 	print("test: " + test);
 
-	thread bleep();
+	thing = bleep;
+
+	what = "bleep!";
+
+	//what thing();
+
+	thread what thing();
 
 	for(i=0;i<10;i++)
 	{
@@ -21,7 +27,7 @@ bleep()
 {
 	for(i=0;i<100;i++)
 	{
-		print("bleep!");
+		print(self);
 		wait .1;
 	}
 }

@@ -79,9 +79,9 @@ namespace EarleCode.Runtime
 
         public virtual bool SetValue(EarleVariableReference reference, EarleValue value)
         {
-            if(reference.Name == "self")
+            if(reference.Name == "self" || reference.Name == "thread")
             {
-                Frame.Runtime.HandleWarning("'self' cannot be set!");
+                Frame.Runtime.HandleWarning($"'{reference.Name}' cannot be set!");
                 return false;
             }
 
