@@ -33,6 +33,8 @@ namespace EarleCode.Runtime
                 frame.SubFrame = new WaitFrameExecutor(frame, seconds.CastTo<float>(frame.Runtime));
             }));
 
+            RegisterNative(EarleNativeFunction.Create("isdefined", (EarleValue value) => value.Value != null));
+
             RegisterNative(EarleNativeFunction.Create("createvector2", (EarleValue x, EarleValue y) => {
                 return new EarleVector2(
                     x.Is<float>() ? x.As<float>() : x.As<int>(),
