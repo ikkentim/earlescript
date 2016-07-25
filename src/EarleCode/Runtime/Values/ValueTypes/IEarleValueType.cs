@@ -21,6 +21,8 @@ namespace EarleCode.Runtime.Values.ValueTypes
     {
         Type Type { get; }
 
-        object ParseValueToType(EarleValue value);
+        object CastTo<TTo>(EarleValue value);
+
+        object CastTo(Type toType, EarleValue value);
     }
 }

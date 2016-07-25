@@ -13,15 +13,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
+
 namespace EarleCode.Runtime.Values.ValueTypes
 {
     public class EarleStringValueType : EarleValueType<string>
     {
         #region Overrides of EarleValueType<string>
 
-        protected override string ParseOtherValueToType(EarleValue value)
+        protected override object CastToOtherType(Type toType, string value)
         {
-            return value.Value?.ToString() ?? string.Empty;
+            return null;
         }
 
         #endregion

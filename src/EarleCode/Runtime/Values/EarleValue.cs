@@ -57,19 +57,19 @@ namespace EarleCode.Runtime.Values
 
         #region To
 
-        public T To<T>(EarleRuntime runtime)
+        public T CastTo<T>(EarleRuntime runtime)
         {
             if (runtime == null) throw new ArgumentNullException(nameof(runtime));
-            var typedTo = To(typeof (T), runtime);
-            return (T) (typedTo ?? default(T));
+            var result = CastTo(typeof (T), runtime);
+            return (T) (result ?? default(T));
         }
 
-        public object To(Type type, EarleRuntime runtime)
+        public object CastTo(Type type, EarleRuntime runtime)
         {
             if (runtime == null) throw new ArgumentNullException(nameof(runtime));
-            var valueType = runtime.GetValueTypeForType(type);
-            var retval = valueType?.ParseValueToType(this);
-            return retval;
+            var valueType = runtime.GetValueTypeForType(Value?.GetType());
+            var result = valueType?.CastTo(type, this);
+            return result;
         }
 
         #endregion

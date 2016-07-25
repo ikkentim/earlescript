@@ -13,19 +13,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
+
 namespace EarleCode.Runtime.Values.ValueTypes
 {
     public class EarleVector3ValueType : EarleValueType<EarleVector3>
     {
         #region Overrides of EarleValueType<bool>
 
-        protected override EarleVector3 ParseOtherValueToType(EarleValue value)
+        protected override object CastToOtherType(Type toType, EarleVector3 value)
         {
-            if (value.Is<EarleVector2>())
-            {
-                var vector = value.As<EarleVector2>();
-                return new EarleVector3(vector.X, vector.Y, 0);
-            }
+            if(toType == typeof(EarleVector2))
+                return new EarleVector2(value.X, value.Y);
+            if(toType == typeof(bool))
+                return !(value.X.Equals(0) && value.Y.Equals(0) && value.Z.Equals(0));
+            if(toType == typeof(string))
+                return value.ToString();
             return null;
         }
 

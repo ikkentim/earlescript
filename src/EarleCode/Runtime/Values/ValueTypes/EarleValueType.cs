@@ -19,21 +19,28 @@ namespace EarleCode.Runtime.Values.ValueTypes
 {
     public abstract class EarleValueType<T> : IEarleValueType
     {
-        protected abstract T ParseOtherValueToType(EarleValue value);
+        protected abstract object CastToOtherType(Type toType, T value);
 
         #region Implementation of IEarleValueType
 
         public virtual Type Type { get; } = typeof (T);
 
-        public virtual object ParseValueToType(EarleValue value)
+        public virtual object CastTo<TTo>(EarleValue value)
         {
-            if (value.Is(Type)) return value.Value;
-
-            var parsedValue = ParseOtherValueToType(value);
-
-            return parsedValue != null ? (object) parsedValue : null;
+            return CastTo(typeof(TTo), value);
         }
 
+        public virtual object CastTo(Type toType, EarleValue value)
+        {
+            if(value.Value?.GetType() != Type)
+            {
+                throw new ArgumentException("Value must be of the type specified by the Type property in order for it to be castable by this instance.\t", nameof(value));
+            }
+            if(Type == toType)
+                return value.Value;
+
+            return CastToOtherType(toType, (T)value.Value);
+        }
         #endregion
     }
 }

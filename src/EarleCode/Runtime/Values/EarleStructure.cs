@@ -19,7 +19,7 @@ using System.Collections.Generic;
 
 namespace EarleCode.Runtime.Values
 {
-    public class EarleStructure : IEarleStructure, IEnumerable<KeyValuePair<String, EarleValue>>
+    public class EarleStructure : IEarleStructure, IEnumerable<KeyValuePair<string, EarleValue>>
     {
         private readonly EarleDictionary _values = new EarleDictionary();
 

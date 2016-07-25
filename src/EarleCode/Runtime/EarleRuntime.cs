@@ -102,6 +102,9 @@ namespace EarleCode.Runtime
 
         public IEarleValueType GetValueTypeForType(Type type)
         {
+            if(type == null)
+                return null;
+            
             IEarleValueType valueType;
             return _valueTypes.TryGetValue(type, out valueType) ? valueType : null;
         }

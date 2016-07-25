@@ -29,7 +29,7 @@ namespace EarleCode.Runtime.Instructions
             if (value.Is<int>())
                 value = value.As<int>() == 0 ? EarleValue.True : EarleValue.False;
             else
-                value = value.HasValue ? EarleValue.True : EarleValue.False;
+                value = value.HasValue ? EarleValue.False : EarleValue.True;
 
             Push(value);
         }

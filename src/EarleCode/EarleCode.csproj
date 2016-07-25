@@ -69,7 +69,6 @@
     <Compile Include="Runtime\Values\EarleVector2.cs" />
     <Compile Include="Runtime\Values\EarleVector3.cs" />
     <Compile Include="Runtime\Values\IEarleStructure.cs" />
-    <Compile Include="Runtime\Values\ValueTypes\EarleBoolValueType.cs" />
     <Compile Include="Runtime\Values\ValueTypes\EarleFloatValueType.cs" />
     <Compile Include="Runtime\Values\ValueTypes\EarleIntegerValueType.cs" />
     <Compile Include="Runtime\Values\ValueTypes\EarleStringValueType.cs" />

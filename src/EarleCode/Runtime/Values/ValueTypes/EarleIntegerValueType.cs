@@ -13,15 +13,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
+
 namespace EarleCode.Runtime.Values.ValueTypes
 {
     public class EarleIntegerValueType : EarleValueType<int>
     {
         #region Overrides of EarleValueType<int>
 
-        protected override int ParseOtherValueToType(EarleValue value)
+        protected override object CastToOtherType(Type toType, int value)
         {
-            return value.Is<float>() ? (int) value.As<float>() : 0;
+            if(toType == typeof(float))
+                return (float)value;
+            if(toType == typeof(bool))
+               return value != 0;
+            if(toType == typeof(string))
+                return value.ToString();
+            return null;
         }
 
         #endregion

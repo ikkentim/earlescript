@@ -72,7 +72,7 @@ namespace EarleCode.Runtime.Instructions
 
         protected T PopTo<T>()
         {
-            return Pop().To<T>(Frame.Frame.Runtime);
+            return Pop().CastTo<T>(Frame.Frame.Runtime);
         }
 
         protected void Jump(int count)
