@@ -30,10 +30,12 @@ namespace EarleCode.Runtime
             }));
 
             RegisterNative(EarleNativeFunction.Create("wait", (EarleStackFrame frame, EarleValue seconds) => {
-                frame.SubFrame = new WaitFrameExecutor(frame, seconds.CastTo<float>(frame.Runtime));
+                var time = seconds.CastTo<float>(frame.Runtime);
+                if(time > 0)
+                    frame.SubFrame = new WaitFrameExecutor(frame, time);
             }));
 
-            RegisterNative(EarleNativeFunction.Create("isdefined", (EarleValue value) => value.Value != null));
+            RegisterNative(EarleNativeFunction.Create("isdefined", (EarleValue value) => value.Value != null ? EarleValue.True : EarleValue.False));
 
             RegisterNative(EarleNativeFunction.Create("createvector2", (EarleValue x, EarleValue y) => {
                 return new EarleVector2(

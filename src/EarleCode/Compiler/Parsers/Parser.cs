@@ -169,15 +169,15 @@ namespace EarleCode.Compiler.Parsers
             Yield($"{path}::{name}".ToLower());
         }
 
-        public void PushCall(int arguments)
+        public void PushCall(int arguments, bool thread = false)
         {
-            Yield(OpCode.Call);
+            Yield(thread ? OpCode.Thread : OpCode.Call);
             Yield(arguments);
         }
 
-        public void PushCallWithoutTarget(int arguments)
+        public void PushCallWithoutTarget(int arguments, bool thread = false)
         {
-            Yield(OpCode.CallNoTarget);
+            Yield(thread ? OpCode.ThreadNoTarget : OpCode.CallNoTarget);
             Yield(arguments);
         }
 

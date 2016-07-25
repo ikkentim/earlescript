@@ -1,4 +1,4 @@
-﻿// EarleCode
+// EarleCode
 // Copyright 2016 Tim Potze
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,30 +13,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
-using EarleCode.Compiler.Lexing;
-using EarleCode.Runtime.Instructions;
-
-namespace EarleCode.Compiler.Parsers
+namespace EarleCode.Runtime.Instructions
 {
-    public class StatementCallParser : CallExpressionParser, ISimpleStatement
+    internal class ThreadInstruction : CallInstruction
     {
-        #region Overrides of CallExpressionParser
-
-        protected override void Parse()
+        protected override void Handle()
         {
-            // Output:
-            // CALL         (?)
-            // POP          (1)
-
-            var isThreaded = Lexer.Current.Is(TokenType.Identifier, "thread");
-
-            base.Parse();
-
-            if(!isThreaded)
-                Yield(OpCode.Pop);
+            Frame.Frame.Runtime.StartThread(new EarleThread(CreateFrameExecutor(), null));
         }
-
-        #endregion
     }
+    
 }

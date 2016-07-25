@@ -27,23 +27,30 @@ namespace EarleCode.Runtime.Instructions
 
         protected override void Handle()
         {
+            Frame.Frame.SubFrame = CreateFrameExecutor();
+        }
+
+        #endregion
+
+        protected virtual EarleStackFrameExecutor CreateFrameExecutor()
+        {
             var argumentCount = GetInt32();
             var value = Pop().Value;
             var initialValue = value;
             var hasOverloads = false;
             EarleFunction function;
 
-            while (value is EarleVariableReference || value is EarleBoxedValueReference)
+            while(value is EarleVariableReference || value is EarleBoxedValueReference)
             {
-                if (value is EarleVariableReference)
-                    value = Frame.GetValue((EarleVariableReference) value).Value;
-                else if (value is EarleBoxedValueReference)
-                    value = ((EarleBoxedValueReference) value).GetField().Value;
+                if(value is EarleVariableReference)
+                    value = Frame.GetValue((EarleVariableReference)value).Value;
+                else if(value is EarleBoxedValueReference)
+                    value = ((EarleBoxedValueReference)value).GetField().Value;
             }
 
-            if (value is EarleFunctionCollection)
+            if(value is EarleFunctionCollection)
             {
-                var functions = (EarleFunctionCollection) value;
+                var functions = (EarleFunctionCollection)value;
                 hasOverloads = functions.Count > 0;
                 function = functions.FirstOrDefault(f => f.Parameters.Length == argumentCount);
             }
@@ -51,19 +58,12 @@ namespace EarleCode.Runtime.Instructions
             {
                 function = value as EarleFunction;
             }
-//            var functionReference = Pop<EarleVariableReference>();
-//
-//            object value = functionReference;
-//            while (value is EarleVariableReference)
-//                value = Loop.GetValue((EarleVariableReference)value).Value;
-//            
-//            var functions = value as EarleFunctionCollection;
-//            var function = functions?.FirstOrDefault(f => f.Parameters.Length == argumentCount);  
-            if (function == null)
+
+            if(function == null)
             {
-                if (initialValue is EarleVariableReference)
+                if(initialValue is EarleVariableReference)
                 {
-                    var functionReference = (EarleVariableReference) initialValue;
+                    var functionReference = (EarleVariableReference)initialValue;
 
                     Frame.Frame.Runtime.HandleWarning(!hasOverloads
                         ? $"unknown function {functionReference}"
@@ -74,21 +74,21 @@ namespace EarleCode.Runtime.Instructions
                     Frame.Frame.Runtime.HandleWarning($"{initialValue?.GetType()} cannot be invoked.");
                 }
 
-                for (var i = 0; i < argumentCount; i++)
+                for(var i = 0; i < argumentCount; i++)
                     Pop();
 
                 Push(EarleValue.Undefined);
-                return;
+                return null;
             }
+
             var args = new List<EarleValue>();
-            for (var i = 0; i < argumentCount; i++)
+            for(var i = 0; i < argumentCount; i++)
                 args.Add(Pop());
             args.Reverse();
 
             var target = HasTarget ? Pop() : EarleValue.Undefined;
-            Frame.Frame.SubFrame = function.CreateFrameExecutor(Frame.Frame, target, args.ToArray());
-        }
 
-        #endregion
+            return function.CreateFrameExecutor(Frame.Frame, target, args.ToArray());
+        }
     }
 }

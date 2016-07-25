@@ -34,6 +34,20 @@ namespace EarleCode.Runtime.Instructions
         CallNoTarget,
 
         /// <summary>
+        ///     Spawn a new thread and call the function referenced by the value below the top of the stack and
+        ///     with the value on the top of the stack as a target with the specified number of arguments.
+        /// </summary>
+        [OpCode("THREAD $int", typeof(ThreadInstruction))]
+        Thread,
+
+        /// <summary>
+        ///     Spawn a new thread and call the function referenced by the value on the top of the stack with the
+        ///     specified number of arguments.
+        /// </summary>
+        [OpCode("THREAD_T $int", typeof(ThreadWithoutTargetInstruction))]
+        ThreadNoTarget,
+
+        /// <summary>
         ///     Write the value under the top of the stack to the variable referenced by the top of the stack.
         /// </summary>
         [OpCode("WRITE", typeof (WriteInstruction))] Write,

@@ -49,7 +49,7 @@ namespace EarleCode.Compiler
             SyntaxGrammarProcessor.AddRule("ASSIGNMENT", true, "VARIABLE OPERATOR_UNARY = EXPRESSION");
             SyntaxGrammarProcessor.AddRule("ASSIGNMENT", true, "VARIABLE OPERATOR_MOD_UNARY");
             SyntaxGrammarProcessor.AddRule("ASSIGNMENT", true, "OPERATOR_MOD_UNARY VARIABLE");
-            SyntaxGrammarProcessor.AddRule("FUNCTION_CALL", true, "OPTIONAL VARIABLE FUNCTION_CALL_PART");
+            SyntaxGrammarProcessor.AddRule("FUNCTION_CALL", true, "OPTIONAL `thread` OPTIONAL VARIABLE FUNCTION_CALL_PART");
             SyntaxGrammarProcessor.AddRule("FUNCTION_CALL_PART", false, "FUNCTION_IDENTIFIER ( OPTIONAL EXPRESSION_LIST )");
 
             // Expressions

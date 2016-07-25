@@ -30,8 +30,15 @@ namespace EarleCode.Compiler.Parsers
             // REFERENCE    (?)
             // CALL(_T) N   (5)
 
-            bool hasTarget = !SyntaxMatches("FUNCTION_CALL_PART");
-            if(!SyntaxMatches("FUNCTION_CALL_PART"))
+            var isThreaded = false;
+            if(Lexer.Current.Is(TokenType.Identifier, "thread"))
+            {
+                isThreaded = true;
+                Lexer.AssertMoveNext();
+            }
+
+            var hasTarget = !SyntaxMatches("FUNCTION_CALL_PART");
+            if(hasTarget)
                 Parse<FunctionTargetExpressionParser>();
             
             while(SyntaxMatches("FUNCTION_CALL_PART"))
@@ -55,9 +62,9 @@ namespace EarleCode.Compiler.Parsers
                 Lexer.SkipToken(TokenType.Token, ")");
                 Yield(referenceBuffer);
                 if(hasTarget)
-                    PushCall(arguments);
+                    PushCall(arguments, isThreaded);
                 else
-                    PushCallWithoutTarget(arguments);
+                    PushCallWithoutTarget(arguments, isThreaded);
             }
         }
 

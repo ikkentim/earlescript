@@ -133,6 +133,8 @@
     <Compile Include="Runtime\EarleStackFrameExecutor.cs" />
     <Compile Include="Runtime\EarleCompletionHandler.cs" />
     <Compile Include="Runtime\EarleThread.cs" />
+    <Compile Include="Runtime\Instructions\ThreadWithoutTargetInstruction.cs" />
+    <Compile Include="Runtime\Instructions\ThreadInstruction.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
