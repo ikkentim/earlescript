@@ -31,7 +31,7 @@ namespace EarleCode.Runtime
 
         #region Overrides of EarleNativeFunction
 
-        protected override EarleValue Invoke(EarleValue[] arguments)
+        protected override EarleValue Invoke(EarleStackFrame frame, EarleValue[] arguments)
         {
             return _native(arguments);
         }

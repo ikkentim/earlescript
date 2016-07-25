@@ -28,11 +28,11 @@ namespace EarleCode.Runtime.Instructions
             var value = vvalue.Value;
             var setValue = Pop();
             if (value is EarleVariableReference)
-                Loop.SetValue((EarleVariableReference) value, setValue);
+                Frame.SetValue((EarleVariableReference) value, setValue);
             else if (value is EarleBoxedValueReference)
                 ((EarleBoxedValueReference) value).SetField(setValue);
             else
-                Runtime.HandleWarning($"Value {value} is not a reference");
+                Frame.Frame.Runtime.HandleWarning($"Value {value} is not a reference");
         }
 
         #endregion

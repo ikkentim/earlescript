@@ -31,6 +31,8 @@ namespace EarleCode.Runtime
 
         private readonly Dictionary<Type, IEarleValueType> _valueTypes = new Dictionary<Type, IEarleValueType>();
 
+        private readonly Queue<EarleThread> _threadPool = new Queue<EarleThread>();
+
         public EarleRuntime() : base(null)
         {
             Compiler = new EarleCompiler(this);
@@ -58,32 +60,30 @@ namespace EarleCode.Runtime
 
         #region Running
 
-        private Queue<EarleRuntimeLoop> queuedLoops = new Queue<EarleRuntimeLoop>();
-        private EarleValue? RunLoop(EarleRuntimeLoop loop)
+        private EarleValue? RunThread(EarleThread thread)
         {
-            var result = loop.Run();
+            var result = thread.Frame.Run();
 
             if(result == null)
-            {
-                queuedLoops.Enqueue(loop);
-            }
+                _threadPool.Enqueue(thread);
+            else if(thread.CompletionHandler != null)
+                thread.CompletionHandler(result.Value);
+            
             return result;
         }
 
         public bool Tick(int ticks = int.MaxValue)
         {
-            if(queuedLoops.Count < ticks)
-                ticks = queuedLoops.Count;
+            if(_threadPool.Count < ticks)
+                ticks = _threadPool.Count;
             
             int count = 0;
-            while(queuedLoops.Any() && count < ticks)
+            while(_threadPool.Any() && count < ticks)
             {
-                var loop = queuedLoops.Dequeue();
-
-                RunLoop(loop);
+                RunThread(_threadPool.Dequeue());
             }
 
-            return !queuedLoops.Any();
+            return !_threadPool.Any();
         }
         #endregion
 
@@ -135,15 +135,20 @@ namespace EarleCode.Runtime
 
         #region Invoking
 
-        public EarleValue? Invoke(EarleFunction function, EarleValue target)
-        {
-            return Invoke(function, null, target);
-        }
-
-        public EarleValue? Invoke(EarleFunction function, IEnumerable<EarleValue> arguments, EarleValue target)
+        public EarleValue? Invoke(EarleFunction function, IEnumerable<EarleValue> arguments, EarleValue target, EarleCompletionHandler completionHandler = null)
         {
             if (function == null) throw new ArgumentNullException(nameof(function));
-            return RunLoop(function.CreateLoop(this, arguments?.ToArray() ?? new EarleValue[0], target));
+
+            var rootFrame = new EarleStackFrame(this, EarleValue.Undefined);
+            var frame = function.CreateFrameExecutor(rootFrame, target, arguments?.ToArray() ?? new EarleValue[0]);
+            var thread = new EarleThread(frame, completionHandler);
+
+            return RunThread(thread);
+        }
+
+        public void StartThread(EarleThread thread)
+        {
+            _threadPool.Enqueue(thread);
         }
 
         #endregion

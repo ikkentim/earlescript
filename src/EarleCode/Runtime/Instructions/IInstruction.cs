@@ -17,6 +17,6 @@ namespace EarleCode.Runtime.Instructions
 {
     internal interface IInstruction
     {
-        void Handle(EarleRuntimeLoop loop);
+        void Handle(EarleStackFrameExecutor loop);
     }
 }

@@ -36,7 +36,7 @@ namespace EarleCode.Runtime.Instructions
             while (value is EarleVariableReference || value is EarleBoxedValueReference)
             {
                 if (value is EarleVariableReference)
-                    value = Loop.GetValue((EarleVariableReference) value).Value;
+                    value = Frame.GetValue((EarleVariableReference) value).Value;
                 else if (value is EarleBoxedValueReference)
                     value = ((EarleBoxedValueReference) value).GetField().Value;
             }
@@ -65,13 +65,13 @@ namespace EarleCode.Runtime.Instructions
                 {
                     var functionReference = (EarleVariableReference) initialValue;
 
-                    Runtime.HandleWarning(!hasOverloads
+                    Frame.Frame.Runtime.HandleWarning(!hasOverloads
                         ? $"unknown function {functionReference}"
                         : $"no overload of function {functionReference} found with {argumentCount} parameters.");
                 }
                 else
                 {
-                    Runtime.HandleWarning($"{initialValue?.GetType()} cannot be invoked.");
+                    Frame.Frame.Runtime.HandleWarning($"{initialValue?.GetType()} cannot be invoked.");
                 }
 
                 for (var i = 0; i < argumentCount; i++)
@@ -86,7 +86,7 @@ namespace EarleCode.Runtime.Instructions
             args.Reverse();
 
             var target = HasTarget ? Pop() : EarleValue.Undefined;
-            Loop.SubLoop = function.CreateLoop(Runtime, args.ToArray(), target);
+            Frame.Frame.SubFrame = function.CreateFrameExecutor(Frame.Frame, target, args.ToArray());
         }
 
         #endregion

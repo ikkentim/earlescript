@@ -45,7 +45,7 @@ namespace EarleCode.Runtime.Values
             }
         }
 
-        public static EarleValue Undefined { get; } = new EarleValue();
+        public static readonly EarleValue Undefined  = new EarleValue();
 
         public static EarleValue True { get; } = new EarleValue(1);
 

@@ -106,7 +106,7 @@ namespace EarleCode.Compiler
 
             var function = new EarleFunction(file, name, parameters.ToArray(), Compile(lexer, file, true, false, false).PCode);
 
-            PrintCompiledPCode(function);
+            //PrintCompiledPCode(function);
 
             return function;
         }

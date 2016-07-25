@@ -40,7 +40,7 @@ namespace EarleCode.Runtime
 
         public string[] Parameters { get; }
 
-        public virtual EarleRuntimeLoop CreateLoop(EarleRuntime runtime, EarleValue[] arguments, EarleValue target)
+        public virtual EarleStackFrameExecutor CreateFrameExecutor(EarleStackFrame superFrame, EarleValue target, EarleValue[] arguments)
         {
             if (arguments == null) throw new ArgumentNullException(nameof(arguments));
             var locals = new EarleDictionary();
@@ -52,7 +52,7 @@ namespace EarleCode.Runtime
                 index++;
             }
 
-            return new EarleRuntimeLoop(runtime, File, PCode, locals, target);
+            return new EarleStackFrameExecutor(new EarleStackFrame(superFrame.Runtime, target), File, PCode, locals);
         }
 
         #region Overrides of Object

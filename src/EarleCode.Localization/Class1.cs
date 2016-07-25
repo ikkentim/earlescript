@@ -89,7 +89,7 @@ namespace EarleCode.Localization
 
         #region Overrides of EarleNativeFunction
 
-        protected override EarleValue Invoke(EarleValue[] arguments)
+        protected override EarleValue Invoke(EarleStackFrame frame, EarleValue[] arguments)
         {
             return Localize(arguments.First());
         }

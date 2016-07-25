@@ -4,4 +4,13 @@
 	print("test: " + test);
 	test -= 5;
 	print("test: " + test);
+
+	for(i=0;i<10;i++)
+	{
+		print("wait..." + (1 + i));
+		wait 1;
+	}
+	res = "this is the result";
+
+	return res;
 }

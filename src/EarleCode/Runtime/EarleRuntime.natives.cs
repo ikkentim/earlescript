@@ -25,31 +25,30 @@ namespace EarleCode.Runtime
     {
         private void RegisterDefaultNatives()
         {
-            RegisterNative(new WaitFunction());
-            RegisterNative(new EarleInlineNativeFunction("print", values =>
-            {
-                Console.WriteLine(values.FirstOrDefault().Value);
-                return EarleValue.Undefined;
-            }, "value"));
+            RegisterNative(EarleNativeFunction.Create("print", (EarleValue value) => {
+                Console.WriteLine(value.Value);
+            }));
 
-            RegisterNative(new EarleInlineNativeFunction("createvector2",
-                values => new EarleVector2(
-                    values[0].Is<float>() ? values[0].As<float>() : values[0].As<int>(),
-                    values[1].Is<float>() ? values[1].As<float>() : values[1].As<int>()
-                    ).ToEarleValue()
-                , "x", "y"));
+            RegisterNative(EarleNativeFunction.Create("wait", (EarleStackFrame frame, EarleValue seconds) => {
+                frame.SubFrame = new WaitFrameExecutor(frame, seconds.To<float>(frame.Runtime));
+            }));
 
-            RegisterNative(new EarleInlineNativeFunction("createvector3",
-                values =>
-                    new EarleVector3(
-                        values[0].Is<float>() ? values[0].As<float>() : values[0].As<int>(),
-                        values[1].Is<float>() ? values[1].As<float>() : values[1].As<int>(),
-                        values[2].Is<float>() ? values[2].As<float>() : values[2].As<int>()
-                        ).ToEarleValue(),
-                "x", "y", "z"));
+            RegisterNative(EarleNativeFunction.Create("createvector2", (EarleValue x, EarleValue y) => {
+                return new EarleVector2(
+                    x.Is<float>() ? x.As<float>() : x.As<int>(),
+                    y.Is<float>() ? y.As<float>() : y.As<int>()
+                ).ToEarleValue();
+            }));
 
-            RegisterNative(new EarleInlineNativeFunction("spawnstruct",
-                values => new EarleStructure().ToEarleValue()));
+            RegisterNative(EarleNativeFunction.Create("createvector3", (EarleValue x, EarleValue y, EarleValue z) => {
+                return new EarleVector3(
+                    x.Is<float>() ? x.As<float>() : x.As<int>(),
+                    y.Is<float>() ? y.As<float>() : y.As<int>(),
+                    z.Is<float>() ? z.As<float>() : z.As<int>()
+                ).ToEarleValue();
+            }));
+
+            RegisterNative(EarleNativeFunction.Create("spawnstruct", () => new EarleStructure().ToEarleValue()));
 
             RegisterNative(new BinaryOperatorFunction("*", (left, right) => left.Is<float>() || right.Is<float>()
                 ? new EarleValue(left.To<float>(this)*right.To<float>(this))
@@ -182,36 +181,24 @@ namespace EarleCode.Runtime
             }
         }
 
-        private class WaitFunction : EarleFunction
+        private class WaitFrameExecutor : EarleStackFrameExecutor
         {
-            public WaitFunction() : base(null, "wait", new[] { "seconds" }, null)
+            private Stopwatch _stopwatch;
+            private long _miliseconds;
+
+            public WaitFrameExecutor(EarleStackFrame frame, float seconds) : base(frame, null, null)
             {
+                _stopwatch = new Stopwatch();
+                _stopwatch.Start();
+                _miliseconds = (long)(seconds * 1000);
             }
 
-            public override EarleRuntimeLoop CreateLoop(EarleRuntime runtime, EarleValue[] arguments, EarleValue target)
+            public override EarleValue? Run()
             {
-                var seconds = arguments.Length >= 1 ? arguments[0].To<float>(runtime) : 0;
-                return new WaitLoop(runtime, seconds);
-            }
-
-            private class WaitLoop : EarleRuntimeLoop
-            {
-                private Stopwatch _stopwatch;
-                private long _miliseconds;
-
-                public WaitLoop(EarleRuntime runtime, float seconds) : base(runtime, null, null, EarleValue.Undefined)
-                {
-                    _stopwatch = new Stopwatch();
-                    _stopwatch.Start();
-                    _miliseconds = (long)(seconds * 1000);
-                }
-
-                public override EarleValue? Run()
-                {
-                    return _stopwatch.ElapsedMilliseconds >= _miliseconds ? (EarleValue?)EarleValue.Undefined : null;
-                }
+                return _stopwatch.ElapsedMilliseconds >= _miliseconds ? (EarleValue?)EarleValue.Undefined : null;
             }
         }
+
         private class BinaryOperatorFunction : EarleInlineNativeFunction
         {
             public BinaryOperatorFunction(string @operator, Func<EarleValue, EarleValue, EarleValue> operation,

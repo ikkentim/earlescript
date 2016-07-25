@@ -120,7 +120,6 @@
     <Compile Include="Runtime\EarleOperators.cs" />
     <Compile Include="Runtime\EarleRuntime.cs" />
     <Compile Include="Runtime\EarleRuntime.natives.cs" />
-    <Compile Include="Runtime\EarleRuntimeLoop.cs" />
     <Compile Include="Runtime\EarleRuntimeScope.cs" />
     <Compile Include="Runtime\IRuntimeScope.cs" />
     <Compile Include="Compiler\Grammar\GrammarProcessor.cs" />
@@ -131,6 +130,10 @@
     <Compile Include="Compiler\Grammar\GrammarRuleTable.cs" />
     <Compile Include="Compiler\Grammar\IGrammarRuleElement.cs" />
     <Compile Include="Compiler\Parsers\ICompoundStatement.cs" />
+    <Compile Include="Runtime\EarleStackFrame.cs" />
+    <Compile Include="Runtime\EarleStackFrameExecutor.cs" />
+    <Compile Include="Runtime\EarleCompletionHandler.cs" />
+    <Compile Include="Runtime\EarleThread.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

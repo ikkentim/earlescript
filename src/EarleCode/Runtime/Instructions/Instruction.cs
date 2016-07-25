@@ -20,15 +20,13 @@ namespace EarleCode.Runtime.Instructions
 {
     internal abstract class Instruction : IInstruction
     {
-        protected EarleRuntimeLoop Loop { get; private set; }
-
-        protected EarleRuntime Runtime => Loop.Runtime;
+        protected EarleStackFrameExecutor Frame { get; private set; }
 
         #region Implementation of IInstruction
 
-        public void Handle(EarleRuntimeLoop loop)
+        public void Handle(EarleStackFrameExecutor frame)
         {
-            Loop = loop;
+            Frame = frame;
             Handle();
         }
 
@@ -38,16 +36,16 @@ namespace EarleCode.Runtime.Instructions
 
         protected int GetInt32()
         {
-            var value = BitConverter.ToInt32(Loop.PCode, Loop.CIP);
-            Loop.CIP += 4;
+            var value = BitConverter.ToInt32(Frame.PCode, Frame.CIP);
+            Frame.CIP += 4;
 
             return value;
         }
 
         protected float GetSingle()
         {
-            var value = BitConverter.ToSingle(Loop.PCode, Loop.CIP);
-            Loop.CIP += 4;
+            var value = BitConverter.ToSingle(Frame.PCode, Frame.CIP);
+            Frame.CIP += 4;
             return value;
         }
 
@@ -55,16 +53,16 @@ namespace EarleCode.Runtime.Instructions
         {
             var value = "";
 
-            while (Loop.PCode[Loop.CIP] != 0)
-                value += (char) Loop.PCode[Loop.CIP++];
-            Loop.CIP++;
+            while (Frame.PCode[Frame.CIP] != 0)
+                value += (char) Frame.PCode[Frame.CIP++];
+            Frame.CIP++;
 
             return value;
         }
 
         protected EarleValue Pop()
         {
-            return Loop.Stack.Pop();
+            return Frame.Stack.Pop();
         }
 
         protected T Pop<T>()
@@ -74,22 +72,22 @@ namespace EarleCode.Runtime.Instructions
 
         protected T PopTo<T>()
         {
-            return Pop().To<T>(Runtime);
+            return Pop().To<T>(Frame.Frame.Runtime);
         }
 
         protected void Jump(int count)
         {
-            Loop.CIP += count;
+            Frame.CIP += count;
         }
 
         protected EarleValue Peek()
         {
-            return Loop.Stack.Peek();
+            return Frame.Stack.Peek();
         }
 
         protected void Push(EarleValue item)
         {
-            Loop.Stack.Push(item);
+            Frame.Stack.Push(item);
         }
     }
 }

@@ -54,18 +54,19 @@ namespace EarleCode.Debug
         private static void Main(string[] args)
         {
             var runtime = new EarleRuntime();
-            
-            var codeDir = Path.Combine(Directory.GetCurrentDirectory(), "code");
 
-            foreach (var file in Directory.GetFiles(codeDir, "*.earle", SearchOption.AllDirectories))
+            // Load code
+            var codeDir = Path.Combine(Directory.GetCurrentDirectory(), "code");
+            foreach(var file in Directory.GetFiles(codeDir, "*.earle", SearchOption.AllDirectories))
             {
                 var rel = GetRelativePath(file, codeDir).Replace('/', '\\');
                 rel = '\\' + rel.Substring(0, rel.Length - 6);
                 runtime.CompileFile(rel, File.ReadAllText(file));
             }
-            
+
+            // Add localization
             var loc = new Localizer();
-            foreach (var file in Directory.GetFiles(codeDir, "*.estr", SearchOption.AllDirectories))
+            foreach(var file in Directory.GetFiles(codeDir, "*.estr", SearchOption.AllDirectories))
             {
                 var rel = GetRelativePath(file, codeDir).Replace('/', '\\');
                 rel = rel.Substring(0, rel.Length - 5);
@@ -74,25 +75,25 @@ namespace EarleCode.Debug
             loc.AddToRuntime(runtime);
             loc.Key = "LANG_ENGLISH";
 
-            var result = runtime.GetFile("\\main").Invoke("init", EarleValue.Undefined);
+            // Invoke main::init
+            runtime.GetFile("\\main").Invoke("init", EarleValue.Undefined, (result) => {
+                Console.WriteLine();
+                Console.WriteLine("Code execution completed!");
+                Console.WriteLine("Result: " + result);
 
-            Console.WriteLine();
-            Console.WriteLine("Code execution completed!");
-            Console.WriteLine("Result: " + result);
-
-            if (result?.Is<EarleStructure>() ?? false)
-            {
-                var struc = result.Value.As<EarleStructure>();
-                foreach(var kv in struc)
-                    Console.WriteLine($"> {kv.Key} = {kv.Value}");
-            }
-
-            if (result?.Is<EarleArray>() ?? false)
-            {
-                var arr = result.Value.As<EarleArray>();
-                foreach (var v in arr)
-                    Console.WriteLine(v);
-            }
+                if(result.Is<EarleStructure>())
+                {
+                    var struc = result.As<EarleStructure>();
+                    foreach(var kv in struc)
+                        Console.WriteLine($"> {kv.Key} = {kv.Value}");
+                }
+                else if(result.Is<EarleArray>())
+                {
+                    var arr = result.As<EarleArray>();
+                    foreach(var v in arr)
+                        Console.WriteLine(v);
+                }
+            });
 
             do
             {
@@ -101,7 +102,6 @@ namespace EarleCode.Debug
             } while(!runtime.Tick());
 
             Console.WriteLine("Done!");
-//            Console.ReadLine();
         }
     }
 }
