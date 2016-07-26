@@ -27,21 +27,6 @@ namespace EarleCode.Runtime.Values
 
             if (HasValue)
             {
-                if (!(
-                    Value is int ||
-                    Value is float ||
-                    Value is string ||
-                    Value is EarleVector2 ||
-                    Value is EarleVector3 ||
-                    Value is EarleFunction ||
-                    Value is EarleVariableReference ||
-                    Value is EarleFunctionCollection ||
-                    Value is IEarleStructure ||
-                    Value is EarleBoxedValueReference
-                    ))
-                {
-                    throw new Exception("Invalid value type boxed in EarleValue");
-                }
             }
         }
 
@@ -57,19 +42,23 @@ namespace EarleCode.Runtime.Values
 
         #region To
 
-        public T CastTo<T>(EarleRuntime runtime)
+        public T CastTo<T>()
         {
-            if (runtime == null) throw new ArgumentNullException(nameof(runtime));
-            var result = CastTo(typeof (T), runtime);
+            if(Is<T>())
+                return As<T>();
+            
+            var result = CastTo(typeof (T));
             return (T) (result ?? default(T));
         }
 
-        public object CastTo(Type type, EarleRuntime runtime)
+        public object CastTo(Type type)
         {
-            if (runtime == null) throw new ArgumentNullException(nameof(runtime));
-            var valueType = runtime.GetValueTypeForType(Value?.GetType());
-            var result = valueType?.CastTo(type, this);
-            return result;
+            var caster = EarleValueTypeStore.GetCaster(Value?.GetType(), type);
+
+            if(caster == null)
+                return null;
+
+            return caster(Value);
         }
 
         #endregion
@@ -115,6 +104,46 @@ namespace EarleCode.Runtime.Values
         }
 
         #endregion
+
+        public static explicit operator int(EarleValue value)
+        {
+            return value.CastTo<int>();
+        }
+
+        public static explicit operator float(EarleValue value)
+        {
+            return value.CastTo<float>();
+        }
+
+        public static explicit operator string(EarleValue value)
+        {
+            return value.CastTo<string>();
+        }
+
+        public static explicit operator bool(EarleValue value)
+        {
+            return value.CastTo<bool>();
+        }
+
+        public static implicit operator EarleValue(bool value)
+        {
+            return value ? True : False;
+        }
+
+        public static implicit operator EarleValue(int value)
+        {
+            return new EarleValue(value);
+        }
+
+        public static implicit operator EarleValue(float value)
+        {
+            return new EarleValue(value);
+        }
+
+        public static implicit operator EarleValue(string value)
+        {
+            return new EarleValue(value);
+        }
 
         #region Overrides of ValueType
 

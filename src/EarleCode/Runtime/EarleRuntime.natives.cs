@@ -15,9 +15,7 @@
 
 using System;
 using System.Diagnostics;
-using System.Linq;
 using EarleCode.Runtime.Values;
-using EarleCode.Runtime.Values.ValueTypes;
 
 namespace EarleCode.Runtime
 {
@@ -30,7 +28,7 @@ namespace EarleCode.Runtime
             }));
 
             RegisterNative(EarleNativeFunction.Create("wait", (EarleStackFrame frame, EarleValue seconds) => {
-                var time = seconds.CastTo<float>(frame.Runtime);
+                var time = seconds.CastTo<float>();
                 if(time > 0)
                     frame.SubFrame = new WaitFrameExecutor(frame, time);
             }));
@@ -38,150 +36,94 @@ namespace EarleCode.Runtime
             RegisterNative(EarleNativeFunction.Create("isdefined", (EarleValue value) => value.Value != null ? EarleValue.True : EarleValue.False));
 
             RegisterNative(EarleNativeFunction.Create("createvector2", (EarleValue x, EarleValue y) => {
-                return new EarleVector2(
-                    x.Is<float>() ? x.As<float>() : x.As<int>(),
-                    y.Is<float>() ? y.As<float>() : y.As<int>()
-                ).ToEarleValue();
+                return new EarleVector2((float)x, (float)y).ToEarleValue();
             }));
 
             RegisterNative(EarleNativeFunction.Create("createvector3", (EarleValue x, EarleValue y, EarleValue z) => {
-                return new EarleVector3(
-                    x.Is<float>() ? x.As<float>() : x.As<int>(),
-                    y.Is<float>() ? y.As<float>() : y.As<int>(),
-                    z.Is<float>() ? z.As<float>() : z.As<int>()
-                ).ToEarleValue();
+                return new EarleVector3((float)x, (float)y, (float)z).ToEarleValue();
             }));
 
             RegisterNative(EarleNativeFunction.Create("spawnstruct", () => new EarleStructure().ToEarleValue()));
 
-            RegisterNative(new BinaryOperatorFunction("*", (left, right) => left.Is<float>() || right.Is<float>()
-                ? new EarleValue(left.CastTo<float>(this)*right.CastTo<float>(this))
-                : new EarleValue(left.CastTo<int>(this)*right.CastTo<int>(this)), typeof (int), typeof (float)));
+            RegisterNative(CreateBinaryOperator("*", (left, right) => left.Is<float>() || right.Is<float>()
+                                                      ? (float)left*(float)right
+                                                      : (int)left*(int)right, typeof (int), typeof (float)));
 
-            RegisterNative(new BinaryOperatorFunction("+", (left, right) =>
+            RegisterNative(CreateBinaryOperator("+", (left, right) =>
             {
                 if (left.Is<string>() || right.Is<string>())
-                    return (new EarleValue(left.CastTo<string>(this) + right.CastTo<string>(this)));
+                    return (string)left + (string)right;
                 if (left.Is<float>() && right.Is<float>())
-                    return (new EarleValue(left.CastTo<float>(this) + right.CastTo<float>(this)));
+                    return (float)left + (float)right;
                 if (left.Is<int>() && right.Is<float>())
-                    return (new EarleValue(left.CastTo<int>(this) + right.CastTo<float>(this)));
+                    return (int)left + (float)right;
                 if (left.Is<float>() && right.Is<int>())
-                    return (new EarleValue(left.CastTo<float>(this) + right.CastTo<int>(this)));
-                if (left.Is<int>() && right.Is<int>())
-                    return (new EarleValue(left.CastTo<int>(this) + right.CastTo<int>(this)));
+                    return (float)left + (int)right;
+                if(left.Is<int>() && right.Is<int>())
+                    return (int)left + (int)right;
 
                 return EarleValue.Undefined;
             }));
 
-            RegisterNative(new BinaryOperatorFunction("-", (left, right) => left.Is<float>() || right.Is<float>()
-                ? new EarleValue(left.CastTo<float>(this) - right.CastTo<float>(this))
-                : new EarleValue(left.CastTo<int>(this) - right.CastTo<int>(this)), typeof (int), typeof (float),
-                typeof (string)));
+            RegisterNative(CreateBinaryOperator("-", (left, right) => left.Is<float>() || right.Is<float>()
+                                                      ? (float)left - (float)right
+                                                      : (int)left - (int)right, typeof (int), typeof (float), typeof (string)));
 
-            RegisterNative(new BinaryBooleanOperatorFunction("<", (left, right) =>
-            {
-                if (left.Is<int>() && right.Is<int>())
-                    return left.As<int>() < right.As<int>();
-                if (left.Is<int>() && right.Is<float>())
-                    return left.As<int>() < right.As<float>();
-                if (left.Is<float>() && right.Is<int>())
-                    return left.As<float>() < right.As<int>();
-                if (left.Is<float>() && right.Is<float>())
-                    return left.As<float>() < right.As<float>();
+            RegisterNative(CreateBinaryOperator("<", (left, right) => CompareFloatInt(left.Value, right.Value) < 0, 
+                                                      typeof (int), typeof (float)));
 
-                return false;
-            }, typeof (int), typeof (float)));
+            RegisterNative(CreateBinaryOperator("<=", (left, right) => CompareFloatInt(left.Value, right.Value) <= 0, 
+                                                      typeof (int), typeof (float)));
 
-            RegisterNative(new BinaryBooleanOperatorFunction("<=", (left, right) =>
-            {
-                if (left.Is<int>() && right.Is<int>())
-                    return left.As<int>() <= right.As<int>();
-                if (left.Is<int>() && right.Is<float>())
-                    return left.As<int>() <= right.As<float>();
-                if (left.Is<float>() && right.Is<int>())
-                    return left.As<float>() <= right.As<int>();
-                if (left.Is<float>() && right.Is<float>())
-                    return left.As<float>() <= right.As<float>();
+            RegisterNative(CreateBinaryOperator(">", (left, right) => CompareFloatInt(left.Value, right.Value) > 0,
+                                                      typeof(int), typeof(float)));
 
-                return false;
-            }, typeof (int), typeof (float)));
+            RegisterNative(CreateBinaryOperator(">=", (left, right) => CompareFloatInt(left.Value, right.Value) >= 0,
+                                                      typeof(int), typeof(float)));
 
-            RegisterNative(new BinaryBooleanOperatorFunction(">", (left, right) =>
-            {
-                if (left.Is<int>() && right.Is<int>())
-                    return left.As<int>() > right.As<int>();
-                if (left.Is<int>() && right.Is<float>())
-                    return left.As<int>() > right.As<float>();
-                if (left.Is<float>() && right.Is<int>())
-                    return left.As<float>() > right.As<int>();
-                if (left.Is<float>() && right.Is<float>())
-                    return left.As<float>() > right.As<float>();
+            RegisterNative(CreateBinaryOperator("==", (left, right) => {
+                if((left.Is<int>() || left.Is<float>()) && (right.Is<int>() || right.Is<float>()))
+                   return CompareFloatInt(left.Value, right.Value) == 0;
 
-                return false;
-            }, typeof (int), typeof (float)));
 
-            RegisterNative(new BinaryBooleanOperatorFunction(">=", (left, right) =>
-            {
-                if (left.Is<int>() && right.Is<int>())
-                    return left.As<int>() >= right.As<int>();
-                if (left.Is<int>() && right.Is<float>())
-                    return left.As<int>() >= right.As<float>();
-                if (left.Is<float>() && right.Is<int>())
-                    return left.As<float>() >= right.As<int>();
-                if (left.Is<float>() && right.Is<float>())
-                    return left.As<float>() >= right.As<float>();
-
-                return false;
-            }, typeof (int), typeof (float)));
-
-            RegisterNative(new BinaryBooleanOperatorFunction("==", (left, right) =>
-            {
-                if (left.Is<int>() && right.Is<float>())
-                    return left.As<int>() == right.As<float>();
-                if (left.Is<float>() && right.Is<int>())
-                    return left.As<float>() == right.As<int>();
-
-                return left.Is(null)
-                    ? right.Is(null)
+                return left.Value == null
+                    ? right.Value == null
                     : left.Value.Equals(right.Value);
             }));
 
-            RegisterNative(new BinaryBooleanOperatorFunction("!=", (left, right) =>
-            {
-                if (left.Is<int>() && right.Is<float>())
-                    return left.As<int>() != right.As<float>();
-                if (left.Is<float>() && right.Is<int>())
-                    return left.As<float>() != right.As<int>();
+            RegisterNative(CreateBinaryOperator("!=", (left, right) => {
+                if((left.Is<int>() || left.Is<float>()) && (right.Is<int>() || right.Is<float>()))
+                   return CompareFloatInt(left.Value, right.Value) != 0;
 
-                return left.Is(null)
-                    ? !right.Is(null)
+
+                return left.Value == null
+                    ? right.Value != null
                     : !left.Value.Equals(right.Value);
             }));
 
-            RegisterNative(new UnaryOperatorFunction("++",
-                v => v.Is<int>() ? (v.As<int>() + 1).ToEarleValue() : (v.As<float>() + 1).ToEarleValue(), typeof (int),
+            RegisterNative(CreateUnaryOperator("++",
+                                                     v => v.Is<int>() ? ((int)v + 1).ToEarleValue() : ((float)v+ 1).ToEarleValue(), typeof (int),
                 typeof (float)));
 
-            RegisterNative(new UnaryOperatorFunction("--",
+            RegisterNative(CreateUnaryOperator("--",
                 v => v.Is<int>() ? (v.As<int>() - 1).ToEarleValue() : (v.As<float>() - 1).ToEarleValue(), typeof (int),
                 typeof (float)));
         }
 
-        private void RegisterDefaultValueTypes()
+        private static int CompareFloatInt(object val1, object val2)
         {
-            RegisterValueType(new EarleIntegerValueType());
-            RegisterValueType(new EarleFloatValueType());
-            RegisterValueType(new EarleStringValueType());
-        }
-
-        private class BinaryBooleanOperatorFunction : BinaryOperatorFunction
-        {
-            public BinaryBooleanOperatorFunction(string @operator, Func<EarleValue, EarleValue, bool> operation,
-                params Type[] supportedTypes)
-                : base(@operator, (l, r) => operation(l, r) ? EarleValue.True : EarleValue.False, supportedTypes)
-            {
-            }
+            if(!(val1 is float || val1 is int))
+                throw new ArgumentException("value must be int or float", nameof(val1));
+            if(!(val2 is float || val2 is int))
+                throw new ArgumentException("value must be int or float", nameof(val2));
+            
+            if(val1 is int && val2 is int)
+                return ((int)val1).CompareTo(val2);
+        
+            if(val1 is float)
+                return ((float)val1).CompareTo((int)val2);
+         
+            return ((float)(int)val1).CompareTo(val2);
         }
 
         private class WaitFrameExecutor : EarleStackFrameExecutor
@@ -202,43 +144,32 @@ namespace EarleCode.Runtime
             }
         }
 
-        private class BinaryOperatorFunction : EarleInlineNativeFunction
+        private EarleFunction CreateBinaryOperator(string @operator, Func<EarleValue, EarleValue, EarleValue> operation,
+                                                   params Type[] supportedTypes)
         {
-            public BinaryOperatorFunction(string @operator, Func<EarleValue, EarleValue, EarleValue> operation,
-                params Type[] supportedTypes)
-                : base($"operator{@operator}", values =>
-                {
-                    var left = values[0];
-                    var right = values[1];
+            if(@operator == null) throw new ArgumentNullException(nameof(@operator));
+            if(operation == null) throw new ArgumentNullException(nameof(operation));
+            if(supportedTypes == null) throw new ArgumentNullException(nameof(supportedTypes));
 
-                    return supportedTypes.Length > 0 && (!left.IsAny(supportedTypes) || !right.IsAny(supportedTypes))
-                        ? EarleValue.Undefined
-                        : operation(left, right);
-                }, "left", "right")
-            {
-                if (@operator == null) throw new ArgumentNullException(nameof(@operator));
-                if (operation == null) throw new ArgumentNullException(nameof(operation));
-                if (supportedTypes == null) throw new ArgumentNullException(nameof(supportedTypes));
-            }
+            return EarleNativeFunction.Create($"operator{@operator}", (EarleValue left, EarleValue right) => {
+                return supportedTypes.Length > 0 && (!left.IsAny(supportedTypes) || !right.IsAny(supportedTypes))
+                    ? EarleValue.Undefined
+                    : operation(left, right);
+            });
         }
 
-        private class UnaryOperatorFunction : EarleInlineNativeFunction
+        private EarleFunction CreateUnaryOperator(string @operator, Func<EarleValue, EarleValue> operation,
+                                                   params Type[] supportedTypes)
         {
-            public UnaryOperatorFunction(string @operator, Func<EarleValue, EarleValue> operation,
-                params Type[] supportedTypes)
-                : base($"operator{@operator}", values =>
-                {
-                    var value = values[0];
+            if(@operator == null) throw new ArgumentNullException(nameof(@operator));
+            if(operation == null) throw new ArgumentNullException(nameof(operation));
+            if(supportedTypes == null) throw new ArgumentNullException(nameof(supportedTypes));
 
-                    return supportedTypes.Length > 0 && !value.IsAny(supportedTypes)
-                        ? EarleValue.Undefined
-                        : operation(value);
-                }, "value")
-            {
-                if (@operator == null) throw new ArgumentNullException(nameof(@operator));
-                if (operation == null) throw new ArgumentNullException(nameof(operation));
-                if (supportedTypes == null) throw new ArgumentNullException(nameof(supportedTypes));
-            }
+            return EarleNativeFunction.Create($"operator{@operator}", (EarleValue value) => {
+                return supportedTypes.Length > 0 && !value.IsAny(supportedTypes)
+                    ? EarleValue.Undefined
+                    : operation(value);
+            });
         }
     }
 }

@@ -69,13 +69,6 @@
     <Compile Include="Runtime\Values\EarleVector2.cs" />
     <Compile Include="Runtime\Values\EarleVector3.cs" />
     <Compile Include="Runtime\Values\IEarleStructure.cs" />
-    <Compile Include="Runtime\Values\ValueTypes\EarleFloatValueType.cs" />
-    <Compile Include="Runtime\Values\ValueTypes\EarleIntegerValueType.cs" />
-    <Compile Include="Runtime\Values\ValueTypes\EarleStringValueType.cs" />
-    <Compile Include="Runtime\Values\ValueTypes\EarleValueType.cs" />
-    <Compile Include="Runtime\Values\ValueTypes\EarleVector2ValueType.cs" />
-    <Compile Include="Runtime\Values\ValueTypes\EarleVector3ValueType.cs" />
-    <Compile Include="Runtime\Values\ValueTypes\IEarleValueType.cs" />
     <Compile Include="Compiler\EarleCompiler.cs" />
     <Compile Include="Compiler\EarleCompiler.grammar.cs" />
     <Compile Include="Compiler\Lexing\ILexer.cs" />
@@ -135,6 +128,7 @@
     <Compile Include="Runtime\EarleThread.cs" />
     <Compile Include="Runtime\Instructions\ThreadWithoutTargetInstruction.cs" />
     <Compile Include="Runtime\Instructions\ThreadInstruction.cs" />
+    <Compile Include="Runtime\Values\EarleValueTypeStore.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

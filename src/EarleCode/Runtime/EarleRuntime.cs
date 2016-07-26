@@ -18,7 +18,6 @@ using System.Collections.Generic;
 using System.Linq;
 using EarleCode.Compiler;
 using EarleCode.Runtime.Values;
-using EarleCode.Runtime.Values.ValueTypes;
 
 namespace EarleCode.Runtime
 {
@@ -29,8 +28,6 @@ namespace EarleCode.Runtime
         private readonly Dictionary<string, EarleFunctionCollection> _natives =
             new Dictionary<string, EarleFunctionCollection>();
 
-        private readonly Dictionary<Type, IEarleValueType> _valueTypes = new Dictionary<Type, IEarleValueType>();
-
         private readonly Queue<EarleThread> _threadPool = new Queue<EarleThread>();
 
         public EarleRuntime() : base(null)
@@ -38,7 +35,6 @@ namespace EarleCode.Runtime
             Compiler = new EarleCompiler(this);
 
             RegisterDefaultNatives();
-            RegisterDefaultValueTypes();
         }
 
         public EarleCompiler Compiler { get; }
@@ -94,20 +90,20 @@ namespace EarleCode.Runtime
 
         #region Value types
 
-        public void RegisterValueType(IEarleValueType valueType)
-        {
-            if (valueType == null) throw new ArgumentNullException(nameof(valueType));
-            _valueTypes[valueType.Type] = valueType;
-        }
+        //public void RegisterValueType(IEarleValueType valueType)
+        //{
+        //    if (valueType == null) throw new ArgumentNullException(nameof(valueType));
+        //    _valueTypes[valueType.Type] = valueType;
+        //}
 
-        public IEarleValueType GetValueTypeForType(Type type)
-        {
-            if(type == null)
-                return null;
+        //public IEarleValueType GetValueTypeForType(Type type)
+        //{
+        //    if(type == null)
+        //        return null;
             
-            IEarleValueType valueType;
-            return _valueTypes.TryGetValue(type, out valueType) ? valueType : null;
-        }
+        //    IEarleValueType valueType;
+        //    return _valueTypes.TryGetValue(type, out valueType) ? valueType : null;
+        //}
 
         #endregion
 

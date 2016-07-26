@@ -5,6 +5,8 @@
 	test -= 5;
 	print("test: " + test);
 
+	print("vec " + (11,22.101,33));
+
 	thing = bleep;
 
 	what = "bleep!";
