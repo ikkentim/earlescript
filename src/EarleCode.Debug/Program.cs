@@ -76,7 +76,7 @@ namespace EarleCode.Debug
             loc.Key = "LANG_ENGLISH";
 
             // Invoke main::init
-            runtime.GetFile("\\main").Invoke("init", EarleValue.Undefined, (result) => {
+            runtime.GetFile("\\main").Invoke("init", (result) => {
                 Console.WriteLine();
                 Console.WriteLine("Code execution completed!");
                 Console.WriteLine("Result: " + result);
@@ -93,7 +93,7 @@ namespace EarleCode.Debug
                     foreach(var v in arr)
                         Console.WriteLine(v);
                 }
-            });
+            }, EarleValue.Undefined);
 
             do
             {

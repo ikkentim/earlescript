@@ -13,6 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Linq;
 using EarleCode.Compiler.Lexing;
 using EarleCode.Runtime;
@@ -29,8 +30,8 @@ namespace EarleCode.Compiler.Parsers
             {
                 str += Lexer.Current.Value;
                 Lexer.AssertMoveNext();
-            } while (Lexer.Current.Is(TokenType.Token) && opList.Any(o => o.StartsWith(str)) &&
-                     opList.Where(o => o.StartsWith(str)).Max(o => o.Length) > str.Length);
+            } while (Lexer.Current.Is(TokenType.Token) && opList.Any(o => o.StartsWith(str, StringComparison.Ordinal)) &&
+                     opList.Where(o => o.StartsWith(str, StringComparison.Ordinal)).Max(o => o.Length) > str.Length);
 
             return str;
         }

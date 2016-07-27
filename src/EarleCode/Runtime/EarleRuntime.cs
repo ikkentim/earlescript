@@ -40,6 +40,11 @@ namespace EarleCode.Runtime
 
         public EarleCompiler Compiler { get; }
 
+        public EarleFile this[string fileName]
+        {
+            get { return GetFile(fileName); }
+        }
+
         #region Natives
 
         public void RegisterNative(EarleFunction native)

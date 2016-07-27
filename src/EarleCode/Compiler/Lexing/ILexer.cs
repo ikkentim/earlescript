@@ -13,18 +13,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Collections.Generic;
 
 namespace EarleCode.Compiler.Lexing
 {
-    public interface ILexer : IEnumerator<Token>
+    public interface ILexer : IEnumerator<Token>, ICloneable
     {
         /// <summary>
         ///     Pushes the specified token.
         /// </summary>
         /// <param name="token">The token.</param>
         void Push(Token token);
-
-        ILexer Clone();
     }
 }

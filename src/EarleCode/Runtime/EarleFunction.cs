@@ -55,6 +55,11 @@ namespace EarleCode.Runtime
             return new EarleStackFrameExecutor(new EarleStackFrame(superFrame.Runtime, target), File, PCode, locals);
         }
 
+        public void Invoke(EarleCompletionHandler completionHandler, EarleValue target, params EarleValue[] args)
+        {
+            throw new NotImplementedException();
+        }
+
         #region Overrides of Object
 
         /// <summary>

@@ -6,7 +6,6 @@ using System.Linq;
 
 namespace EarleCode.Compiler.Grammar
 {
-
     internal class GrammarRuleTable : IEnumerable<GrammarRule>
     {
         private readonly IEnumerable<GrammarRule> _empty = new GrammarRule[0];

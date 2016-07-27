@@ -13,7 +13,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Collections.Generic;
+using EarleCode.Runtime.Values;
 
 namespace EarleCode.Runtime
 {
@@ -35,6 +37,12 @@ namespace EarleCode.Runtime
         /// <exception cref="T:System.ArgumentNullException"><paramref name="collection" /> is null.</exception>
         public EarleFunctionCollection(IEnumerable<EarleFunction> collection) : base(collection)
         {
+        }
+
+        public void Invoke(EarleCompletionHandler completionHandler, EarleValue target, params EarleValue[] args)
+        {
+            // TODO: Invoke method with the nearest args match
+            throw new NotImplementedException();
         }
     }
 }

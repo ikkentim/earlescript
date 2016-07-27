@@ -6,8 +6,7 @@ using EarleCode.Compiler.Lexing;
 
 namespace EarleCode.Compiler.Grammar
 {
-
-    public class GrammarRuleElementLiteral : IGrammarRuleElement
+    internal class GrammarRuleElementLiteral : IGrammarRuleElement
     {
         public GrammarRuleElementLiteral(TokenType[] tokenTypes, string tokenValue)
         {
@@ -26,7 +25,7 @@ namespace EarleCode.Compiler.Grammar
             {
                 if(TokenValue == null ? lexer.Current.Is(tokenType) : lexer.Current.Is(tokenType, TokenValue))
                 {
-                    var newLexer = lexer.Clone();
+                    var newLexer = (ILexer)lexer.Clone();
                     newLexer.MoveNext();
                     yield return newLexer;
                 }

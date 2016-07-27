@@ -5,8 +5,7 @@ using EarleCode.Compiler.Lexing;
 
 namespace EarleCode.Compiler.Grammar
 {
-
-    public class GrammarRuleElementOptional : IGrammarRuleElement
+    internal class GrammarRuleElementOptional : IGrammarRuleElement
     {
         public GrammarRuleElementOptional(IGrammarRuleElement element)
         {

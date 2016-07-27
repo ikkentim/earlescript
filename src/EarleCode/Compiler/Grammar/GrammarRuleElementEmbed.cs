@@ -4,8 +4,7 @@ using EarleCode.Compiler.Lexing;
 
 namespace EarleCode.Compiler.Grammar
 {
-
-    public class GrammarRuleElementEmbed : IGrammarRuleElement
+    internal class GrammarRuleElementEmbed : IGrammarRuleElement
     {
         public GrammarRuleElementEmbed(string ruleName) 
         {

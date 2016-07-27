@@ -98,7 +98,7 @@ namespace EarleCode.Runtime.Instructions
         ///     Pop a scope off the scopes stack.
         /// </summary>
         [OpCode("POPS", typeof (PopScopeInstruction))] PopScope,
-        // Binary invert
+
         /// <summary>
         ///     Replace the value on top of the stack with its logical NOT value.
         /// </summary>
@@ -135,6 +135,7 @@ namespace EarleCode.Runtime.Instructions
         ///     Dereference the specified argument from the structure on the top of the stack.
         /// </summary>
         [OpCode("DEREF_F $string", typeof (DereferenceFieldInstruction))] DereferenceField,
+
         /// <summary>
         ///     Dereference the specified argument from the structure on the top of the stack.
         /// </summary>

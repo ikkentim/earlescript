@@ -34,7 +34,7 @@ namespace EarleCode.Runtime.Values
 
         public EarleValue GetField(string name)
         {
-            return name == "length" ? _values.Count.ToEarleValue() : EarleValue.Undefined;
+            return name == "length" ? _values.Count : EarleValue.Undefined;
         }
 
         public void SetField(string name, EarleValue value)

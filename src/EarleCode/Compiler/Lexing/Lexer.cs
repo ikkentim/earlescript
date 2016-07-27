@@ -70,8 +70,10 @@ namespace EarleCode.Compiler.Lexing
             Current = token;
         }
 
+        #region Implementation of ICloneable
+
         [DebuggerHidden]
-        public ILexer Clone()
+        public object Clone()
         {
             return new Lexer(_file, _input)
             {
@@ -82,6 +84,8 @@ namespace EarleCode.Compiler.Lexing
                 Current = Current
             };
         }
+
+        #endregion
 
         #region Implementation of IDisposable
 

@@ -129,6 +129,7 @@
     <Compile Include="Runtime\Instructions\ThreadInstruction.cs" />
     <Compile Include="Runtime\Values\EarleValueTypeStore.cs" />
     <Compile Include="Runtime\EarleNativeFunctionAttribute.cs" />
+    <Compile Include="Compiler\Grammar\IGrammarProcessor.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
