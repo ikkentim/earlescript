@@ -38,28 +38,35 @@ namespace EarleCode.Runtime
 
         public List<EarleFunction> Functions { get; } = new List<EarleFunction>();
 
+        public EarleFunctionCollection this[string functionName]
+        {
+            get { return GetFunctions(functionName); }
+        }
         public static bool IsValidName(string input)
         {
-            // todo improve
+            // TODO: Improve this function
             return input.StartsWith("\\");
         }
 
         public void AddFunction(EarleFunction function)
         {
             if (function == null) throw new ArgumentNullException(nameof(function));
+
+            // TODO: Should be dictionary of collections to speed things up
+            // Dupe names can exist when multiple overloads exist
             Functions.Add(function);
         }
 
-        public EarleFunctionCollection GetFunctions(string name)
+        public EarleFunctionCollection GetFunctions(string functionName)
         {
-            var funcs = Functions.Where(f => f.Name == name).ToArray();
+            var funcs = Functions.Where(f => f.Name == functionName).ToArray();
             return funcs.Length == 0 ? null : new EarleFunctionCollection(funcs);
         }
 
-        public EarleValue? Invoke(string functionName, EarleValue target, EarleCompletionHandler completionHandler = null, params EarleValue[] arguments)
+        public EarleValue? Invoke(string functionName, EarleCompletionHandler completionHandler, EarleValue target, params EarleValue[] arguments)
         {
             var function = GetFunctions(functionName).FirstOrDefault(f => f.Parameters.Length == arguments.Length);
-            return _runtime.Invoke(function, arguments, target, completionHandler);
+            return _runtime.Invoke(function, completionHandler, target, arguments);
         }
 
         #region Overrides of Object

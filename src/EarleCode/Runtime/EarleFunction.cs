@@ -65,7 +65,7 @@ namespace EarleCode.Runtime
         /// </returns>
         public override string ToString()
         {
-            return $"{File}::{Name}";
+            return $"{File}::{Name}({string.Join(", ", Parameters)})";
         }
 
         #endregion

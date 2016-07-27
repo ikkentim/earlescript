@@ -116,7 +116,16 @@ namespace EarleCode.Runtime
         public void AddFile(EarleFile file)
         {
             if (file == null) throw new ArgumentNullException(nameof(file));
+
+            // TODO: Don't allow duplicate names
             _files[file.Name] = file;
+        }
+
+        public EarleFile GetFile(string fileName)
+        {
+            EarleFile file;
+            _files.TryGetValue(fileName, out file);
+            return file;
         }
 
         public EarleFile CompileFile(string fileName, string script)
@@ -127,18 +136,11 @@ namespace EarleCode.Runtime
             return file;
         }
 
-        public EarleFile GetFile(string fileName)
-        {
-            EarleFile file;
-            _files.TryGetValue(fileName, out file);
-            return file;
-        }
-
         #endregion
 
         #region Invoking
 
-        public EarleValue? Invoke(EarleFunction function, IEnumerable<EarleValue> arguments, EarleValue target, EarleCompletionHandler completionHandler = null)
+        public EarleValue? Invoke(EarleFunction function, EarleCompletionHandler completionHandler, EarleValue target, IEnumerable<EarleValue> arguments)
         {
             if (function == null) throw new ArgumentNullException(nameof(function));
 

@@ -102,12 +102,6 @@ namespace EarleCode.Runtime
                     ? null
                     : Instructions[instructionIdentifier];
 
-                // Debug
-//                var debug = CIP - 1;
-//                var str = ((OpCode) instructionIdentifier).GetCustomAttribute<OpCodeAttribute>().BuildString(PCode, ref debug);
-//                Console.WriteLine("RUNNING " + str);
-//                Debug.WriteLine("RUNNING " + str);
-
                 if (instruction == null)
                     throw new Exception("Unkown opcode " + (OpCode) instructionIdentifier);
 
