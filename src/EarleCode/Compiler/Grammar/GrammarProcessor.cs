@@ -32,7 +32,6 @@ namespace EarleCode.Compiler.Grammar
 
         public bool IsMatch(ILexer lexer, string ruleName)
         {
-            // TODO: Optimize any ( don't need to find all results first )
             return GetMatches(lexer, ruleName).Any();
         }
 

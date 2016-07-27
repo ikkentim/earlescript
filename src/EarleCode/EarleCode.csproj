@@ -107,7 +107,6 @@
     <Compile Include="Runtime\EarleFile.cs" />
     <Compile Include="Runtime\EarleFunction.cs" />
     <Compile Include="Runtime\EarleFunctionCollection.cs" />
-    <Compile Include="Runtime\EarleInlineNativeFunction.cs" />
     <Compile Include="Runtime\EarleNativeFunction.cs" />
     <Compile Include="Runtime\EarleOperators.cs" />
     <Compile Include="Runtime\EarleRuntime.cs" />
@@ -129,6 +128,7 @@
     <Compile Include="Runtime\Instructions\ThreadWithoutTargetInstruction.cs" />
     <Compile Include="Runtime\Instructions\ThreadInstruction.cs" />
     <Compile Include="Runtime\Values\EarleValueTypeStore.cs" />
+    <Compile Include="Runtime\EarleNativeFunctionAttribute.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

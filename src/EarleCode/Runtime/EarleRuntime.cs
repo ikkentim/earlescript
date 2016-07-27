@@ -18,6 +18,7 @@ using System.Collections.Generic;
 using System.Linq;
 using EarleCode.Compiler;
 using EarleCode.Runtime.Values;
+using System.Reflection;
 
 namespace EarleCode.Runtime
 {
@@ -50,6 +51,28 @@ namespace EarleCode.Runtime
                 _natives[native.Name] = collection = new EarleFunctionCollection();
 
             collection.Add(native);
+        }
+
+        public void RegisterNativesInType<T>()
+        {
+            RegisterNativesInType(typeof(T));
+        }
+
+        public void RegisterNativesInType(Type type)
+        {
+            if(type == null)
+                throw new ArgumentNullException(nameof(type));
+            foreach(var method in type.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static))
+            {
+                var attribute = method.GetCustomAttributes(typeof(EarleNativeFunctionAttribute), true)?.FirstOrDefault() as EarleNativeFunctionAttribute;
+
+                if(attribute == null)
+                    continue;
+
+                var name = attribute.Name?.ToLower() ?? method.Name.ToLower();
+
+                RegisterNative(EarleNativeFunction.Create(name, null, method));
+            }
         }
 
         #endregion
@@ -87,25 +110,6 @@ namespace EarleCode.Runtime
         {
             Console.WriteLine(warning);
         }
-
-        #region Value types
-
-        //public void RegisterValueType(IEarleValueType valueType)
-        //{
-        //    if (valueType == null) throw new ArgumentNullException(nameof(valueType));
-        //    _valueTypes[valueType.Type] = valueType;
-        //}
-
-        //public IEarleValueType GetValueTypeForType(Type type)
-        //{
-        //    if(type == null)
-        //        return null;
-            
-        //    IEarleValueType valueType;
-        //    return _valueTypes.TryGetValue(type, out valueType) ? valueType : null;
-        //}
-
-        #endregion
 
         #region Files
 

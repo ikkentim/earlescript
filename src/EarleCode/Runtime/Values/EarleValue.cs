@@ -23,6 +23,9 @@ namespace EarleCode.Runtime.Values
     {
         public EarleValue(object value) : this()
         {
+            if(value is bool)
+                value = (bool)value ? 1 : 0;
+            
             Value = value;
 
             if (HasValue)

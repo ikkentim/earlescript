@@ -32,13 +32,7 @@ namespace EarleCode.Localization
         public void AddToRuntime(EarleRuntime runtime)
         {
             runtime.RegisterNative(new LocalizeOperator(this));
-            runtime.RegisterNative(new EarleInlineNativeFunction("setActiveLanguage", values =>
-            {
-                var str = values.First().As<string>();
-                if (str != null)
-                    Key = str;
-                return EarleValue.Undefined;
-            }, "key"));
+            runtime.RegisterNative(EarleNativeFunction.Create("setactivelanguage", (EarleValue key) => { Key = (string)key; }));
         }
 
         public void LoadFromFile(string fileName, string fileContents, string prefix)

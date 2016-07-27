@@ -1,9 +1,13 @@
 ﻿init()
 {
+
 	test = 1;
 	print("test: " + test);
 	test -= 5;
 	print("test: " + test);
+
+	print("is test defined: " + isdefined(test));
+	print("is test2 defined: " + isdefined(test2));
 
 	print("vec " + (11,22.101,33));
 

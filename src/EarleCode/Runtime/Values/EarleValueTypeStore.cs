@@ -6,6 +6,19 @@ namespace EarleCode.Runtime.Values
 {
     internal static class EarleValueTypeStore
     {
+        private static Type[] _supportedTypes = {
+            typeof(int),
+            typeof(float),
+            typeof(string),
+            typeof(EarleVector2),
+            typeof(EarleVector3),
+            typeof(EarleFunction),
+            typeof(EarleVariableReference),
+            typeof(EarleFunctionCollection),
+            typeof(IEarleStructure),
+            typeof(EarleBoxedValueReference)
+        };
+
         private static Type[] _supportedCastTypes = {
             typeof(bool)
         };
@@ -29,8 +42,8 @@ namespace EarleCode.Runtime.Values
 
         static EarleValueTypeStore()
         {
-            foreach(var fr in SupportedTypes.Concat(_supportedCastTypes))
-                foreach(var to in SupportedTypes.Concat(_supportedCastTypes))
+            foreach(var fr in _supportedTypes.Concat(_supportedCastTypes))
+                foreach(var to in _supportedTypes.Concat(_supportedCastTypes))
                 {
                     if(_casters.ContainsKey(new Tuple<Type, Type>(fr, to)))
                         continue;
@@ -53,18 +66,6 @@ namespace EarleCode.Runtime.Values
                 }
         }
 
-        public static Type[] SupportedTypes { get; } = {            typeof(int),
-            typeof(float),
-            typeof(string),
-            typeof(EarleVector2),
-            typeof(EarleVector3),
-            typeof(EarleFunction),
-            typeof(EarleVariableReference),
-            typeof(EarleFunctionCollection),
-            typeof(IEarleStructure),
-            typeof(EarleBoxedValueReference)
-        };
-
         public static Func<object, object> GetCaster(Type from, Type to)
         {
             if(from == to)
@@ -76,6 +77,11 @@ namespace EarleCode.Runtime.Values
                 ? result
                 : null;
                 
+        }
+
+        public static bool IsSupportedType(Type type)
+        {
+            return _supportedTypes.Concat(_supportedCastTypes).Any(t => t.IsAssignableFrom(type));
         }
     }
 
