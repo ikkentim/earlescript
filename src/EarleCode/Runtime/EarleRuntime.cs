@@ -26,8 +26,7 @@ namespace EarleCode.Runtime
     {
         private readonly Dictionary<string, EarleFile> _files = new Dictionary<string, EarleFile>();
 
-        private readonly Dictionary<string, EarleFunctionCollection> _natives =
-            new Dictionary<string, EarleFunctionCollection>();
+        private readonly EarleFunctionTable _natives = new EarleFunctionTable();
 
         private readonly Queue<EarleThread> _threadPool = new Queue<EarleThread>();
 
@@ -51,11 +50,7 @@ namespace EarleCode.Runtime
         {
             if (native == null) throw new ArgumentNullException(nameof(native));
 
-            EarleFunctionCollection collection;
-            if (!_natives.TryGetValue(native.Name, out collection))
-                _natives[native.Name] = collection = new EarleFunctionCollection();
-
-            collection.Add(native);
+            _natives.Add(native);
         }
 
         public void RegisterNativesInType<T>()
@@ -122,8 +117,15 @@ namespace EarleCode.Runtime
         {
             if (file == null) throw new ArgumentNullException(nameof(file));
 
-            // TODO: Don't allow duplicate names
+            if(_files.ContainsKey(file.Name))
+                throw new ArgumentException("File name is already present");
+            
             _files[file.Name] = file;
+        }
+
+        public bool RemoveFile(string fileName)
+        {
+            return _files.Remove(fileName);
         }
 
         public EarleFile GetFile(string fileName)
@@ -145,12 +147,12 @@ namespace EarleCode.Runtime
 
         #region Invoking
 
-        public EarleValue? Invoke(EarleFunction function, EarleCompletionHandler completionHandler, EarleValue target, IEnumerable<EarleValue> arguments)
+        public EarleValue? Invoke(EarleFunction function, EarleCompletionHandler completionHandler, EarleValue target, IEnumerable<EarleValue> args)
         {
             if (function == null) throw new ArgumentNullException(nameof(function));
 
             var rootFrame = new EarleStackFrame(this, EarleValue.Undefined);
-            var frame = function.CreateFrameExecutor(rootFrame, target, arguments?.ToArray() ?? new EarleValue[0]);
+            var frame = function.CreateFrameExecutor(rootFrame, target, args?.ToArray() ?? new EarleValue[0]);
             var thread = new EarleThread(frame, completionHandler);
 
             return RunThread(thread);
@@ -170,8 +172,8 @@ namespace EarleCode.Runtime
             if (!string.IsNullOrEmpty(reference.File))
                 return GetFile(reference.File)?.GetFunctions(reference.Name)?.ToEarleValue() ?? EarleValue.Undefined;
 
-            EarleFunctionCollection natives;
-            if (_natives.TryGetValue(reference.Name, out natives))
+            var natives = _natives.Get(reference.Name);
+            if(natives != null)
                 return new EarleValue(natives);
 
             // TODO: Check global variables

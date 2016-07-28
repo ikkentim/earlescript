@@ -22,9 +22,7 @@ namespace EarleCode.Runtime
     {
         public EarleFunction(EarleFile file, string name, string[] parameters, byte[] pCode)
         {
-            ;
             if (name == null) throw new ArgumentNullException(nameof(name));
-            if (parameters == null) throw new ArgumentNullException(nameof(parameters));
 
             File = file;
             Parameters = parameters;
@@ -46,6 +44,11 @@ namespace EarleCode.Runtime
             var locals = new EarleDictionary();
 
             var index = 0;
+
+            if(Parameters == null)
+            {
+                throw new Exception("Parameters cannot be null in order for a EarleStackFrameExecutor to be created.");
+            }
             foreach (var parameter in Parameters)
             {
                 locals[parameter] = index >= arguments.Length ? EarleValue.Undefined : arguments[index];
@@ -55,24 +58,9 @@ namespace EarleCode.Runtime
             return new EarleStackFrameExecutor(new EarleStackFrame(superFrame.Runtime, target), File, PCode, locals);
         }
 
-        public void Invoke(EarleCompletionHandler completionHandler, EarleValue target, params EarleValue[] args)
+        public EarleValue? Invoke(EarleCompletionHandler completionHandler, EarleValue target, params EarleValue[] args)
         {
-            throw new NotImplementedException();
+            return File.Runtime.Invoke(this, completionHandler, target, args);
         }
-
-        #region Overrides of Object
-
-        /// <summary>
-        ///     Returns a string that represents the current object.
-        /// </summary>
-        /// <returns>
-        ///     A string that represents the current object.
-        /// </returns>
-        public override string ToString()
-        {
-            return $"{File}::{Name}({string.Join(", ", Parameters)})";
-        }
-
-        #endregion
     }
 }

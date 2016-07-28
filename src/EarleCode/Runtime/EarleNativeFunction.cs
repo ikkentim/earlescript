@@ -29,15 +29,15 @@ namespace EarleCode.Runtime
 
         #region Overrides of EarleFunction
 
-        public override EarleStackFrameExecutor CreateFrameExecutor(EarleStackFrame superFrame, EarleValue target, EarleValue[] arguments)
+        public override EarleStackFrameExecutor CreateFrameExecutor(EarleStackFrame superFrame, EarleValue target, EarleValue[] args)
         {
-            if(Parameters.Length < arguments.Length)
-                arguments =
-                    arguments.Concat(Enumerable.Repeat(EarleValue.Undefined, Parameters.Length - arguments.Length))
+            if(Parameters != null && Parameters.Length < args.Length)
+                args =
+                    args.Concat(Enumerable.Repeat(EarleValue.Undefined, Parameters.Length - args.Length))
                              .Take(Parameters.Length)
                              .ToArray();
 
-            return new NativeStackFrameExecutor(new EarleStackFrame(superFrame.Runtime, target), this, arguments);
+            return new NativeStackFrameExecutor(new EarleStackFrame(superFrame.Runtime, target), this, args);
         }
 
         #endregion
@@ -87,12 +87,22 @@ namespace EarleCode.Runtime
         {
             var parameters = methodInfo.GetParameters();
             var passStackFrame = false;
+            var varArgs = false;
 
             for(var i = 0; i < parameters.Length; i++)
             {
                 if(i == 0 && parameters[i].ParameterType == typeof(EarleStackFrame))
                 {
                     passStackFrame = true;
+                }
+                else if(parameters[i].ParameterType == typeof(EarleValue[]))
+                {
+                    if(i != parameters.Length - 1)
+                    {
+                        throw new ArgumentException("Method may only contain EarleValue[] argument as last argument.", nameof(methodInfo));
+                    }
+
+                    varArgs = true;
                 }
                 else if(parameters[i].ParameterType != typeof(EarleValue) && !EarleValueTypeStore.IsSupportedType(parameters[i].ParameterType))
                 {
@@ -105,7 +115,8 @@ namespace EarleCode.Runtime
                 throw new ArgumentException("Method may only return EarleValue or void.", nameof(methodInfo));
             }
 
-            return new LambdaFunction(name, target, methodInfo, passStackFrame);
+            var paramNames = varArgs ? null : methodInfo.GetParameters().Skip(passStackFrame ? 1 : 0).Select(p => p.Name).ToArray();
+            return new LambdaFunction(name, target, methodInfo, paramNames);
         }
 
         public static EarleNativeFunction Create(string name, Action action) => Create(name, action.Target, action.Method);
@@ -148,34 +159,53 @@ namespace EarleCode.Runtime
         {
             private readonly object _target;
             private readonly MethodInfo _methodInfo;
-            private readonly bool _passStackFrame;
 
-            public LambdaFunction(string name, object target, MethodInfo methodInfo, bool passStackFrame) : 
-            base(name, methodInfo.GetParameters().Skip(passStackFrame ? 1 : 0).Select(p => p.Name).ToArray())
+            public LambdaFunction(string name, object target, MethodInfo methodInfo, string[] paramNames) : 
+            base(name, paramNames)
             {
                 if(methodInfo == null) throw new ArgumentNullException(nameof(methodInfo));
 
                 _target = target;
                 _methodInfo = methodInfo;
-                _passStackFrame = passStackFrame;
             }
 
             protected override EarleValue Invoke(EarleStackFrame frame, EarleValue[] arguments)
             {
-                var args = new object[arguments.Length];
+                var parameters = _methodInfo.GetParameters();
+                var args = new object[parameters.Length];
 
-                for(int i = 0; i < _methodInfo.GetParameters().Length - (_passStackFrame ? 1 : 0); i++)
+                for(int i = 0, a = 0; i < args.Length; i++)
                 {
-                    var param = _methodInfo.GetParameters()[i + (_passStackFrame ? 1 : 0)];
-                    args[i] = param.ParameterType == typeof(EarleValue) ? arguments[i] : arguments[i].CastTo(param.ParameterType);
+                    var parameter = parameters[i];
+
+                    if(parameter.ParameterType == typeof(EarleValue[]))
+                    {
+                        args[i] = a >= arguments.Length ? new EarleValue[0] : arguments.Skip(a++).ToArray();
+                        break;
+                    }
+
+                    if(a >= arguments.Length)
+                    {
+                        frame.Runtime.HandleWarning($"Out of arguments while invoking native '{Name}'");
+                        continue;
+                    }
+
+                    if(i == 0 && parameter.ParameterType == typeof(EarleStackFrame))
+                    {
+                        args[i] = frame;
+                    }
+                    else if(parameter.ParameterType == typeof(EarleValue))
+                    {
+                        args[i] = arguments[a++];
+                    }
+                    else
+                    {
+                        args[i] = arguments[a++].CastTo(parameter.ParameterType);
+                    }
                 }
 
-                var result = _passStackFrame
-                    ? _methodInfo.Invoke(_target, new object[] { frame }.Concat(args).ToArray())
-                    : _methodInfo.Invoke(_target, args);
+                var result = _methodInfo.Invoke(_target, args);
 
-                if(result == null)
-                    return EarleValue.Undefined;
                 if(result is EarleValue)
                     return (EarleValue)result;
                 return new EarleValue(result);

@@ -40,6 +40,7 @@ namespace EarleCode.Runtime.Instructions
             var hasOverloads = false;
             EarleFunction function;
 
+            // Unbox down to a function or function collection
             while(value is EarleVariableReference || value is EarleBoxedValueReference)
             {
                 if(value is EarleVariableReference)
@@ -52,7 +53,7 @@ namespace EarleCode.Runtime.Instructions
             {
                 var functions = (EarleFunctionCollection)value;
                 hasOverloads = functions.Count > 0;
-                function = functions.FirstOrDefault(f => f.Parameters.Length == argumentCount);
+                function = functions.GetBestOverload(argumentCount);
             }
             else
             {

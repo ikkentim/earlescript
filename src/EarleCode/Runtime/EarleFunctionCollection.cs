@@ -15,6 +15,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using EarleCode.Runtime.Values;
 
 namespace EarleCode.Runtime
@@ -39,10 +40,15 @@ namespace EarleCode.Runtime
         {
         }
 
-        public void Invoke(EarleCompletionHandler completionHandler, EarleValue target, params EarleValue[] args)
+        public EarleFunction GetBestOverload(int argumentCount)
         {
-            // TODO: Invoke method with the nearest args match
-            throw new NotImplementedException();
+            return this.FirstOrDefault(f => f.Parameters != null && f.Parameters.Length == argumentCount) 
+                       ?? this.FirstOrDefault(f => f.Parameters == null);
+        }
+
+        public EarleValue? Invoke(EarleCompletionHandler completionHandler, EarleValue target, params EarleValue[] args)
+        {
+            return GetBestOverload(args.Length).Invoke(completionHandler, target, args);
         }
     }
 }

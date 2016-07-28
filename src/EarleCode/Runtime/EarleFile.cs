@@ -22,7 +22,7 @@ namespace EarleCode.Runtime
 {
     public class EarleFile : EarleRuntimeScope
     {
-        private readonly EarleRuntime _runtime;
+        private EarleFunctionTable _functions = new EarleFunctionTable();
 
         public EarleFile(EarleRuntime runtime, string name) : base(runtime)
         {
@@ -30,18 +30,19 @@ namespace EarleCode.Runtime
             if (name == null) throw new ArgumentNullException(nameof(name));
             if (!IsValidName(name)) throw new ArgumentException("invalid name", nameof(name));
 
-            _runtime = runtime;
+            Runtime = runtime;
             Name = name;
         }
 
         public string Name { get; }
 
-        public List<EarleFunction> Functions { get; } = new List<EarleFunction>();
+        public EarleRuntime Runtime { get; }
 
         public EarleFunctionCollection this[string functionName]
         {
             get { return GetFunctions(functionName); }
         }
+
         public static bool IsValidName(string input)
         {
             // TODO: Improve this function
@@ -52,37 +53,18 @@ namespace EarleCode.Runtime
         {
             if (function == null) throw new ArgumentNullException(nameof(function));
 
-            // TODO: Should be dictionary of collections to speed things up
-            // Dupe names can exist when multiple overloads exist
-            Functions.Add(function);
+            _functions.Add(function);
         }
 
         public EarleFunctionCollection GetFunctions(string functionName)
         {
-            var funcs = Functions.Where(f => f.Name == functionName).ToArray();
-            return funcs.Length == 0 ? null : new EarleFunctionCollection(funcs);
+            return _functions.Get(functionName);
         }
 
         public EarleValue? Invoke(string functionName, EarleCompletionHandler completionHandler, EarleValue target, params EarleValue[] arguments)
         {
-            var function = GetFunctions(functionName).FirstOrDefault(f => f.Parameters.Length == arguments.Length);
-            return _runtime.Invoke(function, completionHandler, target, arguments);
+            return GetFunctions(functionName).Invoke(completionHandler, target, arguments);
         }
-
-        #region Overrides of Object
-
-        /// <summary>
-        ///     Returns a string that represents the current object.
-        /// </summary>
-        /// <returns>
-        ///     A string that represents the current object.
-        /// </returns>
-        public override string ToString()
-        {
-            return Name;
-        }
-
-        #endregion
 
         #region Overrides of RuntimeScope
 

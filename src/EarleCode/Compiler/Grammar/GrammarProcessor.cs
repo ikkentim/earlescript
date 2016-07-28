@@ -5,7 +5,7 @@ using EarleCode.Compiler.Lexing;
 
 namespace EarleCode.Compiler.Grammar
 {
-    public class GrammarProcessor : IGrammarProcessor
+    public class GrammarProcessor
     {
         private readonly GrammarRuleTable _table = new GrammarRuleTable();
 
