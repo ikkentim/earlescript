@@ -16,49 +16,22 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace EarleCode.Runtime.Values
 {
-    public class EarleStructure : IEarleStructure, IEnumerable<KeyValuePair<string, EarleValue>>
+    public class EarleStructure : EarleDictionary, IEarleStructure
     {
-        private readonly EarleDictionary _values = new EarleDictionary();
-
         #region Implementation of IEarleStructure
 
         public virtual EarleValue GetField(string name)
         {
-            return _values[name];
+            return this[name];
         }
 
         public virtual void SetField(string name, EarleValue value)
         {
-            _values[name] = value;
-        }
-
-        #endregion
-
-        #region Implementation of IEnumerable
-
-        /// <summary>
-        ///     Returns an enumerator that iterates through the collection.
-        /// </summary>
-        /// <returns>
-        ///     A <see cref="T:System.Collections.Generic.IEnumerator`1" /> that can be used to iterate through the collection.
-        /// </returns>
-        public IEnumerator<KeyValuePair<string, EarleValue>> GetEnumerator()
-        {
-            return _values.GetEnumerator();
-        }
-
-        /// <summary>
-        ///     Returns an enumerator that iterates through a collection.
-        /// </summary>
-        /// <returns>
-        ///     An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.
-        /// </returns>
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
+            this[name] = value;
         }
 
         #endregion

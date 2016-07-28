@@ -73,13 +73,12 @@ namespace EarleCode.Compiler.Parsers
         /// </returns>
         public override string ToString()
         {
-            return $@"{GetType().Name} {{Lexer = ""{Lexer}""}}";
+            return $"{GetType().Name} {{Lexer = \"{Lexer}\"}}";
         }
 
         #endregion
 
         #region Yield
-
         public void Yield(byte value)
         {
             _result.Add(value);
@@ -281,6 +280,12 @@ namespace EarleCode.Compiler.Parsers
         public bool SyntaxMatches(string rule)
         {
             return Runtime.Compiler.SyntaxGrammarProcessor.IsMatch(Lexer, rule);
+        }
+
+        public void AssertSyntaxMatches(string rule)
+        {
+            if(!SyntaxMatches(rule))
+                ThrowUnexpectedTokenWithExpected(rule.ToLower());
         }
 
         public CompiledBlock CompileBlock(bool canBreak = false, bool canContinue = false)

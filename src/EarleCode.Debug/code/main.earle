@@ -1,6 +1,6 @@
 ﻿init()
 {
-
+	// Some function tests
 	test = 1;
 	print("test: " + test);
 	test -= 5;
@@ -9,24 +9,24 @@
 	print("is test defined: " + isdefined(test));
 	print("is test2 defined: " + isdefined(test2));
 
+	// Vector3 to string test
 	print("vec " + (11,22.101,33));
 
-	thing = bleep;
-
+	// Threading test
 	what = "bleep!";
+	thing = bleep;
+	what thread thing();
 
-	//what thing();
-
-	thread what thing();
-
+	// Sync
 	for(i=0;i<10;i++)
 	{
 		print("wait..." + (1 + i));
 		wait 1;
 	}
-	res = "this is the result";
 
-	return res;
+	// Return variable resolving test
+	result = "this is the result";
+	return result;
 }
 
 bleep()

@@ -23,6 +23,10 @@ namespace EarleCode.Runtime.Values
     {
         private readonly Dictionary<string, EarleValue> _values = new Dictionary<string, EarleValue>();
 
+        public IEnumerable<string> Keys => _values.Keys;
+
+        public IEnumerable<EarleValue> Values => _values.Values;
+
         public EarleValue this[string key]
         {
             get
@@ -40,6 +44,10 @@ namespace EarleCode.Runtime.Values
                     _values[key] = value;
             }
         }
+
+        public bool ContainsKey(string key) => _values.ContainsKey(key);
+
+        public bool ContainsValue(EarleValue value) => _values.ContainsValue(value);
 
         #region Implementation of IEnumerable
 

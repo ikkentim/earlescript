@@ -7,7 +7,9 @@ namespace EarleCode.Runtime.Values
     public class EarleArray : IEarleStructure, IEnumerable<KeyValuePair<EarleValue, EarleValue>>
     {
         private readonly IDictionary<object,EarleValue> _values = new Dictionary<object, EarleValue>();
-        
+
+        public virtual int Length => _values.Count;
+
         public virtual EarleValue GetValue(EarleValue index)
         {
             if(!index.HasValue)
@@ -34,12 +36,12 @@ namespace EarleCode.Runtime.Values
 
         public EarleValue GetField(string name)
         {
-            return name == "length" ? _values.Count : EarleValue.Undefined;
+            return name == "length" ? Length : EarleValue.Undefined;
         }
 
         public void SetField(string name, EarleValue value)
         {
-
+            // Fields of arrays can't be set.
         }
 
         #endregion

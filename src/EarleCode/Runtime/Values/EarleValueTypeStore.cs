@@ -81,7 +81,8 @@ namespace EarleCode.Runtime.Values
 
         public static bool IsSupportedType(Type type)
         {
-            return _supportedTypes.Concat(_supportedCastTypes).Any(t => t.IsAssignableFrom(type));
+            return _supportedTypes.Any(t => t.IsAssignableFrom(type)) || 
+                                  _supportedCastTypes.Any(t => t.IsAssignableFrom(type));
         }
     }
 

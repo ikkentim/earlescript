@@ -29,11 +29,9 @@ namespace EarleCode.Compiler.Parsers
             // CALL         (?)
             // POP          (1)
 
-            var isThreaded = Lexer.Current.Is(TokenType.Identifier, "thread");
-
             base.Parse();
 
-            if(!isThreaded)
+            if(!LastCallWasThreaded)
                 Yield(OpCode.Pop);
         }
 

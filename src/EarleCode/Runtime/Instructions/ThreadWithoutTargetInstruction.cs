@@ -20,7 +20,9 @@ namespace EarleCode.Runtime.Instructions
     {
         protected override void Handle()
         {
-            Frame.Frame.Runtime.StartThread(new EarleThread(CreateFrameExecutor(), null));
+            var frame = CreateFrameExecutor();
+            if(frame != null)
+                Frame.Frame.Runtime.StartThread(new EarleThread(frame, null));
         }
     }
     

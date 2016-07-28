@@ -13,9 +13,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
+
 namespace EarleCode.Runtime.Values
 {
-    public class EarleVector2
+    public class EarleVector2 : IEarleStructure
     {
         public EarleVector2(float x, float y)
         {
@@ -26,6 +28,28 @@ namespace EarleCode.Runtime.Values
         public float X { get; }
 
         public float Y { get; }
+
+        #region Implementation of IEarleStructure
+
+        public EarleValue GetField(string name)
+        {
+            switch(name)
+            {
+                case "x":
+                    return X;
+                case "y":
+                    return Y;
+                default:
+                    return EarleValue.Undefined;
+            }
+        }
+
+        public void SetField(string name, EarleValue value)
+        {
+            // Values cannot be set.
+        }
+
+        #endregion
 
         #region Overrides of Object
 
