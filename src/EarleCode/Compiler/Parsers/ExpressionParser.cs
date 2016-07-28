@@ -125,12 +125,6 @@ namespace EarleCode.Compiler.Parsers
                 return;
             }
 
-            if (SyntaxMatches("EXPLICIT_FUNCTION_IDENTIFIER"))
-            {
-                Parse<FunctionReferenceExpressionParser>();
-                return;
-            }
-
 
             // Unary operator parsing
             if (SyntaxMatches("OPERATOR_UNARY"))
@@ -146,6 +140,11 @@ namespace EarleCode.Compiler.Parsers
             if (SyntaxMatches("FUNCTION_CALL") && ParseFunctionCall())
             {
                 // If parse is not allowed, move on to next else-if case
+            }
+            else if(SyntaxMatches("EXPLICIT_FUNCTION_IDENTIFIER"))
+            {
+                Parse<FunctionReferenceExpressionParser>();
+                return;
             }
             else if (SyntaxMatches("KEYWORD"))
                 ParseKeyword();

@@ -26,7 +26,7 @@ namespace EarleCode.Compiler
         /// <summary>
         ///     Gets the grammar associated with this compiler.
         /// </summary>
-        public Grammar.GrammarProcessor SyntaxGrammarProcessor { get; private set; }
+        public GrammarProcessor SyntaxGrammarProcessor { get; private set; }
 
         private void InitializeGrammarProcessor()
         {
@@ -71,8 +71,8 @@ namespace EarleCode.Compiler
             SyntaxGrammarProcessor.AddRule("OPERATOR_OR", false, "||");
 
             // Value types
-            SyntaxGrammarProcessor.AddRule("PATH", false, "\\IDENTIFIER");
-            SyntaxGrammarProcessor.AddRule("PATH", false, "PATH\\IDENTIFIER");
+            SyntaxGrammarProcessor.AddRule("PATH", false, "OPTIONAL \\ IDENTIFIER");
+            SyntaxGrammarProcessor.AddRule("PATH", false, "PATH \\ IDENTIFIER");
             SyntaxGrammarProcessor.AddRule("PATH_PREFIX", false, "OPTIONAL PATH ::");
             SyntaxGrammarProcessor.AddRule("FUNCTION_IDENTIFIER", false, "OPTIONAL PATH_PREFIX IDENTIFIER");
             SyntaxGrammarProcessor.AddRule("EXPLICIT_FUNCTION_IDENTIFIER", false, "PATH_PREFIX IDENTIFIER");

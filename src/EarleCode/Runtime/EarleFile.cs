@@ -46,7 +46,7 @@ namespace EarleCode.Runtime
         public static bool IsValidName(string input)
         {
             // TODO: Improve this function
-            return input.StartsWith("\\");
+            return true;
         }
 
         public void AddFunction(EarleFunction function)

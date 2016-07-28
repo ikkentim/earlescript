@@ -198,7 +198,7 @@ namespace EarleCode.Compiler
         {
             if (function == null) throw new ArgumentNullException(nameof(function));
 
-            Console.WriteLine($"Function {function} compiled to:");
+            Console.WriteLine($"Function {function.File.Name}::{function.Name} compiled to:");
             PrintCompiledPCode(function.PCode);
             Console.WriteLine();
         }

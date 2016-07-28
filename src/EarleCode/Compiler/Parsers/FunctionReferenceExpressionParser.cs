@@ -36,11 +36,11 @@ namespace EarleCode.Compiler.Parsers
                 Lexer.SkipToken(TokenType.Token, ":");
             }
             // a specific path is supplied
-            else if (Lexer.Current.Is(TokenType.Token, "\\"))
+            else if (SyntaxMatches("PATH_PREFIX"))
             {
                 // Construct path to the function
-                var identifier = false;
-                path = "";
+                var identifier = !Lexer.Current.Is(TokenType.Token, "\\");
+                path = identifier ? "\\" : string.Empty;
                 do
                 {
                     // check syntax

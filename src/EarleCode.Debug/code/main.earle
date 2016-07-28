@@ -12,6 +12,9 @@
 	// Vector3 to string test
 	print("vec " + (11,22.101,33));
 
+	print("util works: " + _utils::giveTrue());
+	print("util works: " + \_utils::giveTrue());
+
 	// Threading test
 	what = "Elmo";
 	thing = bleep;

@@ -53,6 +53,9 @@
     <None Include="code\test.estr">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="code\_utils.earle">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\EarleCode.Localization\EarleCode.Localization.csproj">
