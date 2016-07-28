@@ -19,7 +19,7 @@ using EarleCode.Runtime;
 
 namespace EarleCode.Compiler
 {
-    public partial class EarleCompiler
+    internal partial class EarleCompiler
     {
         private GrammarProcessor _fileGrammarProcessor;
 

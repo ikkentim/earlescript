@@ -49,7 +49,6 @@
     <Compile Include="Compiler\Parsers\FunctionReferenceExpressionParser.cs" />
     <Compile Include="Compiler\Parsers\FunctionTargetExpressionParser.cs" />
     <Compile Include="Compiler\Parsers\IParser.cs" />
-    <Compile Include="Compiler\Parsers\ISimpleStatement.cs" />
     <Compile Include="Compiler\Parsers\ParseException.cs" />
     <Compile Include="Compiler\Parsers\Parser.cs" />
     <Compile Include="Compiler\Parsers\StatementAssignmentParser.cs" />
@@ -112,7 +111,7 @@
     <Compile Include="Runtime\EarleRuntime.cs" />
     <Compile Include="Runtime\EarleRuntime.natives.cs" />
     <Compile Include="Runtime\EarleRuntimeScope.cs" />
-    <Compile Include="Runtime\IRuntimeScope.cs" />
+    <Compile Include="Runtime\IEarleRuntimeScope.cs" />
     <Compile Include="Compiler\Grammar\GrammarProcessor.cs" />
     <Compile Include="Compiler\Grammar\GrammarRule.cs" />
     <Compile Include="Compiler\Grammar\GrammarRuleElementEmbed.cs" />
@@ -120,7 +119,6 @@
     <Compile Include="Compiler\Grammar\GrammarRuleElementOptional.cs" />
     <Compile Include="Compiler\Grammar\GrammarRuleTable.cs" />
     <Compile Include="Compiler\Grammar\IGrammarRuleElement.cs" />
-    <Compile Include="Compiler\Parsers\ICompoundStatement.cs" />
     <Compile Include="Runtime\EarleStackFrame.cs" />
     <Compile Include="Runtime\EarleStackFrameExecutor.cs" />
     <Compile Include="Runtime\EarleCompletionHandler.cs" />
@@ -130,6 +128,7 @@
     <Compile Include="Runtime\Values\EarleValueTypeStore.cs" />
     <Compile Include="Runtime\EarleNativeFunctionAttribute.cs" />
     <Compile Include="Runtime\EarleFunctionTable.cs" />
+    <Compile Include="Compiler\Parsers\ISimpleStatement.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

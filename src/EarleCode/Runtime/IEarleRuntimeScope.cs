@@ -13,12 +13,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 using EarleCode.Runtime.Values;
 
 namespace EarleCode.Runtime
 {
-    public interface IRuntimeScope
+    public interface IEarleRuntimeScope
     {
         EarleValue GetValue(EarleVariableReference field);
         bool SetValue(EarleVariableReference field, EarleValue value);

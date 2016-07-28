@@ -24,7 +24,7 @@ using EarleCode.Utilities;
 
 namespace EarleCode.Compiler
 {
-    public partial class EarleCompiler
+    internal partial class EarleCompiler
     {
         private readonly Dictionary<string, IParser> _parsers = new Dictionary<string, IParser>
         {

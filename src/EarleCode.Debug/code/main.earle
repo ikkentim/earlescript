@@ -13,7 +13,7 @@
 	print("vec " + (11,22.101,33));
 
 	// Threading test
-	what = "bleep!";
+	what = "Elmo";
 	thing = bleep;
 	what thread thing();
 
@@ -31,9 +31,10 @@
 
 bleep()
 {
+	// Print the string representation of the target every 100ms
 	for(i=0;i<100;i++)
 	{
-		print(self);
+		print(self + " says bleep!");
 		wait .1;
 	}
 }

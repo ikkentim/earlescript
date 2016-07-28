@@ -16,7 +16,7 @@
 
 namespace EarleCode.Compiler.Parsers
 {
-    public class FunctionTargetExpressionParser : ExpressionParser
+    internal class FunctionTargetExpressionParser : ExpressionParser
     {
         protected override bool ParseFunctionCall()
         {

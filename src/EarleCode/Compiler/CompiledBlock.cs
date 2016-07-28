@@ -17,7 +17,7 @@ using System;
 
 namespace EarleCode.Compiler
 {
-    public class CompiledBlock
+    internal class CompiledBlock
     {
         public CompiledBlock(byte[] pCode, int[] breaks, int[] continues)
         {

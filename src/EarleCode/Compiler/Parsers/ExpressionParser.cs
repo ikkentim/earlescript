@@ -22,7 +22,7 @@ using EarleCode.Runtime.Instructions;
 
 namespace EarleCode.Compiler.Parsers
 {
-    public class ExpressionParser : Parser
+    internal class ExpressionParser : Parser
     {
         private string GetOperator(string[] opList)
         {

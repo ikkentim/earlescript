@@ -24,20 +24,20 @@ namespace EarleCode.Runtime
 {
     public partial class EarleRuntime : EarleRuntimeScope
     {
+        private EarleStackFrame _rootFrame;
         private readonly Dictionary<string, EarleFile> _files = new Dictionary<string, EarleFile>();
-
         private readonly EarleFunctionTable _natives = new EarleFunctionTable();
-
         private readonly Queue<EarleThread> _threadPool = new Queue<EarleThread>();
 
         public EarleRuntime() : base(null)
         {
+            _rootFrame = new EarleStackFrame(this, EarleValue.Undefined);
             Compiler = new EarleCompiler(this);
 
             RegisterDefaultNatives();
         }
 
-        public EarleCompiler Compiler { get; }
+        internal EarleCompiler Compiler { get; }
 
         public EarleFile this[string fileName]
         {
@@ -151,8 +151,7 @@ namespace EarleCode.Runtime
         {
             if (function == null) throw new ArgumentNullException(nameof(function));
 
-            var rootFrame = new EarleStackFrame(this, EarleValue.Undefined);
-            var frame = function.CreateFrameExecutor(rootFrame, target, args?.ToArray() ?? new EarleValue[0]);
+            var frame = function.CreateFrameExecutor(_rootFrame, target, args?.ToArray() ?? new EarleValue[0]);
             var thread = new EarleThread(frame, completionHandler);
 
             return RunThread(thread);
@@ -181,7 +180,7 @@ namespace EarleCode.Runtime
             return EarleValue.Undefined;
         }
 
-        protected override bool CanAssignReferenceAsLocal(EarleVariableReference reference)
+        protected override bool CanAssignReferenceInScope(EarleVariableReference reference)
         {
             return false;
         }

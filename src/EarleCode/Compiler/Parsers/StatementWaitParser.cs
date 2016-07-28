@@ -18,7 +18,7 @@ using EarleCode.Compiler.Lexing;
 
 namespace EarleCode.Compiler.Parsers
 {
-    public class StatementWaitParser : Parser, ISimpleStatement
+    internal class StatementWaitParser : Parser, ISimpleStatement
     {
         #region Overrides of Parser
 

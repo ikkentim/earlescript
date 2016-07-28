@@ -23,21 +23,6 @@ using EarleCode.Runtime.Values;
 
 namespace EarleCode.Debug
 {
-    public class Measure : IDisposable
-    {
-        private readonly Stopwatch sw;
-        public Measure()
-        {
-            sw = new Stopwatch();
-            sw.Start();
-        }
-        public void Dispose()
-        {
-            sw.Stop();
-            Console.WriteLine($"Took: {sw.Elapsed}");
-        }
-    }
-
     public class Program
     {
         private static string GetRelativePath(string filespec, string folder)
@@ -76,7 +61,7 @@ namespace EarleCode.Debug
             loc.Key = "LANG_ENGLISH";
 
             // Invoke main::init
-            runtime.GetFile("\\main").Invoke("init", (result) => {
+            runtime["\\main"]["init"].Invoke((result) => {
                 Console.WriteLine();
                 Console.WriteLine("Code execution completed!");
                 Console.WriteLine("Result: " + result);
@@ -98,7 +83,6 @@ namespace EarleCode.Debug
             do
             {
                 Thread.Sleep(1000 / 30);
-
             } while(!runtime.Tick());
 
             Console.WriteLine("Done!");

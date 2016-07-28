@@ -19,7 +19,7 @@ using EarleCode.Runtime.Instructions;
 
 namespace EarleCode.Compiler.Parsers
 {
-    public class DereferenceParser : Parser
+    internal class DereferenceParser : Parser
     {
         #region Overrides of Parser
 

@@ -21,7 +21,7 @@ using EarleCode.Runtime.Instructions;
 
 namespace EarleCode.Compiler.Parsers
 {
-    public class AssignmentExpressionParser : Parser
+    internal class AssignmentExpressionParser : Parser
     {
         private string GetOperator(string[] opList)
         {

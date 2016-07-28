@@ -18,16 +18,16 @@ using EarleCode.Runtime.Values;
 
 namespace EarleCode.Runtime
 {
-    public class EarleRuntimeScope : IRuntimeScope
+    public class EarleRuntimeScope : IEarleRuntimeScope
     {
         private readonly EarleDictionary _locals = new EarleDictionary();
-        private readonly EarleRuntimeScope _superScope;
+        private readonly IEarleRuntimeScope _superScope;
 
-        public EarleRuntimeScope(EarleRuntimeScope superScope) : this(superScope, null)
+        public  EarleRuntimeScope(IEarleRuntimeScope superScope) : this(superScope, null)
         {
         }
 
-        public EarleRuntimeScope(EarleRuntimeScope superScope, EarleDictionary initialLocals)
+        public EarleRuntimeScope(IEarleRuntimeScope superScope, EarleDictionary initialLocals)
         {
             _superScope = superScope;
 
@@ -55,7 +55,7 @@ namespace EarleCode.Runtime
                 return _superScope.SetValue(reference, value);
             }
 
-            if (CanAssignReferenceAsLocal(reference))
+            if (CanAssignReferenceInScope(reference))
             {
                 _locals[reference.Name] = value;
                 return true;
@@ -64,7 +64,7 @@ namespace EarleCode.Runtime
             return false;
         }
 
-        protected virtual bool CanAssignReferenceAsLocal(EarleVariableReference reference)
+        protected virtual bool CanAssignReferenceInScope(EarleVariableReference reference)
         {
             return reference.File == null;
         }

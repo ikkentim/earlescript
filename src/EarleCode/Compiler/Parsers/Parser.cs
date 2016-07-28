@@ -24,7 +24,7 @@ using EarleCode.Utilities;
 
 namespace EarleCode.Compiler.Parsers
 {
-    public abstract class Parser : IParser
+    internal abstract class Parser : IParser
     {
         private readonly List<byte> _result = new List<byte>();
         private readonly List<int> _breaks = new List<int>();
@@ -292,6 +292,7 @@ namespace EarleCode.Compiler.Parsers
         {
             return Runtime.Compiler.Compile(Lexer, File, false, canBreak || _canBreak, canContinue || _canContinue);
         }
+
         #endregion
     }
 }

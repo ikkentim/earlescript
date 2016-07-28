@@ -16,7 +16,7 @@
 
 namespace EarleCode.Compiler.Parsers
 {
-    public class StatementAssignmentParser : AssignmentExpressionParser, ISimpleStatement
+    internal class StatementAssignmentParser : AssignmentExpressionParser, ISimpleStatement
     {
         #region Overrides of AssignmentExpressionParser
 

@@ -89,7 +89,7 @@ namespace EarleCode.Runtime
             return baseResult;
         }
 
-        protected override bool CanAssignReferenceAsLocal(EarleVariableReference reference)
+        protected override bool CanAssignReferenceInScope(EarleVariableReference reference)
         {
             return false;
         }

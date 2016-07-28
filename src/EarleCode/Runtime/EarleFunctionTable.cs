@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace EarleCode.Runtime
 {
-    public class EarleFunctionTable
+    internal class EarleFunctionTable
     {
         private Dictionary<string, EarleFunctionCollection> _values = new Dictionary<string, EarleFunctionCollection>();
 

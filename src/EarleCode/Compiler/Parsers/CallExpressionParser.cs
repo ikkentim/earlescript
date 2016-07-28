@@ -18,7 +18,7 @@ using EarleCode.Compiler.Lexing;
 
 namespace EarleCode.Compiler.Parsers
 {
-    public class CallExpressionParser : Parser
+    internal class CallExpressionParser : Parser
     {
         protected bool LastCallWasThreaded { get; private set; }
 

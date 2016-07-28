@@ -19,7 +19,7 @@ using EarleCode.Runtime.Instructions;
 
 namespace EarleCode.Compiler.Parsers
 {
-    public class StatementReturnParser : Parser, ISimpleStatement
+    internal class StatementReturnParser : Parser, ISimpleStatement
     {
         #region Overrides of Parser
 

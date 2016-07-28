@@ -13,13 +13,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 using EarleCode.Compiler.Lexing;
 using EarleCode.Runtime;
 
 namespace EarleCode.Compiler.Parsers
 {
-    public interface IParser
+    internal interface IParser
     {
         CompiledBlock Parse(EarleRuntime runtime, EarleFile file, ILexer lexer, bool canBreak, bool canContinue);
     }

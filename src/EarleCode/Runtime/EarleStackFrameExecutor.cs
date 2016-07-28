@@ -22,38 +22,39 @@ using EarleCode.Utilities;
 
 namespace EarleCode.Runtime
 {
-    public class EarleStackFrameExecutor : IRuntimeScope
+    public class EarleStackFrameExecutor : IEarleRuntimeScope
     {
         private static readonly IInstruction[] Instructions;
 
         static EarleStackFrameExecutor()
         {
-            var values = typeof(OpCode).GetEnumValues().OfType<OpCode>().ToArray();
-            var count = values.Max(v => (byte)v) + 1;
+            // Build up array of instructions
+            var ops = typeof(OpCode).GetEnumValues().OfType<OpCode>().ToArray();
+            var count = ops.Max(v => (byte)v) + 1;
             Instructions = new IInstruction[count];
 
-            foreach(var value in values)
+            foreach(var op in ops)
             {
-                var attribute = value.GetCustomAttribute<OpCodeAttribute>();
+                var attribute = op.GetCustomAttribute<OpCodeAttribute>();
 
                 if(attribute?.InstructionType == null)
                     continue;
 
-                Instructions[(byte)value] = Activator.CreateInstance(attribute.InstructionType) as IInstruction;
+                Instructions[(byte)op] = Activator.CreateInstance(attribute.InstructionType) as IInstruction;
             }
         }
 
-        public EarleStackFrameExecutor(EarleStackFrame frame, EarleRuntimeScope superScope, byte[] instructions)
-            : this(frame, superScope, instructions, null)
+        public EarleStackFrameExecutor(EarleStackFrame frame, IEarleRuntimeScope superScope, byte[] pCode)
+            : this(frame, superScope, pCode, null)
         {
         }
 
-        public EarleStackFrameExecutor(EarleStackFrame frame, EarleRuntimeScope superScope, byte[] instructions,
+        public EarleStackFrameExecutor(EarleStackFrame frame, IEarleRuntimeScope superScope, byte[] pCode,
             EarleDictionary initialLocals)
         {
             if(frame == null) throw new ArgumentNullException(nameof(frame));
             Frame = frame;
-            PCode = instructions;
+            PCode = pCode;
             Stack = new Stack<EarleValue>();
 
             Scopes.Push(new EarleRuntimeScope(superScope, initialLocals));
@@ -92,7 +93,7 @@ namespace EarleCode.Runtime
         {
             // If a value is returned, loop is complete, if null is returned, the loop has not yet been completed.
 
-            if (!RunSubLoop())
+            if (!RunSubFrame())
                 return null;
 
             while (CIP < PCode.Length)
@@ -107,14 +108,14 @@ namespace EarleCode.Runtime
 
                 instruction.Handle(this);
 
-                if (!RunSubLoop())
+                if (!RunSubFrame())
                     return null;
             }
 
             return Stack.Pop();
         }
 
-        private bool RunSubLoop()
+        private bool RunSubFrame()
         {
             if (Frame.SubFrame != null)
             {

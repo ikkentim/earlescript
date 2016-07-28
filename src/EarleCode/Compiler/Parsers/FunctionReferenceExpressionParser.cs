@@ -18,7 +18,7 @@ using EarleCode.Compiler.Lexing;
 
 namespace EarleCode.Compiler.Parsers
 {
-    public class FunctionReferenceExpressionParser : Parser
+    internal class FunctionReferenceExpressionParser : Parser
     {
         #region Overrides of Parser
 
