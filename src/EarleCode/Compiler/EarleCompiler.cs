@@ -55,21 +55,50 @@ namespace EarleCode.Compiler
             if (script == null) throw new ArgumentNullException(nameof(script));
 
             fileName = fileName.ToLower();
-            var tokenizer = new Lexer(fileName, script);
+            var lexer = new Lexer(fileName, script);
             var file = new EarleFile(_runtime, fileName);
 
-            tokenizer.MoveNext();
+            lexer.MoveNext();
 
             // Recursively look foor function declarations
-            while (tokenizer.Current != null)
+            while (lexer.Current != null)
             {
-                var match = _fileGrammarProcessor.GetMatch(tokenizer);
-                if (match != "FUNCTION_DECLARATION")
-                    throw new ParseException(tokenizer.Current,
-                        $"Expected function, found {match} `{tokenizer.Current.Value}`");
+                var match = _fileGrammarProcessor.GetMatch(lexer, true);
 
-                // Compile the function and add it to the file
-                file.AddFunction(CompileFunction(tokenizer, file));
+                switch(match)
+                {
+                    case "FUNCTION_DECLARATION":
+                        // Compile the function and add it to the file
+                        file.AddFunction(CompileFunction(lexer, file));
+                        break;
+                    case "INCLUDE":
+                        lexer.SkipToken(TokenType.Token, "#");
+                        lexer.SkipToken(TokenType.Identifier, "include");
+
+                        var identifier = !lexer.Current.Is(TokenType.Token, "\\");
+                        var path = identifier ? "\\" : string.Empty;
+                        do
+                        {
+                            // check syntax
+                            if(identifier)
+                                lexer.AssertToken(TokenType.Identifier);
+                            else
+                                lexer.AssertToken(TokenType.Token, "\\");
+                            identifier = !identifier;
+
+                            path += lexer.Current.Value;
+
+                            lexer.AssertMoveNext();
+                        } while(!lexer.Current.Is(TokenType.Token, ";"));
+
+                        lexer.SkipToken(TokenType.Token, ";");
+
+                        file.IncludeFile(path);
+                        break;
+                    default:
+                        throw new ParseException(lexer.Current,
+                            $"Expected function, found {match} `{lexer.Current.Value}`");
+                }
             }
 
             return file;

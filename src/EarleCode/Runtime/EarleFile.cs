@@ -23,6 +23,7 @@ namespace EarleCode.Runtime
     public class EarleFile : EarleRuntimeScope
     {
         private EarleFunctionTable _functions = new EarleFunctionTable();
+        private readonly List<string> _includedFiles = new List<string>();
 
         public EarleFile(EarleRuntime runtime, string name) : base(runtime)
         {
@@ -47,6 +48,12 @@ namespace EarleCode.Runtime
         {
             // TODO: Improve this function
             return true;
+        }
+
+        public void IncludeFile(string file)
+        {
+            if(!_includedFiles.Contains(file))
+                _includedFiles.Add(file);
         }
 
         public void AddFunction(EarleFunction function)
@@ -77,6 +84,21 @@ namespace EarleCode.Runtime
                 {
                     var functions = GetFunctions(reference.Name);
 
+                    if(reference.File == null)
+                    {
+                        foreach(var inc in _includedFiles)
+                        {
+                            var incVal = Runtime.GetValue(new EarleVariableReference(inc, reference.Name));
+                            if(incVal.Is<EarleFunctionCollection>())
+                            {
+                                if(functions == null)
+                                    functions = new EarleFunctionCollection();
+
+                                functions.AddRange(incVal.As<EarleFunctionCollection>());
+                            }
+                        }
+                    }
+
                     if (functions != null)
                     {
                         if (baseResult.HasValue && baseResult.Is<EarleFunctionCollection>())
@@ -84,6 +106,7 @@ namespace EarleCode.Runtime
 
                         return new EarleValue(functions);
                     }
+
                 }
 
             return baseResult;

@@ -32,8 +32,11 @@ namespace EarleCode.Compiler
         {
             _fileGrammarProcessor = new GrammarProcessor();
             _fileGrammarProcessor.AddRule("FUNCTION_DECLARATION", true, "IDENTIFIER ( OPTIONAL IDENTIFIER_LIST )");
+            _fileGrammarProcessor.AddRule("INCLUDE", true, "# `include` PATH ;");
             _fileGrammarProcessor.AddRule("IDENTIFIER_LIST", false, "IDENTIFIER_LIST , IDENTIFIER_LIST");
             _fileGrammarProcessor.AddRule("IDENTIFIER_LIST", false, "IDENTIFIER");
+            _fileGrammarProcessor.AddRule("PATH", false, "OPTIONAL \\ IDENTIFIER");
+            _fileGrammarProcessor.AddRule("PATH", false, "PATH \\ IDENTIFIER");
           
             // Statements
             SyntaxGrammarProcessor = new Grammar.GrammarProcessor();

@@ -1,4 +1,6 @@
-﻿init()
+﻿#include _utils;
+
+init()
 {
 	// Some function tests
 	test = 1;
@@ -14,6 +16,7 @@
 
 	print("util works: " + _utils::giveTrue());
 	print("util works: " + \_utils::giveTrue());
+	print("util works: " + giveTrue());
 
 	// Threading test
 	what = "Elmo";
