@@ -40,6 +40,7 @@ namespace EarleCode.Runtime.Instructions
             var l = new Lexer(Format, Format);
             var str = "";
             var size = 1;
+            var start = index;
             while (l.MoveNext())
             {
                 if (l.Current.Is(TokenType.Token, "$"))
@@ -82,7 +83,7 @@ namespace EarleCode.Runtime.Instructions
                 }
             }
 
-            return $"[{size}]" + str;
+            return $"[{start}:{size}]" + str;
         }
     }
 }

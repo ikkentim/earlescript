@@ -29,12 +29,13 @@ namespace EarleCode.Compiler
         private readonly Dictionary<string, IParser> _parsers = new Dictionary<string, IParser>
         {
             ["FUNCTION_CALL"] = new StatementCallParser(),
+            ["ASSIGNMENT"] = new StatementAssignmentParser(),
             ["STATEMENT_IF"] = new StatementIfParser(),
             ["STATEMENT_WHILE"] = new StatementWhileParser(),
             ["STATEMENT_FOR"] = new StatementForParser(),
             ["STATEMENT_RETURN"] = new StatementReturnParser(),
             ["STATEMENT_WAIT"] = new StatementWaitParser(),
-            ["ASSIGNMENT"] = new StatementAssignmentParser()
+            ["STATEMENT_SWITCH"] = new StatementSwitchParser()
         };
 
         private readonly EarleRuntime _runtime;
@@ -140,7 +141,7 @@ namespace EarleCode.Compiler
             return function;
         }
 
-        public CompiledBlock Compile(ILexer lexer, EarleFile file, bool mustReturn, bool canBreak, bool canContinue)
+        public CompiledBlock Compile(ILexer lexer, EarleFile file, bool mustReturn, bool canBreak, bool canContinue, bool multilineWithoutBacketsSupported = false)
         {
             var pCode = new List<byte>();
             var breaks = new List<int>();
@@ -175,6 +176,9 @@ namespace EarleCode.Compiler
                     pCode.Add((byte)OpCode.Jump);
                     pCode.AddRange(ArrayUtility.Repeat((byte) 0xaa, 4));
                     didReturnAnyValue = false;
+
+                    if(multilineWithoutBacketsSupported)
+                        break;
                 }
                 else if(parserName == "STATEMENT_CONTINUE" && canContinue)
                 {
@@ -185,6 +189,9 @@ namespace EarleCode.Compiler
                     pCode.Add((byte)OpCode.Jump);
                     pCode.AddRange(ArrayUtility.Repeat((byte)0xaa, 4));
                     didReturnAnyValue = false;
+
+                    if(multilineWithoutBacketsSupported)
+                        break;
                 }
                 else
                 {
@@ -202,8 +209,17 @@ namespace EarleCode.Compiler
                         lexer.SkipToken(TokenType.Token, ";");
 
                     didReturnAnyValue = parser is StatementReturnParser;
+
+                    if(didReturnAnyValue && multilineWithoutBacketsSupported)
+                        break;
                 }
-            } while (multiLine && !lexer.Current.Is(TokenType.Token, "}"));
+
+                if(multilineWithoutBacketsSupported && 
+                   (SyntaxGrammarProcessor.IsMatch(lexer, "LABEL_CASE") || 
+                    SyntaxGrammarProcessor.IsMatch(lexer, "LABEL_DEFAULT")))
+                    break;
+                
+            } while (multilineWithoutBacketsSupported || (multiLine && !lexer.Current.Is(TokenType.Token, "}")));
 
             if(multiLine)
             {

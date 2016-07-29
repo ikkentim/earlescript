@@ -129,6 +129,7 @@
     <Compile Include="Runtime\EarleNativeFunctionAttribute.cs" />
     <Compile Include="Runtime\EarleFunctionTable.cs" />
     <Compile Include="Compiler\Parsers\ISimpleStatement.cs" />
+    <Compile Include="Compiler\Parsers\StatementSwitchParser.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

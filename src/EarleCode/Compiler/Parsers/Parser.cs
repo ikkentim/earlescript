@@ -288,9 +288,9 @@ namespace EarleCode.Compiler.Parsers
                 ThrowUnexpectedTokenWithExpected(rule.ToLower());
         }
 
-        public CompiledBlock CompileBlock(bool canBreak = false, bool canContinue = false)
+        public CompiledBlock CompileBlock(bool canBreak = false, bool canContinue = false, bool multilineWithoutBacketsIsSupported = false)
         {
-            return Runtime.Compiler.Compile(Lexer, File, false, canBreak || _canBreak, canContinue || _canContinue);
+            return Runtime.Compiler.Compile(Lexer, File, false, canBreak || _canBreak, canContinue || _canContinue, multilineWithoutBacketsIsSupported);
         }
 
         #endregion

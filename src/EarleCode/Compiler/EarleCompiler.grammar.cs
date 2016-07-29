@@ -44,6 +44,7 @@ namespace EarleCode.Compiler
             SyntaxGrammarProcessor.AddRule("STATEMENT_DO", true, "`do`");
             SyntaxGrammarProcessor.AddRule("STATEMENT_WHILE", true, "`while` ( EXPRESSION )");
             SyntaxGrammarProcessor.AddRule("STATEMENT_FOR", true, "`for` ( OPTIONAL ASSIGNMENT ; OPTIONAL EXPRESSION ; OPTIONAL ASSIGNMENT )");
+            SyntaxGrammarProcessor.AddRule("STATEMENT_SWITCH", true, "`switch` ( EXPRESSION )");
             SyntaxGrammarProcessor.AddRule("STATEMENT_RETURN", true, "`return` OPTIONAL EXPRESSION ;");
             SyntaxGrammarProcessor.AddRule("STATEMENT_BREAK", true, "`break` ;");
             SyntaxGrammarProcessor.AddRule("STATEMENT_CONTINUE", true, "`continue` ;");
@@ -54,6 +55,10 @@ namespace EarleCode.Compiler
             SyntaxGrammarProcessor.AddRule("ASSIGNMENT", true, "OPERATOR_MOD_UNARY VARIABLE");
             SyntaxGrammarProcessor.AddRule("FUNCTION_CALL", true, "OPTIONAL VARIABLE OPTIONAL `thread` FUNCTION_CALL_PART");
             SyntaxGrammarProcessor.AddRule("FUNCTION_CALL_PART", false, "FUNCTION_IDENTIFIER ( OPTIONAL EXPRESSION_LIST )");
+
+            // Labels
+            SyntaxGrammarProcessor.AddRule("LABEL_CASE", false, "`case` NUMBER_LITERAL|STRING_LITERAL :");
+            SyntaxGrammarProcessor.AddRule("LABEL_DEFAULT", false, "`default` :");
 
             // Expressions
             SyntaxGrammarProcessor.AddRule("EXPRESSION", false, "NUMBER_LITERAL|STRING_LITERAL");
