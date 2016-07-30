@@ -24,8 +24,9 @@ namespace EarleCode.Runtime
     {
         private void RegisterDefaultNatives()
         {
-            RegisterNativesInType<DefaultNatives>();
+            RegisterNativesInType<EarleDefaultNatives>();
             RegisterNativesInType<EarleEventManagerNatives>();
+
             RegisterNative(CreateBinaryOperator("*", (left, right) => (EarleValue)(left.Is<float>() || right.Is<float>()
                                                       ? (float)left*(float)right
                                                                                    : (int)left*(int)right), typeof (int), typeof (float)));
@@ -105,64 +106,6 @@ namespace EarleCode.Runtime
                 return ((float)val1).CompareTo((int)val2);
          
             return ((float)(int)val1).CompareTo(val2);
-        }
-
-        private class DefaultNatives
-        {
-            [EarleNativeFunction]
-            private static void Print(string value)
-            {
-                Console.WriteLine(value);
-            }
-
-            [EarleNativeFunction]
-            private static void Wait(EarleStackFrame frame, float seconds)
-            {
-                if(seconds > 0)
-                    frame.SubFrame = new WaitFrameExecutor(frame, seconds);
-            }
-
-            [EarleNativeFunction]
-            private static bool IsDefined(EarleValue value)
-            {
-                return value.Value != null;
-            }
-
-            [EarleNativeFunction]
-            private static EarleVector2 CreateVector2(float x, float y)
-            {
-                return new EarleVector2(x, y);
-            }
-
-            [EarleNativeFunction]
-            private static EarleVector3 CreateVector3(float x, float y, float z)
-            {
-                return new EarleVector3(x, y, z);
-            }
-
-            [EarleNativeFunction]
-            private static EarleStructure SpawnStruct()
-            {
-                return new EarleStructure();
-            }
-
-            private class WaitFrameExecutor : EarleStackFrameExecutor
-            {
-                private Stopwatch _stopwatch;
-                private long _miliseconds;
-
-                public WaitFrameExecutor(EarleStackFrame frame, float seconds) : base(frame, null, null)
-                {
-                    _stopwatch = new Stopwatch();
-                    _stopwatch.Start();
-                    _miliseconds = (long)(seconds * 1000);
-                }
-
-                public override EarleValue? Run()
-                {
-                    return _stopwatch.ElapsedMilliseconds >= _miliseconds ? (EarleValue?)EarleValue.Undefined : null;
-                }
-            }
         }
 
         private EarleFunction CreateBinaryOperator(string @operator, Func<EarleValue, EarleValue, EarleValue> operation,

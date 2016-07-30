@@ -137,6 +137,7 @@
     <Compile Include="Runtime\Events\EarleEventNotifyEventArgs.cs" />
     <Compile Include="Runtime\Events\EarleEventManagerNatives.cs" />
     <Compile Include="Runtime\IEarleObject.cs" />
+    <Compile Include="Runtime\EarleDefaultNatives.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

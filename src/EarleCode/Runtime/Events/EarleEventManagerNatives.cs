@@ -6,32 +6,29 @@ namespace EarleCode.Runtime.Events
 {
     internal class EarleEventManagerNatives
     {
-        [EarleNativeFunction]
-        public static EarleValue WaitTill(EarleStackFrame frame, string eventName)
+        private static IEarleEventManager GetManager(EarleStackFrame frame)
         {
             var manager = frame.Target.As<IEarleEventableObject>()?.EventManager;
 
             if(manager == null)
-            {
                 frame.Runtime.HandleWarning("A valid target must be specified when calling waittill");
-                return EarleValue.Undefined;
-            }
-
-            frame.SubFrame = new WaitTillStackFrameExecutor(frame.SpawnSubFrame(frame.Target), manager, eventName);
-
-            return (EarleValue)null;
+            
+            return manager;
         }
 
         [EarleNativeFunction]
-        public static void EndOn(EarleStackFrame frame, string eventName)
+        private static void WaitTill(EarleStackFrame frame, string eventName)
         {
-            var manager = frame.Target.As<IEarleEventableObject>()?.EventManager;
+            var manager = GetManager(frame);
 
-            if(manager == null)
-            {
-                frame.Runtime.HandleWarning("A valid target must be specified when calling endon");
-                return;
-            }
+            if(manager != null)
+                frame.SubFrame = new WaitTillStackFrameExecutor(frame.SpawnSubFrame(frame.Target), manager, eventName);
+        }
+
+        [EarleNativeFunction]
+        private static void EndOn(EarleStackFrame frame, string eventName)
+        {
+            var manager = GetManager(frame);
 
             var thread = frame.Thread;
             manager.EventFired += (sender, e) => {
@@ -43,7 +40,7 @@ namespace EarleCode.Runtime.Events
         }
 
         [EarleNativeFunction]
-        public static void Notify(EarleStackFrame frame, string eventName, EarleValue[] optionals)
+        private static void Notify(EarleStackFrame frame, string eventName, EarleValue[] optionals)
         {
             var manager = frame.Target.As<IEarleEventableObject>()?.EventManager;
 
