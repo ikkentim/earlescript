@@ -39,7 +39,7 @@ namespace EarleCode.Debug
         private static void Main(string[] args)
         {
             var runtime = new EarleRuntime();
-            var target = new EarleSimpleEventableStructure();
+            runtime.GlobalVariables["level"] = new EarleSimpleEventableStructure().ToEarleValue();
 
             // Load code
             var codeDir = Path.Combine(Directory.GetCurrentDirectory(), "code");
@@ -79,7 +79,7 @@ namespace EarleCode.Debug
                     foreach(var v in arr)
                         Console.WriteLine(v);
                 }
-            }, target.ToEarleValue());
+            }, EarleValue.Undefined);
 
             do
             {

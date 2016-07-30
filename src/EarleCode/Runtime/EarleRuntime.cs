@@ -22,13 +22,13 @@ using System.Reflection;
 
 namespace EarleCode.Runtime
 {
-    public partial class EarleRuntime : EarleRuntimeScope
+    public partial class EarleRuntime : IEarleRuntimeScope
     {
         private readonly Dictionary<string, EarleFile> _files = new Dictionary<string, EarleFile>();
         private readonly EarleFunctionTable _natives = new EarleFunctionTable();
         private readonly Queue<EarleThread> _threadPool = new Queue<EarleThread>();
 
-        public EarleRuntime() : base(null)
+        public EarleRuntime()
         {
             Compiler = new EarleCompiler(this);
 
@@ -37,6 +37,7 @@ namespace EarleCode.Runtime
 
         internal EarleCompiler Compiler { get; }
 
+        public EarleDictionary GlobalVariables { get; } = new EarleDictionary();
         public EarleFile this[string fileName]
         {
             get { return GetFile(fileName); }
@@ -177,21 +178,25 @@ namespace EarleCode.Runtime
 
         #region Overrides of RuntimeScope
 
-        public override EarleValue GetValue(EarleVariableReference reference)
+        public virtual EarleValue GetValue(EarleVariableReference reference)
         {
+            // Redirect to other files' funcion references.
             if (!string.IsNullOrEmpty(reference.File))
                 return GetFile(reference.File)?.GetFunctions(reference.Name)?.ToEarleValue() ?? EarleValue.Undefined;
 
+            // Look natives up.
             var natives = _natives.Get(reference.Name);
             if(natives != null)
                 return new EarleValue(natives);
 
-            // TODO: Check global variables
-
+            // Look global variables up.
+            if(GlobalVariables.ContainsKey(reference.Name))
+                return GlobalVariables[reference.Name];
+            
             return EarleValue.Undefined;
         }
 
-        protected override bool CanAssignReferenceInScope(EarleVariableReference reference)
+        public virtual bool SetValue(EarleVariableReference reference, EarleValue value)
         {
             return false;
         }

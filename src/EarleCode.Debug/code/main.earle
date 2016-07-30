@@ -1,14 +1,14 @@
 ﻿init()
 {
-	self thread bleep();
+	level thread bleep();
 
 	for(i=0;i<5;i++)
 	{
 		wait .5;
-		self notify("wait done");
+		level notify("wait done");
 	}
 
-	self notify("all done");
+	level notify("all done");
 }
 
 bleep()
@@ -18,6 +18,6 @@ bleep()
 	for(;;)
 	{
 		print("Bleep!");
-		self waittill("wait done");
+		val = self waittill("wait done");
 	}
 }

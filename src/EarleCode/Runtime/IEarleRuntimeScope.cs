@@ -19,7 +19,7 @@ namespace EarleCode.Runtime
 {
     public interface IEarleRuntimeScope
     {
-        EarleValue GetValue(EarleVariableReference field);
-        bool SetValue(EarleVariableReference field, EarleValue value);
+        EarleValue GetValue(EarleVariableReference reference);
+        bool SetValue(EarleVariableReference reference, EarleValue value);
     }
 }
