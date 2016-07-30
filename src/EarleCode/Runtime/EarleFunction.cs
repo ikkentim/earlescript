@@ -14,6 +14,7 @@
 // limitations under the License.
 
 using System;
+using System.Linq;
 using EarleCode.Runtime.Values;
 
 namespace EarleCode.Runtime
@@ -60,7 +61,12 @@ namespace EarleCode.Runtime
 
         public EarleValue? Invoke(EarleCompletionHandler completionHandler, EarleValue target, params EarleValue[] args)
         {
-            return File.Runtime.Invoke(this, completionHandler, target, args);
+            var thread = new EarleThread(completionHandler);
+            var rootFrame = new EarleStackFrame(File.Runtime, thread, target);
+            var frame = CreateFrameExecutor(rootFrame, target, args?.ToArray() ?? new EarleValue[0]);
+            thread.AttachFrame(frame);
+
+            return thread.Run();
         }
     }
 }

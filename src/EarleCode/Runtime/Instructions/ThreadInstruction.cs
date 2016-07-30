@@ -29,7 +29,7 @@ namespace EarleCode.Runtime.Instructions
                 return;
             thread.AttachFrame(frame);
 
-            Frame.Frame.Runtime.StartThread(thread);
+            Frame.Frame.Runtime.EnqueueThread(thread);
         }
     }
     

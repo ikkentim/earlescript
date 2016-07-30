@@ -29,7 +29,6 @@ namespace EarleCode.Runtime
         {
             if (runtime == null) throw new ArgumentNullException(nameof(runtime));
             if (name == null) throw new ArgumentNullException(nameof(name));
-            if (!IsValidName(name)) throw new ArgumentException("invalid name", nameof(name));
 
             Runtime = runtime;
             Name = name;
@@ -42,12 +41,6 @@ namespace EarleCode.Runtime
         public EarleFunctionCollection this[string functionName]
         {
             get { return GetFunctions(functionName); }
-        }
-
-        public static bool IsValidName(string input)
-        {
-            // TODO: Improve this function
-            return true;
         }
 
         public void IncludeFile(string file)

@@ -33,7 +33,7 @@ namespace EarleCode.Compiler.Parsers
 
                     var caseValue = ParseToBuffer<ExpressionParser>();
                     Lexer.SkipToken(TokenType.Token, ":");
-                    var caseBlock = CompileBlock(true, false, true);
+                    var caseBlock = CompileBlock(EarleCompileOptions.SwitchCase);
 
                     caseBlocks[caseStringValue] = new Tuple<CompiledBlock, CompiledBlock>(caseValue, caseBlock);
                 }
@@ -47,7 +47,7 @@ namespace EarleCode.Compiler.Parsers
                     Lexer.SkipToken(TokenType.Identifier, "default");
                     Lexer.SkipToken(TokenType.Token, ":");
 
-                    defaultBlock = CompileBlock(true, false, true);
+                    defaultBlock = CompileBlock(EarleCompileOptions.SwitchCase);
                 }
                 else
                 {

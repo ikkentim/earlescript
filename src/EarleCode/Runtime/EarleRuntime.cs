@@ -38,11 +38,9 @@ namespace EarleCode.Runtime
         internal EarleCompiler Compiler { get; }
 
         public EarleDictionary GlobalVariables { get; } = new EarleDictionary();
-        public EarleFile this[string fileName]
-        {
-            get { return GetFile(fileName); }
-        }
 
+        public EarleFile this[string fileName] => GetFile(fileName);
+  
         #region Natives
 
         public void RegisterNative(EarleFunction native)
@@ -59,8 +57,8 @@ namespace EarleCode.Runtime
 
         public void RegisterNativesInType(Type type)
         {
-            if(type == null)
-                throw new ArgumentNullException(nameof(type));
+            if(type == null) throw new ArgumentNullException(nameof(type));
+            
             foreach(var method in type.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static))
             {
                 var attribute = method.GetCustomAttributes(typeof(EarleNativeFunctionAttribute), true)?.FirstOrDefault() as EarleNativeFunctionAttribute;
@@ -78,19 +76,9 @@ namespace EarleCode.Runtime
 
         #region Running
 
-        private EarleValue? RunThread(EarleThread thread)
+        public void EnqueueThread(EarleThread thread)
         {
-            var result = thread.Frame.Run();
-
-            if(result == null)
-            {
-                if(thread.IsAlive)
-                    _threadPool.Enqueue(thread);
-            }
-            else if(thread.CompletionHandler != null)
-                thread.CompletionHandler(result.Value);
-            
-            return result;
+            _threadPool.Enqueue(thread);
         }
 
         public bool Tick(int ticks = int.MaxValue)
@@ -108,18 +96,19 @@ namespace EarleCode.Runtime
                     ticks--;
                     continue;
                 }
-                RunThread(thread);
+                thread.Run();
                 count++;
             }
 
             return !_threadPool.Any();
         }
-        #endregion
 
         public virtual void HandleWarning(string warning)
         {
             Console.WriteLine(warning);
         }
+
+        #endregion
 
         #region Files
 
@@ -162,28 +151,7 @@ namespace EarleCode.Runtime
 
         #endregion
 
-        #region Invoking
-
-        public EarleValue? Invoke(EarleFunction function, EarleCompletionHandler completionHandler, EarleValue target, IEnumerable<EarleValue> args)
-        {
-            if (function == null) throw new ArgumentNullException(nameof(function));
-
-            var thread = new EarleThread(completionHandler);
-            var rootFrame = new EarleStackFrame(this, thread, target);
-            var frame = function.CreateFrameExecutor(rootFrame, target, args?.ToArray() ?? new EarleValue[0]);
-            thread.AttachFrame(frame);
-
-            return RunThread(thread);
-        }
-
-        public void StartThread(EarleThread thread)
-        {
-            _threadPool.Enqueue(thread);
-        }
-
-        #endregion
-
-        #region Overrides of RuntimeScope
+        #region Implementation of IRuntimeScope
 
         public virtual EarleValue GetValue(EarleVariableReference reference)
         {

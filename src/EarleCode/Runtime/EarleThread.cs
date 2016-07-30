@@ -1,4 +1,6 @@
-﻿namespace EarleCode.Runtime
+﻿using EarleCode.Runtime.Values;
+
+namespace EarleCode.Runtime
 {
     public class EarleThread
     {
@@ -15,6 +17,7 @@
         }
 
         public int ThreadId { get; private set; }
+
         public EarleStackFrameExecutor Frame { get; private set; }
 
         public EarleCompletionHandler CompletionHandler { get; }
@@ -26,6 +29,22 @@
             Frame = frame;
         }
 
+        public EarleValue? Run()
+        {
+            var result = Frame.Run();
+
+            if(result == null)
+            {
+                if(IsAlive)
+                    Frame.Frame.Runtime.EnqueueThread(this);
+            }
+            else
+            {
+                CompletionHandler?.Invoke(result.Value);
+            }
+
+            return result;
+        }
         public void Kill()
         {
             IsAlive = false;

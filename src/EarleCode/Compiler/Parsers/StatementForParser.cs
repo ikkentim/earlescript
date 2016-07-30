@@ -63,8 +63,7 @@ namespace EarleCode.Compiler.Parsers
                 incrementBlock = ParseToBuffer<StatementAssignmentParser>();
             Lexer.SkipToken(TokenType.Token, ")");
 
-            // todo: break and continue
-            var block = CompileBlock(true, true);
+            var block = CompileBlock(EarleCompileOptions.Loop);
 
             PushJump(false, block.Length + 5 + incrementBlock.Length);
 

@@ -32,9 +32,9 @@ namespace EarleCode.Compiler.Parsers
 
             Lexer.SkipToken(TokenType.Identifier, "if");
             Lexer.SkipToken(TokenType.Token, "(");
-            Parse<ExpressionParser>(false, false);
+            Parse<ExpressionParser>();
             Lexer.SkipToken(TokenType.Token, ")");
-            var block = CompileBlock();
+            var block = CompileBlock(EarleCompileOptions.None);
             Yield(OpCode.JumpIfFalse);
             Yield(block.Length);
             Yield(block);

@@ -56,7 +56,7 @@ namespace EarleCode.Compiler.Parsers
                     Lexer.SkipToken(TokenType.Token, "&");
                     Lexer.SkipToken(TokenType.Token, "&");
 
-                    var block = ParseToBuffer<ExpressionParser>(false, false);
+                    var block = ParseToBuffer<ExpressionParser>();
                     PushJump(false, block.Length + 5);
                     Yield(block);
                     PushJump(5);

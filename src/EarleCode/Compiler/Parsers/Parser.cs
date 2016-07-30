@@ -29,8 +29,8 @@ namespace EarleCode.Compiler.Parsers
         private readonly List<byte> _result = new List<byte>();
         private readonly List<int> _breaks = new List<int>();
         private readonly List<int> _continues = new List<int>();
-        private bool _canBreak;
-        private bool _canContinue;
+        private EarleCompileOptions _enforcedCompileOptions;
+
         protected EarleRuntime Runtime { get; private set; }
 
         protected EarleFile File { get; private set; }
@@ -39,7 +39,7 @@ namespace EarleCode.Compiler.Parsers
 
         #region Implementation of IParser
 
-        public CompiledBlock Parse(EarleRuntime runtime, EarleFile file, ILexer lexer, bool canBreak, bool canContinue)
+        public CompiledBlock Parse(EarleRuntime runtime, EarleFile file, ILexer lexer, EarleCompileOptions enforcedCompileOptions)
         {
             if (runtime == null) throw new ArgumentNullException(nameof(runtime));
             if (file == null) throw new ArgumentNullException(nameof(file));
@@ -47,8 +47,7 @@ namespace EarleCode.Compiler.Parsers
             Runtime = runtime;
             File = file;
             Lexer = lexer;
-            _canBreak = canBreak;
-            _canContinue = canContinue;
+            _enforcedCompileOptions = enforcedCompileOptions;
 
             _result.Clear();
             _breaks.Clear();
@@ -264,17 +263,17 @@ namespace EarleCode.Compiler.Parsers
 
         #region Misc Helpers
 
-        public int Parse<T>(bool canBreak = false, bool canContinue = false) where T : IParser
+        public int Parse<T>(EarleCompileOptions compileOptions = EarleCompileOptions.None) where T : IParser
         {
-            var block = ParseToBuffer<T>(canBreak, canContinue);
+            var block = ParseToBuffer<T>(compileOptions);
             Yield(block);
             return block.PCode.Length;
         }
 
-        public CompiledBlock ParseToBuffer<T>(bool canBreak = false, bool canContinue = false) where T : IParser
+        public CompiledBlock ParseToBuffer<T>(EarleCompileOptions compileOptions = EarleCompileOptions.None) where T : IParser
         {
             var parser = Activator.CreateInstance<T>();
-            return parser.Parse(Runtime, File, Lexer, _canBreak || canBreak, _canContinue || canContinue);
+            return parser.Parse(Runtime, File, Lexer, _enforcedCompileOptions | compileOptions);
         }
 
         public bool SyntaxMatches(string rule)
@@ -288,9 +287,9 @@ namespace EarleCode.Compiler.Parsers
                 ThrowUnexpectedTokenWithExpected(rule.ToLower());
         }
 
-        public CompiledBlock CompileBlock(bool canBreak = false, bool canContinue = false, bool multilineWithoutBacketsIsSupported = false)
+        public CompiledBlock CompileBlock(EarleCompileOptions compileOptions)
         {
-            return Runtime.Compiler.Compile(Lexer, File, false, canBreak || _canBreak, canContinue || _canContinue, multilineWithoutBacketsIsSupported);
+            return Runtime.Compiler.Compile(Lexer, File, _enforcedCompileOptions | compileOptions);
         }
 
         #endregion

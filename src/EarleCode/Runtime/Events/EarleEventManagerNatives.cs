@@ -6,12 +6,12 @@ namespace EarleCode.Runtime.Events
 {
     internal class EarleEventManagerNatives
     {
-        private static IEarleEventManager GetManager(EarleStackFrame frame)
+        private static IEarleEventManager GetManager(EarleStackFrame frame, string funcName)
         {
             var manager = frame.Target.As<IEarleEventableObject>()?.EventManager;
 
             if(manager == null)
-                frame.Runtime.HandleWarning("A valid target must be specified when calling waittill");
+                frame.Runtime.HandleWarning($"A valid target must be specified when calling `{funcName}`");
             
             return manager;
         }
@@ -19,7 +19,7 @@ namespace EarleCode.Runtime.Events
         [EarleNativeFunction]
         private static void WaitTill(EarleStackFrame frame, string eventName)
         {
-            var manager = GetManager(frame);
+            var manager = GetManager(frame, "waittill");
 
             if(manager != null)
                 frame.SubFrame = new WaitTillStackFrameExecutor(frame.SpawnSubFrame(frame.Target), manager, eventName);
@@ -28,29 +28,25 @@ namespace EarleCode.Runtime.Events
         [EarleNativeFunction]
         private static void EndOn(EarleStackFrame frame, string eventName)
         {
-            var manager = GetManager(frame);
+            var manager = GetManager(frame, "endon");
 
-            var thread = frame.Thread;
-            manager.EventFired += (sender, e) => {
-                if(e.EventName == eventName)
-                {
-                    thread.Kill();
-                }
-            };
+            if(manager != null)
+            {
+                var thread = frame.Thread;
+                manager.EventFired += (sender, e) => {
+                    if(e.EventName == eventName)
+                    {
+                        thread.Kill();
+                    }
+                };
+            }
         }
 
         [EarleNativeFunction]
         private static void Notify(EarleStackFrame frame, string eventName, EarleValue[] optionals)
         {
-            var manager = frame.Target.As<IEarleEventableObject>()?.EventManager;
-
-            if(manager == null)
-            {
-                frame.Runtime.HandleWarning("A valid target must be specified when calling notify");
-                return;
-            }
-
-            manager.Notify(eventName, optionals?.FirstOrDefault() ?? EarleValue.Undefined);
+            GetManager(frame, "notify")
+                ?.Notify(eventName, optionals?.FirstOrDefault() ?? EarleValue.Undefined);
         }
 
         private class WaitTillStackFrameExecutor : EarleStackFrameExecutor

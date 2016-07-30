@@ -138,6 +138,7 @@
     <Compile Include="Runtime\Events\EarleEventManagerNatives.cs" />
     <Compile Include="Runtime\IEarleObject.cs" />
     <Compile Include="Runtime\EarleDefaultNatives.cs" />
+    <Compile Include="Compiler\EarleCompileOptions.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

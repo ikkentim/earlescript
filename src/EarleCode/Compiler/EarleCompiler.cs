@@ -134,14 +134,14 @@ namespace EarleCode.Compiler
 
             lexer.SkipToken(TokenType.Token, ")");
 
-            var function = new EarleFunction(file, name, parameters.ToArray(), Compile(lexer, file, true, false, false).PCode);
+            var function = new EarleFunction(file, name, parameters.ToArray(), Compile(lexer, file, EarleCompileOptions.Method).PCode);
 
             PrintCompiledPCode(function);
 
             return function;
         }
 
-        public CompiledBlock Compile(ILexer lexer, EarleFile file, bool mustReturn, bool canBreak, bool canContinue, bool multilineWithoutBacketsSupported = false)
+        public CompiledBlock Compile(ILexer lexer, EarleFile file, EarleCompileOptions options)
         {
             var pCode = new List<byte>();
             var breaks = new List<int>();
@@ -167,7 +167,7 @@ namespace EarleCode.Compiler
                 if (parserName == null)
                     throw new ParseException(lexer.Current, $"Expected statement, found token `{lexer.Current.Value}`");
 
-                if(parserName == "STATEMENT_BREAK" && canBreak)
+                if(parserName == "STATEMENT_BREAK" && options.HasFlag(EarleCompileOptions.CanBreak))
                 {
                     lexer.SkipToken(TokenType.Identifier, "break");
                     lexer.SkipToken(TokenType.Token, ";");
@@ -177,10 +177,10 @@ namespace EarleCode.Compiler
                     pCode.AddRange(ArrayUtility.Repeat((byte) 0xaa, 4));
                     didReturnAnyValue = false;
 
-                    if(multilineWithoutBacketsSupported)
+                    if(options.HasFlag(EarleCompileOptions.EnforceMultiline))
                         break;
                 }
-                else if(parserName == "STATEMENT_CONTINUE" && canContinue)
+                else if(parserName == "STATEMENT_CONTINUE" && options.HasFlag(EarleCompileOptions.CanContinue))
                 {
                     lexer.SkipToken(TokenType.Identifier, "continue");
                     lexer.SkipToken(TokenType.Token, ";");
@@ -190,7 +190,7 @@ namespace EarleCode.Compiler
                     pCode.AddRange(ArrayUtility.Repeat((byte)0xaa, 4));
                     didReturnAnyValue = false;
 
-                    if(multilineWithoutBacketsSupported)
+                    if(options.HasFlag(EarleCompileOptions.EnforceMultiline))
                         break;
                 }
                 else
@@ -200,7 +200,7 @@ namespace EarleCode.Compiler
                         throw new ParseException(lexer.Current,
                             $"Expected statement, found {parserName.ToLower()} `{lexer.Current.Value}`");
 
-                    var block = parser.Parse(_runtime, file, lexer, canBreak, canContinue);
+                    var block = parser.Parse(_runtime, file, lexer, options);
                     breaks.AddRange(block.Breaks.Select(b => b + pCode.Count));
                     continues.AddRange(block.Continues.Select(c => c + pCode.Count));
                     pCode.AddRange(block.PCode);
@@ -210,16 +210,14 @@ namespace EarleCode.Compiler
 
                     didReturnAnyValue = parser is StatementReturnParser;
 
-                    if(didReturnAnyValue && multilineWithoutBacketsSupported)
+                    if(didReturnAnyValue && options.HasFlag(EarleCompileOptions.EnforceMultiline))
                         break;
                 }
 
-                if(multilineWithoutBacketsSupported && 
-                   (SyntaxGrammarProcessor.IsMatch(lexer, "LABEL_CASE") || 
-                    SyntaxGrammarProcessor.IsMatch(lexer, "LABEL_DEFAULT")))
+                if(options.HasFlag(EarleCompileOptions.EnforceMultiline) && SyntaxGrammarProcessor.MatchStartsWith(lexer, "LABEL_"))
                     break;
                 
-            } while (multilineWithoutBacketsSupported || (multiLine && !lexer.Current.Is(TokenType.Token, "}")));
+            } while (options.HasFlag(EarleCompileOptions.EnforceMultiline) || (multiLine && !lexer.Current.Is(TokenType.Token, "}")));
 
             if(multiLine)
             {
@@ -227,7 +225,7 @@ namespace EarleCode.Compiler
                 lexer.MoveNext();
             }
 
-            if (!didReturnAnyValue && mustReturn)
+            if (!didReturnAnyValue && options.HasFlag(EarleCompileOptions.MustReturn))
                 pCode.Add((byte) OpCode.PushUndefined);
 
             pCode.Add((byte) OpCode.PopScope);

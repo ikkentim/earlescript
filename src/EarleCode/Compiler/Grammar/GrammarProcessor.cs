@@ -32,6 +32,14 @@ namespace EarleCode.Compiler.Grammar
             return GetMatches(lexer, ruleName).Any();
         }
 
+        public bool MatchStartsWith(ILexer lexer, string ruleNameStartWith)
+        {
+            return _table.Where(r => r.Name.StartsWith(ruleNameStartWith, StringComparison.Ordinal))
+                         .Select(r => r.Name)
+                         .Distinct()
+                         .Any(n => IsMatch(lexer, n));
+        }
+
         public IEnumerable<ILexer> GetMatches(ILexer lexer, string ruleName)
         {
             var wrapRules = new List<GrammarRule>();

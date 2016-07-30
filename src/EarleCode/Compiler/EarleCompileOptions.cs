@@ -13,13 +13,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using EarleCode.Compiler.Lexing;
-using EarleCode.Runtime;
+using System;
 
-namespace EarleCode.Compiler.Parsers
+namespace EarleCode.Compiler
 {
-    internal interface IParser
+
+    [Flags]
+    internal enum EarleCompileOptions
     {
-        CompiledBlock Parse(EarleRuntime runtime, EarleFile file, ILexer lexer, EarleCompileOptions enforcedCompileOptions);
+        None = 0,
+        MustReturn = 1,
+        CanBreak = 2,
+        CanContinue = 4,
+        EnforceMultiline = 8,
+        Method = MustReturn,
+        SwitchCase = CanBreak | EnforceMultiline,
+        Loop = CanBreak | CanContinue
     }
 }
