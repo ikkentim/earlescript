@@ -156,7 +156,7 @@ namespace EarleCode.Compiler
                 lexer.AssertMoveNext();
             }
 
-            pCode.Add((byte) OpCode.PushScope);
+            var requiresScope = false;
 
             do
             {
@@ -201,9 +201,12 @@ namespace EarleCode.Compiler
                             $"Expected statement, found {parserName.ToLower()} `{lexer.Current.Value}`");
 
                     var block = parser.Parse(_runtime, file, lexer, options);
+
                     breaks.AddRange(block.Breaks.Select(b => b + pCode.Count));
                     continues.AddRange(block.Continues.Select(c => c + pCode.Count));
+                    requiresScope = requiresScope || block.RequiresScope;
                     pCode.AddRange(block.PCode);
+
 
                     if(parser is ISimpleStatement)
                         lexer.SkipToken(TokenType.Token, ";");
@@ -228,9 +231,13 @@ namespace EarleCode.Compiler
             if (!didReturnAnyValue && options.HasFlag(EarleCompileOptions.MustReturn))
                 pCode.Add((byte) OpCode.PushUndefined);
 
-            pCode.Add((byte) OpCode.PopScope);
+            if(requiresScope)
+            {
+                pCode.Insert(0, (byte)OpCode.PushScope);
+                pCode.Add((byte)OpCode.PopScope);
+            }
 
-            return new CompiledBlock(pCode.ToArray(), breaks.ToArray(), continues.ToArray());
+            return new CompiledBlock(pCode.ToArray(), breaks.ToArray(), continues.ToArray(), false);
         }
 
         #endregion

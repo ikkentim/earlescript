@@ -37,6 +37,7 @@ namespace EarleCode.Compiler.Parsers
 
         protected ILexer Lexer { get; private set; }
 
+        protected virtual bool RequiresScope { get; }
         #region Implementation of IParser
 
         public CompiledBlock Parse(EarleRuntime runtime, EarleFile file, ILexer lexer, EarleCompileOptions enforcedCompileOptions)
@@ -55,7 +56,7 @@ namespace EarleCode.Compiler.Parsers
 
             Parse();
 
-            return new CompiledBlock(_result.ToArray(), _breaks.ToArray(), _continues.ToArray());
+            return new CompiledBlock(_result.ToArray(), _breaks.ToArray(), _continues.ToArray(), RequiresScope);
         }
 
         #endregion
@@ -78,6 +79,7 @@ namespace EarleCode.Compiler.Parsers
         #endregion
 
         #region Yield
+
         public void Yield(byte value)
         {
             _result.Add(value);

@@ -19,7 +19,7 @@ namespace EarleCode.Compiler
 {
     internal class CompiledBlock
     {
-        public CompiledBlock(byte[] pCode, int[] breaks, int[] continues)
+        public CompiledBlock(byte[] pCode, int[] breaks, int[] continues, bool requiresScope)
         {
             if(pCode == null) throw new ArgumentNullException(nameof(pCode));
             if(breaks == null) throw new ArgumentNullException(nameof(breaks));
@@ -28,14 +28,16 @@ namespace EarleCode.Compiler
             PCode = pCode;
             Breaks = breaks;
             Continues = continues;
+            RequiresScope = requiresScope;
         }
 
         public byte[] PCode { get; }
         public int[] Breaks { get; }
         public int[] Continues { get; }
+        public bool RequiresScope { get; }
         public int Length => PCode.Length;
 
-        public static CompiledBlock Empty { get; } = new CompiledBlock(new byte[0], new int[0], new int[0]);
+        public static CompiledBlock Empty { get; } = new CompiledBlock(new byte[0], new int[0], new int[0], false);
     }
     
 }

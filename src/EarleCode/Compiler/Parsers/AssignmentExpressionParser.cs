@@ -43,6 +43,8 @@ namespace EarleCode.Compiler.Parsers
 
         #region Overrides of Parser
 
+        protected override bool RequiresScope => true;
+
         protected override void Parse()
         {
             // Output:
