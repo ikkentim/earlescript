@@ -27,12 +27,12 @@ namespace EarleCode.Runtime.Instructions
 
         protected override void Handle()
         {
-            Frame.Frame.SubFrame = CreateFrameExecutor();
+            Frame.Frame.SubFrame = CreateFrameExecutor(Frame.Frame);
         }
 
         #endregion
 
-        protected virtual EarleStackFrameExecutor CreateFrameExecutor()
+        protected virtual EarleStackFrameExecutor CreateFrameExecutor(EarleStackFrame superFrame)
         {
             var argumentCount = GetInt32();
             var value = Pop().Value;
@@ -89,7 +89,7 @@ namespace EarleCode.Runtime.Instructions
 
             var target = HasTarget ? Pop() : EarleValue.Undefined;
 
-            return function.CreateFrameExecutor(Frame.Frame, target, args.ToArray());
+            return function.CreateFrameExecutor(superFrame, target, args.ToArray());
         }
     }
 }

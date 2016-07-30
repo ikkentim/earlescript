@@ -14,11 +14,11 @@
 // limitations under the License.
 
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using EarleCode.Localization;
 using EarleCode.Runtime;
+using EarleCode.Runtime.Events;
 using EarleCode.Runtime.Values;
 
 namespace EarleCode.Debug
@@ -39,6 +39,7 @@ namespace EarleCode.Debug
         private static void Main(string[] args)
         {
             var runtime = new EarleRuntime();
+            var target = new EarleSimpleEventableStructure();
 
             // Load code
             var codeDir = Path.Combine(Directory.GetCurrentDirectory(), "code");
@@ -78,7 +79,7 @@ namespace EarleCode.Debug
                     foreach(var v in arr)
                         Console.WriteLine(v);
                 }
-            }, EarleValue.Undefined);
+            }, target.ToEarleValue());
 
             do
             {

@@ -32,6 +32,7 @@ namespace EarleCode.Compiler.Parsers
             // REFERENCE            (?) |
             // (CALL|THREAD)(_T) N  (5) |__ repeats
 
+            LastCallWasThreaded = false;
             var hasTarget = false;
             if(!SyntaxMatches("FUNCTION_CALL_PART") && !Lexer.Current.Is(TokenType.Identifier, "thread"))
             {

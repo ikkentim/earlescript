@@ -130,6 +130,13 @@
     <Compile Include="Runtime\EarleFunctionTable.cs" />
     <Compile Include="Compiler\Parsers\ISimpleStatement.cs" />
     <Compile Include="Compiler\Parsers\StatementSwitchParser.cs" />
+    <Compile Include="Runtime\Events\EarleEventManager.cs" />
+    <Compile Include="Runtime\Events\IEarleEventableObject.cs" />
+    <Compile Include="Runtime\Events\IEarleEventManager.cs" />
+    <Compile Include="Runtime\Events\EarleSimpleEventableStructure.cs" />
+    <Compile Include="Runtime\Events\EarleEventNotifyEventArgs.cs" />
+    <Compile Include="Runtime\Events\EarleEventManagerNatives.cs" />
+    <Compile Include="Runtime\IEarleObject.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
@@ -140,6 +147,7 @@
     <Folder Include="Compiler\Lexing\" />
     <Folder Include="Runtime\Instructions\" />
     <Folder Include="Compiler\Grammar\" />
+    <Folder Include="Runtime\Events\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -2,15 +2,34 @@
 {
     public class EarleThread
     {
-        public EarleThread(EarleStackFrameExecutor frame, EarleCompletionHandler completionHandler)
+        private static int _threads = 0;
+        public EarleThread(EarleCompletionHandler completionHandler)
         {
-            Frame = frame;
+            ThreadId = _threads++;
             CompletionHandler = completionHandler;
         }
 
-        public EarleStackFrameExecutor Frame { get; }
+        public EarleThread(EarleStackFrameExecutor frame, EarleCompletionHandler completionHandler) : this(completionHandler)
+        {
+            Frame = frame;
+        }
+
+        public int ThreadId { get; private set; }
+        public EarleStackFrameExecutor Frame { get; private set; }
 
         public EarleCompletionHandler CompletionHandler { get; }
+
+        public bool IsAlive { get; private set; } = true;
+
+        internal void AttachFrame(EarleStackFrameExecutor frame)
+        {
+            Frame = frame;
+        }
+
+        public void Kill()
+        {
+            IsAlive = false;
+        }
     }
 }
 

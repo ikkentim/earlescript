@@ -5,9 +5,14 @@ namespace EarleCode.Runtime
 {
     public class EarleStackFrame
     {
-        public EarleStackFrame(EarleRuntime runtime, EarleValue target)
+        public EarleStackFrame(EarleRuntime runtime, EarleThread thread, EarleValue target)
         {
+            if(runtime == null)
+                throw new ArgumentNullException(nameof(runtime));
+            if(thread == null)
+                throw new ArgumentNullException(nameof(thread));
             Runtime = runtime;
+            Thread = thread;
             Target = target;
         }
 
@@ -16,6 +21,13 @@ namespace EarleCode.Runtime
         public EarleValue Target { get; }
 
         public EarleStackFrameExecutor SubFrame { get; set; }
+
+        public EarleThread Thread { get; }
+
+        internal EarleStackFrame SpawnSubFrame(EarleValue target)
+        {
+            return new EarleStackFrame(Runtime, Thread, target);
+        }
     }
 }
 

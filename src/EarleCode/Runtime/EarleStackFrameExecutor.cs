@@ -93,11 +93,14 @@ namespace EarleCode.Runtime
         {
             // If a value is returned, loop is complete, if null is returned, the loop has not yet been completed.
 
-            if (!RunSubFrame())
+            if (!Frame.Thread.IsAlive || !RunSubFrame())
                 return null;
 
             while (CIP < PCode.Length)
             {
+                if(!Frame.Thread.IsAlive)
+                    return null;
+                
                 var instructionIdentifier = PCode[CIP++];
                 var instruction = instructionIdentifier >= Instructions.Length
                     ? null

@@ -16,7 +16,8 @@ namespace EarleCode.Runtime.Values
             typeof(EarleVariableReference),
             typeof(EarleFunctionCollection),
             typeof(IEarleStructure),
-            typeof(EarleBoxedValueReference)
+            typeof(EarleBoxedValueReference),
+            typeof(IEarleObject)
         };
 
         private static Type[] _supportedCastTypes = {

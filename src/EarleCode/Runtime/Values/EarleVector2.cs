@@ -36,9 +36,9 @@ namespace EarleCode.Runtime.Values
             switch(name)
             {
                 case "x":
-                    return X;
+                    return (EarleValue)X;
                 case "y":
-                    return Y;
+                    return (EarleValue)Y;
                 default:
                     return EarleValue.Undefined;
             }

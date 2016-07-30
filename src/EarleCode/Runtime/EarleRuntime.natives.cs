@@ -15,7 +15,7 @@
 
 using System;
 using System.Diagnostics;
-using System.Linq;
+using EarleCode.Runtime.Events;
 using EarleCode.Runtime.Values;
 
 namespace EarleCode.Runtime
@@ -25,61 +25,61 @@ namespace EarleCode.Runtime
         private void RegisterDefaultNatives()
         {
             RegisterNativesInType<DefaultNatives>();
-
-            RegisterNative(CreateBinaryOperator("*", (left, right) => left.Is<float>() || right.Is<float>()
+            RegisterNativesInType<EarleEventManagerNatives>();
+            RegisterNative(CreateBinaryOperator("*", (left, right) => (EarleValue)(left.Is<float>() || right.Is<float>()
                                                       ? (float)left*(float)right
-                                                      : (int)left*(int)right, typeof (int), typeof (float)));
+                                                                                   : (int)left*(int)right), typeof (int), typeof (float)));
 
             RegisterNative(CreateBinaryOperator("+", (left, right) =>
             {
                 if (left.Is<string>() || right.Is<string>())
-                    return (string)left + (string)right;
+                    return (EarleValue)((string)left + (string)right);
                 if (left.Is<float>() && right.Is<float>())
-                    return (float)left + (float)right;
+                    return (EarleValue)((float)left + (float)right);
                 if (left.Is<int>() && right.Is<float>())
-                    return (int)left + (float)right;
+                    return (EarleValue)((int)left + (float)right);
                 if (left.Is<float>() && right.Is<int>())
-                    return (float)left + (int)right;
+                    return (EarleValue)((float)left + (int)right);
                 if(left.Is<int>() && right.Is<int>())
-                    return (int)left + (int)right;
+                    return (EarleValue)((int)left + (int)right);
 
                 return EarleValue.Undefined;
             }));
 
-            RegisterNative(CreateBinaryOperator("-", (left, right) => left.Is<float>() || right.Is<float>()
+            RegisterNative(CreateBinaryOperator("-", (left, right) => (EarleValue)(left.Is<float>() || right.Is<float>()
                                                       ? (float)left - (float)right
-                                                      : (int)left - (int)right, typeof (int), typeof (float), typeof (string)));
+                                                                                   : (int)left - (int)right), typeof (int), typeof (float), typeof (string)));
 
-            RegisterNative(CreateBinaryOperator("<", (left, right) => CompareFloatInt(left.Value, right.Value) < 0, 
+            RegisterNative(CreateBinaryOperator("<", (left, right) => (EarleValue)(CompareFloatInt(left.Value, right.Value) < 0), 
                                                       typeof (int), typeof (float)));
 
-            RegisterNative(CreateBinaryOperator("<=", (left, right) => CompareFloatInt(left.Value, right.Value) <= 0, 
+            RegisterNative(CreateBinaryOperator("<=", (left, right) => (EarleValue)(CompareFloatInt(left.Value, right.Value) <= 0), 
                                                       typeof (int), typeof (float)));
 
-            RegisterNative(CreateBinaryOperator(">", (left, right) => CompareFloatInt(left.Value, right.Value) > 0,
+            RegisterNative(CreateBinaryOperator(">", (left, right) => (EarleValue)(CompareFloatInt(left.Value, right.Value) > 0),
                                                       typeof(int), typeof(float)));
 
-            RegisterNative(CreateBinaryOperator(">=", (left, right) => CompareFloatInt(left.Value, right.Value) >= 0,
+            RegisterNative(CreateBinaryOperator(">=", (left, right) => (EarleValue)(CompareFloatInt(left.Value, right.Value) >= 0),
                                                       typeof(int), typeof(float)));
 
             RegisterNative(CreateBinaryOperator("==", (left, right) => {
                 if((left.Is<int>() || left.Is<float>()) && (right.Is<int>() || right.Is<float>()))
-                   return CompareFloatInt(left.Value, right.Value) == 0;
+                    return (EarleValue)(CompareFloatInt(left.Value, right.Value) == 0);
 
 
-                return left.Value == null
+                return (EarleValue)(left.Value == null
                     ? right.Value == null
-                    : left.Value.Equals(right.Value);
+                                    : left.Value.Equals(right.Value));
             }));
 
             RegisterNative(CreateBinaryOperator("!=", (left, right) => {
                 if((left.Is<int>() || left.Is<float>()) && (right.Is<int>() || right.Is<float>()))
-                   return CompareFloatInt(left.Value, right.Value) != 0;
+                    return (EarleValue)(CompareFloatInt(left.Value, right.Value) != 0);
 
 
-                return left.Value == null
+                return (EarleValue)(left.Value == null
                     ? right.Value != null
-                    : !left.Value.Equals(right.Value);
+                                    : !left.Value.Equals(right.Value));
             }));
 
             RegisterNative(CreateUnaryOperator("++",

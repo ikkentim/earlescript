@@ -55,7 +55,7 @@ namespace EarleCode.Runtime
                 index++;
             }
 
-            return new EarleStackFrameExecutor(new EarleStackFrame(superFrame.Runtime, target), File, PCode, locals);
+            return new EarleStackFrameExecutor(superFrame.SpawnSubFrame(target), File, PCode, locals);
         }
 
         public EarleValue? Invoke(EarleCompletionHandler completionHandler, EarleValue target, params EarleValue[] args)

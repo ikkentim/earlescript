@@ -1,71 +1,23 @@
-﻿#include _utils;
-
-init()
+﻿init()
 {
-	value = 2;
+	self thread bleep();
 
-	switch(value)
+	for(i=0;i<5;i++)
 	{
-		case 1:
-			print(":1");
-			break;
-		case 2:
-			print(":2");
-		case 3:
-			print(":3");
-			break;
-		case 4:
-			print(":4");
-			break;
-		default:
-			print(":default");
-			break;
+		wait .5;
+		self notify("wait done");
 	}
 
-	print("end");
-}
-/*
-init2()
-{
-	// Some function tests
-	test = 1;
-	print("test: " + test);
-	test -= 5;
-	print("test: " + test);
-
-	print("is test defined: " + isdefined(test));
-	print("is test2 defined: " + isdefined(test2));
-
-	// Vector3 to string test
-	print("vec " + (11,22.101,33));
-
-	print("util works: " + _utils::giveTrue());
-	print("util works: " + \_utils::giveTrue());
-	print("util works: " + giveTrue());
-
-	// Threading test
-	what = "Elmo";
-	thing = bleep;
-	what thread thing();
-
-	// Sync
-	for(i=0;i<10;i++)
-	{
-		print("wait..." + (1 + i));
-		wait 1;
-	}
-
-	// Return variable resolving test
-	result = "this is the result";
-	return result;
+	self notify("all done");
 }
 
 bleep()
 {
-	// Print the string representation of the target every 100ms
-	for(i=0;i<100;i++)
+	self endon("all done");
+
+	for(;;)
 	{
-		print(self + " says bleep!");
-		wait .1;
+		print("Bleep!");
+		self waittill("wait done");
 	}
-}*/
+}

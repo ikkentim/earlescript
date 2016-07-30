@@ -128,22 +128,22 @@ namespace EarleCode.Runtime.Values
             return value.CastTo<bool>();
         }
 
-        public static implicit operator EarleValue(bool value)
+        public static explicit operator EarleValue(bool value)
         {
             return value ? True : False;
         }
 
-        public static implicit operator EarleValue(int value)
+        public static explicit operator EarleValue(int value)
         {
             return new EarleValue(value);
         }
 
-        public static implicit operator EarleValue(float value)
+        public static explicit operator EarleValue(float value)
         {
             return new EarleValue(value);
         }
 
-        public static implicit operator EarleValue(string value)
+        public static explicit operator EarleValue(string value)
         {
             return new EarleValue(value);
         }

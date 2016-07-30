@@ -24,14 +24,12 @@ namespace EarleCode.Runtime
 {
     public partial class EarleRuntime : EarleRuntimeScope
     {
-        private EarleStackFrame _rootFrame;
         private readonly Dictionary<string, EarleFile> _files = new Dictionary<string, EarleFile>();
         private readonly EarleFunctionTable _natives = new EarleFunctionTable();
         private readonly Queue<EarleThread> _threadPool = new Queue<EarleThread>();
 
         public EarleRuntime() : base(null)
         {
-            _rootFrame = new EarleStackFrame(this, EarleValue.Undefined);
             Compiler = new EarleCompiler(this);
 
             RegisterDefaultNatives();
@@ -84,7 +82,10 @@ namespace EarleCode.Runtime
             var result = thread.Frame.Run();
 
             if(result == null)
-                _threadPool.Enqueue(thread);
+            {
+                if(thread.IsAlive)
+                    _threadPool.Enqueue(thread);
+            }
             else if(thread.CompletionHandler != null)
                 thread.CompletionHandler(result.Value);
             
@@ -99,7 +100,15 @@ namespace EarleCode.Runtime
             int count = 0;
             while(_threadPool.Any() && count < ticks)
             {
-                RunThread(_threadPool.Dequeue());
+                var thread = _threadPool.Dequeue();
+
+                if(!thread.IsAlive)
+                {
+                    ticks--;
+                    continue;
+                }
+                RunThread(thread);
+                count++;
             }
 
             return !_threadPool.Any();
@@ -151,8 +160,10 @@ namespace EarleCode.Runtime
         {
             if (function == null) throw new ArgumentNullException(nameof(function));
 
-            var frame = function.CreateFrameExecutor(_rootFrame, target, args?.ToArray() ?? new EarleValue[0]);
-            var thread = new EarleThread(frame, completionHandler);
+            var thread = new EarleThread(completionHandler);
+            var rootFrame = new EarleStackFrame(this, thread, target);
+            var frame = function.CreateFrameExecutor(rootFrame, target, args?.ToArray() ?? new EarleValue[0]);
+            thread.AttachFrame(frame);
 
             return RunThread(thread);
         }

@@ -37,51 +37,12 @@ namespace EarleCode.Runtime
                              .Take(Parameters.Length)
                              .ToArray();
 
-            return new NativeStackFrameExecutor(new EarleStackFrame(superFrame.Runtime, target), this, args);
+            return new NativeStackFrameExecutor(superFrame.SpawnSubFrame(target), this, args);
         }
 
         #endregion
 
         protected abstract EarleValue Invoke(EarleStackFrame frame, EarleValue[] arguments);
-
-        private class NativeStackFrameExecutor : EarleStackFrameExecutor
-        {
-            private readonly EarleValue[] _arguments;
-            private readonly EarleNativeFunction _native;
-
-            public NativeStackFrameExecutor(EarleStackFrame frame, EarleNativeFunction native, EarleValue[] arguments)
-                : base(frame, null, null)
-            {
-                _native = native;
-                _arguments = arguments;
-            }
-
-            #region Overrides of RuntimeLoop
-
-            public override EarleValue? Run()
-            {
-                if(Frame.SubFrame != null)
-                {
-                    var result = Frame.SubFrame.Run();
-
-                    if(result != null)
-                        Frame.SubFrame = null;
-
-                    return result;
-                }
-                else
-                {
-                    var result = _native.Invoke(Frame, _arguments);
-
-                    if(Frame.SubFrame == null)
-                        return result;
-
-                    return null;
-                }
-            }
-
-            #endregion
-        }
 
         public static EarleNativeFunction Create(string name, object target, MethodInfo methodInfo)
         {
@@ -154,6 +115,45 @@ namespace EarleCode.Runtime
         public static EarleNativeFunction Create<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, TResult>(string name, Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, TResult> func) => Create(name, func.Target, func.Method);
         public static EarleNativeFunction Create<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, TResult>(string name, Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, TResult> func) => Create(name, func.Target, func.Method);
         public static EarleNativeFunction Create<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, TResult>(string name, Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, TResult> func) => Create(name, func.Target, func.Method);
+
+        private class NativeStackFrameExecutor : EarleStackFrameExecutor
+        {
+            private readonly EarleValue[] _arguments;
+            private readonly EarleNativeFunction _native;
+
+            public NativeStackFrameExecutor(EarleStackFrame frame, EarleNativeFunction native, EarleValue[] arguments)
+                : base(frame, null, null)
+            {
+                _native = native;
+                _arguments = arguments;
+            }
+
+            #region Overrides of RuntimeLoop
+
+            public override EarleValue? Run()
+            {
+                if(Frame.SubFrame != null)
+                {
+                    var result = Frame.SubFrame.Run();
+
+                    if(result != null)
+                        Frame.SubFrame = null;
+
+                    return result;
+                }
+                else
+                {
+                    var result = _native.Invoke(Frame, _arguments);
+
+                    if(Frame.SubFrame == null)
+                        return result;
+
+                    return null;
+                }
+            }
+
+            #endregion
+        }
 
         private class LambdaFunction : EarleNativeFunction
         {

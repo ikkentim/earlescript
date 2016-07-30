@@ -16,14 +16,9 @@
 namespace EarleCode.Runtime.Instructions
 {
 
-    internal class ThreadWithoutTargetInstruction : CallWithoutTargetInstruction
+    internal class ThreadWithoutTargetInstruction : ThreadInstruction
     {
-        protected override void Handle()
-        {
-            var frame = CreateFrameExecutor();
-            if(frame != null)
-                Frame.Frame.Runtime.StartThread(new EarleThread(frame, null));
-        }
+        protected override bool HasTarget => false;
     }
     
 }
