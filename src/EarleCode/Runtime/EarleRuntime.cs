@@ -18,14 +18,15 @@ using System.Collections.Generic;
 using System.Linq;
 using EarleCode.Compiler;
 using EarleCode.Runtime.Values;
-using System.Reflection;
+using EarleCode.Localization;
+using EarleCode.Runtime.Events;
+using System.Collections;
 
 namespace EarleCode.Runtime
 {
-    public partial class EarleRuntime : IEarleRuntimeScope
+    public partial class EarleRuntime : IEarleRuntimeScope, IEnumerable<EarleFile>
     {
         private readonly Dictionary<string, EarleFile> _files = new Dictionary<string, EarleFile>();
-        private readonly EarleFunctionTable _natives = new EarleFunctionTable();
         private readonly Queue<EarleThread> _threadPool = new Queue<EarleThread>();
 
         public EarleRuntime()
@@ -33,46 +34,27 @@ namespace EarleCode.Runtime
             Compiler = new EarleCompiler(this);
 
             RegisterDefaultNatives();
+            RegisterDefaultOperators();
         }
 
         internal EarleCompiler Compiler { get; }
 
         public EarleDictionary GlobalVariables { get; } = new EarleDictionary();
 
+        public EarleOperatorCollection Operators { get; } = new EarleOperatorCollection();
+
+        public EarleLocalizer Localizer { get; } = new EarleLocalizer();
+
+        public EarleNativeCollection Natives { get; } = new EarleNativeCollection();
+
         public EarleFile this[string fileName] => GetFile(fileName);
-  
-        #region Natives
 
-        public void RegisterNative(EarleFunction native)
+        private void RegisterDefaultNatives()
         {
-            if (native == null) throw new ArgumentNullException(nameof(native));
-
-            _natives.Add(native);
+            Natives.RegisterInType<EarleDefaultNatives>();
+            Natives.RegisterInType<EarleEventManagerNatives>();
+            Natives.RegisterInType<EarleLocalizerNatives>();
         }
-
-        public void RegisterNativesInType<T>()
-        {
-            RegisterNativesInType(typeof(T));
-        }
-
-        public void RegisterNativesInType(Type type)
-        {
-            if(type == null) throw new ArgumentNullException(nameof(type));
-            
-            foreach(var method in type.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static))
-            {
-                var attribute = method.GetCustomAttributes(typeof(EarleNativeFunctionAttribute), true)?.FirstOrDefault() as EarleNativeFunctionAttribute;
-
-                if(attribute == null)
-                    continue;
-
-                var name = attribute.Name?.ToLower() ?? method.Name.ToLower();
-
-                RegisterNative(EarleNativeFunction.Create(name, null, method));
-            }
-        }
-
-        #endregion
 
         #region Running
 
@@ -151,6 +133,15 @@ namespace EarleCode.Runtime
 
         #endregion
 
+        #region Debugging
+
+        public IEnumerable<string> GetDebugInformation()
+        {
+            return this.SelectMany(f => f).SelectMany(Compiler.GetDebugInformation);
+        }
+
+        #endregion
+
         #region Implementation of IRuntimeScope
 
         public virtual EarleValue GetValue(EarleVariableReference reference)
@@ -160,7 +151,7 @@ namespace EarleCode.Runtime
                 return GetFile(reference.File)?.GetFunctions(reference.Name)?.ToEarleValue() ?? EarleValue.Undefined;
 
             // Look natives up.
-            var natives = _natives.Get(reference.Name);
+            var natives = Natives.Get(reference.Name);
             if(natives != null)
                 return new EarleValue(natives);
 
@@ -176,6 +167,20 @@ namespace EarleCode.Runtime
             return false;
         }
 
+        #endregion
+
+        #region Implementation of IEnumerable<EarleFile>
+
+        public IEnumerator<EarleFile> GetEnumerator()
+        {
+            return _files.Values.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+        
         #endregion
     }
 }

@@ -21,19 +21,23 @@ namespace EarleCode.Runtime.Instructions
     [AttributeUsage(AttributeTargets.Field)]
     internal class OpCodeAttribute : Attribute
     {
-        public OpCodeAttribute(string format) : this(format, null)
-        {
-        }
-
-        public OpCodeAttribute(string format, Type instructionType)
+        public OpCodeAttribute(string format, Type instructionType, params object[] args)
         {
             Format = format;
             InstructionType = instructionType;
+            Arguments = args;
         }
 
         public string Format { get; }
 
         public Type InstructionType { get; }
+
+        public object[] Arguments { get; }
+
+        public IInstruction CreateInstruction()
+        {
+            return Activator.CreateInstance(InstructionType, Arguments ?? new object[0]) as IInstruction;
+        }
 
         public string BuildString(byte[] pCode, ref int index)
         {
@@ -45,6 +49,8 @@ namespace EarleCode.Runtime.Instructions
             {
                 if (l.Current.Is(TokenType.Token, "$"))
                 {
+                    str += " ";
+
                     l.AssertMoveNext();
                     l.AssertToken(TokenType.Identifier);
 
@@ -79,11 +85,11 @@ namespace EarleCode.Runtime.Instructions
                 }
                 else
                 {
-                    str += $"{l.Current.Value} ";
+                    str += $"{l.Current.Value}";
                 }
             }
 
-            return $"[{start}:{size}]" + str;
+            return $"[{start:000000}:{size:00}] " + str;
         }
     }
 }

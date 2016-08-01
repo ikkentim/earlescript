@@ -89,7 +89,7 @@ namespace EarleCode.Compiler.Parsers
                         ThrowUnexpectedToken("-OPERATOR-");
 
                     if (operators.Any() &&
-                        EarleOperators.BinaryOperators[operators.Peek()] >= EarleOperators.BinaryOperators[op])
+                        EarleOperators.BinaryOperators[operators.Peek()].Priority >= EarleOperators.BinaryOperators[op].Priority)
                         do YieldBinaryOperator(operators.Pop()); while (operators.Any());
 
                     operators.Push(op);
@@ -253,7 +253,7 @@ namespace EarleCode.Compiler.Parsers
 
         protected virtual void YieldBinaryOperator(string op)
         {
-            PushCallWithoutTarget(null, $"operator{op}", 2);
+            Yield(EarleOperators.BinaryOperators[op].OpCode);
         }
 
         protected virtual void YieldBinaryOperators(Stack<string> operators)
@@ -271,10 +271,10 @@ namespace EarleCode.Compiler.Parsers
                     YieldBinaryOperator("*");
                     break;
                 case "!":
-                    Yield(OpCode.Not);
+                    Yield(OpCode.LogicalNot);
                     break;
                 default:
-                    PushCallWithoutTarget(null, $"operator{op}", 1);
+                    Yield(EarleOperators.UnaryOperators[op]);
                     break;
             }
         }

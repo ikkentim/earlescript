@@ -1,4 +1,4 @@
-﻿// EarleCode
+// EarleCode
 // Copyright 2016 Tim Potze
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,27 +13,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using EarleCode.Runtime;
 
-using EarleCode.Runtime.Values;
-
-namespace EarleCode.Runtime.Instructions
+namespace EarleCode.Localization
 {
-    internal class NotInstruction : Instruction
+    internal class EarleLocalizerNatives
     {
-        #region Overrides of Instruction
-
-        protected override void Handle()
+        [EarleNativeFunction]
+        private static void SetActiveLanguage(EarleStackFrame frame, string key)
         {
-            var value = Pop();
-
-            if (value.Is<int>())
-                value = value.As<int>() == 0 ? EarleValue.True : EarleValue.False;
-            else
-                value = value.HasValue ? EarleValue.False : EarleValue.True;
-
-            Push(value);
+            frame.Runtime.Localizer.Key = key;
         }
-
-        #endregion
     }
 }

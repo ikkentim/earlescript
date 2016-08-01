@@ -16,42 +16,55 @@
 using System;
 using System.Collections.Generic;
 using EarleCode.Compiler.Lexing;
+using EarleCode.Runtime.Instructions;
 
 namespace EarleCode.Runtime
 {
     internal static class EarleOperators
     {
-        public static readonly IDictionary<string, int> BinaryOperators = new Dictionary<string, int>
+        public struct OperatorInfo
         {
-            ["+"] = 1,
-            ["-"] = 1,
-            ["*"] = 3,
-            ["/"] = 3,
-            ["^"] = 3,
-            ["|"] = 3,
-            ["&"] = 3,
-            ["<<"] = 3,
-            [">>"] = 3,
-            ["<"] = 4,
-            [">"] = 4,
-            ["<="] = 4,
-            [">="] = 4,
-            ["=="] = 4,
-            ["!="] = 4
+            public OperatorInfo(int priority, OpCode opCode)
+            {
+                Priority = priority;
+                OpCode = opCode;
+            }
+
+            public OpCode OpCode { get; }
+            public int Priority { get; }
+        }
+
+        public static readonly IDictionary<string, OperatorInfo> BinaryOperators = new Dictionary<string, OperatorInfo>
+        {
+            //TODO
+            ["+"] = new OperatorInfo(1, OpCode.Add),//add
+            ["-"] = new OperatorInfo(1, OpCode.Subtract),//sub
+            ["*"] = new OperatorInfo(3, OpCode.Multiply),//mul
+            ["/"] = new OperatorInfo(3, OpCode.Divide),//div
+            ["^"] = new OperatorInfo(3, OpCode.BitwiseXor),//xor.bitwise
+            ["|"] = new OperatorInfo(3, OpCode.BitwiseOr),//or.bitwise
+            ["&"] = new OperatorInfo(3, OpCode.BitwiseAnd),//and.bitwise
+            ["<<"] = new OperatorInfo(3, OpCode.Return),//shl
+            [">>"] = new OperatorInfo(3, OpCode.Return),//shr
+            ["<"] = new OperatorInfo(4, OpCode.CheckLessThan),//clt
+            [">"] = new OperatorInfo(4, OpCode.CheckGreaterThan),//cgt
+            ["<="] = new OperatorInfo(4, OpCode.CheckLessOrEqual),//clte
+            [">="] = new OperatorInfo(4, OpCode.CheckGreaterOrEqual),//cgte
+            ["=="] = new OperatorInfo(4, OpCode.CheckEqual),//ceq
+            ["!="] = new OperatorInfo(4, OpCode.CheckNotEqual),//cneq
         };
 
-        public static readonly string[] UnaryOperators =
+        public static readonly IDictionary<string, OpCode> UnaryOperators = new Dictionary<string, OpCode>
         {
-            "+",
-            "-",
-            "!",
-            "~",
-            "@"
+            //TODO
+            ["-"] = OpCode.Negate,//neg
+            ["!"] = OpCode.LogicalNot,//not.logical
+            ["~"] = OpCode.BitwiseNot,//not.bitwise
+            ["@"] = OpCode.Convert,//conv
         };
 
         public static readonly string[] UnaryAssignmentOperators =
         {
-            "+",
             "-"
         };
 

@@ -134,11 +134,7 @@ namespace EarleCode.Compiler
 
             lexer.SkipToken(TokenType.Token, ")");
 
-            var function = new EarleFunction(file, name, parameters.ToArray(), Compile(lexer, file, EarleCompileOptions.Method).PCode);
-
-            PrintCompiledPCode(function);
-
-            return function;
+            return new EarleFunction(file, name, parameters.ToArray(), Compile(lexer, file, EarleCompileOptions.Method).PCode);
         }
 
         public CompiledBlock Compile(ILexer lexer, EarleFile file, EarleCompileOptions options)
@@ -200,7 +196,11 @@ namespace EarleCode.Compiler
                         throw new ParseException(lexer.Current,
                             $"Expected statement, found {parserName.ToLower()} `{lexer.Current.Value}`");
 
-                    var block = parser.Parse(_runtime, file, lexer, options);
+                    var parseOptions = options.HasFlag(EarleCompileOptions.MustReturn) 
+                                              ? options ^ EarleCompileOptions.MustReturn 
+                                              : options;
+                    
+                    var block = parser.Parse(_runtime, file, lexer, parseOptions);
 
                     breaks.AddRange(block.Breaks.Select(b => b + pCode.Count));
                     continues.AddRange(block.Continues.Select(c => c + pCode.Count));
@@ -244,25 +244,22 @@ namespace EarleCode.Compiler
 
         #region Debugging
 
-        public void PrintCompiledPCode(EarleFunction function)
+        public IEnumerable<string> GetDebugInformation(EarleFunction function)
         {
             if (function == null) throw new ArgumentNullException(nameof(function));
 
-            Console.WriteLine($"Function {function.File.Name}::{function.Name} compiled to:");
-            PrintCompiledPCode(function.PCode);
-            Console.WriteLine();
-        }
+            yield return $"Function {function.File.Name}::{function.Name} compiled to ({function.PCode.Length:000000} bytes):";
 
-        public void PrintCompiledPCode(byte[] pCode)
-        {
-            for (var index = 0; index < pCode.Length; index++)
+            for(var index = 0; index < function.PCode.Length; index++)
             {
-                var p = pCode[index];
-                var e = (OpCode) p;
+                var p = function.PCode[index];
+                var e = (OpCode)p;
                 var a = e.GetCustomAttribute<OpCodeAttribute>();
 
-                Console.WriteLine(a.BuildString(pCode, ref index));
+                yield return a.BuildString(function.PCode, ref index);
             }
+
+            yield return string.Empty;
         }
 
         #endregion

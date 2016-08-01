@@ -87,7 +87,6 @@
     <Compile Include="Runtime\Instructions\JumpIfFalseInstruction.cs" />
     <Compile Include="Runtime\Instructions\JumpIfTrueInstruction.cs" />
     <Compile Include="Runtime\Instructions\JumpInstruction.cs" />
-    <Compile Include="Runtime\Instructions\NotInstruction.cs" />
     <Compile Include="Runtime\Instructions\OpCode.cs" />
     <Compile Include="Runtime\Instructions\OpCodeAttribute.cs" />
     <Compile Include="Runtime\Instructions\PopInstruction.cs" />
@@ -109,7 +108,7 @@
     <Compile Include="Runtime\EarleNativeFunction.cs" />
     <Compile Include="Runtime\EarleOperators.cs" />
     <Compile Include="Runtime\EarleRuntime.cs" />
-    <Compile Include="Runtime\EarleRuntime.natives.cs" />
+    <Compile Include="Runtime\EarleRuntime.operators.cs" />
     <Compile Include="Runtime\EarleRuntimeScope.cs" />
     <Compile Include="Runtime\IEarleRuntimeScope.cs" />
     <Compile Include="Compiler\Grammar\GrammarProcessor.cs" />
@@ -139,6 +138,14 @@
     <Compile Include="Runtime\IEarleObject.cs" />
     <Compile Include="Runtime\EarleDefaultNatives.cs" />
     <Compile Include="Compiler\EarleCompileOptions.cs" />
+    <Compile Include="Runtime\EarleOperatorCollection.cs" />
+    <Compile Include="Runtime\Instructions\BinaryOperatorInstruction.cs" />
+    <Compile Include="Runtime\Instructions\PushOneInstruction.cs" />
+    <Compile Include="Runtime\Instructions\UnaryOperatorInstruction.cs" />
+    <Compile Include="Localization\EarleLocalizer.cs" />
+    <Compile Include="Localization\EarleLocalizerNatives.cs" />
+    <Compile Include="Runtime\EarleOperatorTypeOrder.cs" />
+    <Compile Include="Runtime\EarleNativeCollection.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
@@ -150,6 +157,7 @@
     <Folder Include="Runtime\Instructions\" />
     <Folder Include="Compiler\Grammar\" />
     <Folder Include="Runtime\Events\" />
+    <Folder Include="Localization\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

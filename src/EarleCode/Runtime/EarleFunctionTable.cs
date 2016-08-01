@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Linq;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace EarleCode.Runtime
 {
-    internal class EarleFunctionTable
+    internal class EarleFunctionTable : IEnumerable<EarleFunction>
     {
         private Dictionary<string, EarleFunctionCollection> _values = new Dictionary<string, EarleFunctionCollection>();
 
@@ -35,6 +37,20 @@ namespace EarleCode.Runtime
             _values.TryGetValue(functionName, out collection);
             return collection;
         }
+
+        #region Implementation of IEnumerable<EarleFunction>
+
+        public IEnumerator<EarleFunction> GetEnumerator()
+        {
+            return _values.Values.SelectMany(c => c).GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+
+        #endregion
     }
 }
 

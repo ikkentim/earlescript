@@ -5,3 +5,23 @@ LANG_DUTCH      "Dit is een test regel."
 REFERENCE       HELLO_WORLD
 LANG_ENGLISH    "Hello, World!"
 LANG_DUTCH      "Hallo, Wereld!"
+
+REFERENCE       TWELVE
+LANG_ENGLISH    "twelve"
+LANG_DUTCH      "twaalf"
+
+REFERENCE       THIRTEEN
+LANG_ENGLISH    "thirteen"
+LANG_DUTCH      "dertien"
+
+REFERENCE       FOURTEEN
+LANG_ENGLISH    "fourteen"
+LANG_DUTCH      "veertien"
+
+REFERENCE       FIFTEEN
+LANG_ENGLISH    "fifteen"
+LANG_DUTCH      "vijftien"
+
+REFERENCE       SIXTEEN
+LANG_ENGLISH    "sixteen"
+LANG_DUTCH      "zestien"

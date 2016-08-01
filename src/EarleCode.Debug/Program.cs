@@ -51,16 +51,17 @@ namespace EarleCode.Debug
             }
 
             // Add localization
-            var loc = new Localizer();
             foreach(var file in Directory.GetFiles(codeDir, "*.estr", SearchOption.AllDirectories))
             {
                 var rel = GetRelativePath(file, codeDir).Replace('/', '\\');
                 rel = rel.Substring(0, rel.Length - 5);
-                loc.LoadFromFile(rel, File.ReadAllText(file), Path.GetFileNameWithoutExtension(file).ToUpper() + "_");
+                runtime.Localizer.LoadFromFile(rel, File.ReadAllText(file), Path.GetFileNameWithoutExtension(file).ToUpper() + "_");
             }
-            loc.AddToRuntime(runtime);
-            loc.Key = "LANG_ENGLISH";
+            runtime.Localizer.Key = "LANG_ENGLISH";
 
+            foreach(var l in runtime.GetDebugInformation())
+                Console.WriteLine(l);
+            
             // Invoke main::init
             runtime["\\main"]["init"].Invoke((result) => {
                 Console.WriteLine();

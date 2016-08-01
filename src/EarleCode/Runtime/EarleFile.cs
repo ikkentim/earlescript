@@ -14,13 +14,14 @@
 // limitations under the License.
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using EarleCode.Runtime.Values;
 
 namespace EarleCode.Runtime
 {
-    public class EarleFile : EarleRuntimeScope
+    public class EarleFile : EarleRuntimeScope, IEnumerable<EarleFunction>
     {
         private EarleFunctionTable _functions = new EarleFunctionTable();
         private readonly List<string> _includedFiles = new List<string>();
@@ -108,6 +109,20 @@ namespace EarleCode.Runtime
         protected override bool CanAssignReferenceInScope(EarleVariableReference reference)
         {
             return false;
+        }
+
+        #endregion
+
+        #region Implementation of IEnumerable<EarleFunction>
+
+        public IEnumerator<EarleFunction> GetEnumerator()
+        {
+            return _functions.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
 
         #endregion

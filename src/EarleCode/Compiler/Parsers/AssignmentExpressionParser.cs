@@ -87,7 +87,8 @@ namespace EarleCode.Compiler.Parsers
                     YieldDuplicate();
 
                 // Operator call
-                PushCallWithoutTarget(null, $"operator{unaryModOperator}", 1);
+                Yield(OpCode.PushOne);
+                Yield(EarleOperators.BinaryOperators[unaryModOperator.First().ToString()].OpCode);
 
                 // Prefix dupelicate
                 if (unaryModOperatorIsPrefix)
@@ -115,8 +116,8 @@ namespace EarleCode.Compiler.Parsers
 
                 Parse<ExpressionParser>();
 
-                if (unaryOperator != null)
-                    PushCallWithoutTarget(null, $"operator{unaryOperator}", 2);
+                if(unaryOperator != null)
+                    Yield(EarleOperators.UnaryOperators[unaryOperator.First().ToString()]);
 
                 YieldDuplicate();
 

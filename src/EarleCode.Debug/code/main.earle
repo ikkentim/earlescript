@@ -1,5 +1,32 @@
 ﻿init()
 {
+	a = 4;
+	a = a + 10;
+
+	print("test: " + a);
+
+	setactivelanguage("LANG_DUTCH");
+
+	switch(a)
+	{
+		case 12:
+			print(@"TEST_TWELVE");
+			break;
+		case 13:
+			print(@"TEST_THIRTEEN");
+			break;
+		case 14:
+			print(@"TEST_FOURTEEN");
+			break;
+		case 15:
+			print(@"TEST_FIFTEEN");
+	 		break;
+		case 16:
+			print(@"TEST_SIXTEEN");
+			break;
+	}
+
+
 	level thread bleep();
 
 	for(i=0;i<5;i++)
@@ -9,6 +36,7 @@
 	}
 
 	level notify("all done");
+
 }
 
 bleep()

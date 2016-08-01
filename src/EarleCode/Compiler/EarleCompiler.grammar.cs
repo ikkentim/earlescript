@@ -104,7 +104,7 @@ namespace EarleCode.Compiler
             foreach (var o in EarleOperators.BinaryOperators.Keys.OrderByDescending(o => o.Length))
                 SyntaxGrammarProcessor.AddRule("OPERATOR", false, o);
 
-            foreach (var o in EarleOperators.UnaryOperators.OrderByDescending(o => o.Length))
+            foreach (var o in EarleOperators.UnaryOperators.Keys.OrderByDescending(o => o.Length))
                 SyntaxGrammarProcessor.AddRule("OPERATOR_UNARY", false, o);
 
             foreach (var o in EarleOperators.UnaryAssignmentModOperators.OrderByDescending(o => o.Length))
