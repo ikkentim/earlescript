@@ -38,6 +38,12 @@ namespace EarleCode.Debug
 
         private static void Main(string[] args)
         {
+            Console.WriteLine(4 << 1 + 1);//16
+            Console.WriteLine(4 | 1 << 1 + 1);//4
+            Console.WriteLine(4 * 3 == 12);//true
+            Console.WriteLine(3 & 1 | 2 << 2);//9
+            Console.WriteLine(1 < 3 == 3 < 1);//false
+
             var runtime = new EarleRuntime();
             runtime.GlobalVariables["level"] = new EarleSimpleEventableStructure().ToEarleValue();
 

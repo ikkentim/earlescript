@@ -14,6 +14,7 @@
 // limitations under the License.
 
 using System;
+using System.Linq;
 using EarleCode.Compiler.Lexing;
 
 namespace EarleCode.Runtime.Instructions
@@ -34,9 +35,16 @@ namespace EarleCode.Runtime.Instructions
 
         public object[] Arguments { get; }
 
-        public IInstruction CreateInstruction()
+        public IInstruction CreateInstruction(OpCode op)
         {
-            return Activator.CreateInstance(InstructionType, Arguments ?? new object[0]) as IInstruction;
+            if(InstructionType == null)
+                return null;
+            
+            var constructor = InstructionType.GetConstructors()
+                                             .FirstOrDefault(c => c.GetParameters().FirstOrDefault()?.ParameterType == typeof(OpCode));
+            
+            return constructor?.Invoke(new object[] { op }.Concat(Arguments ?? new object[0]).ToArray()) as IInstruction 
+                        ?? Activator.CreateInstance(InstructionType, Arguments ?? new object[0]) as IInstruction;
         }
 
         public string BuildString(byte[] pCode, ref int index)

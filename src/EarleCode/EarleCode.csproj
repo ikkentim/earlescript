@@ -146,6 +146,9 @@
     <Compile Include="Localization\EarleLocalizerNatives.cs" />
     <Compile Include="Runtime\EarleOperatorTypeOrder.cs" />
     <Compile Include="Runtime\EarleNativeCollection.cs" />
+    <Compile Include="Runtime\Instructions\NopInstuction.cs" />
+    <Compile Include="Runtime\OperatorType.cs" />
+    <Compile Include="Runtime\OperatorAttribute.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

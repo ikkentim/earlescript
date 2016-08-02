@@ -118,17 +118,17 @@ namespace EarleCode.Runtime
 
         public EarleFile CompileFile(string fileName, string script)
         {
-            try
-            {
+            //try
+            //{
                 var file = Compiler.CompileFile(fileName, script);
 
                 AddFile(file);
                 return file;
-            }
-            catch(Exception e)
-            {
-                throw e;
-            }
+            //}
+            //catch(Exception e)
+            //{
+            //    throw e;
+            //}
         }
 
         #endregion

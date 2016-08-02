@@ -20,6 +20,8 @@ namespace EarleCode.Runtime.Instructions
     /// </summary>
     public enum OpCode : byte
     {
+        [OpCode("NOP", typeof(NopInstuction))]
+        Nop,
         /// <summary>
         ///     Call the function referenced by the value below the top of the stack and with the value on the top of the stack as a 
         ///     target with the specified number of arguments.
@@ -157,48 +159,71 @@ namespace EarleCode.Runtime.Instructions
         [OpCode("DEREF.I", typeof(DereferenceIndexInstruction))]
         DereferenceIndex,
 
-        [OpCode("ADD", typeof(BinaryOperatorInstruction), "+")]
+        [OpCode("ADD", typeof(BinaryOperatorInstruction))]
+        [Operator("+", OperatorType.BinaryOperator | OperatorType.AssignmentModOperator | OperatorType.AssignmentOperator, 7)]
         Add,
-        [OpCode("SUB", typeof(BinaryOperatorInstruction), "-")]
+        [OpCode("SUB", typeof(BinaryOperatorInstruction))]
+        [Operator("-", OperatorType.BinaryOperator | OperatorType.AssignmentModOperator | OperatorType.AssignmentOperator, 7)]
         Subtract,
-        [OpCode("MUL", typeof(BinaryOperatorInstruction), "*")]
+        [OpCode("MUL", typeof(BinaryOperatorInstruction))]
+        [Operator("*", OperatorType.BinaryOperator, 8)]
         Multiply,
-        [OpCode("DIV", typeof(BinaryOperatorInstruction), "/")]
+        [OpCode("MOD", typeof(BinaryOperatorInstruction))]
+        [Operator("*", OperatorType.BinaryOperator, 8)]
+        Modulo,
+        [OpCode("DIV", typeof(BinaryOperatorInstruction))]
+        [Operator("/", OperatorType.BinaryOperator, 8)]
         Divide,
-        [OpCode("XOR", typeof(BinaryOperatorInstruction), "^")]
+        [OpCode("XOR", typeof(BinaryOperatorInstruction))]
+        [Operator("^", OperatorType.BinaryOperator, 2)]
         BitwiseXor,
-        [OpCode("OR", typeof(BinaryOperatorInstruction), "|")]
+        [OpCode("OR", typeof(BinaryOperatorInstruction))]
+        [Operator("|", OperatorType.BinaryOperator, 1)]
         BitwiseOr,
-        [OpCode("AND", typeof(BinaryOperatorInstruction), "&")]
+        [OpCode("AND", typeof(BinaryOperatorInstruction))]
+        [Operator("&", OperatorType.BinaryOperator, 3)]
         BitwiseAnd,
-        [OpCode("SHL", typeof(BinaryOperatorInstruction), "<<")]
+        [OpCode("SHL", typeof(BinaryOperatorInstruction))]
+        [Operator("<<", OperatorType.BinaryOperator, 6)]
         ShiftLeft,
-        [OpCode("SHR", typeof(BinaryOperatorInstruction), ">>")]
+        [OpCode("SHR", typeof(BinaryOperatorInstruction))]
+        [Operator(">>", OperatorType.BinaryOperator, 6)]
         ShiftRight,
-        [OpCode("CLT", typeof(BinaryOperatorInstruction), "<")]
+        [OpCode("CLT", typeof(BinaryOperatorInstruction))]
+        [Operator("<", OperatorType.BinaryOperator, 5)]
         CheckLessThan,
-        [OpCode("CGT", typeof(BinaryOperatorInstruction), ">")]
+        [OpCode("CGT", typeof(BinaryOperatorInstruction))]
+        [Operator(">", OperatorType.BinaryOperator, 5)]
         CheckGreaterThan,
-        [OpCode("CLEQ", typeof(BinaryOperatorInstruction), "<=")]
+        [OpCode("CLEQ", typeof(BinaryOperatorInstruction))]
+        [Operator("<=", OperatorType.BinaryOperator, 5)]
         CheckLessOrEqual,
-        [OpCode("CGEQ", typeof(BinaryOperatorInstruction), ">=")]
+        [OpCode("CGEQ", typeof(BinaryOperatorInstruction))]
+        [Operator(">=", OperatorType.BinaryOperator, 5)]
         CheckGreaterOrEqual,
-        [OpCode("CEQ", typeof(BinaryOperatorInstruction), "==")]
+        [OpCode("CEQ", typeof(BinaryOperatorInstruction))]
+        [Operator("==", OperatorType.BinaryOperator, 4)]
         CheckEqual,
-        [OpCode("CNEQ", typeof(BinaryOperatorInstruction), "!=")]
+        [OpCode("CNEQ", typeof(BinaryOperatorInstruction))]
+        [Operator("!=", OperatorType.BinaryOperator, 4)]
         CheckNotEqual,
-        [OpCode("NEG", typeof(UnaryOperatorInstruction), "-")]
+        [OpCode("NEG", typeof(UnaryOperatorInstruction))]
+        [Operator("-", OperatorType.UnaryOperator)]
         Negate,
 
         /// <summary>
         ///     Replace the value on top of the stack with its logical NOT value.
         /// </summary>
-        [OpCode("NOT.L", typeof(UnaryOperatorInstruction), "!")]
+        [OpCode("NOT.L", typeof(UnaryOperatorInstruction))]
+        [Operator("!", OperatorType.UnaryOperator)]
         LogicalNot,
 
-        [OpCode("NOT.B", typeof(UnaryOperatorInstruction), "~")]
+        [OpCode("NOT.B", typeof(UnaryOperatorInstruction))]
+        [Operator("~", OperatorType.UnaryOperator)]
         BitwiseNot,
-        [OpCode("CONV", typeof(UnaryOperatorInstruction), "@")]
+        [OpCode("CONV", typeof(UnaryOperatorInstruction))]
+        [Operator("@", OperatorType.UnaryOperator)]
         Convert,
+        // TODO: Modulo
     }
 }

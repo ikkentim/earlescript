@@ -14,6 +14,7 @@
 // limitations under the License.
 
 using System;
+using EarleCode.Runtime.Instructions;
 using EarleCode.Runtime.Values;
 
 namespace EarleCode.Runtime
@@ -25,132 +26,137 @@ namespace EarleCode.Runtime
             // BINARY OPERATORS
        
             // +
-            Operators.AddBinaryOperator("+", null, typeof(string), (l, r) => {
+            Operators.AddBinaryOperator(OpCode.Add, null, typeof(string), (l, r) => {
                 return (EarleValue)((string)l + (string)r);
             }, EarleOperatorTypeOrder.Any);
 
-            Operators.AddBinaryOperator("+", typeof(int), typeof(float), (l, r) => {
+            Operators.AddBinaryOperator(OpCode.Add, typeof(int), typeof(float), (l, r) => {
                 return (EarleValue)((int)l + (float)r);
             }, EarleOperatorTypeOrder.Specified);
 
-            Operators.AddBinaryOperator("+", typeof(int), typeof(int), (l, r) => {
+            Operators.AddBinaryOperator(OpCode.Add, typeof(int), typeof(int), (l, r) => {
                 return (EarleValue)((int)l + (int)r);
             });
 
-            Operators.AddBinaryOperator("+", typeof(float), typeof(float), (l, r) => {
+            Operators.AddBinaryOperator(OpCode.Add, typeof(float), typeof(float), (l, r) => {
                 return (EarleValue)((float)l + (float)r);
             });
 
             // -
-            Operators.AddBinaryOperator("-", typeof(int), typeof(float), (l, r) => {
+            Operators.AddBinaryOperator(OpCode.Subtract, typeof(int), typeof(float), (l, r) => {
                 return (EarleValue)((int)l - (float)r);
             });
 
-            Operators.AddBinaryOperator("-", typeof(float), typeof(int), (l, r) => {
+            Operators.AddBinaryOperator(OpCode.Subtract, typeof(float), typeof(int), (l, r) => {
                 return (EarleValue)((float)l - (int)r);
             });
 
-            Operators.AddBinaryOperator("-", typeof(float), typeof(float), (l, r) => {
+            Operators.AddBinaryOperator(OpCode.Subtract, typeof(float), typeof(float), (l, r) => {
                 return (EarleValue)((float)l - (float)r);
             });
 
-            Operators.AddBinaryOperator("-", typeof(int), typeof(int), (l, r) => {
+            Operators.AddBinaryOperator(OpCode.Subtract, typeof(int), typeof(int), (l, r) => {
                 return (EarleValue)((int)l - (int)r);
             });
 
             // *
-            Operators.AddBinaryOperator("*", typeof(int), typeof(float), (l, r) => {
+            Operators.AddBinaryOperator(OpCode.Multiply, typeof(int), typeof(float), (l, r) => {
                 return (EarleValue)((int)l * (float)r);
             }, EarleOperatorTypeOrder.Specified);
 
 
-            Operators.AddBinaryOperator("*", typeof(int), typeof(int), (l, r) => {
+            Operators.AddBinaryOperator(OpCode.Multiply, typeof(int), typeof(int), (l, r) => {
                 return (EarleValue)((int)l * (int)r);
             });
 
-            Operators.AddBinaryOperator("*", typeof(float), typeof(float), (l, r) => {
+            Operators.AddBinaryOperator(OpCode.Multiply, typeof(float), typeof(float), (l, r) => {
                 return (EarleValue)((float)l * (float)r);
             });
 
             // /
-            Operators.AddBinaryOperator("/", typeof(int), typeof(float), (l, r) => {
+            Operators.AddBinaryOperator(OpCode.Divide, typeof(int), typeof(float), (l, r) => {
                 return (EarleValue)((int)l / (float)r);
             });
 
-            Operators.AddBinaryOperator("/", typeof(float), typeof(int), (l, r) => {
+            Operators.AddBinaryOperator(OpCode.Divide, typeof(float), typeof(int), (l, r) => {
                 return (EarleValue)((float)l / (int)r);
             });
 
-            Operators.AddBinaryOperator("/", typeof(float), typeof(float), (l, r) => {
+            Operators.AddBinaryOperator(OpCode.Divide, typeof(float), typeof(float), (l, r) => {
                 return (EarleValue)((float)l / (float)r);
             });
 
-            Operators.AddBinaryOperator("/", typeof(int), typeof(int), (l, r) => {
+            Operators.AddBinaryOperator(OpCode.Divide, typeof(int), typeof(int), (l, r) => {
                 return (EarleValue)((int)l / (int)r);
             });
 
+            // %
+            Operators.AddBinaryOperator(OpCode.Modulo, typeof(int), typeof(int), (l, r) => {
+                return (EarleValue)((int)l % (int)r);
+            });
+
             // ^
-            Operators.AddBinaryOperator("^", typeof(int), typeof(int), (l, r) => {
+            Operators.AddBinaryOperator(OpCode.BitwiseXor, typeof(int), typeof(int), (l, r) => {
                 return (EarleValue)((int)l ^ (int)r);
             });
 
             // |
-            Operators.AddBinaryOperator("|", typeof(int), typeof(int), (l, r) => {
+            Operators.AddBinaryOperator(OpCode.BitwiseOr, typeof(int), typeof(int), (l, r) => {
                 return (EarleValue)((int)l | (int)r);
             });
 
             // &
-            Operators.AddBinaryOperator("&", typeof(int), typeof(int), (l, r) => {
+            Operators.AddBinaryOperator(OpCode.BitwiseAnd, typeof(int), typeof(int), (l, r) => {
                 return (EarleValue)((int)l & (int)r);
             });
 
             // <<
-            Operators.AddBinaryOperator("<<", typeof(int), typeof(int), (l, r) => {
+            Operators.AddBinaryOperator(OpCode.ShiftLeft, typeof(int), typeof(int), (l, r) => {
                 return (EarleValue)((int)l << (int)r);
             });
 
             // >>
-            Operators.AddBinaryOperator(">>", typeof(int), typeof(int), (l, r) => {
+            Operators.AddBinaryOperator(OpCode.ShiftRight, typeof(int), typeof(int), (l, r) => {
                 return (EarleValue)((int)l >> (int)r);
             });
 
             // <
-            Operators.AddBinaryOperator("<", new[] { typeof(float), typeof(int) }, (l, r) => {
+            Operators.AddBinaryOperator(OpCode.CheckLessThan, new[] { typeof(float), typeof(int) }, (l, r) => {
                 return (EarleValue)(CompareFloatInt(l.Value, r.Value) < 0);
             });
 
             // >
-            Operators.AddBinaryOperator(">", new[] { typeof(float), typeof(int) }, (l, r) => {
+            Operators.AddBinaryOperator(OpCode.CheckGreaterThan, new[] { typeof(float), typeof(int) }, (l, r) => {
                 return (EarleValue)(CompareFloatInt(l.Value, r.Value) > 0);
             });
 
             // <=
-            Operators.AddBinaryOperator("<=", new[] { typeof(float), typeof(int) }, (l, r) => {
+            Operators.AddBinaryOperator(OpCode.CheckLessOrEqual, new[] { typeof(float), typeof(int) }, (l, r) => {
                 return (EarleValue)(CompareFloatInt(l.Value, r.Value) <= 0);
             });
 
             // >=
-            Operators.AddBinaryOperator(">=", new[] { typeof(float), typeof(int) }, (l, r) => {
+            Operators.AddBinaryOperator(OpCode.CheckGreaterOrEqual, new[] { typeof(float), typeof(int) }, (l, r) => {
                 return (EarleValue)(CompareFloatInt(l.Value, r.Value) >= 0);
             });
 
             // ==
-            Operators.AddBinaryOperator("==", new[] { typeof(float), typeof(int) }, (l, r) => {
+            Operators.AddBinaryOperator(OpCode.CheckEqual, new[] { typeof(float), typeof(int) }, (l, r) => {
                 return (EarleValue)(CompareFloatInt(l.Value, r.Value) == 0);
             });
 
-            Operators.AddBinaryOperator("==", null as Type, null, (l, r) => {
+            Operators.AddBinaryOperator(OpCode.CheckEqual, null as Type, null, (l, r) => {
                 return (EarleValue)(l.Value == null
                     ? r.Value == null
                     : l.Value.Equals(r.Value));
             });
 
             // !=
-            Operators.AddBinaryOperator("!=", new[] { typeof(float), typeof(int) }, (l, r) => {
+            Operators.AddBinaryOperator(OpCode.CheckNotEqual, new[] { typeof(float), typeof(int) }, (l, r) => {
                 return (EarleValue)(CompareFloatInt(l.Value, r.Value) != 0);
             });
 
-            Operators.AddBinaryOperator("!=", null as Type, null, (l, r) => {
+            Operators.AddBinaryOperator(OpCode.CheckNotEqual, null as Type, null, (l, r) => {
                 return (EarleValue)(l.Value == null
                     ? r.Value != null
                     : !l.Value.Equals(r.Value));
@@ -159,17 +165,17 @@ namespace EarleCode.Runtime
             // UNARY OPERATORS
 
             // -
-            Operators.AddUnaryOperator("-", typeof(int), v => (EarleValue)(-(int)v));
-            Operators.AddUnaryOperator("-", typeof(float), v => (EarleValue)(-(float)v));
+            Operators.AddUnaryOperator(OpCode.Negate, typeof(int), v => (EarleValue)(-(int)v));
+            Operators.AddUnaryOperator(OpCode.Negate, typeof(float), v => (EarleValue)(-(float)v));
 
             // !
-            Operators.AddUnaryOperator("!", typeof(int), v => (EarleValue)((int)v != 0));
+            Operators.AddUnaryOperator(OpCode.LogicalNot, typeof(int), v => (EarleValue)((int)v != 0));
 
             // ~
-            Operators.AddUnaryOperator("!", typeof(int), v => (EarleValue)(~(int)v));
+            Operators.AddUnaryOperator(OpCode.BitwiseNot, typeof(int), v => (EarleValue)(~(int)v));
 
             // @
-            Operators.AddUnaryOperator("@", typeof(string), v => (EarleValue)(Localizer.Localize((string)v)));
+            Operators.AddUnaryOperator(OpCode.Convert, typeof(string), v => (EarleValue)(Localizer.Localize((string)v)));
         }
 
         private static int CompareFloatInt(object val1, object val2)

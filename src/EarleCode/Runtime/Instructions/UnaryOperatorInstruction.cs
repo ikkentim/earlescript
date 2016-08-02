@@ -2,8 +2,8 @@ namespace EarleCode.Runtime.Instructions
 {
     internal class UnaryOperatorInstruction : Instruction
     {
-        private string _operator;
-        public UnaryOperatorInstruction(string @operator)
+        private OpCode _operator;
+        public UnaryOperatorInstruction(OpCode @operator)
         {
             _operator = @operator;
         }

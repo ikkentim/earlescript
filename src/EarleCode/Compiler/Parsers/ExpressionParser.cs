@@ -24,17 +24,16 @@ namespace EarleCode.Compiler.Parsers
 {
     internal class ExpressionParser : Parser
     {
-        private string GetOperator(string[] opList)
+        private OpCode GetOperator(OperatorType type)
         {
             var str = "";
             do
             {
                 str += Lexer.Current.Value;
                 Lexer.AssertMoveNext();
-            } while (Lexer.Current.Is(TokenType.Token) && opList.Any(o => o.StartsWith(str)) &&
-                     opList.Where(o => o.StartsWith(str)).Max(o => o.Length) > str.Length);
+            } while(Lexer.Current.Is(TokenType.Token) && EarleOperators.GetMaxOperatorLength(type, str) > str.Length);
 
-            return str;
+            return EarleOperators.GetOpCode(type, str);
         }
 
         #region Overrides of Parser
@@ -44,7 +43,7 @@ namespace EarleCode.Compiler.Parsers
             // Output:
             // ?
 
-            var operators = new Stack<string>();
+            var operators = new Stack<OpCode>();
 
             for (;;)
             {
@@ -83,20 +82,21 @@ namespace EarleCode.Compiler.Parsers
                 {
                     Lexer.AssertToken(TokenType.Token);
 
-                    var op = GetOperator(EarleOperators.BinaryOperators.Keys.ToArray());
+                    var op = GetOperator(OperatorType.BinaryOperator);
 
-                    if (op.Length == 0)
+                    if (op == OpCode.Nop)
                         ThrowUnexpectedToken("-OPERATOR-");
 
-                    if (operators.Any() &&
-                        EarleOperators.BinaryOperators[operators.Peek()].Priority >= EarleOperators.BinaryOperators[op].Priority)
-                        do YieldBinaryOperator(operators.Pop()); while (operators.Any());
+                    if (operators.Any() && EarleOperators.GetPriority(operators.Peek()) >= EarleOperators.GetPriority(op))
+                        do Yield(operators.Pop()); while (operators.Any());
 
                     operators.Push(op);
                 }
                 else
                 {
-                    YieldBinaryOperators(operators);
+                     while(operators.Any())
+                        Yield(operators.Pop());
+
                     return;
                 }
             }
@@ -116,7 +116,7 @@ namespace EarleCode.Compiler.Parsers
 
         protected virtual void ParseValue()
         {
-            string unaryOperator = null;
+            OpCode unaryOperator = OpCode.Nop;
 
             // Sub-parsers (unary operators are not applicable)
             if (SyntaxMatches("ASSIGNMENT"))
@@ -130,11 +130,8 @@ namespace EarleCode.Compiler.Parsers
             if (SyntaxMatches("OPERATOR_UNARY"))
             {
                 Lexer.AssertToken(TokenType.Token);
-                unaryOperator = Lexer.Current.Value;
+                unaryOperator = EarleOperators.GetOpCode(OperatorType.UnaryOperator, Lexer.Current.Value);
                 Lexer.AssertMoveNext();
-
-                if (!EarleOperators.IsUnaryOpertorTargetValid(unaryOperator, Lexer.Current.Type))
-                    ThrowUnexpectedToken("Unexpected target for operator " + unaryOperator);
             }
 
             if (SyntaxMatches("FUNCTION_CALL") && ParseFunctionCall())
@@ -191,8 +188,8 @@ namespace EarleCode.Compiler.Parsers
             else
                 ThrowUnexpectedToken("-VALUE-");
 
-            if (unaryOperator != null)
-                YieldUnaryOperator(unaryOperator);
+            if (unaryOperator != OpCode.Nop)
+                Yield(unaryOperator);
         }
 
         protected virtual void ParseKeyword()
@@ -245,38 +242,6 @@ namespace EarleCode.Compiler.Parsers
             }
 
             Lexer.AssertMoveNext();
-        }
-
-        #endregion
-
-        #region Yield
-
-        protected virtual void YieldBinaryOperator(string op)
-        {
-            Yield(EarleOperators.BinaryOperators[op].OpCode);
-        }
-
-        protected virtual void YieldBinaryOperators(Stack<string> operators)
-        {
-            while (operators.Count > 0)
-                YieldBinaryOperator(operators.Pop());
-        }
-
-        protected virtual void YieldUnaryOperator(string op)
-        {
-            switch (op)
-            {
-                case "-":
-                    PushInteger(-1);
-                    YieldBinaryOperator("*");
-                    break;
-                case "!":
-                    Yield(OpCode.LogicalNot);
-                    break;
-                default:
-                    Yield(EarleOperators.UnaryOperators[op]);
-                    break;
-            }
         }
 
         #endregion

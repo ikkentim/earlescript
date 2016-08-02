@@ -3,8 +3,8 @@ namespace EarleCode.Runtime.Instructions
 {
     internal class BinaryOperatorInstruction : Instruction
     {
-        private string _operator;
-        public BinaryOperatorInstruction(string @operator)
+        private OpCode _operator;
+        public BinaryOperatorInstruction(OpCode @operator)
         {
             _operator = @operator;
         }

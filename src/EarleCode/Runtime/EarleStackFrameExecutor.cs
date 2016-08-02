@@ -40,7 +40,7 @@ namespace EarleCode.Runtime
                 if(attribute?.InstructionType == null)
                     continue;
 
-                Instructions[(byte)op] = attribute.CreateInstruction();
+                Instructions[(byte)op] = attribute.CreateInstruction(op);
             }
         }
 

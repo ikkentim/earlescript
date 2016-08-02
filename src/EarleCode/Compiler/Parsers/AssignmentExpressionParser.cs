@@ -23,17 +23,16 @@ namespace EarleCode.Compiler.Parsers
 {
     internal class AssignmentExpressionParser : Parser
     {
-        private string GetOperator(string[] opList)
+        private OpCode GetOperator(OperatorType type)
         {
             var str = "";
             do
             {
                 str += Lexer.Current.Value;
                 Lexer.AssertMoveNext();
-            } while (Lexer.Current.Is(TokenType.Token) && opList.Any(o => o.StartsWith(str, StringComparison.Ordinal)) &&
-                     opList.Where(o => o.StartsWith(str, StringComparison.Ordinal)).Max(o => o.Length) > str.Length);
+            } while (Lexer.Current.Is(TokenType.Token) && EarleOperators.GetMaxOperatorLength(type, str) > str.Length);
 
-            return str;
+            return EarleOperators.GetOpCode(type, str);
         }
 
         protected virtual void YieldDuplicate()
@@ -50,12 +49,12 @@ namespace EarleCode.Compiler.Parsers
             // Output:
             // ?
 
-            string unaryModOperator = null;
+            OpCode modOperator = OpCode.Nop;
             var unaryModOperatorIsPrefix = true;
 
             if (SyntaxMatches("OPERATOR_MOD_UNARY"))
             {
-                unaryModOperator = GetOperator(EarleOperators.UnaryAssignmentModOperators);
+                modOperator = GetOperator(OperatorType.AssignmentModOperator);
             }
 
             Lexer.AssertToken(TokenType.Identifier);
@@ -65,17 +64,14 @@ namespace EarleCode.Compiler.Parsers
 
             var derefBuffer = ParseToBuffer<DereferenceParser>();
 
-            if (unaryModOperator == null && SyntaxMatches("OPERATOR_MOD_UNARY"))
+            if (modOperator == OpCode.Nop && SyntaxMatches("OPERATOR_MOD_UNARY"))
             {
-                unaryModOperator = GetOperator(EarleOperators.UnaryAssignmentModOperators);
+                modOperator = GetOperator(OperatorType.AssignmentModOperator);
                 unaryModOperatorIsPrefix = false;
             }
 
-            if (unaryModOperator != null)
+            if (modOperator != OpCode.Nop)
             {
-                if (unaryModOperator.Length == 0)
-                    ThrowUnexpectedToken("-OPERATOR-");
-
                 // Read
                 PushReference(null, name);
                 Yield(derefBuffer);
@@ -88,7 +84,7 @@ namespace EarleCode.Compiler.Parsers
 
                 // Operator call
                 Yield(OpCode.PushOne);
-                Yield(EarleOperators.BinaryOperators[unaryModOperator.First().ToString()].OpCode);
+                Yield(modOperator);
 
                 // Prefix dupelicate
                 if (unaryModOperatorIsPrefix)
@@ -101,13 +97,13 @@ namespace EarleCode.Compiler.Parsers
             }
             else
             {
-                string unaryOperator = null;
+                OpCode unaryOperator = OpCode.Nop;
                 if (SyntaxMatches("OPERATOR_UNARY"))
-                    unaryOperator = GetOperator(EarleOperators.UnaryAssignmentOperators);
+                    unaryOperator = GetOperator(OperatorType.AssignmentOperator);
 
                 Lexer.SkipToken(TokenType.Token, "=");
 
-                if (unaryOperator != null)
+                if (unaryOperator != OpCode.Nop)
                 {
                     PushReference(null, name);
                     Yield(derefBuffer);
@@ -116,8 +112,8 @@ namespace EarleCode.Compiler.Parsers
 
                 Parse<ExpressionParser>();
 
-                if(unaryOperator != null)
-                    Yield(EarleOperators.UnaryOperators[unaryOperator.First().ToString()]);
+                if(unaryOperator != OpCode.Nop)
+                    Yield(unaryOperator);
 
                 YieldDuplicate();
 
