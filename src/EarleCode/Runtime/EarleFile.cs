@@ -16,6 +16,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using EarleCode.Runtime.Values;
 
@@ -25,6 +26,7 @@ namespace EarleCode.Runtime
     {
         private EarleFunctionTable _functions = new EarleFunctionTable();
         private readonly List<string> _includedFiles = new List<string>();
+        private readonly List<string> _referencedFiles = new List<string>();
 
         public EarleFile(EarleRuntime runtime, string name) : base(runtime)
         {
@@ -39,13 +41,15 @@ namespace EarleCode.Runtime
 
         public EarleRuntime Runtime { get; }
 
-        public EarleFunctionCollection this[string functionName]
-        {
-            get { return GetFunctions(functionName); }
-        }
+        public EarleFunctionCollection this[string functionName] => GetFunctions(functionName);
+
+        public IEnumerable<string> ReferencedFiles => _referencedFiles.AsReadOnly(); 
+
+        public IEnumerable<string> IncludedFiles => _includedFiles.AsReadOnly();
 
         public void IncludeFile(string file)
         {
+            if(file == null) throw new ArgumentNullException(nameof(file));
             if(!_includedFiles.Contains(file))
                 _includedFiles.Add(file);
         }
@@ -55,6 +59,22 @@ namespace EarleCode.Runtime
             if (function == null) throw new ArgumentNullException(nameof(function));
 
             _functions.Add(function);
+        }
+
+        public void AddReferencedFile(string fileName)
+        {
+            if(fileName == null) throw new ArgumentNullException(nameof(fileName));
+            
+            if(!_referencedFiles.Contains(fileName))
+                _referencedFiles.Add(fileName);
+        }
+
+        public void AddReferencedFiles(string[] fileNames)
+        {
+            if(fileNames == null) throw new ArgumentNullException(nameof(fileNames));
+
+            foreach(var f in fileNames)
+                AddReferencedFile(f);
         }
 
         public EarleFunctionCollection GetFunctions(string functionName)

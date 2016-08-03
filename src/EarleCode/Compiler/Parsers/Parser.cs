@@ -28,6 +28,7 @@ namespace EarleCode.Compiler.Parsers
     internal abstract class Parser : IParser
     {
         private readonly List<byte> _result = new List<byte>();
+        private readonly List<string> _usedFiles = new List<string>();
         private readonly List<int> _breaks = new List<int>();
         private readonly List<int> _continues = new List<int>();
         private EarleCompileOptions _enforcedCompileOptions;
@@ -52,12 +53,13 @@ namespace EarleCode.Compiler.Parsers
             _enforcedCompileOptions = enforcedCompileOptions;
 
             _result.Clear();
+            _usedFiles.Clear();
             _breaks.Clear();
             _continues.Clear();
 
             Parse();
 
-            return new CompiledBlock(_result.ToArray(), _breaks.ToArray(), _continues.ToArray(), RequiresScope);
+            return new CompiledBlock(_result.ToArray(), _usedFiles.ToArray(), _breaks.ToArray(), _continues.ToArray(), RequiresScope);
         }
 
         #endregion
@@ -92,6 +94,7 @@ namespace EarleCode.Compiler.Parsers
 
             int startIndex = _result.Count;
             _result.AddRange(block.PCode);
+            _usedFiles.AddRange(block.UsedFiles.Where(f => !_usedFiles.Contains(f)));
 
             if(breaks)
             {
@@ -164,6 +167,10 @@ namespace EarleCode.Compiler.Parsers
         public void PushReference(string path, string name)
         {
             if (name == null) throw new ArgumentNullException(nameof(name));
+
+            if(!string.IsNullOrEmpty(path) && !_usedFiles.Contains(path))
+                _usedFiles.Add(path);
+            
             Yield(OpCode.PushReference);
             Yield($"{path}::{name}".ToLower());
         }

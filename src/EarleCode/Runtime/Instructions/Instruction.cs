@@ -14,6 +14,7 @@
 // limitations under the License.
 
 using System;
+using System.Runtime.InteropServices;
 using System.Text;
 using EarleCode.Runtime.Values;
 
@@ -37,10 +38,14 @@ namespace EarleCode.Runtime.Instructions
 
         protected int GetInt32()
         {
-            var value = BitConverter.ToInt32(Frame.PCode, Frame.CIP);
+            FastConvert converter = new FastConvert();
+            converter.Byte0 = Frame.PCode[Frame.CIP];
+            converter.Byte1 = Frame.PCode[Frame.CIP + 1];
+            converter.Byte2 = Frame.PCode[Frame.CIP + 2];
+            converter.Byte3 = Frame.PCode[Frame.CIP + 3];
             Frame.CIP += 4;
 
-            return value;
+            return converter.Int32;
         }
 
         protected float GetSingle()
@@ -91,6 +96,23 @@ namespace EarleCode.Runtime.Instructions
         protected void Push(EarleValue item)
         {
             Frame.Stack.Push(item);
+        }
+
+        [StructLayout(LayoutKind.Explicit)]
+        private struct FastConvert
+        {
+            [FieldOffset(0)]
+            public byte Byte0;
+            [FieldOffset(1)]
+            public byte Byte1;
+            [FieldOffset(2)]
+            public byte Byte2;
+            [FieldOffset(3)]
+            public byte Byte3;
+            [FieldOffset(0)]
+            public int Int32;
+            [FieldOffset(0)]
+            public float Single;
         }
     }
 }

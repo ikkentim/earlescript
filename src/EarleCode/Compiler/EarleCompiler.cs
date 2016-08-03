@@ -134,7 +134,9 @@ namespace EarleCode.Compiler
 
             lexer.SkipToken(TokenType.Token, ")");
 
-            return new EarleFunction(file, name, parameters.ToArray(), Compile(lexer, file, EarleCompileOptions.Method).PCode);
+            var block = Compile(lexer, file, EarleCompileOptions.Method);
+            file.AddReferencedFiles(block.UsedFiles);
+            return new EarleFunction(file, name, parameters.ToArray(), block.PCode);
         }
 
         public CompiledBlock Compile(ILexer lexer, EarleFile file, EarleCompileOptions options)
@@ -142,6 +144,7 @@ namespace EarleCode.Compiler
             var pCode = new List<byte>();
             var breaks = new List<int>();
             var continues = new List<int>();
+            var usedFiles = new List<string>();
 
             var didReturnAnyValue = false;
             var multiLine = false;
@@ -204,6 +207,7 @@ namespace EarleCode.Compiler
 
                     breaks.AddRange(block.Breaks.Select(b => b + pCode.Count));
                     continues.AddRange(block.Continues.Select(c => c + pCode.Count));
+                    usedFiles.AddRange(block.UsedFiles.Where(f => !usedFiles.Contains(f)));
                     requiresScope = requiresScope || block.RequiresScope;
                     pCode.AddRange(block.PCode);
 
@@ -237,7 +241,7 @@ namespace EarleCode.Compiler
                 pCode.Add((byte)OpCode.PopScope);
             }
 
-            return new CompiledBlock(pCode.ToArray(), breaks.ToArray(), continues.ToArray(), false);
+            return new CompiledBlock(pCode.ToArray(), usedFiles.ToArray(), breaks.ToArray(), continues.ToArray(), false);
         }
 
         #endregion
