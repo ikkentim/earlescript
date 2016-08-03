@@ -22,7 +22,7 @@ namespace EarleCode.Runtime.Instructions
         protected override void Handle()
         {
             var thread = new EarleThread(null);
-            var rootFrame = new EarleStackFrame(Frame.Frame.Runtime, thread, EarleValue.Undefined);
+            var rootFrame = new EarleStackFrame(Frame.Frame.Runtime, null, thread, EarleValue.Undefined);
             var frame = CreateFrameExecutor(rootFrame);
 
             if(frame == null)

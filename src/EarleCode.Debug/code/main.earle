@@ -1,5 +1,12 @@
-﻿init()
+﻿#include _utils;
+
+drop(v)
 {
+}
+init()
+{
+	drop(_utils::giveTrue());
+
 	// test order of operations
 	print(4 << 1 + 1);//16
     print(4 | 1 << 1 + 1);//4
@@ -43,6 +50,7 @@
 	}
 
 	level notify("all done");
+
 }
 
 bleep()

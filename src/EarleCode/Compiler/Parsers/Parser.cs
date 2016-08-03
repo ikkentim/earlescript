@@ -17,6 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using EarleCode.Compiler.Lexing;
 using EarleCode.Runtime;
 using EarleCode.Runtime.Instructions;
@@ -142,9 +143,7 @@ namespace EarleCode.Compiler.Parsers
         public void Yield(string value)
         {
             if (value == null) throw new ArgumentNullException(nameof(value));
-            foreach (var c in value)
-                Yield(c);
-
+            Yield(Encoding.ASCII.GetBytes(value));
             Yield((byte) 0);
         }
 

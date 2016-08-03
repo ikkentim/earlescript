@@ -22,7 +22,7 @@ namespace EarleCode.Runtime.Events
             var manager = GetManager(frame, "waittill");
 
             if(manager != null)
-                frame.SubFrame = new WaitTillStackFrameExecutor(frame.SpawnSubFrame(frame.Target), manager, eventName);
+                frame.SubFrame = new WaitTillStackFrameExecutor(frame.SpawnSubFrame(null, frame.Target), manager, eventName);
         }
 
         [EarleNativeFunction]

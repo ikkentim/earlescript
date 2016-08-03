@@ -14,6 +14,7 @@
 // limitations under the License.
 
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using EarleCode.Localization;
@@ -36,13 +37,27 @@ namespace EarleCode.Debug
             return Uri.UnescapeDataString(folderUri.MakeRelativeUri(pathUri).ToString().Replace('/', Path.DirectorySeparatorChar));
         }
 
+        static object giveTrue()
+        {
+            return true;
+        }
+        static void drop(object v)
+        {
+            
+        }
+
+        static void test()
+        {
+            drop(giveTrue());
+        }
+
         private static void Main(string[] args)
         {
-            Console.WriteLine(4 << 1 + 1);//16
-            Console.WriteLine(4 | 1 << 1 + 1);//4
-            Console.WriteLine(4 * 3 == 12);//true
-            Console.WriteLine(3 & 1 | 2 << 2);//9
-            Console.WriteLine(1 < 3 == 3 < 1);//false
+            //Console.WriteLine(4 << 1 + 1);//16
+            //Console.WriteLine(4 | 1 << 1 + 1);//4
+            //Console.WriteLine(4 * 3 == 12);//true
+            //Console.WriteLine(3 & 1 | 2 << 2);//9
+            //Console.WriteLine(1 < 3 == 3 < 1);//false
 
             var runtime = new EarleRuntime();
             runtime.GlobalVariables["level"] = new EarleSimpleEventableStructure().ToEarleValue();
@@ -67,7 +82,7 @@ namespace EarleCode.Debug
 
             foreach(var l in runtime.GetDebugInformation())
                 Console.WriteLine(l);
-            
+
             // Invoke main::init
             runtime["\\main"]["init"].Invoke((result) => {
                 Console.WriteLine();

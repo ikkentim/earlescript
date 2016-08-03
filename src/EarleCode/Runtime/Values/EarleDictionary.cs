@@ -21,7 +21,20 @@ namespace EarleCode.Runtime.Values
 {
     public class EarleDictionary : IEnumerable<KeyValuePair<string, EarleValue>>
     {
-        private readonly Dictionary<string, EarleValue> _values = new Dictionary<string, EarleValue>();
+        private readonly Dictionary<string, EarleValue> _values;
+
+        public EarleDictionary()
+        {
+            _values = new Dictionary<string, EarleValue>();
+        }
+
+        public EarleDictionary(EarleDictionary dictionary)
+        {
+            if(dictionary == null)
+                throw new ArgumentNullException(nameof(dictionary));
+            
+            _values = new Dictionary<string, EarleValue>(dictionary._values);
+        }
 
         public IEnumerable<string> Keys => _values.Keys;
 

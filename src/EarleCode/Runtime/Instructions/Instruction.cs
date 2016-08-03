@@ -14,6 +14,7 @@
 // limitations under the License.
 
 using System;
+using System.Text;
 using EarleCode.Runtime.Values;
 
 namespace EarleCode.Runtime.Instructions
@@ -51,13 +52,15 @@ namespace EarleCode.Runtime.Instructions
 
         protected string GetString()
         {
-            var value = "";
-
-            while (Frame.PCode[Frame.CIP] != 0)
-                value += (char) Frame.PCode[Frame.CIP++];
+            var start = Frame.CIP;
+            var length = 0;
+            while(Frame.PCode[Frame.CIP] != 0)
+            {
+                length++;
+                Frame.CIP++;
+            }
             Frame.CIP++;
-
-            return value;
+            return Encoding.ASCII.GetString(Frame.PCode, start, length);
         }
 
         protected EarleValue Pop()

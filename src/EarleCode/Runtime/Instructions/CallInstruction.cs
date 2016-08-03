@@ -82,14 +82,13 @@ namespace EarleCode.Runtime.Instructions
                 return null;
             }
 
-            var args = new List<EarleValue>();
+            var args = new EarleValue[argumentCount];
             for(var i = 0; i < argumentCount; i++)
-                args.Add(Pop());
-            args.Reverse();
+                args[argumentCount - 1 - i] = Pop();
 
             var target = HasTarget ? Pop() : EarleValue.Undefined;
 
-            return function.CreateFrameExecutor(superFrame, target, args.ToArray());
+            return function.CreateFrameExecutor(superFrame, target, args);
         }
     }
 }

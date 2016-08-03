@@ -169,7 +169,7 @@ namespace EarleCode.Runtime.Instructions
         [Operator("*", OperatorType.BinaryOperator, 8)]
         Multiply,
         [OpCode("MOD", typeof(BinaryOperatorInstruction))]
-        [Operator("*", OperatorType.BinaryOperator, 8)]
+        [Operator("%", OperatorType.BinaryOperator, 8)]
         Modulo,
         [OpCode("DIV", typeof(BinaryOperatorInstruction))]
         [Operator("/", OperatorType.BinaryOperator, 8)]

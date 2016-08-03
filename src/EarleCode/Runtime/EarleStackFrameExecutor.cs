@@ -50,14 +50,14 @@ namespace EarleCode.Runtime
         }
 
         public EarleStackFrameExecutor(EarleStackFrame frame, IEarleRuntimeScope superScope, byte[] pCode,
-            EarleDictionary initialLocals)
+            EarleDictionary locals)
         {
             if(frame == null) throw new ArgumentNullException(nameof(frame));
             Frame = frame;
             PCode = pCode;
             Stack = new Stack<EarleValue>();
 
-            Scopes.Push(new EarleRuntimeScope(superScope, initialLocals));
+            Scopes.Push(new EarleRuntimeScope(superScope, locals));
         }
 
         public byte[] PCode { get; }
@@ -74,7 +74,7 @@ namespace EarleCode.Runtime
         {
             if(reference.Name == "self")
                 return string.IsNullOrEmpty(reference.File) ? Frame.Target : EarleValue.Undefined;
-            
+
             return Scopes.Peek().GetValue(reference);
         }
 

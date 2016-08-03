@@ -37,7 +37,7 @@ namespace EarleCode.Runtime
                              .Take(Parameters.Length)
                              .ToArray();
 
-            return new NativeStackFrameExecutor(superFrame.SpawnSubFrame(target), this, args);
+            return new NativeStackFrameExecutor(superFrame.SpawnSubFrame(null, target), this, args);
         }
 
         #endregion

@@ -27,15 +27,10 @@ namespace EarleCode.Runtime
         {
         }
 
-        public EarleRuntimeScope(IEarleRuntimeScope superScope, EarleDictionary initialLocals)
+        public EarleRuntimeScope(IEarleRuntimeScope superScope, EarleDictionary locals)
         {
             _superScope = superScope;
-
-            if (initialLocals != null)
-            {
-                foreach (var i in initialLocals)
-                    _locals[i.Key] = i.Value;
-            }
+            _locals = locals ?? new EarleDictionary();
         }
 
         public virtual EarleValue GetValue(EarleVariableReference reference)

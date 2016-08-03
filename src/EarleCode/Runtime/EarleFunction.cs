@@ -56,13 +56,13 @@ namespace EarleCode.Runtime
                 index++;
             }
 
-            return new EarleStackFrameExecutor(superFrame.SpawnSubFrame(target), File, PCode, locals);
+            return new EarleStackFrameExecutor(superFrame.SpawnSubFrame(File, target), File, PCode, locals);
         }
 
         public EarleValue? Invoke(EarleCompletionHandler completionHandler, EarleValue target, params EarleValue[] args)
         {
             var thread = new EarleThread(completionHandler);
-            var rootFrame = new EarleStackFrame(File.Runtime, thread, target);
+            var rootFrame = new EarleStackFrame(File.Runtime, File, thread, target);
             var frame = CreateFrameExecutor(rootFrame, target, args?.ToArray() ?? new EarleValue[0]);
             thread.AttachFrame(frame);
 
