@@ -28,6 +28,7 @@ namespace EarleCode.Compiler.Parsers
     internal abstract class Parser : IParser
     {
         private readonly List<byte> _result = new List<byte>();
+        private Dictionary<int, int> _callLines;
         private readonly List<string> _usedFiles = new List<string>();
         private readonly List<int> _breaks = new List<int>();
         private readonly List<int> _continues = new List<int>();
@@ -53,13 +54,16 @@ namespace EarleCode.Compiler.Parsers
             _enforcedCompileOptions = enforcedCompileOptions;
 
             _result.Clear();
+            _callLines = new Dictionary<int, int>();
             _usedFiles.Clear();
             _breaks.Clear();
             _continues.Clear();
 
+            var startLine = lexer.Current.Line;
+
             Parse();
 
-            return new CompiledBlock(_result.ToArray(), _usedFiles.ToArray(), _breaks.ToArray(), _continues.ToArray(), RequiresScope);
+            return new CompiledBlock(_result.ToArray(), _callLines, _usedFiles.ToArray(), _breaks.ToArray(), _continues.ToArray(), RequiresScope);
         }
 
         #endregion
@@ -92,9 +96,13 @@ namespace EarleCode.Compiler.Parsers
         {
             if(block == null) throw new ArgumentNullException(nameof(block));
 
-            int startIndex = _result.Count;
+            var startIndex = _result.Count;
+
             _result.AddRange(block.PCode);
-            _usedFiles.AddRange(block.UsedFiles.Where(f => !_usedFiles.Contains(f)));
+            foreach(var p in block.CallLines)
+                _callLines.Add(p.Key + startIndex, p.Value);
+            
+            _usedFiles.AddRange(block.ReferencedFiles.Where(f => !_usedFiles.Contains(f)));
 
             if(breaks)
             {
@@ -135,7 +143,8 @@ namespace EarleCode.Compiler.Parsers
 
         public void Yield(OpCode value)
         {
-            Yield((byte) value);
+            Yield((byte) value);//TODO
+
         }
 
         public void Yield(char value)
@@ -175,24 +184,26 @@ namespace EarleCode.Compiler.Parsers
             Yield($"{path}::{name}".ToLower());
         }
 
-        public void PushCall(int arguments, bool thread = false)
+        public void PushCall(int arguments, int lineNumber, bool thread = false)
         {
+            _callLines[_result.Count] = lineNumber;
             Yield(thread ? OpCode.Thread : OpCode.Call);
             Yield(arguments);
         }
 
-        public void PushCallWithoutTarget(int arguments, bool thread = false)
+        public void PushCallWithoutTarget(int arguments, int lineNumber, bool thread = false)
         {
+            _callLines[_result.Count] = lineNumber;
             Yield(thread ? OpCode.ThreadNoTarget : OpCode.CallNoTarget);
             Yield(arguments);
         }
 
-        public void PushCallWithoutTarget(string path, string name, int arguments)
+        public void PushCallWithoutTarget(string path, string name, int arguments, int lineNumber)
         {
             if(name == null) throw new ArgumentNullException(nameof(name));
 
             PushReference(path, name);
-            PushCallWithoutTarget(arguments);
+            PushCallWithoutTarget(arguments, lineNumber);
         }
 
         public void PushJump(bool condition, int count)

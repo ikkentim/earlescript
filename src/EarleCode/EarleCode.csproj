@@ -149,6 +149,7 @@
     <Compile Include="Runtime\Instructions\NopInstuction.cs" />
     <Compile Include="Runtime\OperatorType.cs" />
     <Compile Include="Runtime\OperatorAttribute.cs" />
+    <Compile Include="Runtime\EarleStackTrace.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

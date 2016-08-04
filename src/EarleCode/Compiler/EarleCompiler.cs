@@ -134,20 +134,25 @@ namespace EarleCode.Compiler
 
             lexer.SkipToken(TokenType.Token, ")");
 
+            var lastLine = lexer.Current.Line;
             var block = Compile(lexer, file, EarleCompileOptions.Method);
-            file.AddReferencedFiles(block.UsedFiles);
-            return new EarleFunction(file, name, parameters.ToArray(), block.PCode);
+            file.AddReferencedFiles(block.ReferencedFiles);
+
+            return new EarleFunction(file, name, parameters.ToArray(), block.PCode, block.CallLines);
         }
 
         public CompiledBlock Compile(ILexer lexer, EarleFile file, EarleCompileOptions options)
         {
             var pCode = new List<byte>();
+            var callLines = new Dictionary<int, int>();
             var breaks = new List<int>();
             var continues = new List<int>();
             var usedFiles = new List<string>();
 
             var didReturnAnyValue = false;
             var multiLine = false;
+
+            var startLine = lexer.Current.Line;
 
             if (lexer.Current.Is(TokenType.Token, "{"))
             {
@@ -205,12 +210,14 @@ namespace EarleCode.Compiler
                     
                     var block = parser.Parse(_runtime, file, lexer, parseOptions);
 
+                    var startIndex = pCode.Count;
                     breaks.AddRange(block.Breaks.Select(b => b + pCode.Count));
+                    foreach(var p in block.CallLines)
+                        callLines.Add(p.Key + startIndex, p.Value);
                     continues.AddRange(block.Continues.Select(c => c + pCode.Count));
-                    usedFiles.AddRange(block.UsedFiles.Where(f => !usedFiles.Contains(f)));
+                    usedFiles.AddRange(block.ReferencedFiles.Where(f => !usedFiles.Contains(f)));
                     requiresScope = requiresScope || block.RequiresScope;
                     pCode.AddRange(block.PCode);
-
 
                     if(parser is ISimpleStatement)
                         lexer.SkipToken(TokenType.Token, ";");
@@ -232,16 +239,21 @@ namespace EarleCode.Compiler
                 lexer.MoveNext();
             }
 
-            if (!didReturnAnyValue && options.HasFlag(EarleCompileOptions.MustReturn))
-                pCode.Add((byte) OpCode.PushUndefined);
+            if(!didReturnAnyValue && options.HasFlag(EarleCompileOptions.MustReturn))
+            {
+                pCode.Add((byte)OpCode.PushUndefined);
+            }
 
             if(requiresScope)
             {
                 pCode.Insert(0, (byte)OpCode.PushScope);
                 pCode.Add((byte)OpCode.PopScope);
+
+                // Increase keys because of the inserted PUSH.S instruction
+                callLines = new Dictionary<int, int>(callLines.ToDictionary(kv => kv.Key + 1, kv => kv.Value));
             }
 
-            return new CompiledBlock(pCode.ToArray(), usedFiles.ToArray(), breaks.ToArray(), continues.ToArray(), false);
+            return new CompiledBlock(pCode.ToArray(), callLines, usedFiles.ToArray(), breaks.ToArray(), continues.ToArray(), false);
         }
 
         #endregion
@@ -256,10 +268,10 @@ namespace EarleCode.Compiler
 
             for(var index = 0; index < function.PCode.Length; index++)
             {
-                var p = function.PCode[index];
-                var e = (OpCode)p;
-                var a = e.GetCustomAttribute<OpCodeAttribute>();
-
+                var b = function.PCode[index];
+                var o = (OpCode)b;
+                var a = o.GetCustomAttribute<OpCodeAttribute>();
+                
                 yield return a.BuildString(function.PCode, ref index);
             }
 

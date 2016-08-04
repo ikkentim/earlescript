@@ -148,6 +148,7 @@ namespace EarleCode.Compiler.Parsers
             else if (SyntaxMatches("VECTOR"))
             {
                 var vectorSize = 3;
+                var lineNumber = Lexer.Current.Line;
                 Lexer.SkipToken(TokenType.Token, "(");
                 Parse<ExpressionParser>();
                 Lexer.SkipToken(TokenType.Token, ",");
@@ -162,7 +163,7 @@ namespace EarleCode.Compiler.Parsers
                     Parse<ExpressionParser>();
                 }
 
-                PushCallWithoutTarget(null, $"createVector{vectorSize}", vectorSize);
+                PushCallWithoutTarget(null, $"createVector{vectorSize}", vectorSize, lineNumber);
 
                 Lexer.SkipToken(TokenType.Token, ")");
             }

@@ -23,21 +23,21 @@ namespace EarleCode.Runtime
 {
     public abstract class EarleNativeFunction : EarleFunction
     {
-        protected EarleNativeFunction(string name, params string[] parameters) : base(null, name, parameters, null)
+        protected EarleNativeFunction(string name, params string[] parameters) : base(null, name, parameters, null, null)
         {
         }
 
         #region Overrides of EarleFunction
 
-        public override EarleStackFrameExecutor CreateFrameExecutor(EarleStackFrame superFrame, EarleValue target, EarleValue[] args)
+        public override EarleStackFrameExecutor CreateFrameExecutor(EarleStackFrame superFrame, int callIP, EarleValue target, EarleValue[] arguments)
         {
-            if(Parameters != null && Parameters.Length < args.Length)
-                args =
-                    args.Concat(Enumerable.Repeat(EarleValue.Undefined, Parameters.Length - args.Length))
+            if(Parameters != null && Parameters.Length < arguments.Length)
+                arguments =
+                    arguments.Concat(Enumerable.Repeat(EarleValue.Undefined, Parameters.Length - arguments.Length))
                              .Take(Parameters.Length)
                              .ToArray();
 
-            return new NativeStackFrameExecutor(superFrame.SpawnSubFrame(null, target), this, args);
+            return new NativeStackFrameExecutor(superFrame.SpawnSubFrame(this, callIP, target), this, arguments);
         }
 
         #endregion
@@ -184,17 +184,19 @@ namespace EarleCode.Runtime
                         break;
                     }
 
+                    if(i == 0 && parameter.ParameterType == typeof(EarleStackFrame))
+                    {
+                        args[i] = frame;
+                        continue;
+                    }
+
                     if(a >= arguments.Length)
                     {
                         frame.Runtime.HandleWarning($"Out of arguments while invoking native '{Name}'");
                         continue;
                     }
 
-                    if(i == 0 && parameter.ParameterType == typeof(EarleStackFrame))
-                    {
-                        args[i] = frame;
-                    }
-                    else if(parameter.ParameterType == typeof(EarleValue))
+                    if(parameter.ParameterType == typeof(EarleValue))
                     {
                         args[i] = arguments[a++];
                     }

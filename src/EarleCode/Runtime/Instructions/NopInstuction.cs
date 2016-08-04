@@ -1,9 +1,11 @@
 ﻿
+using System;
+
 namespace EarleCode.Runtime.Instructions
 {
-    internal class NopInstuction : Instruction
+    internal class NopInstuction : IInstruction
     {
-        protected override void Handle()
+        public void Handle(EarleStackFrameExecutor loop)
         {
         }
     }

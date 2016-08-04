@@ -37,20 +37,6 @@ namespace EarleCode.Debug
             return Uri.UnescapeDataString(folderUri.MakeRelativeUri(pathUri).ToString().Replace('/', Path.DirectorySeparatorChar));
         }
 
-        static object giveTrue()
-        {
-            return true;
-        }
-        static void drop(object v)
-        {
-            
-        }
-
-        static void test()
-        {
-            drop(giveTrue());
-        }
-
         private static void Main(string[] args)
         {
             //Console.WriteLine(4 << 1 + 1);//16
@@ -82,6 +68,11 @@ namespace EarleCode.Debug
 
             foreach(var l in runtime.GetDebugInformation())
                 Console.WriteLine(l);
+
+            runtime.Natives.Register(EarleNativeFunction.Create("printstacktrace", (EarleStackFrame frame) => {
+                var trace = frame.GetStackTrace();
+            Console.WriteLine(trace);
+            }));
 
             // Invoke main::init
             runtime["\\main"]["init"].Invoke((result) => {

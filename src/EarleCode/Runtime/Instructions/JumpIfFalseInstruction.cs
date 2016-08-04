@@ -21,7 +21,7 @@ namespace EarleCode.Runtime.Instructions
 
         protected override void Handle()
         {
-            Jump(!PopTo<bool>() ? GetInt32() : 4);
+            Jump(!Pop<bool>() ? GetInt32() : 4);
         }
 
         #endregion

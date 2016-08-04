@@ -29,9 +29,10 @@ namespace EarleCode.Compiler.Parsers
             // PUSH_R       (?)
             // CALL N       (4)
 
+            var lineNumber = Lexer.Current.Line;
             Lexer.SkipToken(TokenType.Identifier, "wait");
             Parse<ExpressionParser>();
-            PushCallWithoutTarget(null, "wait", 1);
+            PushCallWithoutTarget(null, "wait", 1, lineNumber);
         }
 
         #endregion

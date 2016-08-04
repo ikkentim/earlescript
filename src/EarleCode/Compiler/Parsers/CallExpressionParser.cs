@@ -50,6 +50,7 @@ namespace EarleCode.Compiler.Parsers
             {
                 var referenceBuffer = ParseToBuffer<FunctionReferenceExpressionParser>();
 
+                var lineNumber = Lexer.Current.Line;
                 Lexer.SkipToken(TokenType.Token, "(");
 
                 var arguments = 0;
@@ -68,9 +69,9 @@ namespace EarleCode.Compiler.Parsers
                 Yield(referenceBuffer);
 
                 if(hasTarget)
-                    PushCall(arguments, LastCallWasThreaded);
+                    PushCall(arguments, lineNumber, LastCallWasThreaded);
                 else
-                    PushCallWithoutTarget(arguments, LastCallWasThreaded);
+                    PushCallWithoutTarget(arguments, lineNumber, LastCallWasThreaded);
 
                 if(LastCallWasThreaded)
                     break;

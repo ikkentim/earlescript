@@ -224,6 +224,5 @@ namespace EarleCode.Runtime.Instructions
         [OpCode("CONV", typeof(UnaryOperatorInstruction))]
         [Operator("@", OperatorType.UnaryOperator)]
         Convert,
-        // TODO: Modulo
     }
 }

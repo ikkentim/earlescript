@@ -44,38 +44,27 @@ namespace EarleCode.Runtime
             }
         }
 
-        public EarleStackFrameExecutor(EarleStackFrame frame, IEarleRuntimeScope superScope, byte[] pCode)
-            : this(frame, superScope, pCode, null)
+        public EarleStackFrameExecutor(EarleStackFrame frame, IEarleRuntimeScope superScope)
+            : this(frame, superScope, null)
         {
         }
 
-        public EarleStackFrameExecutor(EarleStackFrame frame, IEarleRuntimeScope superScope, byte[] pCode,
-            EarleDictionary locals)
+        public EarleStackFrameExecutor(EarleStackFrame frame, IEarleRuntimeScope superScope, EarleDictionary locals)
         {
             if(frame == null) throw new ArgumentNullException(nameof(frame));
             Frame = frame;
-            PCode = pCode;
-            Stack = new Stack<EarleValue>();
 
-            Scopes.Push(new EarleRuntimeScope(superScope, locals));
+            Frame.Scopes.Push(new EarleRuntimeScope(superScope, locals));
         }
 
-        public byte[] PCode { get; }
-
         public EarleStackFrame Frame { get; }
-
-        public Stack<EarleRuntimeScope> Scopes { get; } = new Stack<EarleRuntimeScope>();
-
-        public Stack<EarleValue> Stack { get; }
-
-        public int CIP { get; set; }
 
         public virtual EarleValue GetValue(EarleVariableReference reference)
         {
             if(reference.Name == "self")
                 return string.IsNullOrEmpty(reference.File) ? Frame.Target : EarleValue.Undefined;
 
-            return Scopes.Peek().GetValue(reference);
+            return Frame.Scopes.Peek().GetValue(reference);
         }
 
         public virtual bool SetValue(EarleVariableReference reference, EarleValue value)
@@ -86,7 +75,7 @@ namespace EarleCode.Runtime
                 return false;
             }
 
-            return Scopes.Peek().SetValue(reference, value);
+            return Frame.Scopes.Peek().SetValue(reference, value);
         }
 
         public virtual EarleValue? Run()
@@ -96,12 +85,14 @@ namespace EarleCode.Runtime
             if (!Frame.Thread.IsAlive || !RunSubFrame())
                 return null;
 
-            while (CIP < PCode.Length)
+            var frame = Frame;
+            var pCode = frame.Function.PCode;
+            while (frame.CIP < pCode.Length)
             {
                 if(!Frame.Thread.IsAlive)
                     return null;
                 
-                var instructionIdentifier = PCode[CIP++];
+                var instructionIdentifier = pCode[frame.CIP++];
                 var instruction = instructionIdentifier >= Instructions.Length
                     ? null
                     : Instructions[instructionIdentifier];
@@ -115,7 +106,7 @@ namespace EarleCode.Runtime
                     return null;
             }
 
-            return Stack.Pop();
+            return frame.Stack.Pop();
         }
 
         private bool RunSubFrame()
@@ -126,7 +117,7 @@ namespace EarleCode.Runtime
                 if (result == null)
                     return false;
 
-                Stack.Push(result.Value);
+                Frame.Stack.Push(result.Value);
                 Frame.SubFrame = null;
             }
 

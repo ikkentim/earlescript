@@ -14,6 +14,7 @@
 // limitations under the License.
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using EarleCode.Runtime.Values;
 
@@ -21,7 +22,7 @@ namespace EarleCode.Runtime
 {
     public class EarleFunction
     {
-        public EarleFunction(EarleFile file, string name, string[] parameters, byte[] pCode)
+        public EarleFunction(EarleFile file, string name, string[] parameters, byte[] pCode, Dictionary<int,int> callLines)
         {
             if (name == null) throw new ArgumentNullException(nameof(name));
 
@@ -29,6 +30,7 @@ namespace EarleCode.Runtime
             Parameters = parameters;
             PCode = pCode;
             Name = name.ToLower();
+            CallLines = callLines == null ? null : new Dictionary<int, int>(callLines);
         }
 
         public EarleFile File { get; }
@@ -39,7 +41,8 @@ namespace EarleCode.Runtime
 
         public string[] Parameters { get; }
 
-        public virtual EarleStackFrameExecutor CreateFrameExecutor(EarleStackFrame superFrame, EarleValue target, EarleValue[] arguments)
+        public Dictionary<int, int> CallLines { get; }
+        public virtual EarleStackFrameExecutor CreateFrameExecutor(EarleStackFrame superFrame, int callerIp, EarleValue target, EarleValue[] arguments)
         {
             if (arguments == null) throw new ArgumentNullException(nameof(arguments));
             var locals = new EarleDictionary();
@@ -56,14 +59,14 @@ namespace EarleCode.Runtime
                 index++;
             }
 
-            return new EarleStackFrameExecutor(superFrame.SpawnSubFrame(File, target), File, PCode, locals);
+            return new EarleStackFrameExecutor(superFrame.SpawnSubFrame(this, callerIp, target), File, locals);
         }
 
         public EarleValue? Invoke(EarleCompletionHandler completionHandler, EarleValue target, params EarleValue[] args)
         {
             var thread = new EarleThread(completionHandler);
-            var rootFrame = new EarleStackFrame(File.Runtime, File, thread, target);
-            var frame = CreateFrameExecutor(rootFrame, target, args?.ToArray() ?? new EarleValue[0]);
+            var rootFrame = new EarleStackFrame(File.Runtime, null, EarleStackFrame.RootFrameIP, null, thread, target);
+            var frame = CreateFrameExecutor(rootFrame, EarleStackFrame.RootCallIP, target, args?.ToArray() ?? new EarleValue[0]);
             thread.AttachFrame(frame);
 
             return thread.Run();

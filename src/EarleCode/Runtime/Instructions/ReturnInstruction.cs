@@ -19,9 +19,9 @@ namespace EarleCode.Runtime.Instructions
     {
         #region Implementation of IInstruction
 
-        public void Handle(EarleStackFrameExecutor frame)
+        public void Handle(EarleStackFrameExecutor executor)
         {
-            frame.CIP = frame.PCode.Length;
+            executor.Frame.CIP = executor.Frame.Function.PCode.Length;
         }
 
         #endregion

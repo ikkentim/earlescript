@@ -3,3 +3,8 @@ giveTrue()
 {
 	return true;
 }
+
+giveACallTo(func)
+{
+	return func();
+}

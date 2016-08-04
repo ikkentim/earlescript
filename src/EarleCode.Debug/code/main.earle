@@ -3,8 +3,30 @@
 drop(v)
 {
 }
+
+methoda()
+{
+	methodb();
+}
+
+methodb()
+{
+	thread giveacallto(methodc);
+}
+
+methodc()
+{
+	methodd();
+}
+
+methodd()
+{
+	printstacktrace();
+}
+
 init()
 {
+	methoda();
 	drop(_utils::giveTrue());
 
 	// test order of operations

@@ -22,13 +22,13 @@ namespace EarleCode.Runtime.Instructions
 {
     internal abstract class Instruction : IInstruction
     {
-        protected EarleStackFrameExecutor Frame { get; private set; }
+        protected EarleStackFrameExecutor Executor { get; private set; }
 
         #region Implementation of IInstruction
 
-        public void Handle(EarleStackFrameExecutor frame)
+        public void Handle(EarleStackFrameExecutor executor)
         {
-            Frame = frame;
+            Executor = executor;
             Handle();
         }
 
@@ -36,66 +36,68 @@ namespace EarleCode.Runtime.Instructions
 
         protected abstract void Handle();
 
+        private FastConvert GetConvertable()
+        {
+            var pCode = Executor.Frame.Function.PCode;
+            var cip = Executor.Frame.CIP;
+            FastConvert converter = new FastConvert();
+            converter.Byte0 = pCode[cip];
+            converter.Byte1 = pCode[cip + 1];
+            converter.Byte2 = pCode[cip + 2];
+            converter.Byte3 = pCode[cip + 3];
+
+            Jump(4);
+
+            return converter;
+        }
+
         protected int GetInt32()
         {
-            FastConvert converter = new FastConvert();
-            converter.Byte0 = Frame.PCode[Frame.CIP];
-            converter.Byte1 = Frame.PCode[Frame.CIP + 1];
-            converter.Byte2 = Frame.PCode[Frame.CIP + 2];
-            converter.Byte3 = Frame.PCode[Frame.CIP + 3];
-            Frame.CIP += 4;
-
-            return converter.Int32;
+            return GetConvertable().Int32;
         }
 
         protected float GetSingle()
         {
-            var value = BitConverter.ToSingle(Frame.PCode, Frame.CIP);
-            Frame.CIP += 4;
-            return value;
+            return GetConvertable().Single;
         }
 
         protected string GetString()
         {
-            var start = Frame.CIP;
+            var start = Executor.Frame.CIP;
+            var pCode = Executor.Frame.Function.PCode;
             var length = 0;
-            while(Frame.PCode[Frame.CIP] != 0)
+            while(pCode[Executor.Frame.CIP] != 0)
             {
                 length++;
-                Frame.CIP++;
+                Executor.Frame.CIP++;
             }
-            Frame.CIP++;
-            return Encoding.ASCII.GetString(Frame.PCode, start, length);
+            Executor.Frame.CIP++;
+            return Encoding.ASCII.GetString(pCode, start, length);
         }
 
         protected EarleValue Pop()
         {
-            return Frame.Stack.Pop();
+            return Executor.Frame.Stack.Pop();
         }
 
         protected T Pop<T>()
-        {
-            return Pop().As<T>();
-        }
-
-        protected T PopTo<T>()
         {
             return Pop().CastTo<T>();
         }
 
         protected void Jump(int count)
         {
-            Frame.CIP += count;
+            Executor.Frame.CIP += count;
         }
 
         protected EarleValue Peek()
         {
-            return Frame.Stack.Peek();
+            return Executor.Frame.Stack.Peek();
         }
 
         protected void Push(EarleValue item)
         {
-            Frame.Stack.Push(item);
+            Executor.Frame.Stack.Push(item);
         }
 
         [StructLayout(LayoutKind.Explicit)]

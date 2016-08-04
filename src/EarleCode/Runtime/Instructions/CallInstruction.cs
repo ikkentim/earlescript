@@ -27,12 +27,12 @@ namespace EarleCode.Runtime.Instructions
 
         protected override void Handle()
         {
-            Frame.Frame.SubFrame = CreateFrameExecutor(Frame.Frame);
+            Executor.Frame.SubFrame = CreateFrameExecutor(Executor.Frame, Executor.Frame.CIP - 1);
         }
 
         #endregion
 
-        protected virtual EarleStackFrameExecutor CreateFrameExecutor(EarleStackFrame superFrame)
+        protected virtual EarleStackFrameExecutor CreateFrameExecutor(EarleStackFrame superFrame, int callerIp)
         {
             var argumentCount = GetInt32();
             var value = Pop().Value;
@@ -44,7 +44,7 @@ namespace EarleCode.Runtime.Instructions
             while(value is EarleVariableReference || value is EarleBoxedValueReference)
             {
                 if(value is EarleVariableReference)
-                    value = Frame.GetValue((EarleVariableReference)value).Value;
+                    value = Executor.GetValue((EarleVariableReference)value).Value;
                 else if(value is EarleBoxedValueReference)
                     value = ((EarleBoxedValueReference)value).GetField().Value;
             }
@@ -66,13 +66,13 @@ namespace EarleCode.Runtime.Instructions
                 {
                     var functionReference = (EarleVariableReference)initialValue;
 
-                    Frame.Frame.Runtime.HandleWarning(!hasOverloads
+                    Executor.Frame.Runtime.HandleWarning(!hasOverloads
                         ? $"unknown function {functionReference}"
                         : $"no overload of function {functionReference} found with {argumentCount} parameters.");
                 }
                 else
                 {
-                    Frame.Frame.Runtime.HandleWarning($"{initialValue?.GetType()} cannot be invoked.");
+                    Executor.Frame.Runtime.HandleWarning($"{initialValue?.GetType()} cannot be invoked.");
                 }
 
                 for(var i = 0; i < argumentCount; i++)
@@ -88,7 +88,7 @@ namespace EarleCode.Runtime.Instructions
 
             var target = HasTarget ? Pop() : EarleValue.Undefined;
 
-            return function.CreateFrameExecutor(superFrame, target, args);
+            return function.CreateFrameExecutor(superFrame, callerIp, target, args);
         }
     }
 }
