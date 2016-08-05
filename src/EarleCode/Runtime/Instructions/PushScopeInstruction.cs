@@ -21,8 +21,8 @@ namespace EarleCode.Runtime.Instructions
 
         protected override void Handle()
         {
-            var super = Executor.Frame.Scopes.Peek();
-            Executor.Frame.Scopes.Push(new EarleRuntimeScope(super));
+            var super = Frame.Executor.Scopes.Peek();
+            Frame.Executor.Scopes.Push(new EarleRuntimeScope(super));
         }
 
         #endregion

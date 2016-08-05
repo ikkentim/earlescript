@@ -13,6 +13,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using EarleCode.Runtime.Operators;
+
 namespace EarleCode.Runtime.Instructions
 {
     /// <summary>
@@ -160,69 +162,69 @@ namespace EarleCode.Runtime.Instructions
         DereferenceIndex,
 
         [OpCode("ADD", typeof(BinaryOperatorInstruction))]
-        [Operator("+", OperatorType.BinaryOperator | OperatorType.AssignmentModOperator | OperatorType.AssignmentOperator, 7)]
+        [Operator("+", EarleOperatorType.BinaryOperator | EarleOperatorType.AssignmentModOperator | EarleOperatorType.AssignmentOperator, 7)]
         Add,
         [OpCode("SUB", typeof(BinaryOperatorInstruction))]
-        [Operator("-", OperatorType.BinaryOperator | OperatorType.AssignmentModOperator | OperatorType.AssignmentOperator, 7)]
+        [Operator("-", EarleOperatorType.BinaryOperator | EarleOperatorType.AssignmentModOperator | EarleOperatorType.AssignmentOperator, 7)]
         Subtract,
         [OpCode("MUL", typeof(BinaryOperatorInstruction))]
-        [Operator("*", OperatorType.BinaryOperator, 8)]
+        [Operator("*", EarleOperatorType.BinaryOperator, 8)]
         Multiply,
         [OpCode("MOD", typeof(BinaryOperatorInstruction))]
-        [Operator("%", OperatorType.BinaryOperator, 8)]
+        [Operator("%", EarleOperatorType.BinaryOperator, 8)]
         Modulo,
         [OpCode("DIV", typeof(BinaryOperatorInstruction))]
-        [Operator("/", OperatorType.BinaryOperator, 8)]
+        [Operator("/", EarleOperatorType.BinaryOperator, 8)]
         Divide,
         [OpCode("XOR", typeof(BinaryOperatorInstruction))]
-        [Operator("^", OperatorType.BinaryOperator, 2)]
+        [Operator("^", EarleOperatorType.BinaryOperator, 2)]
         BitwiseXor,
         [OpCode("OR", typeof(BinaryOperatorInstruction))]
-        [Operator("|", OperatorType.BinaryOperator, 1)]
+        [Operator("|", EarleOperatorType.BinaryOperator, 1)]
         BitwiseOr,
         [OpCode("AND", typeof(BinaryOperatorInstruction))]
-        [Operator("&", OperatorType.BinaryOperator, 3)]
+        [Operator("&", EarleOperatorType.BinaryOperator, 3)]
         BitwiseAnd,
         [OpCode("SHL", typeof(BinaryOperatorInstruction))]
-        [Operator("<<", OperatorType.BinaryOperator, 6)]
+        [Operator("<<", EarleOperatorType.BinaryOperator, 6)]
         ShiftLeft,
         [OpCode("SHR", typeof(BinaryOperatorInstruction))]
-        [Operator(">>", OperatorType.BinaryOperator, 6)]
+        [Operator(">>", EarleOperatorType.BinaryOperator, 6)]
         ShiftRight,
         [OpCode("CLT", typeof(BinaryOperatorInstruction))]
-        [Operator("<", OperatorType.BinaryOperator, 5)]
+        [Operator("<", EarleOperatorType.BinaryOperator, 5)]
         CheckLessThan,
         [OpCode("CGT", typeof(BinaryOperatorInstruction))]
-        [Operator(">", OperatorType.BinaryOperator, 5)]
+        [Operator(">", EarleOperatorType.BinaryOperator, 5)]
         CheckGreaterThan,
         [OpCode("CLEQ", typeof(BinaryOperatorInstruction))]
-        [Operator("<=", OperatorType.BinaryOperator, 5)]
+        [Operator("<=", EarleOperatorType.BinaryOperator, 5)]
         CheckLessOrEqual,
         [OpCode("CGEQ", typeof(BinaryOperatorInstruction))]
-        [Operator(">=", OperatorType.BinaryOperator, 5)]
+        [Operator(">=", EarleOperatorType.BinaryOperator, 5)]
         CheckGreaterOrEqual,
         [OpCode("CEQ", typeof(BinaryOperatorInstruction))]
-        [Operator("==", OperatorType.BinaryOperator, 4)]
+        [Operator("==", EarleOperatorType.BinaryOperator, 4)]
         CheckEqual,
         [OpCode("CNEQ", typeof(BinaryOperatorInstruction))]
-        [Operator("!=", OperatorType.BinaryOperator, 4)]
+        [Operator("!=", EarleOperatorType.BinaryOperator, 4)]
         CheckNotEqual,
         [OpCode("NEG", typeof(UnaryOperatorInstruction))]
-        [Operator("-", OperatorType.UnaryOperator)]
+        [Operator("-", EarleOperatorType.UnaryOperator)]
         Negate,
 
         /// <summary>
         ///     Replace the value on top of the stack with its logical NOT value.
         /// </summary>
         [OpCode("NOT.L", typeof(UnaryOperatorInstruction))]
-        [Operator("!", OperatorType.UnaryOperator)]
+        [Operator("!", EarleOperatorType.UnaryOperator)]
         LogicalNot,
 
         [OpCode("NOT.B", typeof(UnaryOperatorInstruction))]
-        [Operator("~", OperatorType.UnaryOperator)]
+        [Operator("~", EarleOperatorType.UnaryOperator)]
         BitwiseNot,
         [OpCode("CONV", typeof(UnaryOperatorInstruction))]
-        [Operator("@", OperatorType.UnaryOperator)]
+        [Operator("@", EarleOperatorType.UnaryOperator)]
         Convert,
     }
 }

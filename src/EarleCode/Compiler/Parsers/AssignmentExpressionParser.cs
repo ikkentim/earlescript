@@ -18,12 +18,13 @@ using System.Linq;
 using EarleCode.Compiler.Lexing;
 using EarleCode.Runtime;
 using EarleCode.Runtime.Instructions;
+using EarleCode.Runtime.Operators;
 
 namespace EarleCode.Compiler.Parsers
 {
     internal class AssignmentExpressionParser : Parser
     {
-        private OpCode GetOperator(OperatorType type)
+        private OpCode GetOperator(EarleOperatorType type)
         {
             var str = "";
             do
@@ -54,7 +55,7 @@ namespace EarleCode.Compiler.Parsers
 
             if (SyntaxMatches("OPERATOR_MOD_UNARY"))
             {
-                modOperator = GetOperator(OperatorType.AssignmentModOperator);
+                modOperator = GetOperator(EarleOperatorType.AssignmentModOperator);
             }
 
             Lexer.AssertToken(TokenType.Identifier);
@@ -66,7 +67,7 @@ namespace EarleCode.Compiler.Parsers
 
             if (modOperator == OpCode.Nop && SyntaxMatches("OPERATOR_MOD_UNARY"))
             {
-                modOperator = GetOperator(OperatorType.AssignmentModOperator);
+                modOperator = GetOperator(EarleOperatorType.AssignmentModOperator);
                 unaryModOperatorIsPrefix = false;
             }
 
@@ -99,7 +100,7 @@ namespace EarleCode.Compiler.Parsers
             {
                 OpCode unaryOperator = OpCode.Nop;
                 if (SyntaxMatches("OPERATOR_UNARY"))
-                    unaryOperator = GetOperator(OperatorType.AssignmentOperator);
+                    unaryOperator = GetOperator(EarleOperatorType.AssignmentOperator);
 
                 Lexer.SkipToken(TokenType.Token, "=");
 

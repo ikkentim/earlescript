@@ -21,16 +21,16 @@ namespace EarleCode.Runtime.Instructions
     {
         protected override void Handle()
         {
-            var ip = Executor.Frame.CIP - 1;
+            var ip = Frame.Executor.CIP - 1;
             var thread = new EarleThread(null);
-            var rootFrame = new EarleStackFrame(Executor.Frame.Runtime, Executor.Frame.Function, ip, Executor.Frame, thread, EarleValue.Undefined);
+            var rootFrame = new EarleStackFrame(Frame.Runtime, Frame.Function, null, ip, Frame, thread);
             var frame = CreateFrameExecutor(rootFrame, EarleStackFrame.ThreadFrameIP);
 
             if(frame == null)
                 return;
-            thread.AttachFrame(frame);
+            thread.AttachExecutor(frame);
 
-            Executor.Frame.Runtime.EnqueueThread(thread);
+            Frame.Runtime.EnqueueThread(thread);
         }
     }
     

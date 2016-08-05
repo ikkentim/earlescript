@@ -23,10 +23,10 @@ namespace EarleCode.Runtime
                 switch(callerIP)
                 {
                     case EarleStackFrame.RootCallIP:
-                        result += "at (ROOT CALL)";
+                        result += " at (ROOT CALL)";
                         break;
                     case EarleStackFrame.ThreadFrameIP:
-                        result += "at (THREAD START)";
+                        result += " at (THREAD START)";
                         break;
                     case EarleStackFrame.RootFrameIP:
                         break;
@@ -39,7 +39,7 @@ namespace EarleCode.Runtime
                             var line = 0;
                             frame.ParentFrame?.Function?.CallLines?.TryGetValue(callerIP, out line);
 
-                            result += $"at {callerFunctionName}({callerFunctionArgs}) [0x{callerIP:X5}] in {callerFileName}:{line}";
+                            result += $" at {callerFunctionName}({callerFunctionArgs}) [0x{callerIP:X5}] in {callerFileName}:{line}";
 
                             break;
                         }

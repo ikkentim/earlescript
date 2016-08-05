@@ -13,7 +13,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
 using System.Runtime.InteropServices;
 using System.Text;
 using EarleCode.Runtime.Values;
@@ -22,13 +21,13 @@ namespace EarleCode.Runtime.Instructions
 {
     internal abstract class Instruction : IInstruction
     {
-        protected IEarleStackFrameExecutor Executor { get; private set; }
+        protected EarleStackFrame Frame { get; private set; }
 
         #region Implementation of IInstruction
 
-        public void Handle(IEarleStackFrameExecutor executor)
+        public void Handle(EarleStackFrame frame)
         {
-            Executor = executor;
+            Frame = frame;
             Handle();
         }
 
@@ -38,8 +37,8 @@ namespace EarleCode.Runtime.Instructions
 
         private FastConvert GetConvertable()
         {
-            var pCode = Executor.Frame.Function.PCode;
-            var cip = Executor.Frame.CIP;
+            var pCode = Frame.Function.PCode;
+            var cip = Frame.Executor.CIP;
             FastConvert converter = new FastConvert();
             converter.Byte0 = pCode[cip];
             converter.Byte1 = pCode[cip + 1];
@@ -63,21 +62,21 @@ namespace EarleCode.Runtime.Instructions
 
         protected string GetString()
         {
-            var start = Executor.Frame.CIP;
-            var pCode = Executor.Frame.Function.PCode;
+            var start = Frame.Executor.CIP;
+            var pCode = Frame.Function.PCode;
             var length = 0;
-            while(pCode[Executor.Frame.CIP] != 0)
+            while(pCode[Frame.Executor.CIP] != 0)
             {
                 length++;
-                Executor.Frame.CIP++;
+                Frame.Executor.CIP++;
             }
-            Executor.Frame.CIP++;
+            Frame.Executor.CIP++;
             return Encoding.ASCII.GetString(pCode, start, length);
         }
 
         protected EarleValue Pop()
         {
-            return Executor.Frame.Stack.Pop();
+            return Frame.Executor.Stack.Pop();
         }
 
         protected T Pop<T>()
@@ -87,17 +86,17 @@ namespace EarleCode.Runtime.Instructions
 
         protected void Jump(int count)
         {
-            Executor.Frame.CIP += count;
+            Frame.Executor.CIP += count;
         }
 
         protected EarleValue Peek()
         {
-            return Executor.Frame.Stack.Peek();
+            return Frame.Executor.Stack.Peek();
         }
 
         protected void Push(EarleValue item)
         {
-            Executor.Frame.Stack.Push(item);
+            Frame.Executor.Stack.Push(item);
         }
 
         [StructLayout(LayoutKind.Explicit)]

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using EarleCode.Runtime.Instructions;
 using EarleCode.Runtime.Values;
 
-namespace EarleCode.Runtime
+namespace EarleCode.Runtime.Operators
 {
     public sealed class EarleOperatorCollection
     {

@@ -106,7 +106,6 @@
     <Compile Include="Runtime\EarleFunction.cs" />
     <Compile Include="Runtime\EarleFunctionCollection.cs" />
     <Compile Include="Runtime\EarleNativeFunction.cs" />
-    <Compile Include="Runtime\EarleOperators.cs" />
     <Compile Include="Runtime\EarleRuntime.cs" />
     <Compile Include="Runtime\EarleRuntime.operators.cs" />
     <Compile Include="Runtime\EarleRuntimeScope.cs" />
@@ -138,20 +137,21 @@
     <Compile Include="Runtime\IEarleObject.cs" />
     <Compile Include="Runtime\EarleDefaultNatives.cs" />
     <Compile Include="Compiler\EarleCompileOptions.cs" />
-    <Compile Include="Runtime\EarleOperatorCollection.cs" />
     <Compile Include="Runtime\Instructions\BinaryOperatorInstruction.cs" />
     <Compile Include="Runtime\Instructions\PushOneInstruction.cs" />
     <Compile Include="Runtime\Instructions\UnaryOperatorInstruction.cs" />
     <Compile Include="Localization\EarleLocalizer.cs" />
     <Compile Include="Localization\EarleLocalizerNatives.cs" />
-    <Compile Include="Runtime\EarleOperatorTypeOrder.cs" />
     <Compile Include="Runtime\EarleNativeCollection.cs" />
     <Compile Include="Runtime\Instructions\NopInstuction.cs" />
-    <Compile Include="Runtime\OperatorType.cs" />
-    <Compile Include="Runtime\OperatorAttribute.cs" />
     <Compile Include="Runtime\EarleStackTrace.cs" />
     <Compile Include="Runtime\IEarleStackFrameExecutor.cs" />
     <Compile Include="Runtime\EarleBaseStackFrameExecutor.cs" />
+    <Compile Include="Runtime\Operators\EarleOperatorCollection.cs" />
+    <Compile Include="Runtime\Operators\EarleOperators.cs" />
+    <Compile Include="Runtime\Operators\EarleOperatorTypeOrder.cs" />
+    <Compile Include="Runtime\Operators\OperatorAttribute.cs" />
+    <Compile Include="Runtime\Operators\EarleOperatorType.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
@@ -164,6 +164,7 @@
     <Folder Include="Compiler\Grammar\" />
     <Folder Include="Runtime\Events\" />
     <Folder Include="Localization\" />
+    <Folder Include="Runtime\Operators\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

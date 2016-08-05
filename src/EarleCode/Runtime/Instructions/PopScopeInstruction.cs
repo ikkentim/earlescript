@@ -21,7 +21,7 @@ namespace EarleCode.Runtime.Instructions
 
         protected override void Handle()
         {
-            Executor.Frame.Scopes.Pop();
+            Frame.Executor.Scopes.Pop();
         }
 
         #endregion

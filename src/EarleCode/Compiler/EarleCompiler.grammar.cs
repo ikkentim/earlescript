@@ -16,6 +16,7 @@
 using System.Linq;
 using EarleCode.Compiler.Grammar;
 using EarleCode.Runtime;
+using EarleCode.Runtime.Operators;
 
 namespace EarleCode.Compiler
 {

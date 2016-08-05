@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
-using EarleCode.Runtime.Values;
-
-namespace EarleCode.Runtime
+namespace EarleCode.Runtime.Operators
 {
     public enum EarleOperatorTypeOrder
     {

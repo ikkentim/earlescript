@@ -29,7 +29,7 @@ namespace EarleCode.Runtime
 
         #region Overrides of EarleFunction
 
-        public override IEarleStackFrameExecutor CreateFrameExecutor(EarleStackFrame superFrame, int callerIp, EarleValue target, EarleValue[] arguments)
+        public override IEarleStackFrameExecutor CreateFrameExecutor(EarleStackFrame parentFrame, int callerIp, EarleValue target, EarleValue[] arguments)
         {
             if(Parameters != null && Parameters.Length < arguments.Length)
                 arguments =
@@ -37,7 +37,7 @@ namespace EarleCode.Runtime
                              .Take(Parameters.Length)
                              .ToArray();
 
-            return new NativeStackFrameExecutor(superFrame.SpawnSubFrame(this, callerIp, target), this, arguments);
+            return new NativeStackFrameExecutor(this, parentFrame, callerIp, target, arguments);
         }
 
         #endregion
@@ -121,9 +121,12 @@ namespace EarleCode.Runtime
             private readonly EarleValue[] _arguments;
             private readonly EarleNativeFunction _native;
 
-            public NativeStackFrameExecutor(EarleStackFrame frame, EarleNativeFunction native, EarleValue[] arguments)
-                : base(frame)
+            public NativeStackFrameExecutor(EarleNativeFunction native, EarleStackFrame parentFrame, int callerIp, EarleValue target, EarleValue[] arguments) : base(target)
             {
+                if(arguments == null)
+                    throw new ArgumentNullException(nameof(arguments));
+                Frame = parentFrame.SpawnChild(native, this, callerIp);
+
                 _native = native;
                 _arguments = arguments;
             }
@@ -132,12 +135,12 @@ namespace EarleCode.Runtime
 
             public override EarleValue? Run()
             {
-                if(Frame.SubFrame != null)
+                if(Frame.ChildFrame != null)
                 {
-                    var result = Frame.SubFrame.Run();
+                    var result = Frame.ChildFrame.Executor.Run();
 
                     if(result != null)
-                        Frame.SubFrame = null;
+                        Frame.ChildFrame = null;
 
                     return result;
                 }
@@ -145,7 +148,7 @@ namespace EarleCode.Runtime
                 {
                     var result = _native.Invoke(Frame, _arguments);
 
-                    if(Frame.SubFrame == null)
+                    if(Frame.ChildFrame == null)
                         return result;
 
                     return null;

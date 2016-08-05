@@ -8,7 +8,7 @@ namespace EarleCode.Runtime.Events
     {
         private static IEarleEventManager GetManager(EarleStackFrame frame, string funcName)
         {
-            var manager = frame.Target.As<IEarleEventableObject>()?.EventManager;
+            var manager = frame.Executor.Target.As<IEarleEventableObject>()?.EventManager;
 
             if(manager == null)
                 frame.Runtime.HandleWarning($"A valid target must be specified when calling `{funcName}`");
@@ -22,7 +22,7 @@ namespace EarleCode.Runtime.Events
             var manager = GetManager(frame, "waittill");
 
             if(manager != null)
-                frame.SubFrame = new WaitTillStackFrameExecutor(frame.SpawnSubFrame(null, -2, frame.Target), manager, eventName);
+                frame.ChildFrame = new WaitTillStackFrameExecutor(frame, frame.Executor.Target, manager, eventName).Frame;
         }
 
         [EarleNativeFunction]
@@ -55,12 +55,14 @@ namespace EarleCode.Runtime.Events
             private EarleValue _firer;
             private string _eventName;
 
-            public WaitTillStackFrameExecutor(EarleStackFrame frame, IEarleEventManager eventManager, string eventName) : base(frame)
+            public WaitTillStackFrameExecutor(EarleStackFrame parentFrame, EarleValue target, IEarleEventManager eventManager, string eventName) : base(target)
             {
                 if(eventManager == null)
                     throw new ArgumentNullException(nameof(eventManager));
                 if(eventName == null)
                     throw new ArgumentNullException(nameof(eventName));
+
+                Frame = parentFrame.SpawnChild(null, this, -2);//TODO? -2 ? why?
 
                 _eventName = eventName;
                 eventManager.EventFired += OnEventFired;

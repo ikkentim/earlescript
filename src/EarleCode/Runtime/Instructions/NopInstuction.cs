@@ -5,7 +5,7 @@ namespace EarleCode.Runtime.Instructions
 {
     internal class NopInstuction : IInstruction
     {
-        public void Handle(IEarleStackFrameExecutor executor)
+        public void Handle(EarleStackFrame frame)
         {
         }
     }

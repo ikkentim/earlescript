@@ -13,7 +13,7 @@ namespace EarleCode.Runtime.Instructions
         {
             var right = Pop();
             var left = Pop();
-            Push(Executor.Frame.Runtime.Operators.RunBinaryOperator(_operator, left, right));
+            Push(Frame.Runtime.Operators.RunBinaryOperator(_operator, left, right));
         }
     }
 }

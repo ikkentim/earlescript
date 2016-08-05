@@ -15,20 +15,14 @@
 
 using System;
 
-namespace EarleCode.Runtime
+namespace EarleCode.Runtime.Operators
 {
-    [AttributeUsage(AttributeTargets.Field)]
-    internal class OperatorAttribute : Attribute
+    [Flags]
+    internal enum EarleOperatorType
     {
-        public OperatorAttribute(string symbol, OperatorType type, int priority = 0)
-        {
-            Symbol = symbol;
-            Type = type;
-            Priority = priority;
-        }
-
-        public string Symbol { get; }
-        public OperatorType Type { get; }
-        public int Priority { get; }
+        UnaryOperator = 1,
+        BinaryOperator = 2,
+        AssignmentOperator = 4,// eg. +=
+        AssignmentModOperator = 8,// eg. ++
     }
 }

@@ -26,12 +26,12 @@ namespace EarleCode.Runtime.Instructions
         {
             var value = Pop().Value;
             if (value is EarleVariableReference)
-                Push(Executor.GetValue((EarleVariableReference) value));
+                Push(Frame.Executor.GetValue((EarleVariableReference) value));
             else if (value is EarleBoxedValueReference)
                 Push(((EarleBoxedValueReference) value).GetField());
             else
             {
-                Executor.Frame.Runtime.HandleWarning($"Value {value} is not a reference");
+                Frame.Runtime.HandleWarning($"Value {value} is not a reference");
                 Push(EarleValue.Undefined);
             }
         }

@@ -15,6 +15,7 @@
 
 using System;
 using EarleCode.Runtime.Instructions;
+using EarleCode.Runtime.Operators;
 using EarleCode.Runtime.Values;
 
 namespace EarleCode.Runtime

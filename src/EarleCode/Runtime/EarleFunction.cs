@@ -42,7 +42,7 @@ namespace EarleCode.Runtime
         public string[] Parameters { get; }
 
         public Dictionary<int, int> CallLines { get; }
-        public virtual IEarleStackFrameExecutor CreateFrameExecutor(EarleStackFrame superFrame, int callerIp, EarleValue target, EarleValue[] arguments)
+        public virtual IEarleStackFrameExecutor CreateFrameExecutor(EarleStackFrame parentFrame, int callerIp, EarleValue target, EarleValue[] arguments)
         {
             if (arguments == null) throw new ArgumentNullException(nameof(arguments));
             var locals = new EarleDictionary();
@@ -59,15 +59,15 @@ namespace EarleCode.Runtime
                 index++;
             }
 
-            return new EarleStackFrameExecutor(superFrame.SpawnSubFrame(this, callerIp, target), File, locals);
+            return new EarleStackFrameExecutor(this, parentFrame, callerIp, target, File, locals);
         }
 
         public EarleValue? Invoke(EarleCompletionHandler completionHandler, EarleValue target, params EarleValue[] args)
         {
             var thread = new EarleThread(completionHandler);
-            var rootFrame = new EarleStackFrame(File.Runtime, null, EarleStackFrame.RootFrameIP, null, thread, target);
+            var rootFrame = new EarleStackFrame(File.Runtime, null, null, EarleStackFrame.RootFrameIP, null, thread);
             var frame = CreateFrameExecutor(rootFrame, EarleStackFrame.RootCallIP, target, args?.ToArray() ?? new EarleValue[0]);
-            thread.AttachFrame(frame);
+            thread.AttachExecutor(frame);
 
             return thread.Run();
         }

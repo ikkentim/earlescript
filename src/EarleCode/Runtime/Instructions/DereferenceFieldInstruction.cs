@@ -34,7 +34,7 @@ namespace EarleCode.Runtime.Instructions
             }
             else
             {
-                Executor.Frame.Runtime.HandleWarning("Value is not a structure.");
+                Frame.Runtime.HandleWarning("Value is not a structure.");
                 Push(EarleValue.Undefined);
             }
         }

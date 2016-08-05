@@ -10,7 +10,7 @@ namespace EarleCode.Runtime
         public const int RootCallIP = -1;
         public const int ThreadFrameIP = -3;
 
-        public EarleStackFrame(EarleRuntime runtime, EarleFunction function, int callerIp, EarleStackFrame superFrame, EarleThread thread, EarleValue target)
+        public EarleStackFrame(EarleRuntime runtime, EarleFunction function, IEarleStackFrameExecutor executor, int callerIp, EarleStackFrame superFrame, EarleThread thread)
         {
             if(runtime == null)
                 throw new ArgumentNullException(nameof(runtime));
@@ -18,35 +18,30 @@ namespace EarleCode.Runtime
                 throw new ArgumentNullException(nameof(thread));
             Runtime = runtime;
             ParentFrame = superFrame;
+            Executor = executor;
             CallerIP = callerIp;
             Function = function;
             Thread = thread;
-            Target = target;
         }
 
         public EarleRuntime Runtime { get; }
-
-        public EarleValue Target { get; }
-
-        public EarleStackFrame ParentFrame { get; }
-
-        public int CallerIP { get; }
-
-        public IEarleStackFrameExecutor SubFrame { get; set; }
 
         public EarleThread Thread { get; }
 
         public EarleFunction Function { get; }
 
-        public Stack<EarleRuntimeScope> Scopes { get; } = new Stack<EarleRuntimeScope>();
+        public IEarleStackFrameExecutor Executor { get; }
 
-        public Stack<EarleValue> Stack { get; } = new Stack<EarleValue>();
+        public EarleStackFrame ParentFrame { get; }
 
-        public int CIP { get; set; }
+        public EarleStackFrame ChildFrame { get; set; }
 
-        internal EarleStackFrame SpawnSubFrame(EarleFunction function, int callerIp, EarleValue target)
+        public int CallerIP { get; }
+
+
+        internal EarleStackFrame SpawnChild(EarleFunction function, IEarleStackFrameExecutor executor, int callerIp)
         {
-            return new EarleStackFrame(Runtime, function, callerIp, this, Thread, target);
+            return new EarleStackFrame(Runtime, function, executor, callerIp, this, Thread);
         }
 
         public EarleStackTrace GetStackTrace()

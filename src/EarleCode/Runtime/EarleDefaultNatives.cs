@@ -31,7 +31,7 @@ namespace EarleCode.Runtime
         private static void Wait(EarleStackFrame frame, float seconds)
         {
             if(seconds > 0)
-                frame.SubFrame = new WaitFrameExecutor(frame, seconds);
+                frame.ChildFrame = new WaitFrameExecutor(frame, seconds).Frame;
         }
 
         [EarleNativeFunction]
@@ -63,8 +63,11 @@ namespace EarleCode.Runtime
             private Stopwatch _stopwatch;
             private long _miliseconds;
 
-            public WaitFrameExecutor(EarleStackFrame frame, float seconds) : base(frame)
+            public WaitFrameExecutor(EarleStackFrame parentFrame, float seconds) : base(EarleValue.Undefined)
             {
+                if(parentFrame == null) throw new ArgumentNullException(nameof(parentFrame));
+                Frame = parentFrame.SpawnChild(null, this, -2);// todo: -2??? why
+
                 _stopwatch = new Stopwatch();
                 _stopwatch.Start();
                 _miliseconds = (long)(seconds * 1000);

@@ -10,7 +10,7 @@ namespace EarleCode.Runtime.Instructions
 
         protected override void Handle()
         {
-            Push(Executor.Frame.Runtime.Operators.RunUnaryOperator(_operator, Pop()));
+            Push(Frame.Runtime.Operators.RunUnaryOperator(_operator, Pop()));
         }
     }
 }

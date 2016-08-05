@@ -14,6 +14,7 @@
 // limitations under the License.
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using EarleCode.Runtime.Instructions;
 using EarleCode.Runtime.Values;
@@ -23,20 +24,27 @@ namespace EarleCode.Runtime
 {
     public abstract class EarleBaseStackFrameExecutor : IEarleStackFrameExecutor
     {
-        public EarleBaseStackFrameExecutor(EarleStackFrame frame)
+        public EarleBaseStackFrameExecutor(EarleValue target)
         {
-            if(frame == null) throw new ArgumentNullException(nameof(frame));
-            Frame = frame;
+            Target = target;
         }
 
-        public EarleStackFrame Frame { get; }
+        public EarleStackFrame Frame { get; protected set; }
+
+        public EarleValue Target { get; }
+
+        public Stack<EarleRuntimeScope> Scopes { get; } = new Stack<EarleRuntimeScope>();
+
+        public Stack<EarleValue> Stack { get; } = new Stack<EarleValue>();
+
+        public int CIP { get; set; }
 
         public virtual EarleValue GetValue(EarleVariableReference reference)
         {
             if(reference.Name == "self")
-                return string.IsNullOrEmpty(reference.File) ? Frame.Target : EarleValue.Undefined;
+                return string.IsNullOrEmpty(reference.File) ? Target : EarleValue.Undefined;
 
-            return Frame.Scopes.Peek().GetValue(reference);
+            return Scopes.Peek().GetValue(reference);
         }
 
         public virtual bool SetValue(EarleVariableReference reference, EarleValue value)
@@ -47,7 +55,7 @@ namespace EarleCode.Runtime
                 return false;
             }
 
-            return Frame.Scopes.Peek().SetValue(reference, value);
+            return Scopes.Peek().SetValue(reference, value);
         }
 
         public abstract EarleValue? Run();

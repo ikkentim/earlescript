@@ -11,32 +11,36 @@ namespace EarleCode.Runtime
             CompletionHandler = completionHandler;
         }
 
-        public EarleThread(IEarleStackFrameExecutor frame, EarleCompletionHandler completionHandler) : this(completionHandler)
+        public EarleThread(IEarleStackFrameExecutor executor, EarleCompletionHandler completionHandler) : this(completionHandler)
         {
-            Frame = frame;
+            if(executor == null)
+                throw new System.ArgumentNullException(nameof(executor));
+            Executor = executor;
         }
 
         public int ThreadId { get; private set; }
 
-        public IEarleStackFrameExecutor Frame { get; private set; }
+        public IEarleStackFrameExecutor Executor { get; private set; }
 
         public EarleCompletionHandler CompletionHandler { get; }
 
         public bool IsAlive { get; private set; } = true;
 
-        internal void AttachFrame(IEarleStackFrameExecutor frame)
+        internal void AttachExecutor(IEarleStackFrameExecutor executor)
         {
-            Frame = frame;
+            if(executor == null)
+                throw new System.ArgumentNullException(nameof(executor));
+            Executor = executor;
         }
 
         public EarleValue? Run()
         {
-            var result = Frame.Run();
+            var result = Executor.Run();
 
             if(result == null)
             {
                 if(IsAlive)
-                    Frame.Frame.Runtime.EnqueueThread(this);
+                    Executor.Frame.Runtime.EnqueueThread(this);
             }
             else
             {

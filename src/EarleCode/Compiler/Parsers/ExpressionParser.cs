@@ -19,12 +19,13 @@ using System.Linq;
 using EarleCode.Compiler.Lexing;
 using EarleCode.Runtime;
 using EarleCode.Runtime.Instructions;
+using EarleCode.Runtime.Operators;
 
 namespace EarleCode.Compiler.Parsers
 {
     internal class ExpressionParser : Parser
     {
-        private OpCode GetOperator(OperatorType type)
+        private OpCode GetOperator(EarleOperatorType type)
         {
             var str = "";
             do
@@ -82,7 +83,7 @@ namespace EarleCode.Compiler.Parsers
                 {
                     Lexer.AssertToken(TokenType.Token);
 
-                    var op = GetOperator(OperatorType.BinaryOperator);
+                    var op = GetOperator(EarleOperatorType.BinaryOperator);
 
                     if (op == OpCode.Nop)
                         ThrowUnexpectedToken("-OPERATOR-");
@@ -130,7 +131,7 @@ namespace EarleCode.Compiler.Parsers
             if (SyntaxMatches("OPERATOR_UNARY"))
             {
                 Lexer.AssertToken(TokenType.Token);
-                unaryOperator = EarleOperators.GetOpCode(OperatorType.UnaryOperator, Lexer.Current.Value);
+                unaryOperator = EarleOperators.GetOpCode(EarleOperatorType.UnaryOperator, Lexer.Current.Value);
                 Lexer.AssertMoveNext();
             }
 

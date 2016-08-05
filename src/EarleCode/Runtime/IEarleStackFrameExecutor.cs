@@ -25,6 +25,10 @@ namespace EarleCode.Runtime
     public interface IEarleStackFrameExecutor : IEarleRuntimeScope
     {
         EarleStackFrame Frame { get; }
+        EarleValue Target { get; }
+        Stack<EarleRuntimeScope> Scopes { get; }
+        Stack<EarleValue> Stack { get; }
+        int CIP { get; set; }
 
         EarleValue? Run();
     }
