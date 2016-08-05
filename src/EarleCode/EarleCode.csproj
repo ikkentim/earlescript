@@ -152,6 +152,7 @@
     <Compile Include="Runtime\Operators\EarleOperatorTypeOrder.cs" />
     <Compile Include="Runtime\Operators\OperatorAttribute.cs" />
     <Compile Include="Runtime\Operators\EarleOperatorType.cs" />
+    <Compile Include="Runtime\Instructions\PushValueInstruction.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

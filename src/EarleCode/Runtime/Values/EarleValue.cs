@@ -27,10 +27,6 @@ namespace EarleCode.Runtime.Values
                 value = (bool)value ? 1 : 0;
             
             Value = value;
-
-            if (HasValue)
-            {
-            }
         }
 
         public static readonly EarleValue Undefined  = new EarleValue();

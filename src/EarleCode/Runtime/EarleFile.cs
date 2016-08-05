@@ -27,6 +27,7 @@ namespace EarleCode.Runtime
         private EarleFunctionTable _functions = new EarleFunctionTable();
         private readonly List<string> _includedFiles = new List<string>();
         private readonly List<string> _referencedFiles = new List<string>();
+        private readonly List<EarleValue> _valueStore = new List<EarleValue>();
 
         public EarleFile(EarleRuntime runtime, string name) : base(runtime)
         {
@@ -80,6 +81,27 @@ namespace EarleCode.Runtime
         public EarleFunctionCollection GetFunctions(string functionName)
         {
             return _functions.Get(functionName);
+        }
+
+        public int GetIndexForValueInStore(EarleValue value)
+        {
+            var index = _valueStore.IndexOf(value);
+
+            if(index < 0)
+            {
+                index = _valueStore.Count;
+                _valueStore.Add(value);
+            }
+
+            return index;
+        }
+
+        public EarleValue GetValueInStore(int index)
+        {
+            if(index < 0 || index >= _valueStore.Count)
+                return EarleValue.Undefined;
+
+            return _valueStore[index];
         }
 
         public EarleValue? Invoke(string functionName, EarleCompletionHandler completionHandler, EarleValue target, params EarleValue[] arguments)

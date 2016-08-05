@@ -21,6 +21,7 @@ using System.Text;
 using EarleCode.Compiler.Lexing;
 using EarleCode.Runtime;
 using EarleCode.Runtime.Instructions;
+using EarleCode.Runtime.Values;
 using EarleCode.Utilities;
 
 namespace EarleCode.Compiler.Parsers
@@ -179,9 +180,13 @@ namespace EarleCode.Compiler.Parsers
 
             if(!string.IsNullOrEmpty(path) && !_usedFiles.Contains(path))
                 _usedFiles.Add(path);
-            
-            Yield(OpCode.PushReference);
-            Yield($"{path}::{name}".ToLower());
+
+            var value = new EarleVariableReference(path?.ToLower(), name?.ToLower() ?? string.Empty).ToEarleValue();
+            Yield(OpCode.PushValue);
+            Yield(File.GetIndexForValueInStore(value));
+
+            //Yield(OpCode.PushReference);
+            //Yield($"{path}::{name}".ToLower());
         }
 
         public void PushCall(int arguments, int lineNumber, bool thread = false)
@@ -228,8 +233,12 @@ namespace EarleCode.Compiler.Parsers
         public void PushString(string value)
         {
             if (value == null) throw new ArgumentNullException(nameof(value));
-            Yield(OpCode.PushString);
-            Yield(value);
+
+            Yield(OpCode.PushValue);
+            Yield(File.GetIndexForValueInStore(value.ToEarleValue()));
+
+            //Yield(OpCode.PushString);
+            //Yield(value);
         }
 
         public void PushFloat(float value)

@@ -24,11 +24,22 @@ namespace EarleCode.Compiler.Lexing
     {
         private readonly string _file;
         private readonly string _input;
-        private readonly TokenTypeData[] _tokenTypes;
+        private static readonly TokenTypeData[] _tokenTypes;
         private int _caretPosition;
         private int _column;
         private int _line;
         private Stack<Token> _pushedTokens = new Stack<Token>();
+
+        static Lexer()
+        {
+            // Fill the token types array.
+            _tokenTypes = new[]
+            {
+                new TokenTypeData(@"\G[a-zA-Z_][a-zA-Z0-9_]*", TokenType.Identifier),
+                new TokenTypeData(@"\G([0-9]*\.?[0-9]+)", TokenType.NumberLiteral, 1),
+                new TokenTypeData(@"\G([""])((?:\\\1|.)*?)\1", TokenType.StringLiteral, 2)
+            };
+        }
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="Lexer" /> class.
@@ -38,14 +49,6 @@ namespace EarleCode.Compiler.Lexing
         /// <exception cref="ArgumentNullException">Thrown if file or input is null.</exception>
         public Lexer(string file, string input)
         {
-            // Fill the token types array.
-            _tokenTypes = new[]
-            {
-                new TokenTypeData(@"\G[a-zA-Z_][a-zA-Z0-9_]*", TokenType.Identifier),
-                new TokenTypeData(@"\G([0-9]*\.?[0-9]+)", TokenType.NumberLiteral, 1),
-                new TokenTypeData(@"\G([""])((?:\\\1|.)*?)\1", TokenType.StringLiteral, 2)
-            };
-
             if (file == null) throw new ArgumentNullException(nameof(file));
             if (input == null) throw new ArgumentNullException(nameof(input));
 
@@ -107,22 +110,19 @@ namespace EarleCode.Compiler.Lexing
             if (_caretPosition >= _input.Length - 1)
                 return;
 
-            var firstTwoCharacter = _input.Substring(_caretPosition, 2);
-            switch (firstTwoCharacter)
+            if(_caretPosition <= _input.Length - 2)
             {
-                case "//":
+                if(_input[_caretPosition] == '/' && _input[_caretPosition + 1] == '/')
                 {
                     var endIndex = _input.IndexOf("\n", _caretPosition, StringComparison.Ordinal);
                     MoveCaret(endIndex < 0 ? _input.Length - _caretPosition : endIndex - _caretPosition + 1);
                     SkipWhitespace();
-                    break;
                 }
-                case "/*":
+                else if(_input[_caretPosition] == '/' && _input[_caretPosition + 1] == '*')
                 {
                     var endIndex = _input.IndexOf("*/", _caretPosition, StringComparison.Ordinal);
                     MoveCaret(endIndex < 0 ? _input.Length - _caretPosition : endIndex - _caretPosition + 2);
                     SkipWhitespace();
-                    break;
                 }
             }
         }

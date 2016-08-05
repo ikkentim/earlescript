@@ -99,6 +99,9 @@ namespace EarleCode.Runtime.Instructions
         [OpCode("PUSH.1", typeof(PushOneInstruction))]
         PushOne,
 
+        [OpCode("PUSH.V $int", typeof(PushValueInstruction))]
+        PushValue,
+
         /// <summary>
         ///     Pop a value off the stack.
         /// </summary>
