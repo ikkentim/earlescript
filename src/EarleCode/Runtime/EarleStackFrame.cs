@@ -32,7 +32,7 @@ namespace EarleCode.Runtime
 
         public int CallerIP { get; }
 
-        public EarleStackFrameExecutor SubFrame { get; set; }
+        public IEarleStackFrameExecutor SubFrame { get; set; }
 
         public EarleThread Thread { get; }
 

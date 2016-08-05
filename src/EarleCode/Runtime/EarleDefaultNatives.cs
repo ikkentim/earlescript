@@ -58,12 +58,12 @@ namespace EarleCode.Runtime
             return new EarleStructure();
         }
 
-        private class WaitFrameExecutor : EarleStackFrameExecutor
+        private class WaitFrameExecutor : EarleBaseStackFrameExecutor
         {
             private Stopwatch _stopwatch;
             private long _miliseconds;
 
-            public WaitFrameExecutor(EarleStackFrame frame, float seconds) : base(frame, null, null)
+            public WaitFrameExecutor(EarleStackFrame frame, float seconds) : base(frame)
             {
                 _stopwatch = new Stopwatch();
                 _stopwatch.Start();

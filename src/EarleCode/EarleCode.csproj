@@ -150,6 +150,8 @@
     <Compile Include="Runtime\OperatorType.cs" />
     <Compile Include="Runtime\OperatorAttribute.cs" />
     <Compile Include="Runtime\EarleStackTrace.cs" />
+    <Compile Include="Runtime\IEarleStackFrameExecutor.cs" />
+    <Compile Include="Runtime\EarleBaseStackFrameExecutor.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

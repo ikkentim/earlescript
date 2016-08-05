@@ -32,7 +32,7 @@ namespace EarleCode.Runtime.Instructions
 
         #endregion
 
-        protected virtual EarleStackFrameExecutor CreateFrameExecutor(EarleStackFrame superFrame, int callerIp)
+        protected virtual IEarleStackFrameExecutor CreateFrameExecutor(EarleStackFrame superFrame, int callerIp)
         {
             var argumentCount = GetInt32();
             var value = Pop().Value;

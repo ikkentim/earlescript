@@ -1,4 +1,4 @@
-﻿// EarleCode
+// EarleCode
 // Copyright 2016 Tim Potze
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,10 +13,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace EarleCode.Runtime.Instructions
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using EarleCode.Runtime.Instructions;
+using EarleCode.Runtime.Values;
+using EarleCode.Utilities;
+
+namespace EarleCode.Runtime
 {
-    internal interface IInstruction
+    public interface IEarleStackFrameExecutor : IEarleRuntimeScope
     {
-        void Handle(IEarleStackFrameExecutor executor);
+        EarleStackFrame Frame { get; }
+
+        EarleValue? Run();
     }
+    
 }

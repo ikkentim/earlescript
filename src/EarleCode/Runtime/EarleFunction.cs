@@ -42,7 +42,7 @@ namespace EarleCode.Runtime
         public string[] Parameters { get; }
 
         public Dictionary<int, int> CallLines { get; }
-        public virtual EarleStackFrameExecutor CreateFrameExecutor(EarleStackFrame superFrame, int callerIp, EarleValue target, EarleValue[] arguments)
+        public virtual IEarleStackFrameExecutor CreateFrameExecutor(EarleStackFrame superFrame, int callerIp, EarleValue target, EarleValue[] arguments)
         {
             if (arguments == null) throw new ArgumentNullException(nameof(arguments));
             var locals = new EarleDictionary();

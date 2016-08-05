@@ -11,20 +11,20 @@ namespace EarleCode.Runtime
             CompletionHandler = completionHandler;
         }
 
-        public EarleThread(EarleStackFrameExecutor frame, EarleCompletionHandler completionHandler) : this(completionHandler)
+        public EarleThread(IEarleStackFrameExecutor frame, EarleCompletionHandler completionHandler) : this(completionHandler)
         {
             Frame = frame;
         }
 
         public int ThreadId { get; private set; }
 
-        public EarleStackFrameExecutor Frame { get; private set; }
+        public IEarleStackFrameExecutor Frame { get; private set; }
 
         public EarleCompletionHandler CompletionHandler { get; }
 
         public bool IsAlive { get; private set; } = true;
 
-        internal void AttachFrame(EarleStackFrameExecutor frame)
+        internal void AttachFrame(IEarleStackFrameExecutor frame)
         {
             Frame = frame;
         }

@@ -29,7 +29,7 @@ namespace EarleCode.Runtime
 
         #region Overrides of EarleFunction
 
-        public override EarleStackFrameExecutor CreateFrameExecutor(EarleStackFrame superFrame, int callIP, EarleValue target, EarleValue[] arguments)
+        public override IEarleStackFrameExecutor CreateFrameExecutor(EarleStackFrame superFrame, int callerIp, EarleValue target, EarleValue[] arguments)
         {
             if(Parameters != null && Parameters.Length < arguments.Length)
                 arguments =
@@ -37,7 +37,7 @@ namespace EarleCode.Runtime
                              .Take(Parameters.Length)
                              .ToArray();
 
-            return new NativeStackFrameExecutor(superFrame.SpawnSubFrame(this, callIP, target), this, arguments);
+            return new NativeStackFrameExecutor(superFrame.SpawnSubFrame(this, callerIp, target), this, arguments);
         }
 
         #endregion
@@ -116,13 +116,13 @@ namespace EarleCode.Runtime
         public static EarleNativeFunction Create<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, TResult>(string name, Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, TResult> func) => Create(name, func.Target, func.Method);
         public static EarleNativeFunction Create<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, TResult>(string name, Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, TResult> func) => Create(name, func.Target, func.Method);
 
-        private class NativeStackFrameExecutor : EarleStackFrameExecutor
+        private class NativeStackFrameExecutor : EarleBaseStackFrameExecutor
         {
             private readonly EarleValue[] _arguments;
             private readonly EarleNativeFunction _native;
 
             public NativeStackFrameExecutor(EarleStackFrame frame, EarleNativeFunction native, EarleValue[] arguments)
-                : base(frame, null, null)
+                : base(frame)
             {
                 _native = native;
                 _arguments = arguments;

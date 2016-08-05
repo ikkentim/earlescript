@@ -49,13 +49,13 @@ namespace EarleCode.Runtime.Events
                 ?.Notify(eventName, optionals?.FirstOrDefault() ?? EarleValue.Undefined);
         }
 
-        private class WaitTillStackFrameExecutor : EarleStackFrameExecutor
+        private class WaitTillStackFrameExecutor : EarleBaseStackFrameExecutor
         {
             private bool _hasFired;
             private EarleValue _firer;
             private string _eventName;
 
-            public WaitTillStackFrameExecutor(EarleStackFrame frame, IEarleEventManager eventManager, string eventName) : base(frame, null, null)
+            public WaitTillStackFrameExecutor(EarleStackFrame frame, IEarleEventManager eventManager, string eventName) : base(frame)
             {
                 if(eventManager == null)
                     throw new ArgumentNullException(nameof(eventManager));

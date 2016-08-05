@@ -14,7 +14,6 @@
 // limitations under the License.
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using EarleCode.Runtime.Instructions;
 using EarleCode.Runtime.Values;
@@ -22,7 +21,7 @@ using EarleCode.Utilities;
 
 namespace EarleCode.Runtime
 {
-    public class EarleStackFrameExecutor : IEarleRuntimeScope
+    public sealed class EarleStackFrameExecutor : EarleBaseStackFrameExecutor
     {
         private static readonly IInstruction[] Instructions;
 
@@ -49,36 +48,12 @@ namespace EarleCode.Runtime
         {
         }
 
-        public EarleStackFrameExecutor(EarleStackFrame frame, IEarleRuntimeScope superScope, EarleDictionary locals)
+        public EarleStackFrameExecutor(EarleStackFrame frame, IEarleRuntimeScope superScope, EarleDictionary locals) : base(frame)
         {
-            if(frame == null) throw new ArgumentNullException(nameof(frame));
-            Frame = frame;
-
             Frame.Scopes.Push(new EarleRuntimeScope(superScope, locals));
         }
 
-        public EarleStackFrame Frame { get; }
-
-        public virtual EarleValue GetValue(EarleVariableReference reference)
-        {
-            if(reference.Name == "self")
-                return string.IsNullOrEmpty(reference.File) ? Frame.Target : EarleValue.Undefined;
-
-            return Frame.Scopes.Peek().GetValue(reference);
-        }
-
-        public virtual bool SetValue(EarleVariableReference reference, EarleValue value)
-        {
-            if(reference.Name == "self" || reference.Name == "thread")
-            {
-                Frame.Runtime.HandleWarning($"'{reference.Name}' cannot be set!");
-                return false;
-            }
-
-            return Frame.Scopes.Peek().SetValue(reference, value);
-        }
-
-        public virtual EarleValue? Run()
+        public override EarleValue? Run()
         {
             // If a value is returned, loop is complete, if null is returned, the loop has not yet been completed.
 
@@ -89,7 +64,7 @@ namespace EarleCode.Runtime
             var pCode = frame.Function.PCode;
             while (frame.CIP < pCode.Length)
             {
-                if(!Frame.Thread.IsAlive)
+                if(!frame.Thread.IsAlive)
                     return null;
                 
                 var instructionIdentifier = pCode[frame.CIP++];

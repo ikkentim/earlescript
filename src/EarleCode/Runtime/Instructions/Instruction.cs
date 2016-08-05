@@ -22,11 +22,11 @@ namespace EarleCode.Runtime.Instructions
 {
     internal abstract class Instruction : IInstruction
     {
-        protected EarleStackFrameExecutor Executor { get; private set; }
+        protected IEarleStackFrameExecutor Executor { get; private set; }
 
         #region Implementation of IInstruction
 
-        public void Handle(EarleStackFrameExecutor executor)
+        public void Handle(IEarleStackFrameExecutor executor)
         {
             Executor = executor;
             Handle();
