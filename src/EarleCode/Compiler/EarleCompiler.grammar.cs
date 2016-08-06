@@ -51,9 +51,9 @@ namespace EarleCode.Compiler
             SyntaxGrammarProcessor.AddRule("STATEMENT_CONTINUE", true, "`continue` ;");
             SyntaxGrammarProcessor.AddRule("STATEMENT_WAIT", true, "`wait` EXPRESSION ;");
             SyntaxGrammarProcessor.AddRule("ASSIGNMENT", true, "VARIABLE = EXPRESSION");
-            SyntaxGrammarProcessor.AddRule("ASSIGNMENT", true, "VARIABLE OPERATOR_UNARY = EXPRESSION");
-            SyntaxGrammarProcessor.AddRule("ASSIGNMENT", true, "VARIABLE OPERATOR_MOD_UNARY");
-            SyntaxGrammarProcessor.AddRule("ASSIGNMENT", true, "OPERATOR_MOD_UNARY VARIABLE");
+            SyntaxGrammarProcessor.AddRule("ASSIGNMENT", true, "VARIABLE OPERATOR_ASSIGNMENT = EXPRESSION");
+            SyntaxGrammarProcessor.AddRule("ASSIGNMENT", true, "VARIABLE OPERATOR_MOD_ASSIGNMENT");
+            SyntaxGrammarProcessor.AddRule("ASSIGNMENT", true, "OPERATOR_MOD_ASSIGNMENT VARIABLE");
             SyntaxGrammarProcessor.AddRule("FUNCTION_CALL", true, "OPTIONAL VARIABLE OPTIONAL `thread` FUNCTION_CALL_PART");
             SyntaxGrammarProcessor.AddRule("FUNCTION_CALL_PART", false, "FUNCTION_IDENTIFIER ( OPTIONAL EXPRESSION_LIST )");
 
@@ -67,16 +67,16 @@ namespace EarleCode.Compiler
             SyntaxGrammarProcessor.AddRule("EXPRESSION", false, "FUNCTION_CALL");
             SyntaxGrammarProcessor.AddRule("EXPRESSION", false, "( EXPRESSION )");
             SyntaxGrammarProcessor.AddRule("EXPRESSION", false, "VARIABLE");
-            SyntaxGrammarProcessor.AddRule("EXPRESSION", false, "EXPRESSION OPERATOR EXPRESSION");
+            SyntaxGrammarProcessor.AddRule("EXPRESSION", false, "EXPRESSION OPERATOR_BINARY EXPRESSION");
             SyntaxGrammarProcessor.AddRule("EXPRESSION", false, "OPERATOR_UNARY EXPRESSION");
             SyntaxGrammarProcessor.AddRule("EXPRESSION", false, "ASSIGNMENT");
             SyntaxGrammarProcessor.AddRule("EXPRESSION", false, "KEYWORD");
             SyntaxGrammarProcessor.AddRule("EXPRESSION", false, "FUNCTION_IDENTIFIER"); // function reference
 
             // Additional operators
-            SyntaxGrammarProcessor.AddRule("OPERATOR", false, "OPERATOR_AND");
+            SyntaxGrammarProcessor.AddRule("OPERATOR_BINARY", false, "OPERATOR_AND");
             SyntaxGrammarProcessor.AddRule("OPERATOR_AND", false, "&&");
-            SyntaxGrammarProcessor.AddRule("OPERATOR", false, "OPERATOR_OR");
+            SyntaxGrammarProcessor.AddRule("OPERATOR_BINARY", false, "OPERATOR_OR");
             SyntaxGrammarProcessor.AddRule("OPERATOR_OR", false, "||");
 
             // Value types
@@ -102,14 +102,10 @@ namespace EarleCode.Compiler
             SyntaxGrammarProcessor.AddRule("KEYWORD", false, "[]");
 
             // Add all operators
-            foreach (var o in EarleOperators.BinaryOperators.OrderByDescending(o => o.Length))
-                SyntaxGrammarProcessor.AddRule("OPERATOR", false, o);
-
-            foreach (var o in EarleOperators.UnaryOperators.OrderByDescending(o => o.Length))
-                SyntaxGrammarProcessor.AddRule("OPERATOR_UNARY", false, o);
-
-            foreach (var o in EarleOperators.AssignmentModOperators.OrderByDescending(o => o.Length))
-                SyntaxGrammarProcessor.AddRule("OPERATOR_MOD_UNARY", false, o);
+            SyntaxGrammarProcessor.AddRules("OPERATOR_BINARY", false, EarleOperators.BinaryOperators.OrderByDescending(o => o.Length));
+            SyntaxGrammarProcessor.AddRules("OPERATOR_UNARY", false, EarleOperators.UnaryOperators.OrderByDescending(o => o.Length));
+            SyntaxGrammarProcessor.AddRules("OPERATOR_ASSIGNMENT", false, EarleOperators.AssignmentOperators.OrderByDescending(o => o.Length));
+            SyntaxGrammarProcessor.AddRules("OPERATOR_MOD_ASSIGNMENT", false, EarleOperators.AssignmentModOperators.OrderByDescending(o => o.Length));
         }
     }
 }

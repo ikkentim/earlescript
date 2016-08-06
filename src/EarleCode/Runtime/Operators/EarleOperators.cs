@@ -23,23 +23,24 @@ namespace EarleCode.Runtime.Operators
 {
     internal static class EarleOperators
     {
-        private static Dictionary<string, OpCode> _binaryOperators = new Dictionary<string, OpCode>();
-        private static Dictionary<string, OpCode> _unaryOperators = new Dictionary<string, OpCode>();
-        private static Dictionary<OpCode, int> _binaryOperatorPriority = new Dictionary<OpCode, int>();
-        private static List<OpCode> _assignmentOperators = new List<OpCode>();
-        private static List<OpCode> _assignmentModOperators = new List<OpCode>();
+        private static readonly Dictionary<string, OpCode> _binaryOperators = new Dictionary<string, OpCode>();
+        private static readonly Dictionary<string, OpCode> _unaryOperators = new Dictionary<string, OpCode>();
+        private static readonly Dictionary<OpCode, int> _binaryOperatorPriority = new Dictionary<OpCode, int>();
 
-        public static IEnumerable<string> BinaryOperators = _binaryOperators.Keys;
-        public static IEnumerable<string> UnaryOperators = _unaryOperators.Keys;
-        public static IEnumerable<string> AssignmentModOperators = _binaryOperators
-            .Where(kv => _assignmentModOperators.Contains(kv.Value))
-            .Select(kv => kv.Key + kv.Key);
-        
+        private static readonly List<OpCode> _assignmentOperators = new List<OpCode>();
+        private static readonly List<OpCode> _assignmentModOperators = new List<OpCode>();
+
+        public static readonly IEnumerable<string> BinaryOperators;
+        public static readonly IEnumerable<string> UnaryOperators;
+        public static readonly IEnumerable<string> AssignmentModOperators;
+        public static readonly IEnumerable<string> AssignmentOperators;
+
+
         static EarleOperators()
         {
             // Build up dictionary of operators
             var ops = typeof(OpCode).GetEnumValues().OfType<OpCode>().ToArray();
- 
+
             foreach(var op in ops)
             {
                 var attribute = op.GetCustomAttribute<OperatorAttribute>();
@@ -60,31 +61,41 @@ namespace EarleCode.Runtime.Operators
                         _assignmentModOperators.Add(op);
                 }
             }
+
+            BinaryOperators = _binaryOperators.Keys.ToArray();
+            UnaryOperators = _unaryOperators.Keys.ToArray();
+            AssignmentModOperators = _binaryOperators
+                .Where(kv => _assignmentModOperators.Contains(kv.Value))
+                .Select(kv => kv.Key + kv.Key)
+                .ToArray();
+            AssignmentOperators = _binaryOperators
+                .Where(kv => _assignmentOperators.Contains(kv.Value))
+                .Select(kv => kv.Key)
+                .ToArray();
         }
 
+        private static IEnumerable<string> GetOperatorsOfType(EarleOperatorType type)
+        {
+            switch(type)
+            {
+                case EarleOperatorType.AssignmentModOperator:
+                    return AssignmentModOperators;
+                case EarleOperatorType.AssignmentOperator:
+                    return AssignmentOperators;
+                case EarleOperatorType.BinaryOperator:
+                    return BinaryOperators;
+                case EarleOperatorType.UnaryOperator:
+                    return UnaryOperators;
+                default:
+                    throw new ArgumentException("Invalid symbol type", nameof(type));
+            }
+        }
 
         public static bool IsOperator(EarleOperatorType type, string symbol)
         {
             if(symbol == null) throw new ArgumentNullException(nameof(symbol));
 
-            switch(type)
-            {
-                case EarleOperatorType.AssignmentOperator:
-                    return IsOperator(EarleOperatorType.BinaryOperator, symbol) &&
-                        IsAssignmentModOperator(GetOpCode(EarleOperatorType.BinaryOperator, symbol));
-                case EarleOperatorType.AssignmentModOperator:
-                    {
-                        var op = symbol.Substring(0, symbol.Length / 2);
-                        return IsOperator(EarleOperatorType.BinaryOperator, op) &&
-                            IsAssignmentModOperator(GetOpCode(EarleOperatorType.BinaryOperator, op));
-                    }
-                case EarleOperatorType.UnaryOperator:
-                    return _unaryOperators.ContainsKey(symbol);
-                case EarleOperatorType.BinaryOperator:
-                    return _binaryOperators.ContainsKey(symbol);
-                default:
-                    return false;
-            }
+            return GetOperatorsOfType(type).Contains(symbol);
         }
 
         public static int GetPriority(OpCode opCode)
@@ -97,50 +108,26 @@ namespace EarleCode.Runtime.Operators
         {
             if(startingWith == null) throw new ArgumentNullException(nameof(startingWith));
 
-            switch(type)
-            {
-                case EarleOperatorType.AssignmentModOperator:
-                    {
-                        var vals = AssignmentModOperators.Where(o => o.StartsWith(startingWith, StringComparison.InvariantCulture));
-                        return vals.Any() ? vals.Max(o => o.Length) : 0;
-                    }
-                case EarleOperatorType.AssignmentOperator:
-                    {
-                        var vals = BinaryOperators.Where(o => o.StartsWith(startingWith, StringComparison.InvariantCulture) && IsOperator(EarleOperatorType.AssignmentOperator, o));
-                        return vals.Any() ? vals.Max(o => o.Length) : 0;
-                    }
-                case EarleOperatorType.UnaryOperator:
-                    {
-                        var vals = _unaryOperators.Keys.Where(o => o.StartsWith(startingWith, StringComparison.InvariantCulture));
-                        return vals.Any() ? vals.Max(o => o.Length) : 0;
-                    }
-                case EarleOperatorType.BinaryOperator:
-                    {
-                        var vals = _binaryOperators.Keys.Where(o => o.StartsWith(startingWith, StringComparison.InvariantCulture));
-                        return vals.Any() ? vals.Max(o => o.Length) : 0;
-                    }
-                default:
-                    return 0;
-            }
+            var vals = GetOperatorsOfType(type).Where(o => o.StartsWith(startingWith, StringComparison.InvariantCulture));
+            return vals.Any() ? vals.Max(o => o.Length) : 0;
         }
 
         public static OpCode GetOpCode(EarleOperatorType type, string symbol)
         {
             if(symbol == null) throw new ArgumentNullException(nameof(symbol));
 
+            if(!IsOperator(type, symbol))
+                throw new ArgumentException("Invalid symbol", nameof(symbol));
+            
             switch(type)
             {
                 case EarleOperatorType.AssignmentModOperator:
-                    if(!IsOperator(EarleOperatorType.AssignmentModOperator, symbol))
-                        throw new ArgumentException("Invalid symbol", nameof(symbol));
                     return GetOpCode(EarleOperatorType.BinaryOperator, symbol.Substring(0, symbol.Length / 2));
+                case EarleOperatorType.AssignmentOperator:
+                    return GetOpCode(EarleOperatorType.BinaryOperator, symbol);
                 case EarleOperatorType.UnaryOperator:
-                    if(!_unaryOperators.ContainsKey(symbol))
-                        throw new ArgumentException("Invalid symbol", nameof(symbol));
                     return _unaryOperators[symbol];
                 case EarleOperatorType.BinaryOperator:
-                    if(!_binaryOperators.ContainsKey(symbol))
-                        throw new ArgumentException("Invalid symbol", nameof(symbol));
                     return _binaryOperators[symbol];
                 default:
                     throw new ArgumentException("Invalid symbol type", nameof(type));

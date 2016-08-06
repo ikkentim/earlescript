@@ -79,7 +79,7 @@ namespace EarleCode.Compiler.Parsers
                     return;
                 }
 
-                if (SyntaxMatches("OPERATOR"))
+                if (SyntaxMatches("OPERATOR_BINARY"))
                 {
                     Lexer.AssertToken(TokenType.Token);
 

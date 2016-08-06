@@ -11,7 +11,23 @@ namespace EarleCode.Compiler.Grammar
 
         public void AddRule(string name, bool isStatement, string rule)
         {
+            if(name == null)
+                throw new ArgumentNullException(nameof(name));
+            if(rule == null)
+                throw new ArgumentNullException(nameof(rule));
+            
             _table.Add(new GrammarRule(name, isStatement, Compile(rule)));
+        }
+
+        public void AddRules(string name, bool isStatement, IEnumerable<string> rules)
+        {
+            if(name == null)
+                throw new ArgumentNullException(nameof(name));
+            if(rules == null)
+                throw new ArgumentNullException(nameof(rules));
+
+            foreach(var rule in rules)
+                AddRule(name, isStatement, rule);
         }
 
         public string GetMatch(ILexer lexer, bool onlyStatements = false)

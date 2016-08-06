@@ -171,28 +171,28 @@ namespace EarleCode.Runtime.Instructions
         [Operator("-", EarleOperatorType.BinaryOperator | EarleOperatorType.AssignmentModOperator | EarleOperatorType.AssignmentOperator, 7)]
         Subtract,
         [OpCode("MUL", typeof(BinaryOperatorInstruction))]
-        [Operator("*", EarleOperatorType.BinaryOperator, 8)]
+        [Operator("*", EarleOperatorType.BinaryOperator | EarleOperatorType.AssignmentOperator, 8)]
         Multiply,
         [OpCode("MOD", typeof(BinaryOperatorInstruction))]
-        [Operator("%", EarleOperatorType.BinaryOperator, 8)]
+        [Operator("%", EarleOperatorType.BinaryOperator | EarleOperatorType.AssignmentOperator, 8)]
         Modulo,
         [OpCode("DIV", typeof(BinaryOperatorInstruction))]
-        [Operator("/", EarleOperatorType.BinaryOperator, 8)]
+        [Operator("/", EarleOperatorType.BinaryOperator | EarleOperatorType.AssignmentOperator, 8)]
         Divide,
         [OpCode("XOR", typeof(BinaryOperatorInstruction))]
-        [Operator("^", EarleOperatorType.BinaryOperator, 2)]
+        [Operator("^", EarleOperatorType.BinaryOperator | EarleOperatorType.AssignmentOperator, 2)]
         BitwiseXor,
         [OpCode("OR", typeof(BinaryOperatorInstruction))]
-        [Operator("|", EarleOperatorType.BinaryOperator, 1)]
+        [Operator("|", EarleOperatorType.BinaryOperator | EarleOperatorType.AssignmentOperator, 1)]
         BitwiseOr,
         [OpCode("AND", typeof(BinaryOperatorInstruction))]
-        [Operator("&", EarleOperatorType.BinaryOperator, 3)]
+        [Operator("&", EarleOperatorType.BinaryOperator | EarleOperatorType.AssignmentOperator, 3)]
         BitwiseAnd,
         [OpCode("SHL", typeof(BinaryOperatorInstruction))]
-        [Operator("<<", EarleOperatorType.BinaryOperator, 6)]
+        [Operator("<<", EarleOperatorType.BinaryOperator | EarleOperatorType.AssignmentOperator, 6)]
         ShiftLeft,
         [OpCode("SHR", typeof(BinaryOperatorInstruction))]
-        [Operator(">>", EarleOperatorType.BinaryOperator, 6)]
+        [Operator(">>", EarleOperatorType.BinaryOperator | EarleOperatorType.AssignmentOperator, 6)]
         ShiftRight,
         [OpCode("CLT", typeof(BinaryOperatorInstruction))]
         [Operator("<", EarleOperatorType.BinaryOperator, 5)]

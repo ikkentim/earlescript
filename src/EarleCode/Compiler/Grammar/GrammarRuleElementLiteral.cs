@@ -36,7 +36,7 @@ namespace EarleCode.Compiler.Grammar
         {
             if(TokenValue == null)
                 return string.Join("|", TokenTypes.Select(t => t.ToUpperString()));
-            return $"`{TokenValue}`";
+            return TokenTypes.Length == 1 && TokenTypes[0] == TokenType.Token ? TokenValue : $"`{TokenValue}`";
         }
     }
     

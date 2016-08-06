@@ -53,7 +53,7 @@ namespace EarleCode.Compiler.Parsers
             OpCode modOperator = OpCode.Nop;
             var unaryModOperatorIsPrefix = true;
 
-            if (SyntaxMatches("OPERATOR_MOD_UNARY"))
+            if (SyntaxMatches("OPERATOR_MOD_ASSIGNMENT"))
             {
                 modOperator = GetOperator(EarleOperatorType.AssignmentModOperator);
             }
@@ -65,7 +65,7 @@ namespace EarleCode.Compiler.Parsers
 
             var derefBuffer = ParseToBuffer<DereferenceParser>();
 
-            if (modOperator == OpCode.Nop && SyntaxMatches("OPERATOR_MOD_UNARY"))
+            if (modOperator == OpCode.Nop && SyntaxMatches("OPERATOR_MOD_ASSIGNMENT"))
             {
                 modOperator = GetOperator(EarleOperatorType.AssignmentModOperator);
                 unaryModOperatorIsPrefix = false;
@@ -99,7 +99,7 @@ namespace EarleCode.Compiler.Parsers
             else
             {
                 OpCode unaryOperator = OpCode.Nop;
-                if (SyntaxMatches("OPERATOR_UNARY"))
+                if (SyntaxMatches("OPERATOR_ASSIGNMENT"))
                     unaryOperator = GetOperator(EarleOperatorType.AssignmentOperator);
 
                 Lexer.SkipToken(TokenType.Token, "=");
