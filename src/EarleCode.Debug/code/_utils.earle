@@ -6,5 +6,6 @@ giveTrue()
 
 giveACallTo(func)
 {
-	return func();
+	print("func:"+func);
+	return [[func]]();
 }

@@ -111,46 +111,48 @@ namespace EarleCode.Runtime
 
         #region Overrides of RuntimeScope
 
-        public override EarleValue GetValue(EarleVariableReference reference)
-        {
-            var baseResult = base.GetValue(reference);
-
-            if (!baseResult.HasValue || baseResult.Is<EarleFunctionCollection>())
-                if (reference.File == Name || reference.File == null)
-                {
-                    var functions = GetFunctions(reference.Name);
-
-                    if(reference.File == null)
-                    {
-                        foreach(var inc in _includedFiles)
-                        {
-                            var incVal = Runtime.GetValue(new EarleVariableReference(inc, reference.Name));
-                            if(incVal.Is<EarleFunctionCollection>())
-                            {
-                                if(functions == null)
-                                    functions = new EarleFunctionCollection();
-
-                                functions.AddRange(incVal.As<EarleFunctionCollection>());
-                            }
-                        }
-                    }
-
-                    if (functions != null)
-                    {
-                        if (baseResult.HasValue && baseResult.Is<EarleFunctionCollection>())
-                            functions.AddRange(baseResult.As<EarleFunctionCollection>());
-
-                        return new EarleValue(functions);
-                    }
-
-                }
-
-            return baseResult;
-        }
-
         protected override bool CanAssignReferenceInScope(EarleVariableReference reference)
         {
             return false;
+        }
+
+        public override EarleFunctionCollection GetFunctionReference(string fileName, string functionName)
+        {
+            // FIXME: This might mess up function tables of other files when things are added. Should a readonly collection be returned?
+            var result = Runtime.GetFunctionReference(fileName, functionName);
+
+            if(fileName == null || fileName == Name)
+            {
+                var functions = GetFunctions(functionName);
+
+                if(functions != null)
+                {
+                    if(result != null)
+                        result.AddRange(functions);
+                    else
+                        result = functions;
+                }
+
+                foreach(var include in IncludedFiles)
+                {
+                    var file = Runtime.GetFile(include);
+
+                    if(file == null)
+                        continue;
+
+                    var funcs = file.GetFunctions(functionName);
+
+                    if(funcs == null)
+                        continue;
+
+                    if(result != null)
+                        result.AddRange(funcs);
+                    else
+                        result = funcs;
+                }
+            }
+
+            return result;
         }
 
         #endregion

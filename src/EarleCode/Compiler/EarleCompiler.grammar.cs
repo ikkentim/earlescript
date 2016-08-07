@@ -71,7 +71,7 @@ namespace EarleCode.Compiler
             SyntaxGrammarProcessor.AddRule("EXPRESSION", false, "OPERATOR_UNARY EXPRESSION");
             SyntaxGrammarProcessor.AddRule("EXPRESSION", false, "ASSIGNMENT");
             SyntaxGrammarProcessor.AddRule("EXPRESSION", false, "KEYWORD");
-            SyntaxGrammarProcessor.AddRule("EXPRESSION", false, "FUNCTION_IDENTIFIER"); // function reference
+            SyntaxGrammarProcessor.AddRule("EXPRESSION", false, "EXPLICIT_FUNCTION_IDENTIFIER");
 
             // Additional operators
             SyntaxGrammarProcessor.AddRule("OPERATOR_BINARY", false, "OPERATOR_AND");
@@ -84,6 +84,8 @@ namespace EarleCode.Compiler
             SyntaxGrammarProcessor.AddRule("PATH", false, "PATH \\ IDENTIFIER");
             SyntaxGrammarProcessor.AddRule("PATH_PREFIX", false, "OPTIONAL PATH ::");
             SyntaxGrammarProcessor.AddRule("FUNCTION_IDENTIFIER", false, "OPTIONAL PATH_PREFIX IDENTIFIER");
+            SyntaxGrammarProcessor.AddRule("FUNCTION_IDENTIFIER", false, "UNBOX_FUNCTION");
+            SyntaxGrammarProcessor.AddRule("UNBOX_FUNCTION", false, "[ [ IDENTIFIER ] ]");
             SyntaxGrammarProcessor.AddRule("EXPLICIT_FUNCTION_IDENTIFIER", false, "PATH_PREFIX IDENTIFIER");
             SyntaxGrammarProcessor.AddRule("EXPRESSION_LIST", false, "EXPRESSION_LIST , EXPRESSION_LIST");
             SyntaxGrammarProcessor.AddRule("EXPRESSION_LIST", false, "EXPRESSION");

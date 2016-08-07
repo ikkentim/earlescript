@@ -1,93 +1,22 @@
 ﻿#include _utils;
 
-drop(v)
-{
-}
-
-methoda()
-{
-	methodb();
-}
-
-methodb()
-{
-	thread giveacallto(methodc);
-}
-
-methodc()
-{
-	methodd();
-}
-
-methodd()
-{
-	printstacktrace();
-}
-
 init()
 {
-	x = 10;
-	x >>= 1;
-	print(x);
+	print(foo());
 
-	// test stacktrace
-	methoda();
+	abar = ::bar;
 
-	// test order of operations
-	print(4 << 1 + 1);//16
-    print(4 | 1 << 1 + 1);//4
-    print(4 * 3 == 12);//true
-    print(3 & 1 | 2 << 2);//9
-    print(1 < 3 == 3 < 1);//false
+	print("Ref: " + abar);
 
-	a = 4;
-	a = a + 10 / 2.5;
-
-	drop("test: " + a);
-
-	// test switch and localization
-	setactivelanguage("LANG_DUTCH");
-
-	switch(a)
-	{
-		case 12:
-			print(@"TEST_TWELVE");
-			break;
-		case 13:
-			print(@"TEST_THIRTEEN");
-			break;
-		case 14:
-			print(@"TEST_FOURTEEN");
-			break;
-		case 15:
-			print(@"TEST_FIFTEEN");
-	 		break;
-		case 16:
-			print(@"TEST_SIXTEEN");
-			break;
-	}
-
-	// test events
-	level thread bleep();
-
-	for(i=0;i<5;i++)
-	{
-		wait .5;
-		level notify("wait done");
-	}
-
-	level notify("all done");
-
+	print("Result: " + giveACallTo(abar));
 }
 
-bleep()
+foo()
 {
-	
-	self endon("all done");
+	return "Foo";
+}
 
-	for(;;)
-	{
-		print("Bleep!");
-		val = self waittill("wait done");
-	}
+bar()
+{
+	return "Bar";
 }

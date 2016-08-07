@@ -27,7 +27,7 @@ namespace EarleCode.Runtime.Instructions
 
         protected override void Handle()
         {
-            Frame.ChildFrame = CreateFrameExecutor(Frame, Frame.Executor.CIP - 1).Frame;
+            Frame.ChildFrame = CreateFrameExecutor(Frame, Frame.Executor.CIP - 1)?.Frame;
         }
 
         #endregion
@@ -41,13 +41,13 @@ namespace EarleCode.Runtime.Instructions
             EarleFunction function;
 
             // Unbox down to a function or function collection
-            while(value is EarleVariableReference || value is EarleBoxedValueReference)
-            {
-                if(value is EarleVariableReference)
-                    value = Frame.Executor.GetValue((EarleVariableReference)value).Value;
-                else if(value is EarleBoxedValueReference)
-                    value = ((EarleBoxedValueReference)value).GetField().Value;
-            }
+            //while(value is EarleVariableReference || value is EarleBoxedValueReference)
+            //{
+            //    if(value is EarleVariableReference)
+            //        value = Frame.Executor.GetValue((EarleVariableReference)value).Value;
+            //    else if(value is EarleBoxedValueReference)
+            //        value = ((EarleBoxedValueReference)value).GetField().Value;
+            //}
 
             if(value is EarleFunctionCollection)
             {
@@ -62,18 +62,7 @@ namespace EarleCode.Runtime.Instructions
 
             if(function == null)
             {
-                if(initialValue is EarleVariableReference)
-                {
-                    var functionReference = (EarleVariableReference)initialValue;
-
-                    Frame.Runtime.HandleWarning(!hasOverloads
-                        ? $"unknown function {functionReference}"
-                        : $"no overload of function {functionReference} found with {argumentCount} parameters.");
-                }
-                else
-                {
-                    Frame.Runtime.HandleWarning($"{initialValue?.GetType()} cannot be invoked.");
-                }
+                Frame.Runtime.HandleWarning($"{initialValue?.GetType()} cannot be invoked.");
 
                 for(var i = 0; i < argumentCount; i++)
                     Pop();

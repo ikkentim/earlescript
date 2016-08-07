@@ -15,6 +15,7 @@
 
 
 using EarleCode.Compiler.Lexing;
+using EarleCode.Runtime.Instructions;
 
 namespace EarleCode.Compiler.Parsers
 {
@@ -30,40 +31,56 @@ namespace EarleCode.Compiler.Parsers
             string path = null;
 
             // optional token to specify function is part of current file
-            if (Lexer.Current.Is(TokenType.Token, ":"))
+            if(SyntaxMatches("UNBOX_FUNCTION"))
             {
-                Lexer.SkipToken(TokenType.Token, ":");
-                Lexer.SkipToken(TokenType.Token, ":");
+                Lexer.SkipToken(TokenType.Token, "[");
+                Lexer.SkipToken(TokenType.Token, "[");
+                var identifier = Lexer.Current.Value;
+                Lexer.SkipToken(TokenType.Identifier);
+                Lexer.SkipToken(TokenType.Token, "]");
+                Lexer.SkipToken(TokenType.Token, "]");
+
+                PushReference(null, identifier);
+                Yield(OpCode.UnboxFunctionReference);
             }
-            // a specific path is supplied
-            else if (SyntaxMatches("PATH_PREFIX"))
+            else
             {
-                // Construct path to the function
-                var identifier = !Lexer.Current.Is(TokenType.Token, "\\");
-                path = identifier ? "\\" : string.Empty;
-                do
+                if(Lexer.Current.Is(TokenType.Token, ":"))
                 {
-                    // check syntax
-                    if (identifier)
-                        Lexer.AssertToken(TokenType.Identifier);
-                    else
-                        Lexer.AssertToken(TokenType.Token, "\\");
-                    identifier = !identifier;
+                    Lexer.SkipToken(TokenType.Token, ":");
+                    Lexer.SkipToken(TokenType.Token, ":");
+                }
+                // a specific path is supplied
+                else if(SyntaxMatches("PATH_PREFIX"))
+                {
+                    // Construct path to the function
+                    var identifier = !Lexer.Current.Is(TokenType.Token, "\\");
+                    path = identifier ? "\\" : string.Empty;
+                    do
+                    {
+                        // check syntax
+                        if(identifier)
+                            Lexer.AssertToken(TokenType.Identifier);
+                        else
+                            Lexer.AssertToken(TokenType.Token, "\\");
+                        identifier = !identifier;
 
-                    path += Lexer.Current.Value;
+                        path += Lexer.Current.Value;
 
-                    Lexer.AssertMoveNext();
-                } while (!Lexer.Current.Is(TokenType.Token, ":"));
+                        Lexer.AssertMoveNext();
+                    } while(!Lexer.Current.Is(TokenType.Token, ":"));
 
-                Lexer.SkipToken(TokenType.Token, ":");
-                Lexer.SkipToken(TokenType.Token, ":");
+                    Lexer.SkipToken(TokenType.Token, ":");
+                    Lexer.SkipToken(TokenType.Token, ":");
+                }
+
+                Lexer.AssertToken(TokenType.Identifier);
+                var name = Lexer.Current.Value;
+
+                Lexer.AssertMoveNext();
+
+                PushFunctionReference(path, name);
             }
-
-            Lexer.AssertToken(TokenType.Identifier);
-            var name = Lexer.Current.Value;
-            Lexer.AssertMoveNext();
-
-            PushReference(path, name);
         }
 
         #endregion

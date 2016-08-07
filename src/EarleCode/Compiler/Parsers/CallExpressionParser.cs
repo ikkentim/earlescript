@@ -34,6 +34,7 @@ namespace EarleCode.Compiler.Parsers
 
             LastCallWasThreaded = false;
             var hasTarget = false;
+
             if(!SyntaxMatches("FUNCTION_CALL_PART") && !Lexer.Current.Is(TokenType.Identifier, "thread"))
             {
                 hasTarget = true;

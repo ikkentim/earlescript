@@ -88,6 +88,7 @@ namespace EarleCode.Runtime
 
         public virtual void HandleWarning(string warning)
         {
+            // TODO: Proper warning/error handling
             Console.WriteLine(warning);
         }
 
@@ -147,15 +148,6 @@ namespace EarleCode.Runtime
 
         public virtual EarleValue GetValue(EarleVariableReference reference)
         {
-            // Redirect to other files' funcion references.
-            if (!string.IsNullOrEmpty(reference.File))
-                return GetFile(reference.File)?.GetFunctions(reference.Name)?.ToEarleValue() ?? EarleValue.Undefined;
-
-            // Look natives up.
-            var natives = Natives.Get(reference.Name);
-            if(natives != null)
-                return new EarleValue(natives);
-
             // Look global variables up.
             if(GlobalVariables.ContainsKey(reference.Name))
                 return GlobalVariables[reference.Name];
@@ -166,6 +158,20 @@ namespace EarleCode.Runtime
         public virtual bool SetValue(EarleVariableReference reference, EarleValue value)
         {
             return false;
+        }
+
+        public virtual EarleFunctionCollection GetFunctionReference(string fileName, string functionName)
+        {
+            if(fileName == null)
+            {
+                return Natives.Get(functionName);
+            }
+
+            var file = GetFile(fileName);
+
+            return file == null
+                ? null
+                : file.GetFunctions(functionName);
         }
 
         #endregion

@@ -58,6 +58,11 @@ namespace EarleCode.Runtime
             return Scopes.Peek().SetValue(reference, value);
         }
 
+        public virtual EarleFunctionCollection GetFunctionReference(string fileName, string functionName)
+        {
+            return Scopes.Peek().GetFunctionReference(fileName, functionName);
+        }
+
         public abstract EarleValue? Run();
 
     }

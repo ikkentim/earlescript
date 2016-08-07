@@ -59,6 +59,11 @@ namespace EarleCode.Runtime
             return false;
         }
 
+        public virtual EarleFunctionCollection GetFunctionReference(string fileName, string functionName)
+        {
+            return _superScope == null ? null : _superScope.GetFunctionReference(fileName, functionName);
+        }
+
         protected virtual bool CanAssignReferenceInScope(EarleVariableReference reference)
         {
             return reference.File == null;

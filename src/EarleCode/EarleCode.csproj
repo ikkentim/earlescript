@@ -153,6 +153,8 @@
     <Compile Include="Runtime\Operators\OperatorAttribute.cs" />
     <Compile Include="Runtime\Operators\EarleOperatorType.cs" />
     <Compile Include="Runtime\Instructions\PushValueInstruction.cs" />
+    <Compile Include="Runtime\Instructions\PushFunctionReferenceInstruction.cs" />
+    <Compile Include="Runtime\Instructions\UnboxFunctionReferenceInstruction.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

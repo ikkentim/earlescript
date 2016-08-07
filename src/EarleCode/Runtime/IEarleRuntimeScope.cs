@@ -21,5 +21,6 @@ namespace EarleCode.Runtime
     {
         EarleValue GetValue(EarleVariableReference reference);
         bool SetValue(EarleVariableReference reference, EarleValue value);
+        EarleFunctionCollection GetFunctionReference(string fileName, string functionName);
     }
 }

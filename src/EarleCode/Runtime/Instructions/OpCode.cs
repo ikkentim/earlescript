@@ -85,7 +85,10 @@ namespace EarleCode.Runtime.Instructions
         ///     Push the specified reference to a function or variable to the stack.
         /// </summary>
         [OpCode("PUSH.R $string", typeof (PushReferenceInstruction))]
-        PushReference,
+        PushReference,// TODO: Get rid of this instruction
+
+        [OpCode("PUSH.C $string", typeof(PushFunctionReferenceInstruction))]
+        PushFunctionReference,
 
         /// <summary>
         ///     Push a null value to the stack.
@@ -163,6 +166,9 @@ namespace EarleCode.Runtime.Instructions
         /// </summary>
         [OpCode("DEREF.I", typeof(DereferenceIndexInstruction))]
         DereferenceIndex,
+
+        [OpCode("UNBOX.C", typeof(UnboxFunctionReferenceInstruction))]
+        UnboxFunctionReference,
 
         [OpCode("ADD", typeof(BinaryOperatorInstruction))]
         [Operator("+", EarleOperatorType.BinaryOperator | EarleOperatorType.AssignmentModOperator | EarleOperatorType.AssignmentOperator, 7)]

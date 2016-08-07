@@ -189,6 +189,17 @@ namespace EarleCode.Compiler.Parsers
             //Yield($"{path}::{name}".ToLower());
         }
 
+        public void PushFunctionReference(string path, string name)
+        {
+            if(name == null) throw new ArgumentNullException(nameof(name));
+
+            if(!string.IsNullOrEmpty(path) && !_usedFiles.Contains(path))
+                _usedFiles.Add(path);
+
+            Yield(OpCode.PushFunctionReference);
+            Yield($"{path}::{name}".ToLower());
+        }
+
         public void PushCall(int arguments, int lineNumber, bool thread = false)
         {
             _callLines[_result.Count] = lineNumber;
@@ -207,7 +218,7 @@ namespace EarleCode.Compiler.Parsers
         {
             if(name == null) throw new ArgumentNullException(nameof(name));
 
-            PushReference(path, name);
+            PushFunctionReference(path, name);
             PushCallWithoutTarget(arguments, lineNumber);
         }
 

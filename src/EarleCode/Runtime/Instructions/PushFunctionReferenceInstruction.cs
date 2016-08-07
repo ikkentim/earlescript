@@ -1,4 +1,4 @@
-﻿// EarleCode
+// EarleCode
 // Copyright 2016 Tim Potze
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,7 +18,7 @@ using EarleCode.Runtime.Values;
 
 namespace EarleCode.Runtime.Instructions
 {
-    internal class PushReferenceInstruction : Instruction
+    internal class PushFunctionReferenceInstruction : Instruction
     {
         #region Overrides of Instruction
 
@@ -29,19 +29,22 @@ namespace EarleCode.Runtime.Instructions
             string file = null,
                 name;
 
-            // TODO: No more file path
-            if (refString.Contains("::"))
+            if(refString.Contains("::"))
             {
-                var spl = refString.Split(new[] {"::"}, StringSplitOptions.None);
+                var spl = refString.Split(new[] { "::" }, StringSplitOptions.None);
                 file = spl[0];
                 name = spl[1];
             }
             else
                 name = refString;
 
-            Push(new EarleVariableReference((file?.Length ?? 0) == 0 ? null : file, name).ToEarleValue());
+            if(file != null && file.Length == 0)
+                file = null;
+            
+            Push(Frame.Executor.GetFunctionReference(file, name).ToEarleValue());//TODO: Use GetFunction or smth
         }
 
         #endregion
     }
+    
 }

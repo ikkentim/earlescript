@@ -164,7 +164,7 @@ namespace EarleCode.Compiler.Parsers
                     Parse<ExpressionParser>();
                 }
 
-                PushCallWithoutTarget(null, $"createVector{vectorSize}", vectorSize, lineNumber);
+                PushCallWithoutTarget(null, $"createvector{vectorSize}", vectorSize, lineNumber);
 
                 Lexer.SkipToken(TokenType.Token, ")");
             }
