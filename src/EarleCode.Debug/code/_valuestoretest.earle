@@ -1,0 +1,41 @@
+﻿valuestorefiller()
+{
+	print("a");
+	print("aa");
+	print("aaa");
+	print("aaav");
+	print("aaavv");
+	print("aaavvv");
+	print("aaavvvv");
+	print("aaavvvvv");
+	print("aaavvvvvv");
+	print("aaavvvvvvv");
+	print("aaavvvvvvvv");
+	print("aaavvvvvvvvv");
+	print("aaavvvvvvvvvv");
+	print("aaavvvvvvvvvvv");
+	print("aaavvvvvvvvvvvv");
+	print("aaavvvvvvvvvvvvvvcv");
+	print("aaavvvvvvvvvvvvvvcvv");
+	print("aaavvvvvvvvvvvvvvcvvv");
+	print("aaavvvvvvvvvvvvvvcvvvv");
+	print("aaavvvvvvvvvvvvvvcvvvvv");
+	print("aaavvvvvvvvvvvvvvcvvvvvv");
+	print("aaavvvvvvvvvvvvvvcvvvvvsdfv");
+	print("aaavvvvvvvvvvvvvvcvvvvvvsdf");
+	print("aaavvvvvvvvvvvvvvcvvvvvvsdfv");
+	print("aaavvvvvvvvvvvvvvcvvvvvvsdfvv");
+	print("aaavvvvvvvvvvvvvvcvvvvvvsdfvvv");
+	print("aaavvvvvvvvvvvvvvcvvvvvvsdfvvvv");
+	print("aaavvvvvvvvvvvvvvcvvvvvvsdfvvvvv");
+	print("aaavvvvvvvvvvvvvvcvvvvvvsdfvvvvvv");
+	print("aaavvvvvvvvvvvvvvcvvvvvvsdfvvvvvvv");
+	print("aaavvvvvvvvvvvvvvcvvvvvvsdfvvvvvvqv");
+	print("aaavvvvvvvvvvvvvvcvvvvvvsdfvvvvvvwav");
+	print("aaavvvvvvvvvvvvvvcvvvvvvsdfvvvvvvvav");
+}
+
+getvalue()
+{
+	return "value from store";
+}

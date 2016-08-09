@@ -20,7 +20,22 @@ init()
 	abar = ::bar;
 	print("Ref: " + abar);
 	print("Result: " + giveACallTo(abar));
+}
 
+
+
+gettestcount()
+{
+	return 100000;
+}
+
+drop(v)
+{
+}
+
+test()
+{
+	drop(_valuestoretest::getvalue());
 }
 
 foo()

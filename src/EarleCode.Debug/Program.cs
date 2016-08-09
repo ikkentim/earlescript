@@ -49,6 +49,7 @@ namespace EarleCode.Debug
             runtime.GlobalVariables["level"] = new EarleSimpleEventableStructure().ToEarleValue();
 
             // Load code
+            var swc = Stopwatch.StartNew();
             var codeDir = Path.Combine(Directory.GetCurrentDirectory(), "code");
             foreach(var file in Directory.GetFiles(codeDir, "*.earle", SearchOption.AllDirectories))
             {
@@ -56,6 +57,8 @@ namespace EarleCode.Debug
                 rel = '\\' + rel.Substring(0, rel.Length - 6);
                 runtime.CompileFile(rel, File.ReadAllText(file));
             }
+            swc.Stop();
+            Console.WriteLine($"Compiling took: {swc.Elapsed}");
 
             // Add localization
             foreach(var file in Directory.GetFiles(codeDir, "*.estr", SearchOption.AllDirectories))
@@ -74,30 +77,50 @@ namespace EarleCode.Debug
             Console.WriteLine(trace);
             }));
 
-            // Invoke main::init
-            runtime["\\main"]["init"].Invoke((result) => {
-                Console.WriteLine();
-                Console.WriteLine("Code execution completed!");
-                Console.WriteLine("Result: " + result);
+            var test = runtime["\\main"]["test"];
 
-                if(result.Is<EarleStructure>())
-                {
-                    var struc = result.As<EarleStructure>();
-                    foreach(var kv in struc)
-                        Console.WriteLine($"> {kv.Key} = {kv.Value}");
-                }
-                else if(result.Is<EarleArray>())
-                {
-                    var arr = result.As<EarleArray>();
-                    foreach(var v in arr)
-                        Console.WriteLine(v);
-                }
-            }, EarleValue.Undefined);
-
-            do
+            if(test != null)
             {
-                Thread.Sleep(1000 / 30);
-            } while(!runtime.Tick());
+                var count = runtime["\\main"]["gettestcount"]?
+                    .Invoke(null, EarleValue.Undefined)?
+                    .CastTo<int>() ?? 10000;
+
+                var sw = Stopwatch.StartNew();
+                for(var i = 0; i < count; i++)
+                {
+                    test.Invoke(null, EarleValue.Undefined);
+                }
+                sw.Stop();
+
+                Console.WriteLine($"Running {count} times took {sw.Elapsed}");
+            }
+            else
+            {
+                // Invoke main::init
+                runtime["\\main"]["init"].Invoke((result) => {
+                    Console.WriteLine();
+                    Console.WriteLine("Code execution completed!");
+                    Console.WriteLine("Result: " + result);
+
+                    if(result.Is<EarleStructure>())
+                    {
+                        var struc = result.As<EarleStructure>();
+                        foreach(var kv in struc)
+                            Console.WriteLine($"> {kv.Key} = {kv.Value}");
+                    }
+                    else if(result.Is<EarleArray>())
+                    {
+                        var arr = result.As<EarleArray>();
+                        foreach(var v in arr)
+                            Console.WriteLine(v);
+                    }
+                }, EarleValue.Undefined);
+
+                do
+                {
+                    Thread.Sleep(1000 / 30);
+                } while(!runtime.Tick());
+            }
 
             Console.WriteLine("Done!");
         }

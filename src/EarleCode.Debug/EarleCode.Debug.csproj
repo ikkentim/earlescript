@@ -55,6 +55,9 @@
     <None Include="code\_utils.earle">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="code\_valuestoretest.earle">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\EarleCode\EarleCode.csproj">
