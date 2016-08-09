@@ -41,6 +41,8 @@ namespace EarleCode.Runtime
 
         public string Name { get; }
 
+        public bool Locked { get; private set; }
+
         public EarleRuntime Runtime { get; }
 
         public EarleFunctionCollection this[string functionName] => GetFunctions(functionName);
@@ -52,6 +54,10 @@ namespace EarleCode.Runtime
         public void IncludeFile(string file)
         {
             if(file == null) throw new ArgumentNullException(nameof(file));
+
+            if(Locked)
+                throw new Exception("Cannot include a file while this instance is locked.");
+            
             if(!_includedFiles.Contains(file))
                 _includedFiles.Add(file);
         }
@@ -60,12 +66,18 @@ namespace EarleCode.Runtime
         {
             if (function == null) throw new ArgumentNullException(nameof(function));
 
+            if(Locked)
+                throw new Exception("Cannot add a function while this instance is locked.");
+            
             _functions.Add(function);
         }
 
         public void AddReferencedFile(string fileName)
         {
             if(fileName == null) throw new ArgumentNullException(nameof(fileName));
+
+            if(Locked)
+                throw new Exception("Cannot add a referenced file while this instance is locked.");
             
             if(!_referencedFiles.Contains(fileName))
                 _referencedFiles.Add(fileName);
@@ -74,6 +86,9 @@ namespace EarleCode.Runtime
         public void AddReferencedFiles(string[] fileNames)
         {
             if(fileNames == null) throw new ArgumentNullException(nameof(fileNames));
+
+            if(Locked)
+                throw new Exception("Cannot add a referenced file while this instance is locked.");
 
             foreach(var f in fileNames)
                 AddReferencedFile(f);
@@ -95,6 +110,11 @@ namespace EarleCode.Runtime
             }
 
             return index;
+        }
+
+        public void Lock()
+        {
+            Locked = true;
         }
 
         public EarleValue GetValueInStore(int index)
@@ -130,7 +150,7 @@ namespace EarleCode.Runtime
 
             EarleFunctionCollection result;
 
-            if(_functionsCache.TryGetValue(tuple, out result))
+            if(Locked && _functionsCache.TryGetValue(tuple, out result))
                 return result;
 
             result = new EarleFunctionCollection();
@@ -170,7 +190,9 @@ namespace EarleCode.Runtime
                 }
             }
 
-            _functionsCache[tuple] = result;
+            if(Locked)
+                _functionsCache[tuple] = result;
+            
             return result;
         }
 

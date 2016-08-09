@@ -102,7 +102,8 @@ namespace EarleCode.Runtime
 
             if(_files.ContainsKey(file.Name))
                 throw new ArgumentException("File name is already present");
-            
+
+            file.Lock();
             _files[file.Name] = file;
 
             foreach(var f in this)
