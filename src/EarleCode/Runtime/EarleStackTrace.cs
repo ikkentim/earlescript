@@ -28,6 +28,9 @@ namespace EarleCode.Runtime
                     case EarleStackFrame.ThreadFrameIP:
                         result += " at (THREAD START)";
                         break;
+                    case EarleStackFrame.SleepCallIP:
+                        result += " at (SLEEPING)";
+                        break;
                     case EarleStackFrame.RootFrameIP:
                         break;
                     default:

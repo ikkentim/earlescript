@@ -11,5 +11,7 @@ giveACallTo(func)
 
 giveFive()
 {
+	print("giveFive called from:");
+	printstacktrace();
 	return 5;
 }

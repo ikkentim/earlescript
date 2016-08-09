@@ -62,7 +62,7 @@ namespace EarleCode.Runtime.Events
                 if(eventName == null)
                     throw new ArgumentNullException(nameof(eventName));
 
-                Frame = parentFrame.SpawnChild(null, this, -2);// FIXME: No hard -2 should be used as caller IP
+                Frame = parentFrame.SpawnChild(null, this, EarleStackFrame.SleepCallIP);
 
                 _eventName = eventName;
                 eventManager.EventFired += OnEventFired;

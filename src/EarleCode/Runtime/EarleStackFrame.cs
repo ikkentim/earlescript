@@ -9,6 +9,7 @@ namespace EarleCode.Runtime
         public const int RootFrameIP = -4;
         public const int RootCallIP = -1;
         public const int ThreadFrameIP = -3;
+        public const int SleepCallIP = -2;
 
         public EarleStackFrame(EarleRuntime runtime, EarleFunction function, IEarleStackFrameExecutor executor, int callerIp, EarleStackFrame superFrame, EarleThread thread)
         {
