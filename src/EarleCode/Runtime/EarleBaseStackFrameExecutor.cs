@@ -33,7 +33,7 @@ namespace EarleCode.Runtime
 
         public EarleValue Target { get; }
 
-        public Stack<EarleRuntimeScope> Scopes { get; } = new Stack<EarleRuntimeScope>();
+        public Stack<IEarleRuntimeScope> Scopes { get; } = new Stack<IEarleRuntimeScope>();
 
         public Stack<EarleValue> Stack { get; } = new Stack<EarleValue>();
 

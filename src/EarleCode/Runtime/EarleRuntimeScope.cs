@@ -50,7 +50,7 @@ namespace EarleCode.Runtime
                 return _superScope.SetValue(name, value);
             }
 
-            if (CanAssignReferenceInScope(name))
+            if (CanAssignVariableInScope(name))
             {
                 _locals[name] = value;
                 return true;
@@ -64,7 +64,7 @@ namespace EarleCode.Runtime
             return _superScope == null ? null : _superScope.GetFunctionReference(fileName, functionName);
         }
 
-        protected virtual bool CanAssignReferenceInScope(string name)
+        protected virtual bool CanAssignVariableInScope(string name)
         {
             return true;
         }

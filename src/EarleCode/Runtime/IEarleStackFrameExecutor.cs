@@ -26,7 +26,7 @@ namespace EarleCode.Runtime
     {
         EarleStackFrame Frame { get; }
         EarleValue Target { get; }
-        Stack<EarleRuntimeScope> Scopes { get; }
+        Stack<IEarleRuntimeScope> Scopes { get; }
         Stack<EarleValue> Stack { get; }
         int CIP { get; set; }
 
