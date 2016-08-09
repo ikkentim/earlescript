@@ -24,15 +24,7 @@ namespace EarleCode.Runtime.Instructions
 
         protected override void Handle()
         {
-            var vvalue = Pop();
-            var value = vvalue.Value;
-            var setValue = Pop();
-            if (value is EarleVariableReference)
-                Frame.Executor.SetValue((EarleVariableReference) value, setValue);
-            else if (value is EarleBoxedValueReference)
-                ((EarleBoxedValueReference) value).SetField(setValue);
-            else
-                Frame.Runtime.HandleWarning($"Value {value} is not a reference");
+            Frame.Executor.SetValue(GetString(), Pop());
         }
 
         #endregion

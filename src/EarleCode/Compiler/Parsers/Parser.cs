@@ -42,6 +42,7 @@ namespace EarleCode.Compiler.Parsers
         protected ILexer Lexer { get; private set; }
 
         protected virtual bool RequiresScope { get; }
+
         #region Implementation of IParser
 
         public CompiledBlock Parse(EarleRuntime runtime, EarleFile file, ILexer lexer, EarleCompileOptions enforcedCompileOptions)
@@ -93,6 +94,17 @@ namespace EarleCode.Compiler.Parsers
             _result.Add(value);
         }
 
+        public void Yield(OpCode value)
+        {
+            Yield((byte)value);
+        }
+
+        private void Yield(byte[] values)
+        {
+            if(values == null) throw new ArgumentNullException(nameof(values));
+            _result.AddRange(values);
+        }
+
         public void Yield(CompiledBlock block, bool breaks = false, int breakOffset = 0, bool continues = false, int continueOffset = 0)
         {
             if(block == null) throw new ArgumentNullException(nameof(block));
@@ -102,7 +114,7 @@ namespace EarleCode.Compiler.Parsers
             _result.AddRange(block.PCode);
             foreach(var p in block.CallLines)
                 _callLines.Add(p.Key + startIndex, p.Value);
-            
+
             _usedFiles.AddRange(block.ReferencedFiles.Where(f => !_usedFiles.Contains(f)));
 
             if(breaks)
@@ -136,23 +148,6 @@ namespace EarleCode.Compiler.Parsers
             }
         }
 
-        private void Yield(byte[] values)
-        {
-            if(values == null) throw new ArgumentNullException(nameof(values));
-            _result.AddRange(values);
-        }
-
-        public void Yield(OpCode value)
-        {
-            Yield((byte) value);//TODO
-
-        }
-
-        public void Yield(char value)
-        {
-            Yield((byte) value);
-        }
-
         public void Yield(string value)
         {
             if (value == null) throw new ArgumentNullException(nameof(value));
@@ -172,22 +167,48 @@ namespace EarleCode.Compiler.Parsers
 
         #endregion
 
-        #region Push
+        #region Read/write
 
-        public void PushReference(string path, string name)
+        public void PushRead(string variableName)
         {
-            if (name == null) throw new ArgumentNullException(nameof(name));
+            if(variableName == null) throw new ArgumentNullException(nameof(variableName));
 
-            if(!string.IsNullOrEmpty(path) && !_usedFiles.Contains(path))
-                _usedFiles.Add(path);
-
-            var value = new EarleVariableReference(path?.ToLower(), name?.ToLower() ?? string.Empty).ToEarleValue();
-            Yield(OpCode.PushValue);
-            Yield(File.GetIndexForValueInStore(value));
-
-            //Yield(OpCode.PushReference);
-            //Yield($"{path}::{name}".ToLower());
+            Yield(OpCode.Read);
+            Yield(variableName);
         }
+
+        public void PushRead(string variableName, CompiledBlock dereferenceBuffer)
+        {
+            PushRead(variableName);
+            if(dereferenceBuffer != null)
+                Yield(dereferenceBuffer);
+        }
+
+        public void PushWrite(string variableName)
+        {
+            if(variableName == null) throw new ArgumentNullException(nameof(variableName));
+
+            Yield(OpCode.Write);
+            Yield(variableName);
+        }
+
+        public void PushWrite(string variableName, CompiledBlock dereferenceBuffer)
+        {
+            if(variableName == null) throw new ArgumentNullException(nameof(variableName));
+            if(dereferenceBuffer == null || dereferenceBuffer.PCode.Length == 0)
+            {
+                PushWrite(variableName);
+            }
+            else
+            {
+                PushRead(variableName);
+                Yield(dereferenceBuffer);
+            }
+        }
+
+        #endregion
+
+        #region Push call
 
         public void PushFunctionReference(string path, string name)
         {
@@ -222,6 +243,10 @@ namespace EarleCode.Compiler.Parsers
             PushCallWithoutTarget(arguments, lineNumber);
         }
 
+        #endregion
+
+        #region Push jump
+
         public void PushJump(bool condition, int count)
         {
             Yield(condition ? OpCode.JumpIfTrue : OpCode.JumpIfFalse);
@@ -234,12 +259,9 @@ namespace EarleCode.Compiler.Parsers
             Yield(count);
         }
 
-        public void PushDereferenceField(string field)
-        {
-            if (field == null) throw new ArgumentNullException(nameof(field));
-            Yield(OpCode.DereferenceField);
-            Yield(field);
-        }
+        #endregion
+
+        #region Push value
 
         public void PushString(string value)
         {
@@ -300,7 +322,7 @@ namespace EarleCode.Compiler.Parsers
 
         #endregion
 
-        #region Misc Helpers
+        #region Parse
 
         public int Parse<T>(EarleCompileOptions compileOptions = EarleCompileOptions.None) where T : IParser
         {
@@ -315,6 +337,10 @@ namespace EarleCode.Compiler.Parsers
             return parser.Parse(Runtime, File, Lexer, _enforcedCompileOptions | compileOptions);
         }
 
+        #endregion
+
+        #region Syntax matches
+
         public bool SyntaxMatches(string rule)
         {
             return Runtime.Compiler.SyntaxGrammarProcessor.IsMatch(Lexer, rule);
@@ -325,6 +351,10 @@ namespace EarleCode.Compiler.Parsers
             if(!SyntaxMatches(rule))
                 ThrowUnexpectedTokenWithExpected(rule.ToLower());
         }
+
+        #endregion
+
+        #region Compile block
 
         public CompiledBlock CompileBlock(EarleCompileOptions compileOptions)
         {

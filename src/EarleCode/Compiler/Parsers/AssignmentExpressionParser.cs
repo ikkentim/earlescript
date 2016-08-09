@@ -22,20 +22,8 @@ using EarleCode.Runtime.Operators;
 
 namespace EarleCode.Compiler.Parsers
 {
-    internal class AssignmentExpressionParser : Parser
+    internal class AssignmentExpressionParser : ExpressionParser
     {
-        private OpCode GetOperator(EarleOperatorType type)
-        {
-            var str = "";
-            do
-            {
-                str += Lexer.Current.Value;
-                Lexer.AssertMoveNext();
-            } while (Lexer.Current.Is(TokenType.Token) && EarleOperators.GetMaxOperatorLength(type, str) > str.Length);
-
-            return EarleOperators.GetOpCode(type, str);
-        }
-
         protected virtual void YieldDuplicate()
         {
             Yield(OpCode.Duplicate);
@@ -63,7 +51,8 @@ namespace EarleCode.Compiler.Parsers
             var name = Lexer.Current.Value;
             Lexer.AssertMoveNext();
 
-            var derefBuffer = ParseToBuffer<DereferenceParser>();
+            CompiledBlock read, write;
+            ParseDereference(out read, out write);
 
             if (modOperator == OpCode.Nop && SyntaxMatches("OPERATOR_MOD_ASSIGNMENT"))
             {
@@ -74,11 +63,8 @@ namespace EarleCode.Compiler.Parsers
             if (modOperator != OpCode.Nop)
             {
                 // Read
-                PushReference(null, name);
-                Yield(derefBuffer);
+                PushRead(name, read);
 
-                Yield(OpCode.Read);
-                
                 // Postfix duplicate
                 if (!unaryModOperatorIsPrefix)
                     YieldDuplicate();
@@ -92,9 +78,7 @@ namespace EarleCode.Compiler.Parsers
                     YieldDuplicate();
 
                 // Write
-                PushReference(null, name);
-                Yield(derefBuffer);
-                Yield(OpCode.Write);
+                PushWrite(name, write);
             }
             else
             {
@@ -106,9 +90,7 @@ namespace EarleCode.Compiler.Parsers
 
                 if (unaryOperator != OpCode.Nop)
                 {
-                    PushReference(null, name);
-                    Yield(derefBuffer);
-                    Yield(OpCode.Read);
+                    PushRead(name, read);
                 }
 
                 Parse<ExpressionParser>();
@@ -118,9 +100,7 @@ namespace EarleCode.Compiler.Parsers
 
                 YieldDuplicate();
 
-                PushReference(null, name);
-                Yield(derefBuffer);
-                Yield(OpCode.Write);
+                PushWrite(name, write);
             }
         }
 

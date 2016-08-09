@@ -7,17 +7,12 @@ namespace EarleCode.Runtime.Instructions
     {
         protected override void Handle()
         {
-            var value = Pop();
+            var value = Frame.Executor.GetValue(GetString());
 
-            if(!value.Is<EarleVariableReference>())
-            {
+            if(value.Is<EarleFunctionCollection>())
+                Push(value);
+            else 
                 Push(EarleValue.Undefined);
-                return;
-            }
-
-            value = Frame.Executor.GetValue(value.As<EarleVariableReference>());
-
-            Push(value);
         }
     }
 }

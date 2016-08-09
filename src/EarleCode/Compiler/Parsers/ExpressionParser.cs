@@ -16,6 +16,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Text;
 using EarleCode.Compiler.Lexing;
 using EarleCode.Runtime;
 using EarleCode.Runtime.Instructions;
@@ -25,7 +26,7 @@ namespace EarleCode.Compiler.Parsers
 {
     internal class ExpressionParser : Parser
     {
-        private OpCode GetOperator(EarleOperatorType type)
+        protected OpCode GetOperator(EarleOperatorType type)
         {
             var str = "";
             do
@@ -110,9 +111,74 @@ namespace EarleCode.Compiler.Parsers
         protected virtual bool ParseFunctionCall()
         {
             Parse<CallExpressionParser>();
-            Parse<DereferenceParser>();
+
+            CompiledBlock read, write;
+            ParseDereference(out read, out write);
+            Yield(read);
 
             return true;
+        }
+
+        protected virtual void ParseDereference(out CompiledBlock readBlock, out CompiledBlock writeBlock)
+        {
+            var read = new List<byte>();
+            var write = new List<byte>();
+
+            var callLinesRead = new Dictionary<int, int>();
+            var callLinesWrite = new Dictionary<int, int>();
+            var referencedFiles = new List<string>();
+            var requiresScope = false;
+
+            for(;;)
+            {
+                if(Lexer.Current.Is(TokenType.Token, "."))
+                {
+                    Lexer.AssertMoveNext();
+                    Lexer.AssertToken(TokenType.Identifier);
+                    var field = Lexer.Current.Value;
+                    Lexer.AssertMoveNext();
+
+                    var isLast = !Lexer.Current.Is(TokenType.Token, ".") && !Lexer.Current.Is(TokenType.Token, "[");
+
+                    read.Add((byte)OpCode.ReadField);
+                    read.AddRange(Encoding.ASCII.GetBytes(field));
+                    read.Add(0);
+
+                    write.Add(isLast ? (byte)OpCode.WriteField : (byte)OpCode.ReadField);
+                    write.AddRange(Encoding.ASCII.GetBytes(field));
+                    write.Add(0);
+                }
+                else if(Lexer.Current.Is(TokenType.Token, "["))
+                {
+                    Lexer.AssertMoveNext();
+                    var buffer = ParseToBuffer<ExpressionParser>();
+                    Lexer.SkipToken(TokenType.Token, "]");
+
+                    foreach(var kv in buffer.CallLines)
+                    {
+                        callLinesRead[kv.Key + read.Count] = kv.Value;
+                        callLinesWrite[kv.Key + write.Count] = kv.Value;
+                    }
+
+                    referencedFiles.AddRange(buffer.ReferencedFiles.Where(f => !referencedFiles.Contains(f)));
+                    requiresScope |= buffer.RequiresScope;
+
+                    var isLast = !Lexer.Current.Is(TokenType.Token, ".") && !Lexer.Current.Is(TokenType.Token, "[");
+
+                    read.AddRange(buffer.PCode);
+                    read.Add((byte)OpCode.ReadIndex);
+
+                    write.AddRange(buffer.PCode);
+                    write.Add(isLast ? (byte)OpCode.WriteIndex : (byte)OpCode.ReadIndex);
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            readBlock = new CompiledBlock(read.ToArray(), callLinesRead, referencedFiles.ToArray(), new int[0], new int[0], requiresScope);
+            writeBlock = new CompiledBlock(write.ToArray(), callLinesWrite, referencedFiles.ToArray(), new int[0], new int[0], requiresScope);
         }
 
         protected virtual void ParseValue()
@@ -173,7 +239,10 @@ namespace EarleCode.Compiler.Parsers
                 Lexer.AssertMoveNext();
                 Parse<ExpressionParser>();
                 Lexer.SkipToken(TokenType.Token, ")");
-                Parse<DereferenceParser>();
+
+                CompiledBlock read, write;
+                ParseDereference(out read, out write);
+                Yield(read);
             }
             else if (Lexer.Current.Is(TokenType.NumberLiteral) || Lexer.Current.Is(TokenType.StringLiteral))
             {
@@ -183,9 +252,10 @@ namespace EarleCode.Compiler.Parsers
             {
                 var name = Lexer.Current.Value;
                 Lexer.AssertMoveNext();
-                PushReference(null, name);
-                Parse<DereferenceParser>();
-                Yield(OpCode.Read);
+
+                CompiledBlock read, write;
+                ParseDereference(out read, out write);
+                PushRead(name, read);
             }
             else
                 ThrowUnexpectedToken("-VALUE-");

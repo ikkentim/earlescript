@@ -1,4 +1,4 @@
-﻿// EarleCode
+// EarleCode
 // Copyright 2016 Tim Potze
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,33 +13,27 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
 using EarleCode.Runtime.Values;
 
 namespace EarleCode.Runtime.Instructions
 {
-    internal class PushReferenceInstruction : Instruction
+
+    internal class ReadIndexInstruction : Instruction
     {
         #region Overrides of Instruction
 
         protected override void Handle()
         {
-            var refString = GetString();
-
-            string file = null,
-                name;
-
-            // TODO: No more file path
-            if (refString.Contains("::"))
+            var index = Pop();
+            var array = Pop();
+            if(!array.Is<EarleArray>())
             {
-                var spl = refString.Split(new[] {"::"}, StringSplitOptions.None);
-                file = spl[0];
-                name = spl[1];
+                Push(EarleValue.Undefined);
             }
             else
-                name = refString;
-
-            Push(new EarleVariableReference((file?.Length ?? 0) == 0 ? null : file, name).ToEarleValue());
+            {
+                Push(array.As<EarleArray>().GetValue(index));
+            }
         }
 
         #endregion

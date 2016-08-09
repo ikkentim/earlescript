@@ -88,7 +88,7 @@ namespace EarleCode.Runtime
 
         public virtual void HandleWarning(string warning)
         {
-            // TODO: Proper warning/error handling
+            // TODO: Implement proper warning/error handling
             Console.WriteLine(warning);
         }
 
@@ -146,16 +146,16 @@ namespace EarleCode.Runtime
 
         #region Implementation of IRuntimeScope
 
-        public virtual EarleValue GetValue(EarleVariableReference reference)
+        public virtual EarleValue GetValue(string name)
         {
             // Look global variables up.
-            if(GlobalVariables.ContainsKey(reference.Name))
-                return GlobalVariables[reference.Name];
+            if(GlobalVariables.ContainsKey(name))
+                return GlobalVariables[name];
             
             return EarleValue.Undefined;
         }
 
-        public virtual bool SetValue(EarleVariableReference reference, EarleValue value)
+        public virtual bool SetValue(string name, EarleValue value)
         {
             return false;
         }

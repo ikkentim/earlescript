@@ -36,9 +36,11 @@ namespace EarleCode.Runtime.Values
             _values = new Dictionary<string, EarleValue>(dictionary._values);
         }
 
-        public IEnumerable<string> Keys => _values.Keys;
+        public ICollection<string> Keys => _values.Keys;
 
-        public IEnumerable<EarleValue> Values => _values.Values;
+        public ICollection<EarleValue> Values => _values.Values;
+
+        public int Count => _values.Count;
 
         public EarleValue this[string key]
         {
@@ -58,9 +60,12 @@ namespace EarleCode.Runtime.Values
             }
         }
 
+
         public bool ContainsKey(string key) => _values.ContainsKey(key);
 
         public bool ContainsValue(EarleValue value) => _values.ContainsValue(value);
+
+        public void Clear() => _values.Clear();
 
         #region Implementation of IEnumerable
 
@@ -70,10 +75,7 @@ namespace EarleCode.Runtime.Values
         /// <returns>
         ///     A <see cref="T:System.Collections.Generic.IEnumerator`1" /> that can be used to iterate through the collection.
         /// </returns>
-        public IEnumerator<KeyValuePair<string, EarleValue>> GetEnumerator()
-        {
-            return _values.GetEnumerator();
-        }
+        public IEnumerator<KeyValuePair<string, EarleValue>> GetEnumerator() =>  _values.GetEnumerator();
 
         /// <summary>
         ///     Returns an enumerator that iterates through a collection.
@@ -81,10 +83,7 @@ namespace EarleCode.Runtime.Values
         /// <returns>
         ///     An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.
         /// </returns>
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
         #endregion
     }

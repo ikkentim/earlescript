@@ -35,8 +35,7 @@ namespace EarleCode.Runtime.Instructions
         protected virtual IEarleStackFrameExecutor CreateFrameExecutor(EarleStackFrame superFrame, int callerIp)
         {
             var argumentCount = GetInt32();
-            var value = Pop().Value;
-            var initialValue = value;
+            var value = Pop();
             var hasOverloads = false;
             EarleFunction function;
 
@@ -49,20 +48,25 @@ namespace EarleCode.Runtime.Instructions
             //        value = ((EarleBoxedValueReference)value).GetField().Value;
             //}
 
-            if(value is EarleFunctionCollection)
+            if(value.Is<EarleFunctionCollection>())
             {
-                var functions = (EarleFunctionCollection)value;
+                var functions = value.As<EarleFunctionCollection>();
                 hasOverloads = functions.Count > 0;
                 function = functions.GetBestOverload(argumentCount);
             }
             else
             {
-                function = value as EarleFunction;
+                function = value.As<EarleFunction>();
             }
 
             if(function == null)
             {
-                Frame.Runtime.HandleWarning($"{initialValue?.GetType()} cannot be invoked.");
+                if(hasOverloads)
+                    Frame.Runtime.HandleWarning($"No suitable overload cana be found of `{value.As<EarleFunctionCollection>().FirstOrDefault()?.Name}`.");
+                else if(!value.HasValue)
+                    Frame.Runtime.HandleWarning("A null pointer cannot be invoked.");
+                else
+                    Frame.Runtime.HandleWarning($"{value.Value?.GetType()} cannot be invoked.");
 
                 for(var i = 0; i < argumentCount; i++)
                     Pop();

@@ -35,13 +35,13 @@ namespace EarleCode.Compiler.Parsers
             {
                 Lexer.SkipToken(TokenType.Token, "[");
                 Lexer.SkipToken(TokenType.Token, "[");
-                var identifier = Lexer.Current.Value;
+                var variableName = Lexer.Current.Value;
                 Lexer.SkipToken(TokenType.Identifier);
                 Lexer.SkipToken(TokenType.Token, "]");
                 Lexer.SkipToken(TokenType.Token, "]");
 
-                PushReference(null, identifier);
                 Yield(OpCode.UnboxFunctionReference);
+                Yield(variableName);
             }
             else
             {

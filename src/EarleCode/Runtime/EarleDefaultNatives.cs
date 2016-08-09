@@ -66,7 +66,7 @@ namespace EarleCode.Runtime
             public WaitFrameExecutor(EarleStackFrame parentFrame, float seconds) : base(EarleValue.Undefined)
             {
                 if(parentFrame == null) throw new ArgumentNullException(nameof(parentFrame));
-                Frame = parentFrame.SpawnChild(null, this, -2);// TODO: -2??? why
+                Frame = parentFrame.SpawnChild(null, this, -2);// FIXME: No hard -2 should be used as caller IP
 
                 _stopwatch = new Stopwatch();
                 _stopwatch.Start();

@@ -15,12 +15,25 @@
 
 using EarleCode.Runtime.Values;
 
-namespace EarleCode.Runtime
+namespace EarleCode.Runtime.Instructions
 {
-    public interface IEarleRuntimeScope
+
+    internal class WriteFieldInstruction : Instruction
     {
-        EarleValue GetValue(string name);
-        bool SetValue(string name, EarleValue value);
-        EarleFunctionCollection GetFunctionReference(string fileName, string functionName);
+        #region Overrides of Instruction
+
+        protected override void Handle()
+        {
+            var structure = Pop();
+            var value = Pop();
+            var field = GetString();
+            if(structure.Is<IEarleStructure>())
+            {
+                structure.As<IEarleStructure>().SetField(field, value);
+            }
+        }
+
+        #endregion
     }
+    
 }

@@ -24,16 +24,7 @@ namespace EarleCode.Runtime.Instructions
 
         protected override void Handle()
         {
-            var value = Pop().Value;
-            if (value is EarleVariableReference)
-                Push(Frame.Executor.GetValue((EarleVariableReference) value));
-            else if (value is EarleBoxedValueReference)
-                Push(((EarleBoxedValueReference) value).GetField());
-            else
-            {
-                Frame.Runtime.HandleWarning($"Value {value} is not a reference");
-                Push(EarleValue.Undefined);
-            }
+            Push(Frame.Executor.GetValue(GetString()));
         }
 
         #endregion

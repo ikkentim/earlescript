@@ -111,7 +111,7 @@ namespace EarleCode.Runtime
 
         #region Overrides of RuntimeScope
 
-        protected override bool CanAssignReferenceInScope(EarleVariableReference reference)
+        protected override bool CanAssignReferenceInScope(string name)
         {
             return false;
         }

@@ -42,6 +42,7 @@ namespace EarleCode.Runtime
 
         public EarleFunction GetBestOverload(int argumentCount)
         {
+            // TODO: Improve this logic
             return this.FirstOrDefault(f => f.Parameters != null && f.Parameters.Length == argumentCount) 
                        ?? this.FirstOrDefault(f => f.Parameters == null);
         }
@@ -49,6 +50,11 @@ namespace EarleCode.Runtime
         public EarleValue? Invoke(EarleCompletionHandler completionHandler, EarleValue target, params EarleValue[] args)
         {
             return GetBestOverload(args.Length).Invoke(completionHandler, target, args);
+        }
+
+        public override string ToString()
+        {
+            return string.Format($"[[functions({Count})]]");
         }
     }
 }

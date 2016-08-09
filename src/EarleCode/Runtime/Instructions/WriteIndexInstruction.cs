@@ -15,12 +15,24 @@
 
 using EarleCode.Runtime.Values;
 
-namespace EarleCode.Runtime
+namespace EarleCode.Runtime.Instructions
 {
-    public interface IEarleRuntimeScope
+
+    internal class WriteIndexInstruction : Instruction
     {
-        EarleValue GetValue(string name);
-        bool SetValue(string name, EarleValue value);
-        EarleFunctionCollection GetFunctionReference(string fileName, string functionName);
+        #region Overrides of Instruction
+
+        protected override void Handle()
+        {
+            var index = Pop();
+            var array = Pop();
+            var value = Pop();
+            if(array.Is<EarleArray>())
+            {
+                array.As<EarleArray>().SetValue(index, value);
+            }
+        }
+
+        #endregion
     }
 }

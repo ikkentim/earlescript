@@ -6,6 +6,10 @@ giveTrue()
 
 giveACallTo(func)
 {
-	print("func:"+func);
 	return [[func]]();
+}
+
+giveFive()
+{
+	return 5;
 }

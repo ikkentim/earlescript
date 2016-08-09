@@ -41,7 +41,7 @@ namespace EarleCode.Runtime.Instructions
             if(file != null && file.Length == 0)
                 file = null;
             
-            Push(Frame.Executor.GetFunctionReference(file, name).ToEarleValue());//TODO: Use GetFunction or smth
+            Push(Frame.Executor.GetFunctionReference(file, name).ToEarleValue());
         }
 
         #endregion

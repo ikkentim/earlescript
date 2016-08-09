@@ -44,7 +44,6 @@
     <Compile Include="Utilities\ArrayUtility.cs" />
     <Compile Include="Compiler\Parsers\AssignmentExpressionParser.cs" />
     <Compile Include="Compiler\Parsers\CallExpressionParser.cs" />
-    <Compile Include="Compiler\Parsers\DereferenceParser.cs" />
     <Compile Include="Compiler\Parsers\ExpressionParser.cs" />
     <Compile Include="Compiler\Parsers\FunctionReferenceExpressionParser.cs" />
     <Compile Include="Compiler\Parsers\FunctionTargetExpressionParser.cs" />
@@ -59,12 +58,10 @@
     <Compile Include="Compiler\Parsers\StatementWaitParser.cs" />
     <Compile Include="Compiler\Parsers\StatementWhileParser.cs" />
     <Compile Include="Runtime\Values\EarleArray.cs" />
-    <Compile Include="Runtime\Values\EarleBoxedValueReference.cs" />
     <Compile Include="Runtime\Values\EarleDictionary.cs" />
     <Compile Include="Runtime\Values\EarleStructure.cs" />
     <Compile Include="Runtime\Values\EarleValue.cs" />
     <Compile Include="Runtime\Values\EarleValueUtility.cs" />
-    <Compile Include="Runtime\Values\EarleVariableReference.cs" />
     <Compile Include="Runtime\Values\EarleVector2.cs" />
     <Compile Include="Runtime\Values\EarleVector3.cs" />
     <Compile Include="Runtime\Values\IEarleStructure.cs" />
@@ -79,8 +76,6 @@
     <Compile Include="Compiler\Lexing\TokenUtils.cs" />
     <Compile Include="Runtime\Instructions\CallInstruction.cs" />
     <Compile Include="Runtime\Instructions\CallWithoutTargetInstruction.cs" />
-    <Compile Include="Runtime\Instructions\DereferenceFieldInstruction.cs" />
-    <Compile Include="Runtime\Instructions\DereferenceIndexInstruction.cs" />
     <Compile Include="Runtime\Instructions\DuplicateInstruction.cs" />
     <Compile Include="Runtime\Instructions\IInstruction.cs" />
     <Compile Include="Runtime\Instructions\Instruction.cs" />
@@ -95,7 +90,6 @@
     <Compile Include="Runtime\Instructions\PushFloatInstruction.cs" />
     <Compile Include="Runtime\Instructions\PushIntegerInstruction.cs" />
     <Compile Include="Runtime\Instructions\PushNullInstruction.cs" />
-    <Compile Include="Runtime\Instructions\PushReferenceInstruction.cs" />
     <Compile Include="Runtime\Instructions\PushScopeInstruction.cs" />
     <Compile Include="Runtime\Instructions\PushStringInstruction.cs" />
     <Compile Include="Runtime\Instructions\ReadInstruction.cs" />
@@ -155,6 +149,10 @@
     <Compile Include="Runtime\Instructions\PushValueInstruction.cs" />
     <Compile Include="Runtime\Instructions\PushFunctionReferenceInstruction.cs" />
     <Compile Include="Runtime\Instructions\UnboxFunctionReferenceInstruction.cs" />
+    <Compile Include="Runtime\Instructions\ReadFieldInstuction.cs" />
+    <Compile Include="Runtime\Instructions\ReadIndexInstruction.cs" />
+    <Compile Include="Runtime\Instructions\WriteFieldInstruction.cs" />
+    <Compile Include="Runtime\Instructions\WriteIndexInstruction.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

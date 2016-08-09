@@ -1,4 +1,4 @@
-﻿// EarleCode
+// EarleCode
 // Copyright 2016 Tim Potze
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,32 +13,30 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 using EarleCode.Runtime.Values;
 
 namespace EarleCode.Runtime.Instructions
 {
-    internal class DereferenceFieldInstruction : Instruction
+
+    internal class ReadFieldInstuction : Instruction
     {
         #region Overrides of Instruction
 
         protected override void Handle()
         {
-            var fieldName = GetString();
-            var value = Pop();
-
-            if (value.Is<IEarleStructure>())
+            var structure = Pop();
+            var field = GetString();
+            if(!structure.Is<IEarleStructure>())
             {
-                var obj = value.As<IEarleStructure>();
-                Push(new EarleBoxedValueReference(obj, fieldName).ToEarleValue());
+                Push(EarleValue.Undefined);
             }
             else
             {
-                Frame.Runtime.HandleWarning("Value is not a structure.");
-                Push(EarleValue.Undefined);
+                Push(structure.As<IEarleStructure>().GetField(field));
             }
         }
 
         #endregion
     }
+    
 }

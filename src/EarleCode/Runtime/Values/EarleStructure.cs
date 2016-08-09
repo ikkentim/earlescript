@@ -20,20 +20,48 @@ using System.Linq;
 
 namespace EarleCode.Runtime.Values
 {
-    public class EarleStructure : EarleDictionary, IEarleStructure
+    public class EarleStructure : IEarleStructure, IEnumerable<KeyValuePair<string,EarleValue>>
     {
+        private EarleDictionary _values = new EarleDictionary();
+
         #region Implementation of IEarleStructure
 
         public virtual EarleValue GetField(string name)
         {
-            return this[name];
+            return _values[name];
         }
 
         public virtual void SetField(string name, EarleValue value)
         {
-            this[name] = value;
+            _values[name] = value;
         }
 
+        #endregion
+
+        public EarleValue this[string key]
+        {
+            get { return GetField(key); }
+            set { SetField(key, value); }
+        }
+
+        public int Count => _values.Count;
+
+        public bool IsReadOnly => false;
+
+        public ICollection<string> Keys => _values.Keys;
+
+        public ICollection<EarleValue> Values => _values.Values;
+
+        public void Clear() => _values.Clear();
+        
+        public bool ContainsKey(string key) => _values.ContainsKey(key);
+
+        #region Implementation of IEnumerable<KeyValuePair<string,EarleValue>>
+
+        public IEnumerator<KeyValuePair<string, EarleValue>> GetEnumerator() => _values.GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+        
         #endregion
     }
 }

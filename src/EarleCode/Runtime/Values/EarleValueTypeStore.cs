@@ -13,10 +13,7 @@ namespace EarleCode.Runtime.Values
             typeof(EarleVector2),
             typeof(EarleVector3),
             typeof(EarleFunction),
-            typeof(EarleVariableReference),
             typeof(EarleFunctionCollection),
-            typeof(IEarleStructure),
-            typeof(EarleBoxedValueReference),
             typeof(IEarleObject)
         };
 

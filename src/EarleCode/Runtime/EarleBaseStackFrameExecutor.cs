@@ -39,23 +39,23 @@ namespace EarleCode.Runtime
 
         public int CIP { get; set; }
 
-        public virtual EarleValue GetValue(EarleVariableReference reference)
+        public virtual EarleValue GetValue(string name)
         {
-            if(reference.Name == "self")
-                return string.IsNullOrEmpty(reference.File) ? Target : EarleValue.Undefined;
+            if(name == "self")
+                return Target;
 
-            return Scopes.Peek().GetValue(reference);
+            return Scopes.Peek().GetValue(name);
         }
 
-        public virtual bool SetValue(EarleVariableReference reference, EarleValue value)
+        public virtual bool SetValue(string name, EarleValue value)
         {
-            if(reference.Name == "self" || reference.Name == "thread")
+            if(name == "self" || name == "thread")
             {
-                Frame.Runtime.HandleWarning($"'{reference.Name}' cannot be set!");
+                Frame.Runtime.HandleWarning($"'{name}' cannot be set!");
                 return false;
             }
 
-            return Scopes.Peek().SetValue(reference, value);
+            return Scopes.Peek().SetValue(name, value);
         }
 
         public virtual EarleFunctionCollection GetFunctionReference(string fileName, string functionName)

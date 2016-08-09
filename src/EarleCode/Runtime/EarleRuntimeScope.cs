@@ -33,26 +33,26 @@ namespace EarleCode.Runtime
             _locals = locals ?? new EarleDictionary();
         }
 
-        public virtual EarleValue GetValue(EarleVariableReference reference)
+        public virtual EarleValue GetValue(string name)
         {
-            var value = _superScope?.GetValue(reference);
+            var value = _superScope?.GetValue(name);
 
             if (value?.HasValue ?? false)
                 return value.Value;
 
-            return _locals[reference.Name];
+            return _locals[name];
         }
 
-        public virtual bool SetValue(EarleVariableReference reference, EarleValue value)
+        public virtual bool SetValue(string name, EarleValue value)
         {
-            if ((_superScope?.GetValue(reference) ?? EarleValue.Undefined).HasValue)
+            if ((_superScope?.GetValue(name) ?? EarleValue.Undefined).HasValue)
             {
-                return _superScope.SetValue(reference, value);
+                return _superScope.SetValue(name, value);
             }
 
-            if (CanAssignReferenceInScope(reference))
+            if (CanAssignReferenceInScope(name))
             {
-                _locals[reference.Name] = value;
+                _locals[name] = value;
                 return true;
             }
 
@@ -64,9 +64,9 @@ namespace EarleCode.Runtime
             return _superScope == null ? null : _superScope.GetFunctionReference(fileName, functionName);
         }
 
-        protected virtual bool CanAssignReferenceInScope(EarleVariableReference reference)
+        protected virtual bool CanAssignReferenceInScope(string name)
         {
-            return reference.File == null;
+            return true;
         }
     }
 }
