@@ -28,6 +28,13 @@ namespace EarleCode.Compiler.Parsers
 {
     internal abstract class Parser : IParser
     {
+        private readonly string[] ReservedKeywords = {
+            "thread",
+            "true",
+            "false",
+            "undefined"
+        };
+
         private readonly List<byte> _result = new List<byte>();
         private Dictionary<int, int> _callLines;
         private readonly List<string> _usedFiles = new List<string>();
@@ -173,6 +180,9 @@ namespace EarleCode.Compiler.Parsers
         {
             if(variableName == null) throw new ArgumentNullException(nameof(variableName));
 
+            if(ReservedKeywords.Contains(variableName))
+                ThrowParseException($"Cannot read from reserved keyword `{variableName}`");
+            
             Yield(OpCode.Read);
             Yield(variableName);
         }
@@ -188,6 +198,9 @@ namespace EarleCode.Compiler.Parsers
         {
             if(variableName == null) throw new ArgumentNullException(nameof(variableName));
 
+            if(ReservedKeywords.Contains(variableName))
+                ThrowParseException($"Cannot write to reserved keyword `{variableName}`");
+            
             Yield(OpCode.Write);
             Yield(variableName);
         }
@@ -195,6 +208,10 @@ namespace EarleCode.Compiler.Parsers
         public void PushWrite(string variableName, CompiledBlock dereferenceBuffer)
         {
             if(variableName == null) throw new ArgumentNullException(nameof(variableName));
+
+            if(ReservedKeywords.Contains(variableName))
+                ThrowParseException($"Cannot write to reserved keyword `{variableName}`");
+            
             if(dereferenceBuffer == null || dereferenceBuffer.PCode.Length == 0)
             {
                 PushWrite(variableName);
