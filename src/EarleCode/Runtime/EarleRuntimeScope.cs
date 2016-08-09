@@ -20,7 +20,7 @@ namespace EarleCode.Runtime
 {
     public class EarleRuntimeScope : IEarleRuntimeScope
     {
-        private readonly EarleDictionary _locals = new EarleDictionary();
+        private readonly EarleDictionary _locals;
         private readonly IEarleRuntimeScope _superScope;
 
         public  EarleRuntimeScope(IEarleRuntimeScope superScope) : this(superScope, null)
