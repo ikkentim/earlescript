@@ -28,6 +28,7 @@ namespace EarleCode.Runtime
         private readonly List<string> _includedFiles = new List<string>();
         private readonly List<string> _referencedFiles = new List<string>();
         private readonly List<EarleValue> _valueStore = new List<EarleValue>();
+        private Dictionary<Tuple<string, string>, EarleFunctionCollection> _functionsCache = new Dictionary<Tuple<string, string>, EarleFunctionCollection>();
 
         public EarleFile(EarleRuntime runtime, string name) : base(runtime)
         {
@@ -109,6 +110,11 @@ namespace EarleCode.Runtime
             return GetFunctions(functionName).Invoke(completionHandler, target, arguments);
         }
 
+        public void ClearCache()
+        {
+            _functionsCache.Clear();
+        }
+
         #region Overrides of RuntimeScope
 
         protected override bool CanAssignVariableInScope(string name)
@@ -118,9 +124,21 @@ namespace EarleCode.Runtime
 
         public override EarleFunctionCollection GetFunctionReference(string fileName, string functionName)
         {
-            // FIXME: This might mess up function tables of other files when things are added. Should a readonly collection be returned?
-            var result = Runtime.GetFunctionReference(fileName, functionName);
+            if(functionName == null) throw new ArgumentNullException(nameof(functionName));
 
+            var tuple = new Tuple<string, string>(fileName, functionName);
+
+            EarleFunctionCollection result;
+
+            if(_functionsCache.TryGetValue(tuple, out result))
+                return result;
+
+            result = new EarleFunctionCollection();
+
+            var runtimeFunctions = Runtime.GetFunctionReference(fileName, functionName);
+            if(runtimeFunctions != null)
+                result.AddRange(runtimeFunctions);
+            
             if(fileName == null || fileName == Name)
             {
                 var functions = GetFunctions(functionName);
@@ -152,6 +170,7 @@ namespace EarleCode.Runtime
                 }
             }
 
+            _functionsCache[tuple] = result;
             return result;
         }
 

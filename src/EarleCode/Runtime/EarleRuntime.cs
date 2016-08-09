@@ -104,6 +104,9 @@ namespace EarleCode.Runtime
                 throw new ArgumentException("File name is already present");
             
             _files[file.Name] = file;
+
+            foreach(var f in this)
+                f.ClearCache();
         }
 
         public bool RemoveFile(string fileName)
