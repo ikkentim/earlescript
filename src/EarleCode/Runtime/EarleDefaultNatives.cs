@@ -15,6 +15,7 @@
 
 using System;
 using System.Diagnostics;
+using EarleCode.Runtime.Attributes;
 using EarleCode.Runtime.Values;
 
 namespace EarleCode.Runtime

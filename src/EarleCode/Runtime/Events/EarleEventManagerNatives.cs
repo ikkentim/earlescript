@@ -15,6 +15,7 @@
 
 using System;
 using System.Linq;
+using EarleCode.Runtime.Attributes;
 using EarleCode.Runtime.Values;
 
 namespace EarleCode.Runtime.Events

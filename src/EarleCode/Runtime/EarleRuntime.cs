@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using System.Linq;
 using EarleCode.Compiler;
 using EarleCode.Localization;
+using EarleCode.Runtime.Attributes;
 using EarleCode.Runtime.Events;
 using EarleCode.Runtime.Operators;
 using EarleCode.Runtime.Values;
@@ -52,9 +53,10 @@ namespace EarleCode.Runtime
 
 		private void RegisterDefaultNatives()
 		{
-			Natives.RegisterInType<EarleDefaultNatives>();
-			Natives.RegisterInType<EarleEventManagerNatives>();
-			Natives.RegisterInType<EarleLocalizerNatives>();
+		    var scanner = new EarleAttributeScanner(this);
+            scanner.Scan<EarleDefaultNatives>();
+            scanner.Scan<EarleEventManagerNatives>();
+            scanner.Scan<EarleLocalizerNatives>();
 		}
 
 		#region Debugging

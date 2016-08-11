@@ -15,7 +15,7 @@
 
 using System;
 
-namespace EarleCode.Runtime
+namespace EarleCode.Runtime.Attributes
 {
 	[AttributeUsage(AttributeTargets.Method)]
 	public class EarleNativeFunctionAttribute : Attribute

@@ -33,7 +33,7 @@ drop(v)
 {
 }
 
-test()
+test_()
 {
 	drop(_valuestoretest::getvalue());
 }
