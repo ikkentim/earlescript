@@ -166,28 +166,19 @@ namespace EarleCode.Runtime
 
 				if (functions != null)
 				{
-					if (result != null)
-						result.AddRange(functions);
-					else
-						result = functions;
+				    result.AddRange(functions);
 				}
 
 				foreach (var include in IncludedFiles)
 				{
 					var file = Runtime.GetFile(include);
 
-					if (file == null)
-						continue;
-
-					var funcs = file.GetFunctions(functionName);
+				    var funcs = file?.GetFunctions(functionName);
 
 					if (funcs == null)
 						continue;
 
-					if (result != null)
-						result.AddRange(funcs);
-					else
-						result = funcs;
+				    result.AddRange(funcs);
 				}
 			}
 

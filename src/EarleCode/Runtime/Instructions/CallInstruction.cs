@@ -35,7 +35,6 @@ namespace EarleCode.Runtime.Instructions
 		{
 			var argumentCount = GetInt32();
 			var value = Pop();
-			var hasOverloads = false;
 			EarleFunction function;
 
 			// Unbox down to a function or function collection
@@ -50,7 +49,6 @@ namespace EarleCode.Runtime.Instructions
 			if (value.Is<EarleFunctionCollection>())
 			{
 				var functions = value.As<EarleFunctionCollection>();
-				hasOverloads = functions.Count > 0;
 				function = functions.GetBestOverload(argumentCount);
 			}
 			else
@@ -60,15 +58,17 @@ namespace EarleCode.Runtime.Instructions
 
 			if (function == null)
 			{
-				if (hasOverloads)
-					Frame.Runtime.HandleWarning(
-						$"No suitable overload cana be found of `{value.As<EarleFunctionCollection>().FirstOrDefault()?.Name}`.");
-				else if (!value.HasValue)
-					Frame.Runtime.HandleWarning("A null pointer cannot be invoked.");
-				else
-					Frame.Runtime.HandleWarning($"{value.Value?.GetType()} cannot be invoked.");
+			    if (value.As<EarleFunctionCollection>()?.Any() ?? false)
+			        Frame.Runtime.HandleWarning(
+			            $"No suitable overload can be found of `{value.As<EarleFunctionCollection>().FirstOrDefault()?.Name}`.");
+                else if (value.As<EarleFunctionCollection>()?.Any() ?? false)
+                    Frame.Runtime.HandleWarning("No suitable overload can be found.");
+                else if (!value.HasValue)
+			        Frame.Runtime.HandleWarning("A null pointer cannot be invoked.");
+			    else
+			        Frame.Runtime.HandleWarning($"{value.Value?.GetType()} cannot be invoked.");
 
-				for (var i = 0; i < argumentCount; i++)
+			    for (var i = 0; i < argumentCount; i++)
 					Pop();
 
 				Push(EarleValue.Undefined);
