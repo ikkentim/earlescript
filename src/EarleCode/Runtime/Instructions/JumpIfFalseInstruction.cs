@@ -15,15 +15,15 @@
 
 namespace EarleCode.Runtime.Instructions
 {
-    internal class JumpIfFalseInstruction : Instruction
-    {
-        #region Overrides of Instruction
+	internal class JumpIfFalseInstruction : Instruction
+	{
+		#region Overrides of Instruction
 
-        protected override void Handle()
-        {
-            Jump(!Pop<bool>() ? GetInt32() : 4);
-        }
+		protected override void Handle()
+		{
+			Jump(!Pop<bool>() ? GetInt32() : 4);
+		}
 
-        #endregion
-    }
+		#endregion
+	}
 }

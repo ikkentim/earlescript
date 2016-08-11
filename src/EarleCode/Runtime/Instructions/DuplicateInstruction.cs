@@ -15,15 +15,15 @@
 
 namespace EarleCode.Runtime.Instructions
 {
-    internal class DuplicateInstruction : Instruction
-    {
-        #region Overrides of Instruction
+	internal class DuplicateInstruction : Instruction
+	{
+		#region Overrides of Instruction
 
-        protected override void Handle()
-        {
-            Push(Peek());
-        }
+		protected override void Handle()
+		{
+			Push(Peek());
+		}
 
-        #endregion
-    }
+		#endregion
+	}
 }

@@ -21,78 +21,79 @@ using EarleCode.Utilities;
 
 namespace EarleCode.Runtime
 {
-    public sealed class EarleStackFrameExecutor : EarleBaseStackFrameExecutor
-    {
-        private static readonly IInstruction[] Instructions;
+	public sealed class EarleStackFrameExecutor : EarleBaseStackFrameExecutor
+	{
+		private static readonly IInstruction[] Instructions;
 
-        static EarleStackFrameExecutor()
-        {
-            // Build up array of instructions
-            var ops = typeof(OpCode).GetEnumValues().OfType<OpCode>().ToArray();
-            var count = ops.Max(v => (byte)v) + 1;
-            Instructions = new IInstruction[count];
+		static EarleStackFrameExecutor()
+		{
+			// Build up array of instructions
+			var ops = typeof (OpCode).GetEnumValues().OfType<OpCode>().ToArray();
+			var count = ops.Max(v => (byte) v) + 1;
+			Instructions = new IInstruction[count];
 
-            foreach(var op in ops)
-            {
-                var attribute = op.GetCustomAttribute<OpCodeAttribute>();
+			foreach (var op in ops)
+			{
+				var attribute = op.GetCustomAttribute<OpCodeAttribute>();
 
-                if(attribute?.InstructionType == null)
-                    continue;
+				if (attribute?.InstructionType == null)
+					continue;
 
-                Instructions[(byte)op] = attribute.CreateInstruction(op);
-            }
-        }
+				Instructions[(byte) op] = attribute.CreateInstruction(op);
+			}
+		}
 
-        public EarleStackFrameExecutor(EarleFunction function, EarleStackFrame parentFrame, int callerIp, EarleValue target, IEarleRuntimeScope superScope, EarleDictionary locals) : base(target)
-        {
-            Frame = parentFrame.SpawnChild(function, this, callerIp);
-            Scopes.Push(new EarleRuntimeScope(superScope, locals));
-        }
+		public EarleStackFrameExecutor(EarleFunction function, EarleStackFrame parentFrame, int callerIp, EarleValue target,
+			IEarleRuntimeScope superScope, EarleDictionary locals) : base(target)
+		{
+			Frame = parentFrame.SpawnChild(function, this, callerIp);
+			Scopes.Push(new EarleRuntimeScope(superScope, locals));
+		}
 
-        public override EarleValue? Run()
-        {
-            // If a value is returned, loop is complete, if null is returned, the loop has not yet been completed.
+		public override EarleValue? Run()
+		{
+			// If a value is returned, loop is complete, if null is returned, the loop has not yet been completed.
 
-            if (!Frame.Thread.IsAlive || !RunSubFrame())
-                return null;
+			if (!Frame.Thread.IsAlive || !RunSubFrame())
+				return null;
 
-            var frame = Frame;
-            var pCode = frame.Function.PCode;
-            while (CIP < pCode.Length)
-            {
-                if(!frame.Thread.IsAlive)
-                    return null;
-                
-                var instructionIdentifier = pCode[CIP++];
-                var instruction = instructionIdentifier >= Instructions.Length
-                    ? null
-                    : Instructions[instructionIdentifier];
+			var frame = Frame;
+			var pCode = frame.Function.PCode;
+			while (CIP < pCode.Length)
+			{
+				if (!frame.Thread.IsAlive)
+					return null;
 
-                if (instruction == null)
-                    throw new Exception("Unkown opcode " + (OpCode) instructionIdentifier);
+				var instructionIdentifier = pCode[CIP++];
+				var instruction = instructionIdentifier >= Instructions.Length
+					? null
+					: Instructions[instructionIdentifier];
 
-                instruction.Handle(frame);
+				if (instruction == null)
+					throw new Exception("Unkown opcode " + (OpCode) instructionIdentifier);
 
-                if (!RunSubFrame())
-                    return null;
-            }
+				instruction.Handle(frame);
 
-            return Stack.Pop();
-        }
+				if (!RunSubFrame())
+					return null;
+			}
 
-        private bool RunSubFrame()
-        {
-            if (Frame.ChildFrame != null)
-            {
-                var result = Frame.ChildFrame.Executor.Run();
-                if (result == null)
-                    return false;
+			return Stack.Pop();
+		}
 
-                Stack.Push(result.Value);
-                Frame.ChildFrame = null;
-            }
+		private bool RunSubFrame()
+		{
+			if (Frame.ChildFrame != null)
+			{
+				var result = Frame.ChildFrame.Executor.Run();
+				if (result == null)
+					return false;
 
-            return true;
-        }
-    }
+				Stack.Push(result.Value);
+				Frame.ChildFrame = null;
+			}
+
+			return true;
+		}
+	}
 }

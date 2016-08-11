@@ -13,57 +13,55 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-
 namespace EarleCode.Runtime.Values
 {
-    public class EarleVector2 : IEarleStructure
-    {
-        public EarleVector2(float x, float y)
-        {
-            X = x;
-            Y = y;
-        }
+	public class EarleVector2 : IEarleStructure
+	{
+		public EarleVector2(float x, float y)
+		{
+			X = x;
+			Y = y;
+		}
 
-        public float X { get; }
+		public float X { get; }
 
-        public float Y { get; }
+		public float Y { get; }
 
-        #region Implementation of IEarleStructure
+		#region Overrides of Object
 
-        public EarleValue GetField(string name)
-        {
-            switch(name)
-            {
-                case "x":
-                    return (EarleValue)X;
-                case "y":
-                    return (EarleValue)Y;
-                default:
-                    return EarleValue.Undefined;
-            }
-        }
+		/// <summary>
+		///     Returns a string that represents the current object.
+		/// </summary>
+		/// <returns>
+		///     A string that represents the current object.
+		/// </returns>
+		public override string ToString()
+		{
+			return $"({X}, {Y})";
+		}
 
-        public void SetField(string name, EarleValue value)
-        {
-            // Values cannot be set.
-        }
+		#endregion
 
-        #endregion
+		#region Implementation of IEarleStructure
 
-        #region Overrides of Object
+		public EarleValue GetField(string name)
+		{
+			switch (name)
+			{
+				case "x":
+					return (EarleValue) X;
+				case "y":
+					return (EarleValue) Y;
+				default:
+					return EarleValue.Undefined;
+			}
+		}
 
-        /// <summary>
-        ///     Returns a string that represents the current object.
-        /// </summary>
-        /// <returns>
-        ///     A string that represents the current object.
-        /// </returns>
-        public override string ToString()
-        {
-            return $"({X}, {Y})";
-        }
+		public void SetField(string name, EarleValue value)
+		{
+			// Values cannot be set.
+		}
 
-        #endregion
-    }
+		#endregion
+	}
 }

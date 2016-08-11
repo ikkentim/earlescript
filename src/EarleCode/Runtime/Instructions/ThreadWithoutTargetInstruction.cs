@@ -15,10 +15,8 @@
 
 namespace EarleCode.Runtime.Instructions
 {
-
-    internal class ThreadWithoutTargetInstruction : ThreadInstruction
-    {
-        protected override bool HasTarget => false;
-    }
-    
+	internal class ThreadWithoutTargetInstruction : ThreadInstruction
+	{
+		protected override bool HasTarget => false;
+	}
 }

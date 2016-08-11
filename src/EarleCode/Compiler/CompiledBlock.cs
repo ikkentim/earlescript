@@ -18,33 +18,40 @@ using System.Collections.Generic;
 
 namespace EarleCode.Compiler
 {
-    internal class CompiledBlock
-    {
-        public CompiledBlock(byte[] pCode, Dictionary<int,int> callLines, string[] referencedFiles, int[] breaks, int[] continues, bool requiresScope)
-        {
-            if(pCode == null) throw new ArgumentNullException(nameof(pCode));
-            if(callLines == null) throw new ArgumentNullException(nameof(callLines));
-            if(referencedFiles == null) throw new ArgumentNullException(nameof(referencedFiles));
-            if(breaks == null) throw new ArgumentNullException(nameof(breaks));
-            if(continues == null) throw new ArgumentNullException(nameof(continues));
-            
-            PCode = pCode;
-            CallLines = callLines;
-            Breaks = breaks;
-            Continues = continues;
-            RequiresScope = requiresScope;
-            ReferencedFiles = referencedFiles;
-        }
+	internal class CompiledBlock
+	{
+		public CompiledBlock(byte[] pCode, Dictionary<int, int> callLines, string[] referencedFiles, int[] breaks,
+			int[] continues, bool requiresScope)
+		{
+			if (pCode == null) throw new ArgumentNullException(nameof(pCode));
+			if (callLines == null) throw new ArgumentNullException(nameof(callLines));
+			if (referencedFiles == null) throw new ArgumentNullException(nameof(referencedFiles));
+			if (breaks == null) throw new ArgumentNullException(nameof(breaks));
+			if (continues == null) throw new ArgumentNullException(nameof(continues));
 
-        public byte[] PCode { get; }
-        public Dictionary<int, int> CallLines { get; }
-        public int[] Breaks { get; }
-        public int[] Continues { get; }
-        public bool RequiresScope { get; }
-        public string[] ReferencedFiles { get; }
-        public int Length => PCode.Length;
+			PCode = pCode;
+			CallLines = callLines;
+			Breaks = breaks;
+			Continues = continues;
+			RequiresScope = requiresScope;
+			ReferencedFiles = referencedFiles;
+		}
 
-        public static CompiledBlock Empty { get; } = new CompiledBlock(new byte[0], new Dictionary<int, int>(), new string[0], new int[0], new int[0], false);
-    }
-    
+		public byte[] PCode { get; }
+
+		public Dictionary<int, int> CallLines { get; }
+
+		public int[] Breaks { get; }
+
+		public int[] Continues { get; }
+
+		public bool RequiresScope { get; }
+
+		public string[] ReferencedFiles { get; }
+
+		public int Length => PCode.Length;
+
+		public static CompiledBlock Empty { get; } = new CompiledBlock(new byte[0], new Dictionary<int, int>(), new string[0],
+			new int[0], new int[0], false);
+	}
 }

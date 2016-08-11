@@ -24,260 +24,261 @@ using EarleCode.Utilities;
 
 namespace EarleCode.Compiler
 {
-    internal partial class EarleCompiler
-    {
-        private readonly Dictionary<string, IParser> _parsers = new Dictionary<string, IParser>
-        {
-            ["FUNCTION_CALL"] = new StatementCallParser(),
-            ["ASSIGNMENT"] = new StatementAssignmentParser(),
-            ["STATEMENT_IF"] = new StatementIfParser(),
-            ["STATEMENT_WHILE"] = new StatementWhileParser(),
-            ["STATEMENT_FOR"] = new StatementForParser(),
-            ["STATEMENT_RETURN"] = new StatementReturnParser(),
-            ["STATEMENT_WAIT"] = new StatementWaitParser(),
-            ["STATEMENT_SWITCH"] = new StatementSwitchParser()
-        };
+	internal partial class EarleCompiler
+	{
+		private readonly Dictionary<string, IParser> _parsers = new Dictionary<string, IParser>
+		{
+			["FUNCTION_CALL"] = new StatementCallParser(),
+			["ASSIGNMENT"] = new StatementAssignmentParser(),
+			["STATEMENT_IF"] = new StatementIfParser(),
+			["STATEMENT_WHILE"] = new StatementWhileParser(),
+			["STATEMENT_FOR"] = new StatementForParser(),
+			["STATEMENT_RETURN"] = new StatementReturnParser(),
+			["STATEMENT_WAIT"] = new StatementWaitParser(),
+			["STATEMENT_SWITCH"] = new StatementSwitchParser()
+		};
 
-        private readonly EarleRuntime _runtime;
+		private readonly EarleRuntime _runtime;
 
-        public EarleCompiler(EarleRuntime runtime)
-        {
-            if (runtime == null) throw new ArgumentNullException(nameof(runtime));
-            _runtime = runtime;
+		public EarleCompiler(EarleRuntime runtime)
+		{
+			if (runtime == null) throw new ArgumentNullException(nameof(runtime));
+			_runtime = runtime;
 
-            InitializeGrammarProcessor();
-        }
+			InitializeGrammarProcessor();
+		}
 
-        #region Compiling
+		#region Debugging
 
-        public virtual EarleFile CompileFile(string fileName, string script)
-        {
-            if (fileName == null) throw new ArgumentNullException(nameof(fileName));
-            if (script == null) throw new ArgumentNullException(nameof(script));
+		public IEnumerable<string> GetDebugInformation(EarleFunction function)
+		{
+			if (function == null) throw new ArgumentNullException(nameof(function));
 
-            fileName = fileName.ToLower();
-            var lexer = new Lexer(fileName, script);
-            var file = new EarleFile(_runtime, fileName);
+			yield return $"Function {function.File.Name}::{function.Name} compiled to ({function.PCode.Length:000000} bytes):";
 
-            lexer.MoveNext();
+			for (var index = 0; index < function.PCode.Length; index++)
+			{
+				var b = function.PCode[index];
+				var o = (OpCode) b;
+				var a = o.GetCustomAttribute<OpCodeAttribute>();
 
-            // Recursively look foor function declarations
-            while (lexer.Current != null)
-            {
-                var match = _fileGrammarProcessor.GetMatch(lexer, true);
+				yield return a.BuildString(function.PCode, ref index);
+			}
 
-                switch(match)
-                {
-                    case "FUNCTION_DECLARATION":
-                        // Compile the function and add it to the file
-                        file.AddFunction(CompileFunction(lexer, file));
-                        break;
-                    case "INCLUDE":
-                        lexer.SkipToken(TokenType.Token, "#");
-                        lexer.SkipToken(TokenType.Identifier, "include");
+			yield return string.Empty;
+		}
 
-                        var identifier = !lexer.Current.Is(TokenType.Token, "\\");
-                        var path = identifier ? "\\" : string.Empty;
-                        do
-                        {
-                            // check syntax
-                            if(identifier)
-                                lexer.AssertToken(TokenType.Identifier);
-                            else
-                                lexer.AssertToken(TokenType.Token, "\\");
-                            identifier = !identifier;
+		#endregion
 
-                            path += lexer.Current.Value;
+		#region Compiling
 
-                            lexer.AssertMoveNext();
-                        } while(!lexer.Current.Is(TokenType.Token, ";"));
+		public virtual EarleFile CompileFile(string fileName, string script)
+		{
+			if (fileName == null) throw new ArgumentNullException(nameof(fileName));
+			if (script == null) throw new ArgumentNullException(nameof(script));
 
-                        lexer.SkipToken(TokenType.Token, ";");
+			fileName = fileName.ToLower();
+			var lexer = new Lexer(fileName, script);
+			var file = new EarleFile(_runtime, fileName);
 
-                        file.IncludeFile(path);
-                        break;
-                    default:
-                        throw new ParseException(lexer.Current,
-                            $"Expected function, found {match} `{lexer.Current.Value}`");
-                }
-            }
+			lexer.MoveNext();
 
-            return file;
-        }
+			// Recursively look foor function declarations
+			while (lexer.Current != null)
+			{
+				var match = _fileGrammarProcessor.GetMatch(lexer, true);
 
-        public EarleFunction CompileFunction(ILexer lexer, EarleFile file)
-        {
-            if (lexer == null) throw new ArgumentNullException(nameof(lexer));
+				switch (match)
+				{
+					case "FUNCTION_DECLARATION":
+						// Compile the function and add it to the file
+						file.AddFunction(CompileFunction(lexer, file));
+						break;
+					case "INCLUDE":
+						lexer.SkipToken(TokenType.Token, "#");
+						lexer.SkipToken(TokenType.Identifier, "include");
 
-            var name = lexer.Current.Value.ToLower();
-            var parameters = new List<string>();
+						var identifier = !lexer.Current.Is(TokenType.Token, "\\");
+						var path = identifier ? "\\" : string.Empty;
+						do
+						{
+							// check syntax
+							if (identifier)
+								lexer.AssertToken(TokenType.Identifier);
+							else
+								lexer.AssertToken(TokenType.Token, "\\");
+							identifier = !identifier;
 
-            lexer.AssertMoveNext();
+							path += lexer.Current.Value;
 
-            lexer.SkipToken(TokenType.Token, "(");
+							lexer.AssertMoveNext();
+						} while (!lexer.Current.Is(TokenType.Token, ";"));
 
-            while (!lexer.Current.Is(TokenType.Token, ")"))
-            {
-                lexer.AssertToken(TokenType.Identifier);
+						lexer.SkipToken(TokenType.Token, ";");
 
-                if (parameters.Contains(lexer.Current.Value))
-                    throw new ParseException(lexer.Current, $"Duplicate parameter name in function \"{name}\"");
+						file.IncludeFile(path);
+						break;
+					default:
+						throw new ParseException(lexer.Current,
+							$"Expected function, found {match} `{lexer.Current.Value}`");
+				}
+			}
 
-                parameters.Add(lexer.Current.Value);
-                lexer.AssertMoveNext();
+			return file;
+		}
 
-                if (lexer.Current.Is(TokenType.Token, ")"))
-                    break;
+		public EarleFunction CompileFunction(ILexer lexer, EarleFile file)
+		{
+			if (lexer == null) throw new ArgumentNullException(nameof(lexer));
 
-                lexer.SkipToken(TokenType.Token, ",");
-            }
+			var name = lexer.Current.Value.ToLower();
+			var parameters = new List<string>();
 
-            lexer.SkipToken(TokenType.Token, ")");
+			lexer.AssertMoveNext();
 
-            var lastLine = lexer.Current.Line;
-            var block = Compile(lexer, file, EarleCompileOptions.Method);
-            file.AddReferencedFiles(block.ReferencedFiles);
+			lexer.SkipToken(TokenType.Token, "(");
 
-            return new EarleFunction(file, name, parameters.ToArray(), block.PCode, block.CallLines);
-        }
+			while (!lexer.Current.Is(TokenType.Token, ")"))
+			{
+				lexer.AssertToken(TokenType.Identifier);
 
-        public CompiledBlock Compile(ILexer lexer, EarleFile file, EarleCompileOptions options)
-        {
-            var pCode = new List<byte>();
-            var callLines = new Dictionary<int, int>();
-            var breaks = new List<int>();
-            var continues = new List<int>();
-            var usedFiles = new List<string>();
+				if (parameters.Contains(lexer.Current.Value))
+					throw new ParseException(lexer.Current, $"Duplicate parameter name in function \"{name}\"");
 
-            var didReturnAnyValue = false;
-            var multiLine = false;
+				parameters.Add(lexer.Current.Value);
+				lexer.AssertMoveNext();
 
-            var startLine = lexer.Current.Line;
+				if (lexer.Current.Is(TokenType.Token, ")"))
+					break;
 
-            if (lexer.Current.Is(TokenType.Token, "{"))
-            {
-                multiLine = true;
-                lexer.AssertMoveNext();
-            }
+				lexer.SkipToken(TokenType.Token, ",");
+			}
 
-            var requiresScope = false;
+			lexer.SkipToken(TokenType.Token, ")");
 
-            do
-            {
-                if(multiLine && lexer.Current.Is(TokenType.Token, "}"))
-                    break;
-                
-                var parserName = SyntaxGrammarProcessor.GetMatch(lexer, true);
-                if (parserName == null)
-                    throw new ParseException(lexer.Current, $"Expected statement, found token `{lexer.Current.Value}`");
+			var lastLine = lexer.Current.Line;
+			var block = Compile(lexer, file, EarleCompileOptions.Method);
+			file.AddReferencedFiles(block.ReferencedFiles);
 
-                if(parserName == "STATEMENT_BREAK" && options.HasFlag(EarleCompileOptions.CanBreak))
-                {
-                    lexer.SkipToken(TokenType.Identifier, "break");
-                    lexer.SkipToken(TokenType.Token, ";");
+			return new EarleFunction(file, name, parameters.ToArray(), block.PCode, block.CallLines);
+		}
 
-                    breaks.Add(pCode.Count);
-                    pCode.Add((byte)OpCode.Jump);
-                    pCode.AddRange(ArrayUtility.Repeat((byte) 0xaa, 4));
-                    didReturnAnyValue = false;
+		public CompiledBlock Compile(ILexer lexer, EarleFile file, EarleCompileOptions options)
+		{
+			var pCode = new List<byte>();
+			var callLines = new Dictionary<int, int>();
+			var breaks = new List<int>();
+			var continues = new List<int>();
+			var usedFiles = new List<string>();
 
-                    if(options.HasFlag(EarleCompileOptions.EnforceMultiline))
-                        break;
-                }
-                else if(parserName == "STATEMENT_CONTINUE" && options.HasFlag(EarleCompileOptions.CanContinue))
-                {
-                    lexer.SkipToken(TokenType.Identifier, "continue");
-                    lexer.SkipToken(TokenType.Token, ";");
+			var didReturnAnyValue = false;
+			var multiLine = false;
 
-                    continues.Add(pCode.Count);
-                    pCode.Add((byte)OpCode.Jump);
-                    pCode.AddRange(ArrayUtility.Repeat((byte)0xaa, 4));
-                    didReturnAnyValue = false;
+			var startLine = lexer.Current.Line;
 
-                    if(options.HasFlag(EarleCompileOptions.EnforceMultiline))
-                        break;
-                }
-                else
-                {
-                    IParser parser;
-                    if(!_parsers.TryGetValue(parserName, out parser))
-                        throw new ParseException(lexer.Current,
-                            $"Expected statement, found {parserName.ToLower()} `{lexer.Current.Value}`");
+			if (lexer.Current.Is(TokenType.Token, "{"))
+			{
+				multiLine = true;
+				lexer.AssertMoveNext();
+			}
 
-                    var parseOptions = options.HasFlag(EarleCompileOptions.MustReturn) 
-                                              ? options ^ EarleCompileOptions.MustReturn 
-                                              : options;
-                    
-                    var block = parser.Parse(_runtime, file, lexer, parseOptions);
+			var requiresScope = false;
 
-                    var startIndex = pCode.Count;
-                    breaks.AddRange(block.Breaks.Select(b => b + pCode.Count));
-                    foreach(var p in block.CallLines)
-                        callLines.Add(p.Key + startIndex, p.Value);
-                    continues.AddRange(block.Continues.Select(c => c + pCode.Count));
-                    usedFiles.AddRange(block.ReferencedFiles.Where(f => !usedFiles.Contains(f)));
-                    requiresScope = requiresScope || block.RequiresScope;
-                    pCode.AddRange(block.PCode);
+			do
+			{
+				if (multiLine && lexer.Current.Is(TokenType.Token, "}"))
+					break;
 
-                    if(parser is ISimpleStatement)
-                        lexer.SkipToken(TokenType.Token, ";");
+				var parserName = SyntaxGrammarProcessor.GetMatch(lexer, true);
+				if (parserName == null)
+					throw new ParseException(lexer.Current, $"Expected statement, found token `{lexer.Current.Value}`");
 
-                    didReturnAnyValue = parser is StatementReturnParser;
+				if (parserName == "STATEMENT_BREAK" && options.HasFlag(EarleCompileOptions.CanBreak))
+				{
+					lexer.SkipToken(TokenType.Identifier, "break");
+					lexer.SkipToken(TokenType.Token, ";");
 
-                    if(didReturnAnyValue && options.HasFlag(EarleCompileOptions.EnforceMultiline))
-                        break;
-                }
+					breaks.Add(pCode.Count);
+					pCode.Add((byte) OpCode.Jump);
+					pCode.AddRange(ArrayUtility.Repeat((byte) 0xaa, 4));
+					didReturnAnyValue = false;
 
-                if(options.HasFlag(EarleCompileOptions.EnforceMultiline) && SyntaxGrammarProcessor.MatchStartsWith(lexer, "LABEL_"))
-                    break;
-                
-            } while (options.HasFlag(EarleCompileOptions.EnforceMultiline) || (multiLine && !lexer.Current.Is(TokenType.Token, "}")));
+					if (options.HasFlag(EarleCompileOptions.EnforceMultiline))
+						break;
+				}
+				else if (parserName == "STATEMENT_CONTINUE" && options.HasFlag(EarleCompileOptions.CanContinue))
+				{
+					lexer.SkipToken(TokenType.Identifier, "continue");
+					lexer.SkipToken(TokenType.Token, ";");
 
-            if(multiLine)
-            {
-                lexer.AssertToken(TokenType.Token, "}");
-                lexer.MoveNext();
-            }
+					continues.Add(pCode.Count);
+					pCode.Add((byte) OpCode.Jump);
+					pCode.AddRange(ArrayUtility.Repeat((byte) 0xaa, 4));
+					didReturnAnyValue = false;
 
-            if(!didReturnAnyValue && options.HasFlag(EarleCompileOptions.MustReturn))
-            {
-                pCode.Add((byte)OpCode.PushUndefined);
-            }
+					if (options.HasFlag(EarleCompileOptions.EnforceMultiline))
+						break;
+				}
+				else
+				{
+					IParser parser;
+					if (!_parsers.TryGetValue(parserName, out parser))
+						throw new ParseException(lexer.Current,
+							$"Expected statement, found {parserName.ToLower()} `{lexer.Current.Value}`");
 
-            if(requiresScope)
-            {
-                pCode.Insert(0, (byte)OpCode.PushScope);
-                pCode.Add((byte)OpCode.PopScope);
+					var parseOptions = options.HasFlag(EarleCompileOptions.MustReturn)
+						? options ^ EarleCompileOptions.MustReturn
+						: options;
 
-                // Increase keys because of the inserted PUSH.S instruction
-                callLines = new Dictionary<int, int>(callLines.ToDictionary(kv => kv.Key + 1, kv => kv.Value));
-            }
+					var block = parser.Parse(_runtime, file, lexer, parseOptions);
 
-            return new CompiledBlock(pCode.ToArray(), callLines, usedFiles.ToArray(), breaks.ToArray(), continues.ToArray(), false);
-        }
+					var startIndex = pCode.Count;
+					breaks.AddRange(block.Breaks.Select(b => b + pCode.Count));
+					foreach (var p in block.CallLines)
+						callLines.Add(p.Key + startIndex, p.Value);
+					continues.AddRange(block.Continues.Select(c => c + pCode.Count));
+					usedFiles.AddRange(block.ReferencedFiles.Where(f => !usedFiles.Contains(f)));
+					requiresScope = requiresScope || block.RequiresScope;
+					pCode.AddRange(block.PCode);
 
-        #endregion
+					if (parser is ISimpleStatement)
+						lexer.SkipToken(TokenType.Token, ";");
 
-        #region Debugging
+					didReturnAnyValue = parser is StatementReturnParser;
 
-        public IEnumerable<string> GetDebugInformation(EarleFunction function)
-        {
-            if (function == null) throw new ArgumentNullException(nameof(function));
+					if (didReturnAnyValue && options.HasFlag(EarleCompileOptions.EnforceMultiline))
+						break;
+				}
 
-            yield return $"Function {function.File.Name}::{function.Name} compiled to ({function.PCode.Length:000000} bytes):";
+				if (options.HasFlag(EarleCompileOptions.EnforceMultiline) && SyntaxGrammarProcessor.MatchStartsWith(lexer, "LABEL_"))
+					break;
+			} while (options.HasFlag(EarleCompileOptions.EnforceMultiline) ||
+			         (multiLine && !lexer.Current.Is(TokenType.Token, "}")));
 
-            for(var index = 0; index < function.PCode.Length; index++)
-            {
-                var b = function.PCode[index];
-                var o = (OpCode)b;
-                var a = o.GetCustomAttribute<OpCodeAttribute>();
-                
-                yield return a.BuildString(function.PCode, ref index);
-            }
+			if (multiLine)
+			{
+				lexer.AssertToken(TokenType.Token, "}");
+				lexer.MoveNext();
+			}
 
-            yield return string.Empty;
-        }
+			if (!didReturnAnyValue && options.HasFlag(EarleCompileOptions.MustReturn))
+			{
+				pCode.Add((byte) OpCode.PushUndefined);
+			}
 
-        #endregion
-    }
+			if (requiresScope)
+			{
+				pCode.Insert(0, (byte) OpCode.PushScope);
+				pCode.Add((byte) OpCode.PopScope);
+
+				// Increase keys because of the inserted PUSH.S instruction
+				callLines = new Dictionary<int, int>(callLines.ToDictionary(kv => kv.Key + 1, kv => kv.Value));
+			}
+
+			return new CompiledBlock(pCode.ToArray(), callLines, usedFiles.ToArray(), breaks.ToArray(), continues.ToArray(),
+				false);
+		}
+
+		#endregion
+	}
 }

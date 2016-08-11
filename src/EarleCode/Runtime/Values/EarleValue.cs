@@ -19,144 +19,144 @@ using System.Linq;
 
 namespace EarleCode.Runtime.Values
 {
-    public struct EarleValue
-    {
-        public EarleValue(object value) : this()
-        {
-            if(value is bool)
-                value = (bool)value ? 1 : 0;
-            
-            Value = value;
-        }
+	public struct EarleValue
+	{
+		public EarleValue(object value) : this()
+		{
+			if (value is bool)
+				value = (bool) value ? 1 : 0;
 
-        public static readonly EarleValue Undefined  = new EarleValue();
+			Value = value;
+		}
 
-        public static EarleValue True { get; } = new EarleValue(1);
+		public static readonly EarleValue Undefined = new EarleValue();
 
-        public static EarleValue False { get; } = new EarleValue(0);
+		public static EarleValue True { get; } = new EarleValue(1);
 
-        public object Value { get; }
+		public static EarleValue False { get; } = new EarleValue(0);
 
-        public bool HasValue => Value != null;
+		public object Value { get; }
 
-        #region To
+		public bool HasValue => Value != null;
 
-        public T CastTo<T>()
-        {
-            if(Is<T>())
-                return As<T>();
-            
-            var result = CastTo(typeof (T));
-            return (T) (result ?? default(T));
-        }
+		#region To
 
-        public object CastTo(Type type)
-        {
-            var caster = EarleValueTypeStore.GetCaster(Value?.GetType(), type);
+		public T CastTo<T>()
+		{
+			if (Is<T>())
+				return As<T>();
 
-            if(caster == null)
-                return null;
+			var result = CastTo(typeof (T));
+			return (T) (result ?? default(T));
+		}
 
-            return caster(Value);
-        }
+		public object CastTo(Type type)
+		{
+			var caster = EarleValueTypeStore.GetCaster(Value?.GetType(), type);
 
-        #endregion
+			if (caster == null)
+				return null;
 
-        #region As
+			return caster(Value);
+		}
 
-        [DebuggerHidden]
-        public void AssertOfType(params Type[] types)
-        {
-            if (types == null) throw new ArgumentNullException(nameof(types));
+		#endregion
 
-            if (!IsAny(types))
-                throw new Exception("Unexpected earle value type");
-        }
+		#region As
 
-        public T As<T>()
-        {
-            return Value is T ? (T) Value : default(T);
-        }
+		[DebuggerHidden]
+		public void AssertOfType(params Type[] types)
+		{
+			if (types == null) throw new ArgumentNullException(nameof(types));
 
-        public object As(Type type)
-        {
-            return Is(type) ? Value : null;
-        }
+			if (!IsAny(types))
+				throw new Exception("Unexpected earle value type");
+		}
 
-        #endregion
+		public T As<T>()
+		{
+			return Value is T ? (T) Value : default(T);
+		}
 
-        #region Is
+		public object As(Type type)
+		{
+			return Is(type) ? Value : null;
+		}
 
-        public bool Is<T>()
-        {
-            return Value is T;
-        }
+		#endregion
 
-        public bool Is(Type type)
-        {
-            return type?.IsInstanceOfType(Value) ?? Value == null;
-        }
+		#region Is
 
-        public bool IsAny(params Type[] types)
-        {
-            return types != null && types.Length != 0 && types.Any(Is);
-        }
+		public bool Is<T>()
+		{
+			return Value is T;
+		}
 
-        #endregion
+		public bool Is(Type type)
+		{
+			return type?.IsInstanceOfType(Value) ?? Value == null;
+		}
 
-        public static explicit operator int(EarleValue value)
-        {
-            return value.CastTo<int>();
-        }
+		public bool IsAny(params Type[] types)
+		{
+			return types != null && types.Length != 0 && types.Any(Is);
+		}
 
-        public static explicit operator float(EarleValue value)
-        {
-            return value.CastTo<float>();
-        }
+		#endregion
 
-        public static explicit operator string(EarleValue value)
-        {
-            return value.CastTo<string>();
-        }
+		public static explicit operator int(EarleValue value)
+		{
+			return value.CastTo<int>();
+		}
 
-        public static explicit operator bool(EarleValue value)
-        {
-            return value.CastTo<bool>();
-        }
+		public static explicit operator float(EarleValue value)
+		{
+			return value.CastTo<float>();
+		}
 
-        public static explicit operator EarleValue(bool value)
-        {
-            return value ? True : False;
-        }
+		public static explicit operator string(EarleValue value)
+		{
+			return value.CastTo<string>();
+		}
 
-        public static explicit operator EarleValue(int value)
-        {
-            return new EarleValue(value);
-        }
+		public static explicit operator bool(EarleValue value)
+		{
+			return value.CastTo<bool>();
+		}
 
-        public static explicit operator EarleValue(float value)
-        {
-            return new EarleValue(value);
-        }
+		public static explicit operator EarleValue(bool value)
+		{
+			return value ? True : False;
+		}
 
-        public static explicit operator EarleValue(string value)
-        {
-            return new EarleValue(value);
-        }
+		public static explicit operator EarleValue(int value)
+		{
+			return new EarleValue(value);
+		}
 
-        #region Overrides of ValueType
+		public static explicit operator EarleValue(float value)
+		{
+			return new EarleValue(value);
+		}
 
-        /// <summary>
-        ///     Returns the fully qualified type name of this instance.
-        /// </summary>
-        /// <returns>
-        ///     A <see cref="T:System.String" /> containing a fully qualified type name.
-        /// </returns>
-        public override string ToString()
-        {
-            return $@"EarleValue (Value = ""{Value?.ToString() ?? "undefined"}"")";
-        }
+		public static explicit operator EarleValue(string value)
+		{
+			return new EarleValue(value);
+		}
 
-        #endregion
-    }
+		#region Overrides of ValueType
+
+		/// <summary>
+		///     Returns the fully qualified type name of this instance.
+		/// </summary>
+		/// <returns>
+		///     A <see cref="T:System.String" /> containing a fully qualified type name.
+		/// </returns>
+		public override string ToString()
+		{
+			return $@"EarleValue (Value = ""{Value?.ToString() ?? "undefined"}"")";
+		}
+
+		#endregion
+	}
 }

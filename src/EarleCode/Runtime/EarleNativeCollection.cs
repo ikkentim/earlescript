@@ -1,46 +1,62 @@
-﻿using System;
+﻿// EarleCode
+// Copyright 2016 Tim Potze
+// 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+// 
+//     http://www.apache.org/licenses/LICENSE-2.0
+// 
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+using System;
 using System.Linq;
 using System.Reflection;
 
 namespace EarleCode.Runtime
 {
-    public sealed class EarleNativeCollection
-    {
-        private readonly EarleFunctionTable _natives = new EarleFunctionTable();
+	public sealed class EarleNativeCollection
+	{
+		private readonly EarleFunctionTable _natives = new EarleFunctionTable();
 
-        public void Register(EarleFunction native)
-        {
-            if(native == null) throw new ArgumentNullException(nameof(native));
+		public void Register(EarleFunction native)
+		{
+			if (native == null) throw new ArgumentNullException(nameof(native));
 
-            _natives.Add(native);
-        }
+			_natives.Add(native);
+		}
 
-        public void RegisterInType<T>()
-        {
-            RegisterInType(typeof(T));
-        }
+		public void RegisterInType<T>()
+		{
+			RegisterInType(typeof (T));
+		}
 
-        public void RegisterInType(Type type)
-        {
-            if(type == null) throw new ArgumentNullException(nameof(type));
+		public void RegisterInType(Type type)
+		{
+			if (type == null) throw new ArgumentNullException(nameof(type));
 
-            foreach(var method in type.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static))
-            {
-                var attribute = method.GetCustomAttributes(typeof(EarleNativeFunctionAttribute), true)?.FirstOrDefault() as EarleNativeFunctionAttribute;
+			foreach (var method in type.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static))
+			{
+				var attribute =
+					method.GetCustomAttributes(typeof (EarleNativeFunctionAttribute), true)?.FirstOrDefault() as
+						EarleNativeFunctionAttribute;
 
-                if(attribute == null)
-                    continue;
+				if (attribute == null)
+					continue;
 
-                var name = attribute.Name?.ToLower() ?? method.Name.ToLower();
+				var name = attribute.Name?.ToLower() ?? method.Name.ToLower();
 
-                Register(EarleNativeFunction.Create(name, null, method));
-            }
-        }
+				Register(EarleNativeFunction.Create(name, null, method));
+			}
+		}
 
-        public EarleFunctionCollection Get(string name)
-        {
-            return _natives.Get(name);
-        }
-    }
+		public EarleFunctionCollection Get(string name)
+		{
+			return _natives.Get(name);
+		}
+	}
 }
-

@@ -13,32 +13,31 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 using EarleCode.Compiler.Lexing;
 using EarleCode.Runtime.Instructions;
 
 namespace EarleCode.Compiler.Parsers
 {
-    internal class StatementReturnParser : Parser, ISimpleStatement
-    {
-        #region Overrides of Parser
+	internal class StatementReturnParser : Parser, ISimpleStatement
+	{
+		#region Overrides of Parser
 
-        protected override void Parse()
-        {
-            // Output:
-            // EXPRESSION   (?)
-            // RETURN       (1)
+		protected override void Parse()
+		{
+			// Output:
+			// EXPRESSION   (?)
+			// RETURN       (1)
 
-            Lexer.SkipToken(TokenType.Identifier, "return");
+			Lexer.SkipToken(TokenType.Identifier, "return");
 
-            if (Lexer.Current.Is(TokenType.Token, ";"))
-                Yield(OpCode.PushUndefined);
-            else
-                Parse<ExpressionParser>();
+			if (Lexer.Current.Is(TokenType.Token, ";"))
+				Yield(OpCode.PushUndefined);
+			else
+				Parse<ExpressionParser>();
 
-            Yield(OpCode.Return);
-        }
+			Yield(OpCode.Return);
+		}
 
-        #endregion
-    }
+		#endregion
+	}
 }

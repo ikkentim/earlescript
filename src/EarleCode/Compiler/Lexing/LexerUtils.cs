@@ -19,55 +19,55 @@ using EarleCode.Compiler.Parsers;
 
 namespace EarleCode.Compiler.Lexing
 {
-    public static class LexerUtils
-    {
-        [DebuggerHidden]
-        public static void AssertMoveNext(this ILexer lexer)
-        {
-            if (!lexer.MoveNext())
-                throw new ParseException("Unexpected end of file");
-        }
+	public static class LexerUtils
+	{
+		[DebuggerHidden]
+		public static void AssertMoveNext(this ILexer lexer)
+		{
+			if (!lexer.MoveNext())
+				throw new ParseException("Unexpected end of file");
+		}
 
-        [DebuggerHidden]
-        public static void AssertToken(this ILexer lexer, TokenType type, string value)
-        {
-            if (lexer.Current.Type != type || lexer.Current.Value != value)
-                throw new ParseException(lexer.Current, "Unexpected token");
-        }
+		[DebuggerHidden]
+		public static void AssertToken(this ILexer lexer, TokenType type, string value)
+		{
+			if (lexer.Current.Type != type || lexer.Current.Value != value)
+				throw new ParseException(lexer.Current, "Unexpected token");
+		}
 
-        [DebuggerHidden]
-        public static void AssertToken(this ILexer lexer, TokenType type, params string[] values)
-        {
-            if (lexer.Current.Type != type || !values.Contains(lexer.Current.Value))
-                throw new ParseException(lexer.Current, "Unexpected token");
-        }
+		[DebuggerHidden]
+		public static void AssertToken(this ILexer lexer, TokenType type, params string[] values)
+		{
+			if (lexer.Current.Type != type || !values.Contains(lexer.Current.Value))
+				throw new ParseException(lexer.Current, "Unexpected token");
+		}
 
-        [DebuggerHidden]
-        public static void AssertToken(this ILexer lexer, TokenType type)
-        {
-            if (lexer.Current.Type != type)
-                throw new ParseException(lexer.Current, "Unexpected token");
-        }
+		[DebuggerHidden]
+		public static void AssertToken(this ILexer lexer, TokenType type)
+		{
+			if (lexer.Current.Type != type)
+				throw new ParseException(lexer.Current, "Unexpected token");
+		}
 
-        [DebuggerHidden]
-        public static void SkipToken(this ILexer lexer, TokenType type, string value)
-        {
-            AssertToken(lexer, type, value);
-            AssertMoveNext(lexer);
-        }
+		[DebuggerHidden]
+		public static void SkipToken(this ILexer lexer, TokenType type, string value)
+		{
+			AssertToken(lexer, type, value);
+			AssertMoveNext(lexer);
+		}
 
-        [DebuggerHidden]
-        public static void SkipToken(this ILexer lexer, TokenType type, params string[] values)
-        {
-            AssertToken(lexer, type, values);
-            AssertMoveNext(lexer);
-        }
+		[DebuggerHidden]
+		public static void SkipToken(this ILexer lexer, TokenType type, params string[] values)
+		{
+			AssertToken(lexer, type, values);
+			AssertMoveNext(lexer);
+		}
 
-        [DebuggerHidden]
-        public static void SkipToken(this ILexer lexer, TokenType type)
-        {
-            AssertToken(lexer, type);
-            AssertMoveNext(lexer);
-        }
-    }
+		[DebuggerHidden]
+		public static void SkipToken(this ILexer lexer, TokenType type)
+		{
+			AssertToken(lexer, type);
+			AssertMoveNext(lexer);
+		}
+	}
 }

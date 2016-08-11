@@ -15,15 +15,15 @@
 
 namespace EarleCode.Runtime.Instructions
 {
-    internal class ReturnInstruction : IInstruction
-    {
-        #region Implementation of IInstruction
+	internal class ReturnInstruction : IInstruction
+	{
+		#region Implementation of IInstruction
 
-        public void Handle(EarleStackFrame frame)
-        {
-            frame.Executor.CIP = frame.Function.PCode.Length;
-        }
+		public void Handle(EarleStackFrame frame)
+		{
+			frame.Executor.CIP = frame.Function.PCode.Length;
+		}
 
-        #endregion
-    }
+		#endregion
+	}
 }

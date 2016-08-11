@@ -15,15 +15,15 @@
 
 namespace EarleCode.Runtime.Instructions
 {
-    internal class PopScopeInstruction : Instruction
-    {
-        #region Overrides of Instruction
+	internal class PopScopeInstruction : Instruction
+	{
+		#region Overrides of Instruction
 
-        protected override void Handle()
-        {
-            Frame.Executor.Scopes.Pop();
-        }
+		protected override void Handle()
+		{
+			Frame.Executor.Scopes.Pop();
+		}
 
-        #endregion
-    }
+		#endregion
+	}
 }

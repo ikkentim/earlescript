@@ -18,33 +18,32 @@ using EarleCode.Runtime.Values;
 
 namespace EarleCode.Runtime.Instructions
 {
-    internal class PushFunctionReferenceInstruction : Instruction
-    {
-        #region Overrides of Instruction
+	internal class PushFunctionReferenceInstruction : Instruction
+	{
+		#region Overrides of Instruction
 
-        protected override void Handle()
-        {
-            var refString = GetString();
+		protected override void Handle()
+		{
+			var refString = GetString();
 
-            string file = null,
-                name;
+			string file = null,
+				name;
 
-            if(refString.Contains("::"))
-            {
-                var spl = refString.Split(new[] { "::" }, StringSplitOptions.None);
-                file = spl[0];
-                name = spl[1];
-            }
-            else
-                name = refString;
+			if (refString.Contains("::"))
+			{
+				var spl = refString.Split(new[] {"::"}, StringSplitOptions.None);
+				file = spl[0];
+				name = spl[1];
+			}
+			else
+				name = refString;
 
-            if(file != null && file.Length == 0)
-                file = null;
-            
-            Push(Frame.Executor.GetFunctionReference(file, name).ToEarleValue());
-        }
+			if (file != null && file.Length == 0)
+				file = null;
 
-        #endregion
-    }
-    
+			Push(Frame.Executor.GetFunctionReference(file, name).ToEarleValue());
+		}
+
+		#endregion
+	}
 }

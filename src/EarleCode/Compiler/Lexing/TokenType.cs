@@ -15,11 +15,11 @@
 
 namespace EarleCode.Compiler.Lexing
 {
-    public enum TokenType : byte
-    {
-        Identifier,
-        NumberLiteral,
-        StringLiteral,
-        Token
-    }
+	public enum TokenType : byte
+	{
+		Identifier,
+		NumberLiteral,
+		StringLiteral,
+		Token
+	}
 }

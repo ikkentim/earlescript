@@ -13,20 +13,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
-using EarleCode.Runtime.Values;
-
 namespace EarleCode.Runtime.Instructions
 {
-    internal class ReadInstruction : Instruction
-    {
-        #region Overrides of Instruction
+	internal class ReadInstruction : Instruction
+	{
+		#region Overrides of Instruction
 
-        protected override void Handle()
-        {
-            Push(Frame.Executor.GetValue(GetString()));
-        }
+		protected override void Handle()
+		{
+			Push(Frame.Executor.GetValue(GetString()));
+		}
 
-        #endregion
-    }
+		#endregion
+	}
 }

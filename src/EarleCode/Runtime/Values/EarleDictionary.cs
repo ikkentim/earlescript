@@ -19,72 +19,72 @@ using System.Collections.Generic;
 
 namespace EarleCode.Runtime.Values
 {
-    public class EarleDictionary : IEnumerable<KeyValuePair<string, EarleValue>>
-    {
-        private readonly Dictionary<string, EarleValue> _values;
+	public class EarleDictionary : IEnumerable<KeyValuePair<string, EarleValue>>
+	{
+		private readonly Dictionary<string, EarleValue> _values;
 
-        public EarleDictionary()
-        {
-            _values = new Dictionary<string, EarleValue>();
-        }
+		public EarleDictionary()
+		{
+			_values = new Dictionary<string, EarleValue>();
+		}
 
-        public EarleDictionary(EarleDictionary dictionary)
-        {
-            if(dictionary == null)
-                throw new ArgumentNullException(nameof(dictionary));
-            
-            _values = new Dictionary<string, EarleValue>(dictionary._values);
-        }
+		public EarleDictionary(EarleDictionary dictionary)
+		{
+			if (dictionary == null)
+				throw new ArgumentNullException(nameof(dictionary));
 
-        public ICollection<string> Keys => _values.Keys;
+			_values = new Dictionary<string, EarleValue>(dictionary._values);
+		}
 
-        public ICollection<EarleValue> Values => _values.Values;
+		public ICollection<string> Keys => _values.Keys;
 
-        public int Count => _values.Count;
+		public ICollection<EarleValue> Values => _values.Values;
 
-        public EarleValue this[string key]
-        {
-            get
-            {
-                if (key == null) throw new ArgumentNullException(nameof(key));
-                EarleValue value;
-                return _values.TryGetValue(key, out value) ? value : EarleValue.Undefined;
-            }
-            set
-            {
-                if (key == null) throw new ArgumentNullException(nameof(key));
-                if (value.Is(null))
-                    _values.Remove(key);
-                else
-                    _values[key] = value;
-            }
-        }
+		public int Count => _values.Count;
+
+		public EarleValue this[string key]
+		{
+			get
+			{
+				if (key == null) throw new ArgumentNullException(nameof(key));
+				EarleValue value;
+				return _values.TryGetValue(key, out value) ? value : EarleValue.Undefined;
+			}
+			set
+			{
+				if (key == null) throw new ArgumentNullException(nameof(key));
+				if (value.Is(null))
+					_values.Remove(key);
+				else
+					_values[key] = value;
+			}
+		}
 
 
-        public bool ContainsKey(string key) => _values.ContainsKey(key);
+		public bool ContainsKey(string key) => _values.ContainsKey(key);
 
-        public bool ContainsValue(EarleValue value) => _values.ContainsValue(value);
+		public bool ContainsValue(EarleValue value) => _values.ContainsValue(value);
 
-        public void Clear() => _values.Clear();
+		public void Clear() => _values.Clear();
 
-        #region Implementation of IEnumerable
+		#region Implementation of IEnumerable
 
-        /// <summary>
-        ///     Returns an enumerator that iterates through the collection.
-        /// </summary>
-        /// <returns>
-        ///     A <see cref="T:System.Collections.Generic.IEnumerator`1" /> that can be used to iterate through the collection.
-        /// </returns>
-        public IEnumerator<KeyValuePair<string, EarleValue>> GetEnumerator() =>  _values.GetEnumerator();
+		/// <summary>
+		///     Returns an enumerator that iterates through the collection.
+		/// </summary>
+		/// <returns>
+		///     A <see cref="T:System.Collections.Generic.IEnumerator`1" /> that can be used to iterate through the collection.
+		/// </returns>
+		public IEnumerator<KeyValuePair<string, EarleValue>> GetEnumerator() => _values.GetEnumerator();
 
-        /// <summary>
-        ///     Returns an enumerator that iterates through a collection.
-        /// </summary>
-        /// <returns>
-        ///     An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.
-        /// </returns>
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+		/// <summary>
+		///     Returns an enumerator that iterates through a collection.
+		/// </summary>
+		/// <returns>
+		///     An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.
+		/// </returns>
+		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-        #endregion
-    }
+		#endregion
+	}
 }

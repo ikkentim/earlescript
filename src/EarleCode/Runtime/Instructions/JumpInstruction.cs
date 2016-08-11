@@ -15,15 +15,15 @@
 
 namespace EarleCode.Runtime.Instructions
 {
-    internal class JumpInstruction : Instruction
-    {
-        #region Overrides of Instruction
+	internal class JumpInstruction : Instruction
+	{
+		#region Overrides of Instruction
 
-        protected override void Handle()
-        {
-            Jump(GetInt32());
-        }
+		protected override void Handle()
+		{
+			Jump(GetInt32());
+		}
 
-        #endregion
-    }
+		#endregion
+	}
 }

@@ -15,18 +15,17 @@
 
 using System;
 using System.Linq;
-using System.Reflection;
 
 namespace EarleCode.Utilities
 {
-    public static class EnumUtility
-    {
-        public static TAttribute GetCustomAttribute<TAttribute>(this Enum enumValue) where TAttribute : Attribute
-        {
-            return enumValue.GetType()
-                     .GetMember(enumValue.ToString()).FirstOrDefault()
-                     .GetCustomAttributes(false).OfType<TAttribute>()
-                     .FirstOrDefault();
-        }
-    }
+	public static class EnumUtility
+	{
+		public static TAttribute GetCustomAttribute<TAttribute>(this Enum enumValue) where TAttribute : Attribute
+		{
+			return enumValue.GetType()
+				.GetMember(enumValue.ToString()).FirstOrDefault()
+				.GetCustomAttributes(false).OfType<TAttribute>()
+				.FirstOrDefault();
+		}
+	}
 }

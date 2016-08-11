@@ -18,50 +18,50 @@ using System.Linq;
 
 namespace EarleCode.Compiler.Lexing
 {
-    public class Token
-    {
-        public Token(TokenType type, string value, string file, int line, int column)
-        {
-            if (file == null) throw new ArgumentNullException(nameof(file));
-            Type = type;
-            Value = value;
-            File = file;
-            Line = line;
-            Column = column;
-        }
+	public class Token
+	{
+		public Token(TokenType type, string value, string file, int line, int column)
+		{
+			if (file == null) throw new ArgumentNullException(nameof(file));
+			Type = type;
+			Value = value;
+			File = file;
+			Line = line;
+			Column = column;
+		}
 
-        public int Line { get; }
+		public int Line { get; }
 
-        public int Column { get; }
+		public int Column { get; }
 
-        public TokenType Type { get; }
+		public TokenType Type { get; }
 
-        public string Value { get; }
+		public string Value { get; }
 
-        public string File { get; }
+		public string File { get; }
 
-        public bool Is(TokenType type, params string[] values)
-        {
-            return Is(type) && (values == null || values.Contains(Value));
-        }
+		public bool Is(TokenType type, params string[] values)
+		{
+			return Is(type) && (values == null || values.Contains(Value));
+		}
 
-        public bool Is(TokenType type, string value)
-        {
-            return Type == type && Value == value;
-        }
+		public bool Is(TokenType type, string value)
+		{
+			return Type == type && Value == value;
+		}
 
-        public bool Is(TokenType type)
-        {
-            return Type == type;
-        }
+		public bool Is(TokenType type)
+		{
+			return Type == type;
+		}
 
-        #region Overrides of Object
+		#region Overrides of Object
 
-        public override string ToString()
-        {
-            return $"{Line}:{Column}: {Type} `{Value}`";
-        }
+		public override string ToString()
+		{
+			return $"{Line}:{Column}: {Type} `{Value}`";
+		}
 
-        #endregion
-    }
+		#endregion
+	}
 }

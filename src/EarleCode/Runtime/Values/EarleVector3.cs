@@ -15,58 +15,58 @@
 
 namespace EarleCode.Runtime.Values
 {
-    public class EarleVector3 : IEarleStructure
-    {
-        public EarleVector3(float x, float y, float z)
-        {
-            X = x;
-            Y = y;
-            Z = z;
-        }
+	public class EarleVector3 : IEarleStructure
+	{
+		public EarleVector3(float x, float y, float z)
+		{
+			X = x;
+			Y = y;
+			Z = z;
+		}
 
-        public float X { get; }
+		public float X { get; }
 
-        public float Y { get; }
+		public float Y { get; }
 
-        public float Z { get; }
+		public float Z { get; }
 
-        #region Implementation of IEarleStructure
+		#region Overrides of Object
 
-        public EarleValue GetField(string name)
-        {
-            switch(name)
-            {
-                case "x":
-                    return (EarleValue)X;
-                case "y":
-                    return (EarleValue)Y;
-                case "z":
-                    return (EarleValue)Z;
-                default:
-                    return EarleValue.Undefined;
-            }
-        }
+		/// <summary>
+		///     Returns a string that represents the current object.
+		/// </summary>
+		/// <returns>
+		///     A string that represents the current object.
+		/// </returns>
+		public override string ToString()
+		{
+			return $"({X}, {Y}, {Z})";
+		}
 
-        public void SetField(string name, EarleValue value)
-        {
-            // Values cannot be set.
-        }
+		#endregion
 
-        #endregion
+		#region Implementation of IEarleStructure
 
-        #region Overrides of Object
+		public EarleValue GetField(string name)
+		{
+			switch (name)
+			{
+				case "x":
+					return (EarleValue) X;
+				case "y":
+					return (EarleValue) Y;
+				case "z":
+					return (EarleValue) Z;
+				default:
+					return EarleValue.Undefined;
+			}
+		}
 
-        /// <summary>
-        ///     Returns a string that represents the current object.
-        /// </summary>
-        /// <returns>
-        ///     A string that represents the current object.
-        /// </returns>
-        public override string ToString()
-        {
-            return $"({X}, {Y}, {Z})";
-        }
+		public void SetField(string name, EarleValue value)
+		{
+			// Values cannot be set.
+		}
 
-        #endregion
-    }
+		#endregion
+	}
 }

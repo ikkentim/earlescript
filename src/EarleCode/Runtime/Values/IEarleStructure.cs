@@ -13,14 +13,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Collections.Generic;
-
 namespace EarleCode.Runtime.Values
 {
-    public interface IEarleStructure : IEarleObject
-    {
-        EarleValue GetField(string name);
-        void SetField(string name, EarleValue value);
-    }
+	public interface IEarleStructure : IEarleObject
+	{
+		EarleValue GetField(string name);
+		void SetField(string name, EarleValue value);
+	}
 }

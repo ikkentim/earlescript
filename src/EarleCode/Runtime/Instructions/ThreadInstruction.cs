@@ -13,25 +13,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using EarleCode.Runtime.Values;
-
 namespace EarleCode.Runtime.Instructions
 {
-    internal class ThreadInstruction : CallInstruction
-    {
-        protected override void Handle()
-        {
-            var ip = Frame.Executor.CIP - 1;
-            var thread = new EarleThread(null);
-            var rootFrame = new EarleStackFrame(Frame.Runtime, Frame.Function, null, ip, Frame, thread);
-            var frame = CreateFrameExecutor(rootFrame, EarleStackFrame.ThreadFrameIP);
+	internal class ThreadInstruction : CallInstruction
+	{
+		protected override void Handle()
+		{
+			var ip = Frame.Executor.CIP - 1;
+			var thread = new EarleThread(null);
+			var rootFrame = new EarleStackFrame(Frame.Runtime, Frame.Function, null, ip, Frame, thread);
+			var frame = CreateFrameExecutor(rootFrame, EarleStackFrame.ThreadFrameIP);
 
-            if(frame == null)
-                return;
-            thread.AttachExecutor(frame);
+			if (frame == null)
+				return;
+			thread.AttachExecutor(frame);
 
-            Frame.Runtime.EnqueueThread(thread);
-        }
-    }
-    
+			Frame.Runtime.EnqueueThread(thread);
+		}
+	}
 }

@@ -13,79 +13,78 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 using EarleCode.Compiler.Lexing;
 
 namespace EarleCode.Compiler.Parsers
 {
-    internal class CallExpressionParser : Parser
-    {
-        protected bool LastCallWasThreaded { get; private set; }
+	internal class CallExpressionParser : Parser
+	{
+		protected bool LastCallWasThreaded { get; private set; }
 
-        #region Overrides of Parser
+		#region Overrides of Parser
 
-        protected override void Parse()
-        {
-            // Output:
-            // TARGET?              (?)
-            // ARGUMENTS            (?) |
-            // REFERENCE            (?) |
-            // (CALL|THREAD)(_T) N  (5) |__ repeats
+		protected override void Parse()
+		{
+			// Output:
+			// TARGET?              (?)
+			// ARGUMENTS            (?) |
+			// REFERENCE            (?) |
+			// (CALL|THREAD)(_T) N  (5) |__ repeats
 
-            LastCallWasThreaded = false;
-            var hasTarget = false;
+			LastCallWasThreaded = false;
+			var hasTarget = false;
 
-            if(!SyntaxMatches("FUNCTION_CALL_PART") && !Lexer.Current.Is(TokenType.Identifier, "thread"))
-            {
-                hasTarget = true;
-                Parse<FunctionTargetExpressionParser>();
-            }
+			if (!SyntaxMatches("FUNCTION_CALL_PART") && !Lexer.Current.Is(TokenType.Identifier, "thread"))
+			{
+				hasTarget = true;
+				Parse<FunctionTargetExpressionParser>();
+			}
 
-            if(!SyntaxMatches("FUNCTION_CALL_PART") && Lexer.Current.Is(TokenType.Identifier, "thread"))
-            {
-                LastCallWasThreaded = true;
-                Lexer.AssertMoveNext();
-            }
+			if (!SyntaxMatches("FUNCTION_CALL_PART") && Lexer.Current.Is(TokenType.Identifier, "thread"))
+			{
+				LastCallWasThreaded = true;
+				Lexer.AssertMoveNext();
+			}
 
-            while(SyntaxMatches("FUNCTION_CALL_PART"))
-            {
-                var referenceBuffer = ParseToBuffer<FunctionReferenceExpressionParser>();
+			while (SyntaxMatches("FUNCTION_CALL_PART"))
+			{
+				var referenceBuffer = ParseToBuffer<FunctionReferenceExpressionParser>();
 
-                var lineNumber = Lexer.Current.Line;
-                Lexer.SkipToken(TokenType.Token, "(");
+				var lineNumber = Lexer.Current.Line;
+				Lexer.SkipToken(TokenType.Token, "(");
 
-                var arguments = 0;
-                while(!Lexer.Current.Is(TokenType.Token, ")"))
-                {
-                    Parse<ExpressionParser>();
-                    arguments++;
+				var arguments = 0;
+				while (!Lexer.Current.Is(TokenType.Token, ")"))
+				{
+					Parse<ExpressionParser>();
+					arguments++;
 
-                    if(Lexer.Current.Is(TokenType.Token, ")"))
-                        break;
+					if (Lexer.Current.Is(TokenType.Token, ")"))
+						break;
 
-                    Lexer.SkipToken(TokenType.Token, ",");
-                }
+					Lexer.SkipToken(TokenType.Token, ",");
+				}
 
-                Lexer.SkipToken(TokenType.Token, ")");
-                Yield(referenceBuffer);
+				Lexer.SkipToken(TokenType.Token, ")");
+				Yield(referenceBuffer);
 
-                if(hasTarget)
-                    PushCall(arguments, lineNumber, LastCallWasThreaded);
-                else
-                    PushCallWithoutTarget(arguments, lineNumber, LastCallWasThreaded);
+				if (hasTarget)
+					PushCall(arguments, lineNumber, LastCallWasThreaded);
+				else
+					PushCallWithoutTarget(arguments, lineNumber, LastCallWasThreaded);
 
-                if(LastCallWasThreaded)
-                    break;
+				if (LastCallWasThreaded)
+					break;
 
-                if(!SyntaxMatches("FUNCTION_CALL_PART") && Lexer.Current.Is(TokenType.Identifier, "thread"))
-                {
-                    LastCallWasThreaded = true;
-                    Lexer.AssertMoveNext();
-                    AssertSyntaxMatches("FUNCTION_CALL_PART");
-                }
-            }
-        }
+				if (!SyntaxMatches("FUNCTION_CALL_PART") && Lexer.Current.Is(TokenType.Identifier, "thread"))
+				{
+					LastCallWasThreaded = true;
+					Lexer.AssertMoveNext();
+					AssertSyntaxMatches("FUNCTION_CALL_PART");
+				}
+			}
+		}
 
-        #endregion
-    }
+		#endregion
+	}
 }

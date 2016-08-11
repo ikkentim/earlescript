@@ -17,18 +17,20 @@ using System;
 
 namespace EarleCode.Runtime.Operators
 {
-    [AttributeUsage(AttributeTargets.Field)]
-    internal class OperatorAttribute : Attribute
-    {
-        public OperatorAttribute(string symbol, EarleOperatorType type, int priority = 0)
-        {
-            Symbol = symbol;
-            Type = type;
-            Priority = priority;
-        }
+	[AttributeUsage(AttributeTargets.Field)]
+	internal class OperatorAttribute : Attribute
+	{
+		public OperatorAttribute(string symbol, EarleOperatorType type, int priority = 0)
+		{
+			Symbol = symbol;
+			Type = type;
+			Priority = priority;
+		}
 
-        public string Symbol { get; }
-        public EarleOperatorType Type { get; }
-        public int Priority { get; }
-    }
+		public string Symbol { get; }
+
+		public EarleOperatorType Type { get; }
+
+		public int Priority { get; }
+	}
 }

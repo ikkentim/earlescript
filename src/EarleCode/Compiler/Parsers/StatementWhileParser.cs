@@ -13,36 +13,35 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 using EarleCode.Compiler.Lexing;
 using EarleCode.Runtime.Instructions;
 
 namespace EarleCode.Compiler.Parsers
 {
-    internal class StatementWhileParser : Parser
-    {
-        #region Overrides of Parser
+	internal class StatementWhileParser : Parser
+	{
+		#region Overrides of Parser
 
-        protected override void Parse()
-        {
-            // Output:
-            // EXPRESSION   (expressionLength)
-            // JUMP_FALSE N (5)
-            // CODE_BLOCK   (block.Length)
-            // JUMP N       (5)
+		protected override void Parse()
+		{
+			// Output:
+			// EXPRESSION   (expressionLength)
+			// JUMP_FALSE N (5)
+			// CODE_BLOCK   (block.Length)
+			// JUMP N       (5)
 
-            Lexer.SkipToken(TokenType.Identifier, "while");
-            Lexer.SkipToken(TokenType.Token, "(");
-            var expressionLength = Parse<ExpressionParser>();
-            Lexer.SkipToken(TokenType.Token, ")");
-            var block = CompileBlock(EarleCompileOptions.Loop);
-            Yield(OpCode.JumpIfFalse);
-            Yield(block.Length + 5);
-            Yield(block, true, 5, true, -block.Length - expressionLength - 5);
-            Yield(OpCode.Jump);
-            Yield(-block.Length - expressionLength - 10);
-        }
+			Lexer.SkipToken(TokenType.Identifier, "while");
+			Lexer.SkipToken(TokenType.Token, "(");
+			var expressionLength = Parse<ExpressionParser>();
+			Lexer.SkipToken(TokenType.Token, ")");
+			var block = CompileBlock(EarleCompileOptions.Loop);
+			Yield(OpCode.JumpIfFalse);
+			Yield(block.Length + 5);
+			Yield(block, true, 5, true, -block.Length - expressionLength - 5);
+			Yield(OpCode.Jump);
+			Yield(-block.Length - expressionLength - 10);
+		}
 
-        #endregion
-    }
+		#endregion
+	}
 }

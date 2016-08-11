@@ -18,8 +18,8 @@ using EarleCode.Runtime;
 
 namespace EarleCode.Compiler.Parsers
 {
-    internal interface IParser
-    {
-        CompiledBlock Parse(EarleRuntime runtime, EarleFile file, ILexer lexer, EarleCompileOptions enforcedCompileOptions);
-    }
+	internal interface IParser
+	{
+		CompiledBlock Parse(EarleRuntime runtime, EarleFile file, ILexer lexer, EarleCompileOptions enforcedCompileOptions);
+	}
 }

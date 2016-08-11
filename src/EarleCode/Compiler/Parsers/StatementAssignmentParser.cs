@@ -13,18 +13,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 namespace EarleCode.Compiler.Parsers
 {
-    internal class StatementAssignmentParser : AssignmentExpressionParser, ISimpleStatement
-    {
-        #region Overrides of AssignmentExpressionParser
+	internal class StatementAssignmentParser : AssignmentExpressionParser, ISimpleStatement
+	{
+		#region Overrides of AssignmentExpressionParser
 
-        protected override void YieldDuplicate()
-        {
-            // Do nothing.
-        }
+		protected override void YieldDuplicate()
+		{
+			// Do nothing.
+		}
 
-        #endregion
-    }
+		#endregion
+	}
 }

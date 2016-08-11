@@ -14,184 +14,184 @@
 // limitations under the License.
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using EarleCode.Compiler;
-using EarleCode.Runtime.Values;
 using EarleCode.Localization;
 using EarleCode.Runtime.Events;
-using System.Collections;
 using EarleCode.Runtime.Operators;
+using EarleCode.Runtime.Values;
 
 namespace EarleCode.Runtime
 {
-    public partial class EarleRuntime : IEarleRuntimeScope, IEnumerable<EarleFile>
-    {
-        private readonly Dictionary<string, EarleFile> _files = new Dictionary<string, EarleFile>();
-        private readonly Queue<EarleThread> _threadPool = new Queue<EarleThread>();
+	public partial class EarleRuntime : IEarleRuntimeScope, IEnumerable<EarleFile>
+	{
+		private readonly Dictionary<string, EarleFile> _files = new Dictionary<string, EarleFile>();
+		private readonly Queue<EarleThread> _threadPool = new Queue<EarleThread>();
 
-        public EarleRuntime()
-        {
-            Compiler = new EarleCompiler(this);
+		public EarleRuntime()
+		{
+			Compiler = new EarleCompiler(this);
 
-            RegisterDefaultNatives();
-            RegisterDefaultOperators();
-        }
+			RegisterDefaultNatives();
+			RegisterDefaultOperators();
+		}
 
-        internal EarleCompiler Compiler { get; }
+		internal EarleCompiler Compiler { get; }
 
-        public EarleDictionary GlobalVariables { get; } = new EarleDictionary();
+		public EarleDictionary GlobalVariables { get; } = new EarleDictionary();
 
-        public EarleOperatorCollection Operators { get; } = new EarleOperatorCollection();
+		public EarleOperatorCollection Operators { get; } = new EarleOperatorCollection();
 
-        public EarleLocalizer Localizer { get; } = new EarleLocalizer();
+		public EarleLocalizer Localizer { get; } = new EarleLocalizer();
 
-        public EarleNativeCollection Natives { get; } = new EarleNativeCollection();
+		public EarleNativeCollection Natives { get; } = new EarleNativeCollection();
 
-        public EarleFile this[string fileName] => GetFile(fileName);
+		public EarleFile this[string fileName] => GetFile(fileName);
 
-        private void RegisterDefaultNatives()
-        {
-            Natives.RegisterInType<EarleDefaultNatives>();
-            Natives.RegisterInType<EarleEventManagerNatives>();
-            Natives.RegisterInType<EarleLocalizerNatives>();
-        }
+		private void RegisterDefaultNatives()
+		{
+			Natives.RegisterInType<EarleDefaultNatives>();
+			Natives.RegisterInType<EarleEventManagerNatives>();
+			Natives.RegisterInType<EarleLocalizerNatives>();
+		}
 
-        #region Running
+		#region Debugging
 
-        public void EnqueueThread(EarleThread thread)
-        {
-            _threadPool.Enqueue(thread);
-        }
+		public IEnumerable<string> GetDebugInformation()
+		{
+			return this.SelectMany(f => f).SelectMany(Compiler.GetDebugInformation);
+		}
 
-        public bool Tick(int ticks = int.MaxValue)
-        {
-            if(_threadPool.Count < ticks)
-                ticks = _threadPool.Count;
-            
-            int count = 0;
-            while(_threadPool.Any() && count < ticks)
-            {
-                var thread = _threadPool.Dequeue();
+		#endregion
 
-                if(!thread.IsAlive)
-                {
-                    ticks--;
-                    continue;
-                }
-                thread.Run();
-                count++;
-            }
+		#region Running
 
-            return !_threadPool.Any();
-        }
+		public void EnqueueThread(EarleThread thread)
+		{
+			_threadPool.Enqueue(thread);
+		}
 
-        public virtual void HandleWarning(string warning)
-        {
-            // TODO: Implement proper warning/error handling
-            Console.WriteLine(warning);
-        }
+		public bool Tick(int ticks = int.MaxValue)
+		{
+			if (_threadPool.Count < ticks)
+				ticks = _threadPool.Count;
 
-        #endregion
+			int count = 0;
+			while (_threadPool.Any() && count < ticks)
+			{
+				var thread = _threadPool.Dequeue();
 
-        #region Files
+				if (!thread.IsAlive)
+				{
+					ticks--;
+					continue;
+				}
+				thread.Run();
+				count++;
+			}
 
-        public void AddFile(EarleFile file)
-        {
-            if (file == null) throw new ArgumentNullException(nameof(file));
+			return !_threadPool.Any();
+		}
 
-            if(_files.ContainsKey(file.Name))
-                throw new ArgumentException("File name is already present");
+		public virtual void HandleWarning(string warning)
+		{
+			// TODO: Implement proper warning/error handling
+			Console.WriteLine(warning);
+		}
 
-            file.Lock();
-            _files[file.Name] = file;
+		#endregion
 
-            foreach(var f in this)
-                f.ClearCache();
-        }
+		#region Files
 
-        public bool RemoveFile(string fileName)
-        {
-            return _files.Remove(fileName);
-        }
+		public void AddFile(EarleFile file)
+		{
+			if (file == null) throw new ArgumentNullException(nameof(file));
 
-        public EarleFile GetFile(string fileName)
-        {
-            EarleFile file;
-            _files.TryGetValue(fileName, out file);
-            return file;
-        }
+			if (_files.ContainsKey(file.Name))
+				throw new ArgumentException("File name is already present");
 
-        public EarleFile CompileFile(string fileName, string script)
-        {
-            //try
-            //{
-                var file = Compiler.CompileFile(fileName, script);
+			file.Lock();
+			_files[file.Name] = file;
 
-                AddFile(file);
-                return file;
-            //}
-            //catch(Exception e)
-            //{
-            //    throw e;
-            //}
-        }
+			foreach (var f in this)
+				f.ClearCache();
+		}
 
-        #endregion
+		public bool RemoveFile(string fileName)
+		{
+			return _files.Remove(fileName);
+		}
 
-        #region Debugging
+		public EarleFile GetFile(string fileName)
+		{
+			EarleFile file;
+			_files.TryGetValue(fileName, out file);
+			return file;
+		}
 
-        public IEnumerable<string> GetDebugInformation()
-        {
-            return this.SelectMany(f => f).SelectMany(Compiler.GetDebugInformation);
-        }
+		public EarleFile CompileFile(string fileName, string script)
+		{
+			//try
+			//{
+			var file = Compiler.CompileFile(fileName, script);
 
-        #endregion
+			AddFile(file);
+			return file;
+			//}
+			//catch(Exception e)
+			//{
+			//    throw e;
+			//}
+		}
 
-        #region Implementation of IRuntimeScope
+		#endregion
 
-        public virtual EarleValue GetValue(string name)
-        {
-            // Look global variables up.
-            if(GlobalVariables.ContainsKey(name))
-                return GlobalVariables[name];
-            
-            return EarleValue.Undefined;
-        }
+		#region Implementation of IRuntimeScope
 
-        public virtual bool SetValue(string name, EarleValue value)
-        {
-            return false;
-        }
+		public virtual EarleValue GetValue(string name)
+		{
+			// Look global variables up.
+			if (GlobalVariables.ContainsKey(name))
+				return GlobalVariables[name];
 
-        public virtual EarleFunctionCollection GetFunctionReference(string fileName, string functionName)
-        {
-            if(fileName == null)
-            {
-                return Natives.Get(functionName);
-            }
+			return EarleValue.Undefined;
+		}
 
-            var file = GetFile(fileName);
+		public virtual bool SetValue(string name, EarleValue value)
+		{
+			return false;
+		}
 
-            return file == null
-                ? null
-                : file.GetFunctions(functionName);
-        }
+		public virtual EarleFunctionCollection GetFunctionReference(string fileName, string functionName)
+		{
+			if (fileName == null)
+			{
+				return Natives.Get(functionName);
+			}
 
-        #endregion
+			var file = GetFile(fileName);
 
-        #region Implementation of IEnumerable<EarleFile>
+			return file == null
+				? null
+				: file.GetFunctions(functionName);
+		}
 
-        public IEnumerator<EarleFile> GetEnumerator()
-        {
-            return _files.Values.GetEnumerator();
-        }
+		#endregion
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
-        
-        #endregion
-    }
+		#region Implementation of IEnumerable<EarleFile>
+
+		public IEnumerator<EarleFile> GetEnumerator()
+		{
+			return _files.Values.GetEnumerator();
+		}
+
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			return GetEnumerator();
+		}
+
+		#endregion
+	}
 }

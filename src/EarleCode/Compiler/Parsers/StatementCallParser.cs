@@ -13,28 +13,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
-using EarleCode.Compiler.Lexing;
 using EarleCode.Runtime.Instructions;
 
 namespace EarleCode.Compiler.Parsers
 {
-    internal class StatementCallParser : CallExpressionParser, ISimpleStatement
-    {
-        #region Overrides of CallExpressionParser
+	internal class StatementCallParser : CallExpressionParser, ISimpleStatement
+	{
+		#region Overrides of CallExpressionParser
 
-        protected override void Parse()
-        {
-            // Output:
-            // CALL         (?)
-            // POP          (1)
+		protected override void Parse()
+		{
+			// Output:
+			// CALL         (?)
+			// POP          (1)
 
-            base.Parse();
+			base.Parse();
 
-            if(!LastCallWasThreaded)
-                Yield(OpCode.Pop);
-        }
+			if (!LastCallWasThreaded)
+				Yield(OpCode.Pop);
+		}
 
-        #endregion
-    }
+		#endregion
+	}
 }

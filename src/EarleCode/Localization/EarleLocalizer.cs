@@ -19,46 +19,46 @@ using EarleCode.Compiler.Lexing;
 
 namespace EarleCode.Localization
 {
-    public class EarleLocalizer
-    {
-        private readonly Dictionary<Tuple<string, string>, string> _values =
-            new Dictionary<Tuple<string, string>, string>();
+	public class EarleLocalizer
+	{
+		private readonly Dictionary<Tuple<string, string>, string> _values =
+			new Dictionary<Tuple<string, string>, string>();
 
-        public string Key { get; set; }
+		public string Key { get; set; }
 
-        public void LoadFromFile(string fileName, string fileContents, string prefix)
-        {
-            var lexer = new Lexer(fileName, fileContents);
+		public void LoadFromFile(string fileName, string fileContents, string prefix)
+		{
+			var lexer = new Lexer(fileName, fileContents);
 
-            string reference = null;
-            while(lexer.MoveNext())
-            {
-                if(lexer.Current.Is(TokenType.Identifier, "REFERENCE"))
-                {
-                    lexer.AssertMoveNext();
-                    lexer.AssertToken(TokenType.Identifier);
-                    reference = lexer.Current.Value;
+			string reference = null;
+			while (lexer.MoveNext())
+			{
+				if (lexer.Current.Is(TokenType.Identifier, "REFERENCE"))
+				{
+					lexer.AssertMoveNext();
+					lexer.AssertToken(TokenType.Identifier);
+					reference = lexer.Current.Value;
 
-                    continue;
-                }
+					continue;
+				}
 
-                lexer.AssertToken(TokenType.Identifier);
-                var key = lexer.Current.Value;
-                lexer.AssertMoveNext();
-                lexer.AssertToken(TokenType.StringLiteral);
-                _values[new Tuple<string, string>(key, $"{prefix}{reference}")] = lexer.Current.Value;
-            }
-        }
+				lexer.AssertToken(TokenType.Identifier);
+				var key = lexer.Current.Value;
+				lexer.AssertMoveNext();
+				lexer.AssertToken(TokenType.StringLiteral);
+				_values[new Tuple<string, string>(key, $"{prefix}{reference}")] = lexer.Current.Value;
+			}
+		}
 
-        public string Localize(string reference)
-        {
-            if(Key == null || reference == null)
-                return reference;
+		public string Localize(string reference)
+		{
+			if (Key == null || reference == null)
+				return reference;
 
-            string result;
-            return _values.TryGetValue(new Tuple<string, string>(Key, reference), out result)
-                ? result
-                : reference;
-        }
-    }
+			string result;
+			return _values.TryGetValue(new Tuple<string, string>(Key, reference), out result)
+				? result
+				: reference;
+		}
+	}
 }

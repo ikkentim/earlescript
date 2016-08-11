@@ -19,101 +19,106 @@ using EarleCode.Runtime.Values;
 
 namespace EarleCode.Runtime.Instructions
 {
-    internal abstract class Instruction : IInstruction
-    {
-        protected EarleStackFrame Frame { get; private set; }
+	internal abstract class Instruction : IInstruction
+	{
+		protected EarleStackFrame Frame { get; private set; }
 
-        #region Implementation of IInstruction
+		#region Implementation of IInstruction
 
-        public void Handle(EarleStackFrame frame)
-        {
-            Frame = frame;
-            Handle();
-        }
+		public void Handle(EarleStackFrame frame)
+		{
+			Frame = frame;
+			Handle();
+		}
 
-        #endregion
+		#endregion
 
-        protected abstract void Handle();
+		protected abstract void Handle();
 
-        private FastConvert GetConvertable()
-        {
-            var pCode = Frame.Function.PCode;
-            var cip = Frame.Executor.CIP;
-            FastConvert converter = new FastConvert();
-            converter.Byte0 = pCode[cip];
-            converter.Byte1 = pCode[cip + 1];
-            converter.Byte2 = pCode[cip + 2];
-            converter.Byte3 = pCode[cip + 3];
+		private FastConvert GetConvertable()
+		{
+			var pCode = Frame.Function.PCode;
+			var cip = Frame.Executor.CIP;
+			FastConvert converter = new FastConvert();
+			converter.Byte0 = pCode[cip];
+			converter.Byte1 = pCode[cip + 1];
+			converter.Byte2 = pCode[cip + 2];
+			converter.Byte3 = pCode[cip + 3];
 
-            Jump(4);
+			Jump(4);
 
-            return converter;
-        }
+			return converter;
+		}
 
-        protected int GetInt32()
-        {
-            return GetConvertable().Int32;
-        }
+		protected int GetInt32()
+		{
+			return GetConvertable().Int32;
+		}
 
-        protected float GetSingle()
-        {
-            return GetConvertable().Single;
-        }
+		protected float GetSingle()
+		{
+			return GetConvertable().Single;
+		}
 
-        protected string GetString()
-        {
-            var start = Frame.Executor.CIP;
-            var pCode = Frame.Function.PCode;
-            var length = 0;
-            while(pCode[Frame.Executor.CIP] != 0)
-            {
-                length++;
-                Frame.Executor.CIP++;
-            }
-            Frame.Executor.CIP++;
-            return Encoding.ASCII.GetString(pCode, start, length);
-        }
+		protected string GetString()
+		{
+			var start = Frame.Executor.CIP;
+			var pCode = Frame.Function.PCode;
+			var length = 0;
+			while (pCode[Frame.Executor.CIP] != 0)
+			{
+				length++;
+				Frame.Executor.CIP++;
+			}
+			Frame.Executor.CIP++;
+			return Encoding.ASCII.GetString(pCode, start, length);
+		}
 
-        protected EarleValue Pop()
-        {
-            return Frame.Executor.Stack.Pop();
-        }
+		protected EarleValue Pop()
+		{
+			return Frame.Executor.Stack.Pop();
+		}
 
-        protected T Pop<T>()
-        {
-            return Pop().CastTo<T>();
-        }
+		protected T Pop<T>()
+		{
+			return Pop().CastTo<T>();
+		}
 
-        protected void Jump(int count)
-        {
-            Frame.Executor.CIP += count;
-        }
+		protected void Jump(int count)
+		{
+			Frame.Executor.CIP += count;
+		}
 
-        protected EarleValue Peek()
-        {
-            return Frame.Executor.Stack.Peek();
-        }
+		protected EarleValue Peek()
+		{
+			return Frame.Executor.Stack.Peek();
+		}
 
-        protected void Push(EarleValue item)
-        {
-            Frame.Executor.Stack.Push(item);
-        }
+		protected void Push(EarleValue item)
+		{
+			Frame.Executor.Stack.Push(item);
+		}
 
-        [StructLayout(LayoutKind.Explicit)]
-        private struct FastConvert
-        {
-            [FieldOffset(0)]
-            public byte Byte0;
-            [FieldOffset(1)]
-            public byte Byte1;
-            [FieldOffset(2)]
-            public byte Byte2;
-            [FieldOffset(3)]
-            public byte Byte3;
-            [FieldOffset(0)]
-            public int Int32;
-            [FieldOffset(0)]
-            public float Single;
-        }
-    }
+		[StructLayout(LayoutKind.Explicit)]
+		private struct FastConvert
+		{
+			[FieldOffset(0)]
+			public byte Byte0;
+
+			[FieldOffset(1)]
+			public byte Byte1;
+
+			[FieldOffset(2)]
+			public byte Byte2;
+
+			[FieldOffset(3)]
+			public byte Byte3;
+
+			[FieldOffset(0)]
+			public readonly int Int32;
+
+			[FieldOffset(0)]
+			public readonly float Single;
+		}
+	}
 }

@@ -17,12 +17,12 @@ using EarleCode.Runtime;
 
 namespace EarleCode.Localization
 {
-    internal class EarleLocalizerNatives
-    {
-        [EarleNativeFunction]
-        private static void SetActiveLanguage(EarleStackFrame frame, string key)
-        {
-            frame.Runtime.Localizer.Key = key;
-        }
-    }
+	internal class EarleLocalizerNatives
+	{
+		[EarleNativeFunction]
+		private static void SetActiveLanguage(EarleStackFrame frame, string key)
+		{
+			frame.Runtime.Localizer.Key = key;
+		}
+	}
 }

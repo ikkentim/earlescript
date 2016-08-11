@@ -13,20 +13,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 using EarleCode.Runtime.Values;
 
 namespace EarleCode.Runtime.Instructions
 {
-    internal class PushIntegerInstruction : Instruction
-    {
-        #region Overrides of Instruction
+	internal class PushIntegerInstruction : Instruction
+	{
+		#region Overrides of Instruction
 
-        protected override void Handle()
-        {
-            Push(GetInt32().ToEarleValue());
-        }
+		protected override void Handle()
+		{
+			Push(GetInt32().ToEarleValue());
+		}
 
-        #endregion
-    }
+		#endregion
+	}
 }

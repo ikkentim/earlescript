@@ -17,17 +17,16 @@ using System;
 
 namespace EarleCode.Compiler
 {
-
-    [Flags]
-    internal enum EarleCompileOptions
-    {
-        None = 0,
-        MustReturn = 1,
-        CanBreak = 2,
-        CanContinue = 4,
-        EnforceMultiline = 8,
-        Method = MustReturn,
-        SwitchCase = CanBreak | EnforceMultiline,
-        Loop = CanBreak | CanContinue
-    }
+	[Flags]
+	internal enum EarleCompileOptions
+	{
+		None = 0,
+		MustReturn = 1,
+		CanBreak = 2,
+		CanContinue = 4,
+		EnforceMultiline = 8,
+		Method = MustReturn,
+		SwitchCase = CanBreak | EnforceMultiline,
+		Loop = CanBreak | CanContinue
+	}
 }

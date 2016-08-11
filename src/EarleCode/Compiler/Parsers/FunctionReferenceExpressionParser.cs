@@ -13,76 +13,75 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 using EarleCode.Compiler.Lexing;
 using EarleCode.Runtime.Instructions;
 
 namespace EarleCode.Compiler.Parsers
 {
-    internal class FunctionReferenceExpressionParser : Parser
-    {
-        #region Overrides of Parser
+	internal class FunctionReferenceExpressionParser : Parser
+	{
+		#region Overrides of Parser
 
-        protected override void Parse()
-        {
-            // Output:
-            // PUSH_R       (?)
+		protected override void Parse()
+		{
+			// Output:
+			// PUSH_R       (?)
 
-            string path = null;
+			string path = null;
 
-            // optional token to specify function is part of current file
-            if(SyntaxMatches("UNBOX_FUNCTION"))
-            {
-                Lexer.SkipToken(TokenType.Token, "[");
-                Lexer.SkipToken(TokenType.Token, "[");
-                var variableName = Lexer.Current.Value;
-                Lexer.SkipToken(TokenType.Identifier);
-                Lexer.SkipToken(TokenType.Token, "]");
-                Lexer.SkipToken(TokenType.Token, "]");
+			// optional token to specify function is part of current file
+			if (SyntaxMatches("UNBOX_FUNCTION"))
+			{
+				Lexer.SkipToken(TokenType.Token, "[");
+				Lexer.SkipToken(TokenType.Token, "[");
+				var variableName = Lexer.Current.Value;
+				Lexer.SkipToken(TokenType.Identifier);
+				Lexer.SkipToken(TokenType.Token, "]");
+				Lexer.SkipToken(TokenType.Token, "]");
 
-                Yield(OpCode.UnboxFunctionReference);
-                Yield(variableName);
-            }
-            else
-            {
-                if(Lexer.Current.Is(TokenType.Token, ":"))
-                {
-                    Lexer.SkipToken(TokenType.Token, ":");
-                    Lexer.SkipToken(TokenType.Token, ":");
-                }
-                // a specific path is supplied
-                else if(SyntaxMatches("PATH_PREFIX"))
-                {
-                    // Construct path to the function
-                    var identifier = !Lexer.Current.Is(TokenType.Token, "\\");
-                    path = identifier ? "\\" : string.Empty;
-                    do
-                    {
-                        // check syntax
-                        if(identifier)
-                            Lexer.AssertToken(TokenType.Identifier);
-                        else
-                            Lexer.AssertToken(TokenType.Token, "\\");
-                        identifier = !identifier;
+				Yield(OpCode.UnboxFunctionReference);
+				Yield(variableName);
+			}
+			else
+			{
+				if (Lexer.Current.Is(TokenType.Token, ":"))
+				{
+					Lexer.SkipToken(TokenType.Token, ":");
+					Lexer.SkipToken(TokenType.Token, ":");
+				}
+				// a specific path is supplied
+				else if (SyntaxMatches("PATH_PREFIX"))
+				{
+					// Construct path to the function
+					var identifier = !Lexer.Current.Is(TokenType.Token, "\\");
+					path = identifier ? "\\" : string.Empty;
+					do
+					{
+						// check syntax
+						if (identifier)
+							Lexer.AssertToken(TokenType.Identifier);
+						else
+							Lexer.AssertToken(TokenType.Token, "\\");
+						identifier = !identifier;
 
-                        path += Lexer.Current.Value;
+						path += Lexer.Current.Value;
 
-                        Lexer.AssertMoveNext();
-                    } while(!Lexer.Current.Is(TokenType.Token, ":"));
+						Lexer.AssertMoveNext();
+					} while (!Lexer.Current.Is(TokenType.Token, ":"));
 
-                    Lexer.SkipToken(TokenType.Token, ":");
-                    Lexer.SkipToken(TokenType.Token, ":");
-                }
+					Lexer.SkipToken(TokenType.Token, ":");
+					Lexer.SkipToken(TokenType.Token, ":");
+				}
 
-                Lexer.AssertToken(TokenType.Identifier);
-                var name = Lexer.Current.Value;
+				Lexer.AssertToken(TokenType.Identifier);
+				var name = Lexer.Current.Value;
 
-                Lexer.AssertMoveNext();
+				Lexer.AssertMoveNext();
 
-                PushFunctionReference(path, name);
-            }
-        }
+				PushFunctionReference(path, name);
+			}
+		}
 
-        #endregion
-    }
+		#endregion
+	}
 }

@@ -19,17 +19,17 @@ using System.Linq;
 
 namespace EarleCode.Utilities
 {
-    internal static class StringUtility
-    {
-        public static string CreateOrList(this IEnumerable<string> values)
-        {
-            if (values == null) throw new ArgumentNullException(nameof(values));
+	internal static class StringUtility
+	{
+		public static string CreateOrList(this IEnumerable<string> values)
+		{
+			if (values == null) throw new ArgumentNullException(nameof(values));
 
-            var array = values.ToArray();
+			var array = values.ToArray();
 
-            return array.Length <= 1
-                ? (array.FirstOrDefault() ?? string.Empty)
-                : $"{string.Join(", ", array.Take(array.Length - 1))} or {array.Last()}";
-        }
-    }
+			return array.Length <= 1
+				? (array.FirstOrDefault() ?? string.Empty)
+				: $"{string.Join(", ", array.Take(array.Length - 1))} or {array.Last()}";
+		}
+	}
 }

@@ -15,8 +15,7 @@
 
 namespace EarleCode.Compiler.Parsers
 {
-    internal interface ISimpleStatement
-    {
-    }
-    
+	internal interface ISimpleStatement
+	{
+	}
 }

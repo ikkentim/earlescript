@@ -17,10 +17,10 @@ using EarleCode.Runtime.Values;
 
 namespace EarleCode.Runtime
 {
-    public interface IEarleRuntimeScope
-    {
-        EarleValue GetValue(string name);
-        bool SetValue(string name, EarleValue value);
-        EarleFunctionCollection GetFunctionReference(string fileName, string functionName);
-    }
+	public interface IEarleRuntimeScope
+	{
+		EarleValue GetValue(string name);
+		bool SetValue(string name, EarleValue value);
+		EarleFunctionCollection GetFunctionReference(string fileName, string functionName);
+	}
 }

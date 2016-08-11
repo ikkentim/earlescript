@@ -18,12 +18,12 @@ using System.Collections.Generic;
 
 namespace EarleCode.Compiler.Lexing
 {
-    public interface ILexer : IEnumerator<Token>, ICloneable
-    {
-        /// <summary>
-        ///     Pushes the specified token.
-        /// </summary>
-        /// <param name="token">The token.</param>
-        void Push(Token token);
-    }
+	public interface ILexer : IEnumerator<Token>, ICloneable
+	{
+		/// <summary>
+		///     Pushes the specified token.
+		/// </summary>
+		/// <param name="token">The token.</param>
+		void Push(Token token);
+	}
 }

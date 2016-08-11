@@ -13,55 +13,53 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace EarleCode.Runtime.Values
 {
-    public class EarleStructure : IEarleStructure, IEnumerable<KeyValuePair<string,EarleValue>>
-    {
-        private EarleDictionary _values = new EarleDictionary();
+	public class EarleStructure : IEarleStructure, IEnumerable<KeyValuePair<string, EarleValue>>
+	{
+		private readonly EarleDictionary _values = new EarleDictionary();
 
-        #region Implementation of IEarleStructure
+		public EarleValue this[string key]
+		{
+			get { return GetField(key); }
+			set { SetField(key, value); }
+		}
 
-        public virtual EarleValue GetField(string name)
-        {
-            return _values[name];
-        }
+		public int Count => _values.Count;
 
-        public virtual void SetField(string name, EarleValue value)
-        {
-            _values[name] = value;
-        }
+		public bool IsReadOnly => false;
 
-        #endregion
+		public ICollection<string> Keys => _values.Keys;
 
-        public EarleValue this[string key]
-        {
-            get { return GetField(key); }
-            set { SetField(key, value); }
-        }
+		public ICollection<EarleValue> Values => _values.Values;
 
-        public int Count => _values.Count;
+		public void Clear() => _values.Clear();
 
-        public bool IsReadOnly => false;
+		public bool ContainsKey(string key) => _values.ContainsKey(key);
 
-        public ICollection<string> Keys => _values.Keys;
+		#region Implementation of IEarleStructure
 
-        public ICollection<EarleValue> Values => _values.Values;
+		public virtual EarleValue GetField(string name)
+		{
+			return _values[name];
+		}
 
-        public void Clear() => _values.Clear();
-        
-        public bool ContainsKey(string key) => _values.ContainsKey(key);
+		public virtual void SetField(string name, EarleValue value)
+		{
+			_values[name] = value;
+		}
 
-        #region Implementation of IEnumerable<KeyValuePair<string,EarleValue>>
+		#endregion
 
-        public IEnumerator<KeyValuePair<string, EarleValue>> GetEnumerator() => _values.GetEnumerator();
+		#region Implementation of IEnumerable<KeyValuePair<string,EarleValue>>
 
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-        
-        #endregion
-    }
+		public IEnumerator<KeyValuePair<string, EarleValue>> GetEnumerator() => _values.GetEnumerator();
+
+		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+		#endregion
+	}
 }

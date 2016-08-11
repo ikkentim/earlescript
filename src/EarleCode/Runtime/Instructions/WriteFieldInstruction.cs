@@ -17,23 +17,21 @@ using EarleCode.Runtime.Values;
 
 namespace EarleCode.Runtime.Instructions
 {
+	internal class WriteFieldInstruction : Instruction
+	{
+		#region Overrides of Instruction
 
-    internal class WriteFieldInstruction : Instruction
-    {
-        #region Overrides of Instruction
+		protected override void Handle()
+		{
+			var structure = Pop();
+			var value = Pop();
+			var field = GetString();
+			if (structure.Is<IEarleStructure>())
+			{
+				structure.As<IEarleStructure>().SetField(field, value);
+			}
+		}
 
-        protected override void Handle()
-        {
-            var structure = Pop();
-            var value = Pop();
-            var field = GetString();
-            if(structure.Is<IEarleStructure>())
-            {
-                structure.As<IEarleStructure>().SetField(field, value);
-            }
-        }
-
-        #endregion
-    }
-    
+		#endregion
+	}
 }

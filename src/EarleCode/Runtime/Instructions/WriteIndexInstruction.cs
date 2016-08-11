@@ -17,22 +17,21 @@ using EarleCode.Runtime.Values;
 
 namespace EarleCode.Runtime.Instructions
 {
+	internal class WriteIndexInstruction : Instruction
+	{
+		#region Overrides of Instruction
 
-    internal class WriteIndexInstruction : Instruction
-    {
-        #region Overrides of Instruction
+		protected override void Handle()
+		{
+			var index = Pop();
+			var array = Pop();
+			var value = Pop();
+			if (array.Is<EarleArray>())
+			{
+				array.As<EarleArray>().SetValue(index, value);
+			}
+		}
 
-        protected override void Handle()
-        {
-            var index = Pop();
-            var array = Pop();
-            var value = Pop();
-            if(array.Is<EarleArray>())
-            {
-                array.As<EarleArray>().SetValue(index, value);
-            }
-        }
-
-        #endregion
-    }
+		#endregion
+	}
 }

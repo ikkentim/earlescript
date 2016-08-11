@@ -13,70 +13,69 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 using EarleCode.Compiler.Lexing;
 using EarleCode.Runtime.Instructions;
 
 namespace EarleCode.Compiler.Parsers
 {
-    internal class StatementForParser : Parser
-    {
-        #region Overrides of Parser
+	internal class StatementForParser : Parser
+	{
+		#region Overrides of Parser
 
-        protected override void Parse()
-        {
-            // Output:
-            // PUSH_S       (1)
-            // ASSIGNMENT   (?)
-            // EXPRESSION   (checkLength)
-            // JUMP_FALSE N (5)
-            // CODE_BLOCK   (block.Length)
-            // ASSIGNMENT   (incrementBlock.Length)
-            // JUMP N       (5)
-            // POP_S        (1)
+		protected override void Parse()
+		{
+			// Output:
+			// PUSH_S       (1)
+			// ASSIGNMENT   (?)
+			// EXPRESSION   (checkLength)
+			// JUMP_FALSE N (5)
+			// CODE_BLOCK   (block.Length)
+			// ASSIGNMENT   (incrementBlock.Length)
+			// JUMP N       (5)
+			// POP_S        (1)
 
-            int checkLength;
-            var incrementBlock = CompiledBlock.Empty;
+			int checkLength;
+			var incrementBlock = CompiledBlock.Empty;
 
-            Yield(OpCode.PushScope);
+			Yield(OpCode.PushScope);
 
-            Lexer.SkipToken(TokenType.Identifier, "for");
-            Lexer.SkipToken(TokenType.Token, "(");
+			Lexer.SkipToken(TokenType.Identifier, "for");
+			Lexer.SkipToken(TokenType.Token, "(");
 
-            if (SyntaxMatches("ASSIGNMENT"))
-                Parse<StatementAssignmentParser>();
-            Lexer.SkipToken(TokenType.Token, ";");
+			if (SyntaxMatches("ASSIGNMENT"))
+				Parse<StatementAssignmentParser>();
+			Lexer.SkipToken(TokenType.Token, ";");
 
-            if (Lexer.Current.Is(TokenType.Token, ";"))
-            {
-                PushInteger(1);
-                checkLength = 5;
-            }
-            else
-            {
-                checkLength = Parse<ExpressionParser>();
-            }
-            Lexer.SkipToken(TokenType.Token, ";");
-
-
-            if (!Lexer.Current.Is(TokenType.Token, ")"))
-                incrementBlock = ParseToBuffer<StatementAssignmentParser>();
-            Lexer.SkipToken(TokenType.Token, ")");
-
-            var block = CompileBlock(EarleCompileOptions.Loop);
-
-            PushJump(false, block.Length + 5 + incrementBlock.Length);
-
-            Yield(block, true, incrementBlock.Length + 5, true, 0);
-
-            Yield(incrementBlock);
-
-            PushJump(-5 - block.Length - incrementBlock.Length - 5 - checkLength);
+			if (Lexer.Current.Is(TokenType.Token, ";"))
+			{
+				PushInteger(1);
+				checkLength = 5;
+			}
+			else
+			{
+				checkLength = Parse<ExpressionParser>();
+			}
+			Lexer.SkipToken(TokenType.Token, ";");
 
 
-            Yield(OpCode.PopScope);
-        }
+			if (!Lexer.Current.Is(TokenType.Token, ")"))
+				incrementBlock = ParseToBuffer<StatementAssignmentParser>();
+			Lexer.SkipToken(TokenType.Token, ")");
 
-        #endregion
-    }
+			var block = CompileBlock(EarleCompileOptions.Loop);
+
+			PushJump(false, block.Length + 5 + incrementBlock.Length);
+
+			Yield(block, true, incrementBlock.Length + 5, true, 0);
+
+			Yield(incrementBlock);
+
+			PushJump(-5 - block.Length - incrementBlock.Length - 5 - checkLength);
+
+
+			Yield(OpCode.PopScope);
+		}
+
+		#endregion
+	}
 }

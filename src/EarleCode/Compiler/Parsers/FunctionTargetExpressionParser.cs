@@ -13,15 +13,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 namespace EarleCode.Compiler.Parsers
 {
-    internal class FunctionTargetExpressionParser : ExpressionParser
-    {
-        protected override bool ParseFunctionCall()
-        {
-            return false;
-        }
-    }
-    
+	internal class FunctionTargetExpressionParser : ExpressionParser
+	{
+		protected override bool ParseFunctionCall()
+		{
+			return false;
+		}
+	}
 }

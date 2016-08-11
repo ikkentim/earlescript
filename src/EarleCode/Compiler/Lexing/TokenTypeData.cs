@@ -17,36 +17,36 @@ using System.Text.RegularExpressions;
 
 namespace EarleCode.Compiler.Lexing
 {
-    internal class TokenTypeData
-    {
-        private readonly string _pattern;
+	internal class TokenTypeData
+	{
+		private readonly string _pattern;
 
-        public TokenTypeData(Regex pattern, TokenType type)
-        {
-            Pattern = pattern;
-            Type = type;
-        }
+		public TokenTypeData(Regex pattern, TokenType type)
+		{
+			Pattern = pattern;
+			Type = type;
+		}
 
-        public TokenTypeData(string pattern, TokenType type, int contentGroup = 0)
-            : this(new Regex(pattern), type)
-        {
-            _pattern = pattern;
-            ContentGroup = contentGroup;
-        }
+		public TokenTypeData(string pattern, TokenType type, int contentGroup = 0)
+			: this(new Regex(pattern), type)
+		{
+			_pattern = pattern;
+			ContentGroup = contentGroup;
+		}
 
-        public int ContentGroup { get; }
+		public int ContentGroup { get; }
 
-        public Regex Pattern { get; }
+		public Regex Pattern { get; }
 
-        public TokenType Type { get; }
+		public TokenType Type { get; }
 
-        #region Overrides of Object
+		#region Overrides of Object
 
-        public override string ToString()
-        {
-            return $"{Type} `{_pattern}`";
-        }
+		public override string ToString()
+		{
+			return $"{Type} `{_pattern}`";
+		}
 
-        #endregion
-    }
+		#endregion
+	}
 }

@@ -17,112 +17,113 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
-using EarleCode.Localization;
 using EarleCode.Runtime;
 using EarleCode.Runtime.Events;
 using EarleCode.Runtime.Values;
 
 namespace EarleCode.Debug
 {
-    public class Program
-    {
-        private static string GetRelativePath(string filespec, string folder)
-        {
-            var pathUri = new Uri(filespec);
+	public class Program
+	{
+		private static string GetRelativePath(string filespec, string folder)
+		{
+			var pathUri = new Uri(filespec);
 
-            if(!folder.EndsWith(Path.DirectorySeparatorChar.ToString(), StringComparison.Ordinal))
-                folder += Path.DirectorySeparatorChar;
-            
-            var folderUri = new Uri(folder);
-            return Uri.UnescapeDataString(folderUri.MakeRelativeUri(pathUri).ToString().Replace('/', Path.DirectorySeparatorChar));
-        }
+			if (!folder.EndsWith(Path.DirectorySeparatorChar.ToString(), StringComparison.Ordinal))
+				folder += Path.DirectorySeparatorChar;
 
-        private static void Main(string[] args)
-        {
-            //Console.WriteLine(4 << 1 + 1);//16
-            //Console.WriteLine(4 | 1 << 1 + 1);//4
-            //Console.WriteLine(4 * 3 == 12);//true
-            //Console.WriteLine(3 & 1 | 2 << 2);//9
-            //Console.WriteLine(1 < 3 == 3 < 1);//false
+			var folderUri = new Uri(folder);
+			return Uri.UnescapeDataString(folderUri.MakeRelativeUri(pathUri).ToString().Replace('/', Path.DirectorySeparatorChar));
+		}
 
-            var runtime = new EarleRuntime();
-            runtime.GlobalVariables["level"] = new EarleSimpleEventableStructure().ToEarleValue();
+		private static void Main(string[] args)
+		{
+			//Console.WriteLine(4 << 1 + 1);//16
+			//Console.WriteLine(4 | 1 << 1 + 1);//4
+			//Console.WriteLine(4 * 3 == 12);//true
+			//Console.WriteLine(3 & 1 | 2 << 2);//9
+			//Console.WriteLine(1 < 3 == 3 < 1);//false
 
-            // Load code
-            var swc = Stopwatch.StartNew();
-            var codeDir = Path.Combine(Directory.GetCurrentDirectory(), "code");
-            foreach(var file in Directory.GetFiles(codeDir, "*.earle", SearchOption.AllDirectories))
-            {
-                var rel = GetRelativePath(file, codeDir).Replace('/', '\\');
-                rel = '\\' + rel.Substring(0, rel.Length - 6);
-                runtime.CompileFile(rel, File.ReadAllText(file));
-            }
-            swc.Stop();
-            Console.WriteLine($"Compiling took: {swc.Elapsed}");
+			var runtime = new EarleRuntime();
+			runtime.GlobalVariables["level"] = new EarleSimpleEventableStructure().ToEarleValue();
 
-            // Add localization
-            foreach(var file in Directory.GetFiles(codeDir, "*.estr", SearchOption.AllDirectories))
-            {
-                var rel = GetRelativePath(file, codeDir).Replace('/', '\\');
-                rel = rel.Substring(0, rel.Length - 5);
-                runtime.Localizer.LoadFromFile(rel, File.ReadAllText(file), Path.GetFileNameWithoutExtension(file).ToUpper() + "_");
-            }
-            runtime.Localizer.Key = "LANG_ENGLISH";
+			// Load code
+			var swc = Stopwatch.StartNew();
+			var codeDir = Path.Combine(Directory.GetCurrentDirectory(), "code");
+			foreach (var file in Directory.GetFiles(codeDir, "*.earle", SearchOption.AllDirectories))
+			{
+				var rel = GetRelativePath(file, codeDir).Replace('/', '\\');
+				rel = '\\' + rel.Substring(0, rel.Length - 6);
+				runtime.CompileFile(rel, File.ReadAllText(file));
+			}
+			swc.Stop();
+			Console.WriteLine($"Compiling took: {swc.Elapsed}");
 
-            foreach(var l in runtime.GetDebugInformation())
-                Console.WriteLine(l);
+			// Add localization
+			foreach (var file in Directory.GetFiles(codeDir, "*.estr", SearchOption.AllDirectories))
+			{
+				var rel = GetRelativePath(file, codeDir).Replace('/', '\\');
+				rel = rel.Substring(0, rel.Length - 5);
+				runtime.Localizer.LoadFromFile(rel, File.ReadAllText(file), Path.GetFileNameWithoutExtension(file).ToUpper() + "_");
+			}
+			runtime.Localizer.Key = "LANG_ENGLISH";
 
-            runtime.Natives.Register(EarleNativeFunction.Create("printstacktrace", (EarleStackFrame frame) => {
-                var trace = frame.GetStackTrace();
-            Console.WriteLine(trace);
-            }));
+			foreach (var l in runtime.GetDebugInformation())
+				Console.WriteLine(l);
 
-            var test = runtime["\\main"]["test"];
+			runtime.Natives.Register(EarleNativeFunction.Create("printstacktrace", (EarleStackFrame frame) =>
+			{
+				var trace = frame.GetStackTrace();
+				Console.WriteLine(trace);
+			}));
 
-            if(test != null)
-            {
-                var count = runtime["\\main"]["gettestcount"]?
-                    .Invoke(null, EarleValue.Undefined)?
-                    .CastTo<int>() ?? 10000;
+			var test = runtime["\\main"]["test"];
 
-                var sw = Stopwatch.StartNew();
-                for(var i = 0; i < count; i++)
-                {
-                    test.Invoke(null, EarleValue.Undefined);
-                }
-                sw.Stop();
+			if (test != null)
+			{
+				var count = runtime["\\main"]["gettestcount"]?
+					.Invoke(null, EarleValue.Undefined)?
+					.CastTo<int>() ?? 10000;
 
-                Console.WriteLine($"Running {count} times took {sw.Elapsed}");
-            }
-            else
-            {
-                // Invoke main::init
-                runtime["\\main"]["init"].Invoke((result) => {
-                    Console.WriteLine();
-                    Console.WriteLine("Code execution completed!");
-                    Console.WriteLine("Result: " + result);
+				var sw = Stopwatch.StartNew();
+				for (var i = 0; i < count; i++)
+				{
+					test.Invoke(null, EarleValue.Undefined);
+				}
+				sw.Stop();
 
-                    if(result.Is<EarleStructure>())
-                    {
-                        var struc = result.As<EarleStructure>();
-                        foreach(var kv in struc)
-                            Console.WriteLine($"> {kv.Key} = {kv.Value}");
-                    }
-                    else if(result.Is<EarleArray>())
-                    {
-                        var arr = result.As<EarleArray>();
-                        foreach(var v in arr)
-                            Console.WriteLine(v);
-                    }
-                }, EarleValue.Undefined);
+				Console.WriteLine($"Running {count} times took {sw.Elapsed}");
+			}
+			else
+			{
+				// Invoke main::init
+				runtime["\\main"]["init"].Invoke(result =>
+				{
+					Console.WriteLine();
+					Console.WriteLine("Code execution completed!");
+					Console.WriteLine("Result: " + result);
 
-                do
-                {
-                    Thread.Sleep(1000 / 30);
-                } while(!runtime.Tick());
-            }
+					if (result.Is<EarleStructure>())
+					{
+						var struc = result.As<EarleStructure>();
+						foreach (var kv in struc)
+							Console.WriteLine($"> {kv.Key} = {kv.Value}");
+					}
+					else if (result.Is<EarleArray>())
+					{
+						var arr = result.As<EarleArray>();
+						foreach (var v in arr)
+							Console.WriteLine(v);
+					}
+				}, EarleValue.Undefined);
 
-            Console.WriteLine("Done!");
-        }
-    }
+				do
+				{
+					Thread.Sleep(1000/30);
+				} while (!runtime.Tick());
+			}
+
+			Console.WriteLine("Done!");
+		}
+	}
 }

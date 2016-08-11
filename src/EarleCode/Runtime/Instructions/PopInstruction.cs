@@ -15,15 +15,15 @@
 
 namespace EarleCode.Runtime.Instructions
 {
-    internal class PopInstruction : Instruction
-    {
-        #region Overrides of Instruction
+	internal class PopInstruction : Instruction
+	{
+		#region Overrides of Instruction
 
-        protected override void Handle()
-        {
-            Pop();
-        }
+		protected override void Handle()
+		{
+			Pop();
+		}
 
-        #endregion
-    }
+		#endregion
+	}
 }

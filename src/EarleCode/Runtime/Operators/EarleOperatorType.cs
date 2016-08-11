@@ -17,12 +17,12 @@ using System;
 
 namespace EarleCode.Runtime.Operators
 {
-    [Flags]
-    internal enum EarleOperatorType
-    {
-        UnaryOperator = 1,
-        BinaryOperator = 2,
-        AssignmentOperator = 4,// eg. +=
-        AssignmentModOperator = 8,// eg. ++
-    }
+	[Flags]
+	internal enum EarleOperatorType
+	{
+		UnaryOperator = 1,
+		BinaryOperator = 2,
+		AssignmentOperator = 4, // eg. +=
+		AssignmentModOperator = 8 // eg. ++
+	}
 }

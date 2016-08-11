@@ -13,24 +13,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using EarleCode.Runtime.Instructions;
 using EarleCode.Runtime.Values;
-using EarleCode.Utilities;
 
 namespace EarleCode.Runtime
 {
-    public interface IEarleStackFrameExecutor : IEarleRuntimeScope
-    {
-        EarleStackFrame Frame { get; }
-        EarleValue Target { get; }
-        Stack<IEarleRuntimeScope> Scopes { get; }
-        Stack<EarleValue> Stack { get; }
-        int CIP { get; set; }
+	public interface IEarleStackFrameExecutor : IEarleRuntimeScope
+	{
+		EarleStackFrame Frame { get; }
 
-        EarleValue? Run();
-    }
-    
+		EarleValue Target { get; }
+
+		Stack<IEarleRuntimeScope> Scopes { get; }
+
+		Stack<EarleValue> Stack { get; }
+
+		int CIP { get; set; }
+
+		EarleValue? Run();
+	}
 }

@@ -13,75 +13,75 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Collections.Generic;
 using System.Linq;
 using EarleCode.Runtime.Values;
 
 namespace EarleCode.Runtime.Instructions
 {
-    internal class CallInstruction : Instruction
-    {
-        protected virtual bool HasTarget => true;
+	internal class CallInstruction : Instruction
+	{
+		protected virtual bool HasTarget => true;
 
-        #region Overrides of Instruction
+		#region Overrides of Instruction
 
-        protected override void Handle()
-        {
-            Frame.ChildFrame = CreateFrameExecutor(Frame, Frame.Executor.CIP - 1)?.Frame;
-        }
+		protected override void Handle()
+		{
+			Frame.ChildFrame = CreateFrameExecutor(Frame, Frame.Executor.CIP - 1)?.Frame;
+		}
 
-        #endregion
+		#endregion
 
-        protected virtual IEarleStackFrameExecutor CreateFrameExecutor(EarleStackFrame superFrame, int callerIp)
-        {
-            var argumentCount = GetInt32();
-            var value = Pop();
-            var hasOverloads = false;
-            EarleFunction function;
+		protected virtual IEarleStackFrameExecutor CreateFrameExecutor(EarleStackFrame superFrame, int callerIp)
+		{
+			var argumentCount = GetInt32();
+			var value = Pop();
+			var hasOverloads = false;
+			EarleFunction function;
 
-            // Unbox down to a function or function collection
-            //while(value is EarleVariableReference || value is EarleBoxedValueReference)
-            //{
-            //    if(value is EarleVariableReference)
-            //        value = Frame.Executor.GetValue((EarleVariableReference)value).Value;
-            //    else if(value is EarleBoxedValueReference)
-            //        value = ((EarleBoxedValueReference)value).GetField().Value;
-            //}
+			// Unbox down to a function or function collection
+			//while(value is EarleVariableReference || value is EarleBoxedValueReference)
+			//{
+			//    if(value is EarleVariableReference)
+			//        value = Frame.Executor.GetValue((EarleVariableReference)value).Value;
+			//    else if(value is EarleBoxedValueReference)
+			//        value = ((EarleBoxedValueReference)value).GetField().Value;
+			//}
 
-            if(value.Is<EarleFunctionCollection>())
-            {
-                var functions = value.As<EarleFunctionCollection>();
-                hasOverloads = functions.Count > 0;
-                function = functions.GetBestOverload(argumentCount);
-            }
-            else
-            {
-                function = value.As<EarleFunction>();
-            }
+			if (value.Is<EarleFunctionCollection>())
+			{
+				var functions = value.As<EarleFunctionCollection>();
+				hasOverloads = functions.Count > 0;
+				function = functions.GetBestOverload(argumentCount);
+			}
+			else
+			{
+				function = value.As<EarleFunction>();
+			}
 
-            if(function == null)
-            {
-                if(hasOverloads)
-                    Frame.Runtime.HandleWarning($"No suitable overload cana be found of `{value.As<EarleFunctionCollection>().FirstOrDefault()?.Name}`.");
-                else if(!value.HasValue)
-                    Frame.Runtime.HandleWarning("A null pointer cannot be invoked.");
-                else
-                    Frame.Runtime.HandleWarning($"{value.Value?.GetType()} cannot be invoked.");
+			if (function == null)
+			{
+				if (hasOverloads)
+					Frame.Runtime.HandleWarning(
+						$"No suitable overload cana be found of `{value.As<EarleFunctionCollection>().FirstOrDefault()?.Name}`.");
+				else if (!value.HasValue)
+					Frame.Runtime.HandleWarning("A null pointer cannot be invoked.");
+				else
+					Frame.Runtime.HandleWarning($"{value.Value?.GetType()} cannot be invoked.");
 
-                for(var i = 0; i < argumentCount; i++)
-                    Pop();
+				for (var i = 0; i < argumentCount; i++)
+					Pop();
 
-                Push(EarleValue.Undefined);
-                return null;
-            }
+				Push(EarleValue.Undefined);
+				return null;
+			}
 
-            var args = new EarleValue[argumentCount];
-            for(var i = 0; i < argumentCount; i++)
-                args[argumentCount - 1 - i] = Pop();
+			var args = new EarleValue[argumentCount];
+			for (var i = 0; i < argumentCount; i++)
+				args[argumentCount - 1 - i] = Pop();
 
-            var target = HasTarget ? Pop() : EarleValue.Undefined;
+			var target = HasTarget ? Pop() : EarleValue.Undefined;
 
-            return function.CreateFrameExecutor(superFrame, callerIp, target, args);
-        }
-    }
+			return function.CreateFrameExecutor(superFrame, callerIp, target, args);
+		}
+	}
 }

@@ -17,26 +17,24 @@ using EarleCode.Runtime.Values;
 
 namespace EarleCode.Runtime.Instructions
 {
+	internal class ReadFieldInstuction : Instruction
+	{
+		#region Overrides of Instruction
 
-    internal class ReadFieldInstuction : Instruction
-    {
-        #region Overrides of Instruction
+		protected override void Handle()
+		{
+			var structure = Pop();
+			var field = GetString();
+			if (!structure.Is<IEarleStructure>())
+			{
+				Push(EarleValue.Undefined);
+			}
+			else
+			{
+				Push(structure.As<IEarleStructure>().GetField(field));
+			}
+		}
 
-        protected override void Handle()
-        {
-            var structure = Pop();
-            var field = GetString();
-            if(!structure.Is<IEarleStructure>())
-            {
-                Push(EarleValue.Undefined);
-            }
-            else
-            {
-                Push(structure.As<IEarleStructure>().GetField(field));
-            }
-        }
-
-        #endregion
-    }
-    
+		#endregion
+	}
 }

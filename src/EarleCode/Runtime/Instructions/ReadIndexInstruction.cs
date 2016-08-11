@@ -17,25 +17,24 @@ using EarleCode.Runtime.Values;
 
 namespace EarleCode.Runtime.Instructions
 {
+	internal class ReadIndexInstruction : Instruction
+	{
+		#region Overrides of Instruction
 
-    internal class ReadIndexInstruction : Instruction
-    {
-        #region Overrides of Instruction
+		protected override void Handle()
+		{
+			var index = Pop();
+			var array = Pop();
+			if (!array.Is<EarleArray>())
+			{
+				Push(EarleValue.Undefined);
+			}
+			else
+			{
+				Push(array.As<EarleArray>().GetValue(index));
+			}
+		}
 
-        protected override void Handle()
-        {
-            var index = Pop();
-            var array = Pop();
-            if(!array.Is<EarleArray>())
-            {
-                Push(EarleValue.Undefined);
-            }
-            else
-            {
-                Push(array.As<EarleArray>().GetValue(index));
-            }
-        }
-
-        #endregion
-    }
+		#endregion
+	}
 }

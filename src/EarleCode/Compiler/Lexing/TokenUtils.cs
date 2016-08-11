@@ -17,13 +17,13 @@ using System.Linq;
 
 namespace EarleCode.Compiler.Lexing
 {
-    public static class TokenUtils
-    {
-        public static string ToUpperString(this TokenType tokenType)
-        {
-            return string.Concat(
-                tokenType.ToString().Select((x, i) => (i > 0 && char.IsUpper(x) ? "_" : "") + x.ToString()))
-                .ToUpper();
-        }
-    }
+	public static class TokenUtils
+	{
+		public static string ToUpperString(this TokenType tokenType)
+		{
+			return string.Concat(
+				tokenType.ToString().Select((x, i) => (i > 0 && char.IsUpper(x) ? "_" : "") + x.ToString()))
+				.ToUpper();
+		}
+	}
 }

@@ -15,16 +15,16 @@
 
 namespace EarleCode.Runtime.Instructions
 {
-    internal class PushScopeInstruction : Instruction
-    {
-        #region Overrides of Instruction
+	internal class PushScopeInstruction : Instruction
+	{
+		#region Overrides of Instruction
 
-        protected override void Handle()
-        {
-            var super = Frame.Executor.Scopes.Peek();
-            Frame.Executor.Scopes.Push(new EarleRuntimeScope(super));
-        }
+		protected override void Handle()
+		{
+			var super = Frame.Executor.Scopes.Peek();
+			Frame.Executor.Scopes.Push(new EarleRuntimeScope(super));
+		}
 
-        #endregion
-    }
+		#endregion
+	}
 }

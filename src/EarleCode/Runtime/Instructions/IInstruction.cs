@@ -15,8 +15,8 @@
 
 namespace EarleCode.Runtime.Instructions
 {
-    internal interface IInstruction
-    {
-        void Handle(EarleStackFrame frame);
-    }
+	internal interface IInstruction
+	{
+		void Handle(EarleStackFrame frame);
+	}
 }
