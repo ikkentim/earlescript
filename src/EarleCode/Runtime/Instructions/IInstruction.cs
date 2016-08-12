@@ -15,8 +15,15 @@
 
 namespace EarleCode.Runtime.Instructions
 {
-	internal interface IInstruction
-	{
-		void Handle(EarleStackFrame frame);
-	}
+    /// <summary>
+    ///     Represents an Earle instruction.
+    /// </summary>
+    internal interface IInstruction
+    {
+        /// <summary>
+        ///     This method is invoked when the instruction needs to be run.
+        /// </summary>
+        /// <param name="frame">The frame which is running the instruction.</param>
+        void Handle(EarleStackFrame frame);
+    }
 }

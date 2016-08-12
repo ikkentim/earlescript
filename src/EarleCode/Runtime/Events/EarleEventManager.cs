@@ -18,20 +18,38 @@ using EarleCode.Runtime.Values;
 
 namespace EarleCode.Runtime.Events
 {
-	public class EarleEventManager : IEarleEventManager
-	{
-		public event EventHandler<EarleEventNotifyEventArgs> EventFired;
+    /// <summary>
+    ///     Represents an event manager for <see cref="IEarleObject" /> instances which implement
+    ///     <see cref="IEarleEventableObject" />.
+    /// </summary>
+    /// <seealso cref="EarleCode.Runtime.Events.IEarleEventManager" />
+    public class EarleEventManager : IEarleEventManager
+    {
+        /// <summary>
+        ///     Occurs when an event is fired.
+        /// </summary>
+        public event EventHandler<EarleEventNotifyEventArgs> EventFired;
 
-		public void Notify(string eventName, EarleValue firer)
-		{
-			if (eventName == null)
-				return;
-			OnEventFired(this, new EarleEventNotifyEventArgs(eventName, firer));
-		}
+        /// <summary>
+        ///     Notifies the specified event was fired to all of this instances listeners.
+        /// </summary>
+        /// <param name="eventName">Name of the event.</param>
+        /// <param name="firer">The firer of the event.</param>
+        public void Notify(string eventName, EarleValue firer)
+        {
+            if (eventName == null)
+                return;
+            OnEventFired(this, new EarleEventNotifyEventArgs(eventName, firer));
+        }
 
-		protected virtual void OnEventFired(object sender, EarleEventNotifyEventArgs e)
-		{
-			EventFired?.Invoke(sender, e);
-		}
-	}
+        /// <summary>
+        ///     Called when an event is fired.
+        /// </summary>
+        /// <param name="sender">The sender.</param>
+        /// <param name="e">The <see cref="EarleEventNotifyEventArgs" /> instance containing the event data.</param>
+        protected virtual void OnEventFired(object sender, EarleEventNotifyEventArgs e)
+        {
+            EventFired?.Invoke(sender, e);
+        }
+    }
 }

@@ -15,11 +15,23 @@
 
 namespace EarleCode.Runtime.Instructions
 {
-	internal class PushValueInstruction : Instruction
-	{
-		protected override void Handle()
-		{
-			Push(Frame.Function.File.GetValueInStore(GetInt32()));
-		}
-	}
+    /// <summary>
+    ///     Represents the PUSH.V instruction which pushes the value at the specified index stored in the file's value store to
+    ///     the stack.
+    /// </summary>
+    /// <seealso cref="EarleCode.Runtime.Instructions.Instruction" />
+    internal class PushValueInstruction : Instruction
+    {
+        #region Overrides of Instruction
+
+        /// <summary>
+        ///     This method is invoked when the instruction needs to be run.
+        /// </summary>
+        protected override void Handle()
+        {
+            Push(Frame.Function.File.GetValueInStore(GetInt32()));
+        }
+
+        #endregion
+    }
 }

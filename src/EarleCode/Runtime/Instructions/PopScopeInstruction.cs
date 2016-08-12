@@ -15,15 +15,22 @@
 
 namespace EarleCode.Runtime.Instructions
 {
-	internal class PopScopeInstruction : Instruction
-	{
-		#region Overrides of Instruction
+    /// <summary>
+    ///     Represents the POP.SC instruction which pops a scope off the scopes stack.
+    /// </summary>
+    /// <seealso cref="EarleCode.Runtime.Instructions.Instruction" />
+    internal class PopScopeInstruction : Instruction
+    {
+        #region Overrides of Instruction
 
-		protected override void Handle()
-		{
-			Frame.Executor.Scopes.Pop();
-		}
+        /// <summary>
+        ///     This method is invoked when the instruction needs to be run.
+        /// </summary>
+        protected override void Handle()
+        {
+            Frame.Executor.Scopes.Pop();
+        }
 
-		#endregion
-	}
+        #endregion
+    }
 }

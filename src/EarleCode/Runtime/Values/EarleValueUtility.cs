@@ -17,12 +17,12 @@ using System.Diagnostics;
 
 namespace EarleCode.Runtime.Values
 {
-	public static class EarleValueUtility
-	{
-		[DebuggerHidden]
-		public static EarleValue ToEarleValue(this object value)
-		{
-			return new EarleValue(value);
-		}
-	}
+    public static class EarleValueUtility
+    {
+        [DebuggerHidden]
+        public static EarleValue ToEarleValue(this object value)
+        {
+            return new EarleValue(value);
+        }
+    }
 }

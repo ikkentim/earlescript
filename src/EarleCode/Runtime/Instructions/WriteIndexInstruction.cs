@@ -17,21 +17,29 @@ using EarleCode.Runtime.Values;
 
 namespace EarleCode.Runtime.Instructions
 {
-	internal class WriteIndexInstruction : Instruction
-	{
-		#region Overrides of Instruction
+    /// <summary>
+    ///     Represents the WRITE.I instruction which writes the value stored below the array at the index specified on the top
+    ///     of the stack in the array stored below the index.
+    /// </summary>
+    /// <seealso cref="EarleCode.Runtime.Instructions.Instruction" />
+    internal class WriteIndexInstruction : Instruction
+    {
+        #region Overrides of Instruction
 
-		protected override void Handle()
-		{
-			var index = Pop();
-			var array = Pop();
-			var value = Pop();
-			if (array.Is<EarleArray>())
-			{
-				array.As<EarleArray>().SetValue(index, value);
-			}
-		}
+        /// <summary>
+        ///     This method is invoked when the instruction needs to be run.
+        /// </summary>
+        protected override void Handle()
+        {
+            var index = Pop();
+            var array = Pop();
+            var value = Pop();
+            if (array.Is<EarleArray>())
+            {
+                array.As<EarleArray>().SetValue(index, value);
+            }
+        }
 
-		#endregion
-	}
+        #endregion
+    }
 }

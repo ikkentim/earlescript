@@ -78,7 +78,7 @@ namespace EarleCode.Compiler.Parsers
 
 				Lexer.AssertMoveNext();
 
-				PushFunctionReference(path, name);
+				PushFunction(path, name);
 			}
 		}
 

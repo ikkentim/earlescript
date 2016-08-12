@@ -20,188 +20,189 @@ using EarleCode.Runtime.Values;
 
 namespace EarleCode.Runtime
 {
-	public class EarleFile : EarleRuntimeScope, IEnumerable<EarleFunction>
-	{
-		private readonly List<string> _includedFiles = new List<string>();
-		private readonly List<string> _referencedFiles = new List<string>();
-		private readonly List<EarleValue> _valueStore = new List<EarleValue>();
-		private readonly EarleFunctionTable _functions = new EarleFunctionTable();
+    public class EarleFile : EarleRuntimeScope, IEnumerable<EarleFunction>
+    {
+        private readonly EarleFunctionTable _functions = new EarleFunctionTable();
 
-		private readonly Dictionary<Tuple<string, string>, EarleFunctionCollection> _functionsCache =
-			new Dictionary<Tuple<string, string>, EarleFunctionCollection>();
+        private readonly Dictionary<Tuple<string, string>, EarleFunctionCollection> _functionsCache =
+            new Dictionary<Tuple<string, string>, EarleFunctionCollection>();
 
-		public EarleFile(EarleRuntime runtime, string name) : base(runtime)
-		{
-			if (runtime == null) throw new ArgumentNullException(nameof(runtime));
-			if (name == null) throw new ArgumentNullException(nameof(name));
+        private readonly List<string> _includedFiles = new List<string>();
+        private readonly List<string> _referencedFiles = new List<string>();
+        private readonly List<EarleValue> _valueStore = new List<EarleValue>();
 
-			Runtime = runtime;
-			Name = name;
-		}
+        public EarleFile(EarleRuntime runtime, string name) : base(runtime)
+        {
+            if (runtime == null) throw new ArgumentNullException(nameof(runtime));
+            if (name == null) throw new ArgumentNullException(nameof(name));
 
-		public string Name { get; }
+            Runtime = runtime;
+            Name = name;
+        }
 
-		public bool Locked { get; private set; }
+        public string Name { get; }
 
-		public EarleRuntime Runtime { get; }
+        public bool Locked { get; private set; }
 
-		public EarleFunctionCollection this[string functionName] => GetFunctions(functionName);
+        public EarleRuntime Runtime { get; }
 
-		public IEnumerable<string> ReferencedFiles => _referencedFiles.AsReadOnly();
+        public EarleFunctionCollection this[string functionName] => GetFunctions(functionName);
 
-		public IEnumerable<string> IncludedFiles => _includedFiles.AsReadOnly();
+        public IEnumerable<string> ReferencedFiles => _referencedFiles.AsReadOnly();
 
-		public void IncludeFile(string file)
-		{
-			if (file == null) throw new ArgumentNullException(nameof(file));
+        public IEnumerable<string> IncludedFiles => _includedFiles.AsReadOnly();
 
-			if (Locked)
-				throw new Exception("Cannot include a file while this instance is locked.");
+        public void IncludeFile(string file)
+        {
+            if (file == null) throw new ArgumentNullException(nameof(file));
 
-			if (!_includedFiles.Contains(file))
-				_includedFiles.Add(file);
-		}
+            if (Locked)
+                throw new Exception("Cannot include a file while this instance is locked.");
 
-		public void AddFunction(EarleFunction function)
-		{
-			if (function == null) throw new ArgumentNullException(nameof(function));
+            if (!_includedFiles.Contains(file))
+                _includedFiles.Add(file);
+        }
 
-			if (Locked)
-				throw new Exception("Cannot add a function while this instance is locked.");
+        public void AddFunction(EarleFunction function)
+        {
+            if (function == null) throw new ArgumentNullException(nameof(function));
 
-			_functions.Add(function);
-		}
+            if (Locked)
+                throw new Exception("Cannot add a function while this instance is locked.");
 
-		public void AddReferencedFile(string fileName)
-		{
-			if (fileName == null) throw new ArgumentNullException(nameof(fileName));
+            _functions.Add(function);
+        }
 
-			if (Locked)
-				throw new Exception("Cannot add a referenced file while this instance is locked.");
+        public void AddReferencedFile(string fileName)
+        {
+            if (fileName == null) throw new ArgumentNullException(nameof(fileName));
 
-			if (!_referencedFiles.Contains(fileName))
-				_referencedFiles.Add(fileName);
-		}
+            if (Locked)
+                throw new Exception("Cannot add a referenced file while this instance is locked.");
 
-		public void AddReferencedFiles(string[] fileNames)
-		{
-			if (fileNames == null) throw new ArgumentNullException(nameof(fileNames));
+            if (!_referencedFiles.Contains(fileName))
+                _referencedFiles.Add(fileName);
+        }
 
-			if (Locked)
-				throw new Exception("Cannot add a referenced file while this instance is locked.");
+        public void AddReferencedFiles(string[] fileNames)
+        {
+            if (fileNames == null) throw new ArgumentNullException(nameof(fileNames));
 
-			foreach (var f in fileNames)
-				AddReferencedFile(f);
-		}
+            if (Locked)
+                throw new Exception("Cannot add a referenced file while this instance is locked.");
 
-		public EarleFunctionCollection GetFunctions(string functionName)
-		{
-			return _functions.Get(functionName);
-		}
+            foreach (var f in fileNames)
+                AddReferencedFile(f);
+        }
 
-		public int GetIndexForValueInStore(EarleValue value)
-		{
-			var index = _valueStore.IndexOf(value);
+        public EarleFunctionCollection GetFunctions(string functionName)
+        {
+            return _functions.Get(functionName);
+        }
 
-			if (index < 0)
-			{
-				index = _valueStore.Count;
-				_valueStore.Add(value);
-			}
+        public int GetIndexForValueInStore(EarleValue value)
+        {
+            var index = _valueStore.IndexOf(value);
 
-			return index;
-		}
+            if (index < 0)
+            {
+                index = _valueStore.Count;
+                _valueStore.Add(value);
+            }
 
-		public void Lock()
-		{
-			Locked = true;
-		}
+            return index;
+        }
 
-		public EarleValue GetValueInStore(int index)
-		{
-			if (index < 0 || index >= _valueStore.Count)
-				return EarleValue.Undefined;
+        public void Lock()
+        {
+            Locked = true;
+        }
 
-			return _valueStore[index];
-		}
+        public EarleValue GetValueInStore(int index)
+        {
+            if (index < 0 || index >= _valueStore.Count)
+                return EarleValue.Undefined;
 
-		public EarleValue? Invoke(string functionName, EarleCompletionHandler completionHandler, EarleValue target,
-			params EarleValue[] arguments)
-		{
-			return GetFunctions(functionName).Invoke(completionHandler, target, arguments);
-		}
+            return _valueStore[index];
+        }
 
-		public void ClearCache()
-		{
-			_functionsCache.Clear();
-		}
+        public EarleValue? Invoke(string functionName, EarleCompletionHandler completionHandler, EarleValue target,
+            params EarleValue[] arguments)
+        {
+            return GetFunctions(functionName).Invoke(completionHandler, target, arguments);
+        }
 
-		#region Overrides of RuntimeScope
+        public void ClearCache()
+        {
+            _functionsCache.Clear();
+        }
 
-		protected override bool CanAssignVariableInScope(string name)
-		{
-			return false;
-		}
+        #region Overrides of RuntimeScope
 
-		public override EarleFunctionCollection GetFunctionReference(string fileName, string functionName)
-		{
-			if (functionName == null) throw new ArgumentNullException(nameof(functionName));
+        protected override bool CanAssignVariableInScope(string name)
+        {
+            return false;
+        }
 
-			var tuple = new Tuple<string, string>(fileName, functionName);
+        public override EarleFunctionCollection GetFunctionReference(string fileName, string functionName)
+        {
+            if (functionName == null) throw new ArgumentNullException(nameof(functionName));
 
-			EarleFunctionCollection result;
+            var tuple = new Tuple<string, string>(fileName, functionName);
 
-			if (Locked && _functionsCache.TryGetValue(tuple, out result))
-				return result;
+            EarleFunctionCollection result;
 
-			result = new EarleFunctionCollection();
+            if (Locked && _functionsCache.TryGetValue(tuple, out result))
+                return result;
 
-			var runtimeFunctions = Runtime.GetFunctionReference(fileName, functionName);
-			if (runtimeFunctions != null)
-				result.AddRange(runtimeFunctions);
+            result = new EarleFunctionCollection();
 
-			if (fileName == null || fileName == Name)
-			{
-				var functions = GetFunctions(functionName);
+            var runtimeFunctions = Runtime.GetFunctionReference(fileName, functionName);
+            if (runtimeFunctions != null)
+                result.AddRange(runtimeFunctions);
 
-				if (functions != null)
-				{
-				    result.AddRange(functions);
-				}
+            if (fileName == null || fileName == Name)
+            {
+                var functions = GetFunctions(functionName);
 
-				foreach (var include in IncludedFiles)
-				{
-					var file = Runtime.GetFile(include);
+                if (functions != null)
+                {
+                    result.AddRange(functions);
+                }
 
-				    var funcs = file?.GetFunctions(functionName);
+                foreach (var include in IncludedFiles)
+                {
+                    var file = Runtime.GetFile(include);
 
-					if (funcs == null)
-						continue;
+                    var funcs = file?.GetFunctions(functionName);
 
-				    result.AddRange(funcs);
-				}
-			}
+                    if (funcs == null)
+                        continue;
 
-			if (Locked)
-				_functionsCache[tuple] = result;
+                    result.AddRange(funcs);
+                }
+            }
 
-			return result;
-		}
+            if (Locked)
+                _functionsCache[tuple] = result;
 
-		#endregion
+            return result;
+        }
 
-		#region Implementation of IEnumerable<EarleFunction>
+        #endregion
 
-		public IEnumerator<EarleFunction> GetEnumerator()
-		{
-			return _functions.GetEnumerator();
-		}
+        #region Implementation of IEnumerable<EarleFunction>
 
-		IEnumerator IEnumerable.GetEnumerator()
-		{
-			return GetEnumerator();
-		}
+        public IEnumerator<EarleFunction> GetEnumerator()
+        {
+            return _functions.GetEnumerator();
+        }
 
-		#endregion
-	}
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+
+        #endregion
+    }
 }

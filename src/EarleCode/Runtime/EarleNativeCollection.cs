@@ -14,25 +14,23 @@
 // limitations under the License.
 
 using System;
-using System.Linq;
-using System.Reflection;
 
 namespace EarleCode.Runtime
 {
-	public sealed class EarleNativeCollection
-	{
-		private readonly EarleFunctionTable _natives = new EarleFunctionTable();
+    public sealed class EarleNativeCollection
+    {
+        private readonly EarleFunctionTable _natives = new EarleFunctionTable();
 
-		public void Register(EarleFunction native)
-		{
-			if (native == null) throw new ArgumentNullException(nameof(native));
+        public void Register(EarleFunction native)
+        {
+            if (native == null) throw new ArgumentNullException(nameof(native));
 
-			_natives.Add(native);
-		}
-        
-		public EarleFunctionCollection Get(string name)
-		{
-			return _natives.Get(name);
-		}
-	}
+            _natives.Add(native);
+        }
+
+        public EarleFunctionCollection Get(string name)
+        {
+            return _natives.Get(name);
+        }
+    }
 }

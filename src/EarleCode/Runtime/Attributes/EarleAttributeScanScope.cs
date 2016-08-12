@@ -15,9 +15,19 @@
 
 namespace EarleCode.Runtime.Attributes
 {
+    /// <summary>
+    ///     Contains all <see cref="EarleAttributeScanner" /> scope options.
+    /// </summary>
     public enum EarleAttributeScanScope
     {
+        /// <summary>
+        ///     Scan the assembly of the specified type.
+        /// </summary>
         Assembly,
+
+        /// <summary>
+        ///     Scan only the specified class type.
+        /// </summary>
         Class
     }
 }

@@ -150,7 +150,7 @@
     <Compile Include="Runtime\Operators\OperatorAttribute.cs" />
     <Compile Include="Runtime\Operators\EarleOperatorType.cs" />
     <Compile Include="Runtime\Instructions\PushValueInstruction.cs" />
-    <Compile Include="Runtime\Instructions\PushFunctionReferenceInstruction.cs" />
+    <Compile Include="Runtime\Instructions\PushFunctionInstruction.cs" />
     <Compile Include="Runtime\Instructions\UnboxFunctionReferenceInstruction.cs" />
     <Compile Include="Runtime\Instructions\ReadFieldInstuction.cs" />
     <Compile Include="Runtime\Instructions\ReadIndexInstruction.cs" />

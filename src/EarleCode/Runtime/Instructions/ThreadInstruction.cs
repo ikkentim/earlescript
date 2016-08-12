@@ -15,20 +15,33 @@
 
 namespace EarleCode.Runtime.Instructions
 {
-	internal class ThreadInstruction : CallInstruction
-	{
-		protected override void Handle()
-		{
-			var ip = Frame.Executor.CIP - 1;
-			var thread = new EarleThread(null);
-			var rootFrame = new EarleStackFrame(Frame.Runtime, Frame.Function, null, ip, Frame, thread);
-			var frame = CreateFrameExecutor(rootFrame, EarleStackFrame.ThreadFrameIP);
+    /// <summary>
+    ///     Represents the THREAD instruction which spawns a new thread and call the function stored on the top of the stack
+    ///     with the target stored below the top of the stack and with the specified number of arguments stored below the
+    ///     target.
+    /// </summary>
+    /// <seealso cref="CallInstruction" />
+    internal class ThreadInstruction : CallInstruction
+    {
+        #region Overrides of CallInstruction
 
-			if (frame == null)
-				return;
-			thread.AttachExecutor(frame);
+        /// <summary>
+        ///     This method is invoked when the instruction needs to be run.
+        /// </summary>
+        protected override void Handle()
+        {
+            var ip = Frame.Executor.CIP - 1;
+            var thread = new EarleThread(null);
+            var rootFrame = new EarleStackFrame(Frame.Runtime, Frame.Function, null, ip, Frame, thread);
+            var frame = CreateFrameExecutor(rootFrame, EarleStackFrame.ThreadFrameIP);
 
-			Frame.Runtime.EnqueueThread(thread);
-		}
-	}
+            if (frame == null)
+                return;
+            thread.AttachExecutor(frame);
+
+            Frame.Runtime.EnqueueThread(thread);
+        }
+
+        #endregion
+    }
 }

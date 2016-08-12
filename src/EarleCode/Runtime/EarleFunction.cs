@@ -20,58 +20,60 @@ using EarleCode.Runtime.Values;
 
 namespace EarleCode.Runtime
 {
-	public class EarleFunction
-	{
-		public EarleFunction(EarleFile file, string name, string[] parameters, byte[] pCode, Dictionary<int, int> callLines)
-		{
-			if (name == null) throw new ArgumentNullException(nameof(name));
+    public class EarleFunction
+    {
+        public EarleFunction(EarleFile file, string name, string[] parameters, byte[] pCode,
+            Dictionary<int, int> callLines)
+        {
+            if (name == null) throw new ArgumentNullException(nameof(name));
 
-			File = file;
-			Parameters = parameters;
-			PCode = pCode;
-			Name = name.ToLower();
-			CallLines = callLines == null ? null : new Dictionary<int, int>(callLines);
-		}
+            File = file;
+            Parameters = parameters;
+            PCode = pCode;
+            Name = name.ToLower();
+            CallLines = callLines == null ? null : new Dictionary<int, int>(callLines);
+        }
 
-		public EarleFile File { get; }
+        public EarleFile File { get; }
 
-		public byte[] PCode { get; }
+        public byte[] PCode { get; }
 
-		public string Name { get; }
+        public string Name { get; }
 
-		public string[] Parameters { get; }
+        public string[] Parameters { get; }
 
-		public Dictionary<int, int> CallLines { get; }
+        public Dictionary<int, int> CallLines { get; }
 
-		public virtual IEarleStackFrameExecutor CreateFrameExecutor(EarleStackFrame parentFrame, int callerIp,
-			EarleValue target, EarleValue[] arguments)
-		{
-			if (arguments == null) throw new ArgumentNullException(nameof(arguments));
-			var locals = new EarleDictionary();
+        public virtual IEarleStackFrameExecutor CreateFrameExecutor(EarleStackFrame parentFrame, int callerIp,
+            EarleValue target, EarleValue[] arguments)
+        {
+            if (arguments == null) throw new ArgumentNullException(nameof(arguments));
+            var locals = new EarleDictionary();
 
-			var index = 0;
+            var index = 0;
 
-			if (Parameters == null)
-			{
-				throw new Exception("Parameters cannot be null in order for a EarleStackFrameExecutor to be created.");
-			}
-			foreach (var parameter in Parameters)
-			{
-				locals[parameter] = index >= arguments.Length ? EarleValue.Undefined : arguments[index];
-				index++;
-			}
+            if (Parameters == null)
+            {
+                throw new Exception("Parameters cannot be null in order for a EarleStackFrameExecutor to be created.");
+            }
+            foreach (var parameter in Parameters)
+            {
+                locals[parameter] = index >= arguments.Length ? EarleValue.Undefined : arguments[index];
+                index++;
+            }
 
-			return new EarleStackFrameExecutor(this, parentFrame, callerIp, target, File, locals);
-		}
+            return new EarleStackFrameExecutor(this, parentFrame, callerIp, target, File, locals);
+        }
 
-		public EarleValue? Invoke(EarleCompletionHandler completionHandler, EarleValue target, params EarleValue[] args)
-		{
-			var thread = new EarleThread(completionHandler);
-			var rootFrame = new EarleStackFrame(File.Runtime, null, null, EarleStackFrame.RootFrameIP, null, thread);
-			var frame = CreateFrameExecutor(rootFrame, EarleStackFrame.RootCallIP, target, args?.ToArray() ?? new EarleValue[0]);
-			thread.AttachExecutor(frame);
+        public EarleValue? Invoke(EarleCompletionHandler completionHandler, EarleValue target, params EarleValue[] args)
+        {
+            var thread = new EarleThread(completionHandler);
+            var rootFrame = new EarleStackFrame(File.Runtime, null, null, EarleStackFrame.RootFrameIP, null, thread);
+            var frame = CreateFrameExecutor(rootFrame, EarleStackFrame.RootCallIP, target,
+                args?.ToArray() ?? new EarleValue[0]);
+            thread.AttachExecutor(frame);
 
-			return thread.Run();
-		}
-	}
+            return thread.Run();
+        }
+    }
 }

@@ -15,10 +15,22 @@
 
 namespace EarleCode.Runtime.Instructions
 {
-	internal class NopInstuction : IInstruction
-	{
-		public void Handle(EarleStackFrame frame)
-		{
-		}
-	}
+    /// <summary>
+    ///     Represents the NOP instruction which does nothing.
+    /// </summary>
+    /// <seealso cref="IInstruction" />
+    internal class NopInstuction : IInstruction
+    {
+        #region Implementation of IInstruction
+
+        /// <summary>
+        ///     This method is invoked when the instruction needs to be run.
+        /// </summary>
+        /// <param name="frame">The frame which is running the instruction.</param>
+        public void Handle(EarleStackFrame frame)
+        {
+        }
+
+        #endregion
+    }
 }

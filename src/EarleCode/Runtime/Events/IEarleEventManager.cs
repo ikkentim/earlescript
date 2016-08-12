@@ -18,10 +18,18 @@ using EarleCode.Runtime.Values;
 
 namespace EarleCode.Runtime.Events
 {
-	public interface IEarleEventManager : IEarleObject
-	{
-		event EventHandler<EarleEventNotifyEventArgs> EventFired;
+    public interface IEarleEventManager : IEarleObject
+    {
+        /// <summary>
+        ///     Occurs when an event is fired.
+        /// </summary>
+        event EventHandler<EarleEventNotifyEventArgs> EventFired;
 
-		void Notify(string eventName, EarleValue firer);
-	}
+        /// <summary>
+        ///     Notifies the specified event was fired to all of this instances listeners.
+        /// </summary>
+        /// <param name="eventName">Name of the event.</param>
+        /// <param name="firer">The firer of the event.</param>
+        void Notify(string eventName, EarleValue firer);
+    }
 }

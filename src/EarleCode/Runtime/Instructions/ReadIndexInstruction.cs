@@ -17,24 +17,32 @@ using EarleCode.Runtime.Values;
 
 namespace EarleCode.Runtime.Instructions
 {
-	internal class ReadIndexInstruction : Instruction
-	{
-		#region Overrides of Instruction
+    /// <summary>
+    ///     Represents the READ.I instruction which reads the value from the index on the top of the stack in the array stored
+    ///     below the top of the stack.
+    /// </summary>
+    /// <seealso cref="EarleCode.Runtime.Instructions.Instruction" />
+    internal class ReadIndexInstruction : Instruction
+    {
+        #region Overrides of Instruction
 
-		protected override void Handle()
-		{
-			var index = Pop();
-			var array = Pop();
-			if (!array.Is<EarleArray>())
-			{
-				Push(EarleValue.Undefined);
-			}
-			else
-			{
-				Push(array.As<EarleArray>().GetValue(index));
-			}
-		}
+        /// <summary>
+        ///     This method is invoked when the instruction needs to be run.
+        /// </summary>
+        protected override void Handle()
+        {
+            var index = Pop();
+            var array = Pop();
+            if (!array.Is<EarleArray>())
+            {
+                Push(EarleValue.Undefined);
+            }
+            else
+            {
+                Push(array.As<EarleArray>().GetValue(index));
+            }
+        }
 
-		#endregion
-	}
+        #endregion
+    }
 }

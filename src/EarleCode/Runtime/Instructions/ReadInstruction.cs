@@ -15,15 +15,22 @@
 
 namespace EarleCode.Runtime.Instructions
 {
-	internal class ReadInstruction : Instruction
-	{
-		#region Overrides of Instruction
+    /// <summary>
+    ///     Represents the READ instruction which reads the value from the specified variable.
+    /// </summary>
+    /// <seealso cref="EarleCode.Runtime.Instructions.Instruction" />
+    internal class ReadInstruction : Instruction
+    {
+        #region Overrides of Instruction
 
-		protected override void Handle()
-		{
-			Push(Frame.Executor.GetValue(GetString()));
-		}
+        /// <summary>
+        ///     This method is invoked when the instruction needs to be run.
+        /// </summary>
+        protected override void Handle()
+        {
+            Push(Frame.Executor.GetValue(GetString()));
+        }
 
-		#endregion
-	}
+        #endregion
+    }
 }

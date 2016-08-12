@@ -15,8 +15,14 @@
 
 namespace EarleCode.Runtime.Events
 {
-	public interface IEarleEventableObject
-	{
-		IEarleEventManager EventManager { get; }
-	}
+    /// <summary>
+    ///     Indicates this instance has an <see cref="IEarleEventManager" />
+    /// </summary>
+    public interface IEarleEventableObject : IEarleObject
+    {
+        /// <summary>
+        ///     Gets the event manager.
+        /// </summary>
+        IEarleEventManager EventManager { get; }
+    }
 }

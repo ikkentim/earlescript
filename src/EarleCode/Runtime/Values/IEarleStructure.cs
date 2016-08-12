@@ -15,9 +15,9 @@
 
 namespace EarleCode.Runtime.Values
 {
-	public interface IEarleStructure : IEarleObject
-	{
-		EarleValue GetField(string name);
-		void SetField(string name, EarleValue value);
-	}
+    public interface IEarleStructure : IEarleObject
+    {
+        EarleValue GetField(string name);
+        void SetField(string name, EarleValue value);
+    }
 }

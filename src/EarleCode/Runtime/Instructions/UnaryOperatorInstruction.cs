@@ -15,18 +15,33 @@
 
 namespace EarleCode.Runtime.Instructions
 {
-	internal class UnaryOperatorInstruction : Instruction
-	{
-		private readonly OpCode _operator;
+    /// <summary>
+    ///     Represents all unary operator instuctions.
+    /// </summary>
+    /// <seealso cref="EarleCode.Runtime.Instructions.Instruction" />
+    internal class UnaryOperatorInstruction : Instruction
+    {
+        private readonly OpCode _operator;
 
-		public UnaryOperatorInstruction(OpCode @operator)
-		{
-			_operator = @operator;
-		}
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="UnaryOperatorInstruction" /> class.
+        /// </summary>
+        /// <param name="operator">The operator.</param>
+        public UnaryOperatorInstruction(OpCode @operator)
+        {
+            _operator = @operator;
+        }
 
-		protected override void Handle()
-		{
-			Push(Frame.Runtime.Operators.RunUnaryOperator(_operator, Pop()));
-		}
-	}
+        #region Overrides of Instruction
+
+        /// <summary>
+        ///     This method is invoked when the instruction needs to be run.
+        /// </summary>
+        protected override void Handle()
+        {
+            Push(Frame.Runtime.Operators.RunUnaryOperator(_operator, Pop()));
+        }
+
+        #endregion
+    }
 }

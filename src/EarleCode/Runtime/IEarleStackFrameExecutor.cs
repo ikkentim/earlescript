@@ -18,18 +18,18 @@ using EarleCode.Runtime.Values;
 
 namespace EarleCode.Runtime
 {
-	public interface IEarleStackFrameExecutor : IEarleRuntimeScope
-	{
-		EarleStackFrame Frame { get; }
+    public interface IEarleStackFrameExecutor : IEarleRuntimeScope
+    {
+        EarleStackFrame Frame { get; }
 
-		EarleValue Target { get; }
+        EarleValue Target { get; }
 
-		Stack<IEarleRuntimeScope> Scopes { get; }
+        Stack<IEarleRuntimeScope> Scopes { get; }
 
-		Stack<EarleValue> Stack { get; }
+        Stack<EarleValue> Stack { get; }
 
-		int CIP { get; set; }
+        int CIP { get; set; }
 
-		EarleValue? Run();
-	}
+        EarleValue? Run();
+    }
 }

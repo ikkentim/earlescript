@@ -15,20 +15,35 @@
 
 namespace EarleCode.Runtime.Instructions
 {
-	internal class BinaryOperatorInstruction : Instruction
-	{
-		private readonly OpCode _operator;
+    /// <summary>
+    ///     Represents all binary operator instructions.
+    /// </summary>
+    /// <seealso cref="EarleCode.Runtime.Instructions.Instruction" />
+    internal class BinaryOperatorInstruction : Instruction
+    {
+        private readonly OpCode _operator;
 
-		public BinaryOperatorInstruction(OpCode @operator)
-		{
-			_operator = @operator;
-		}
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="BinaryOperatorInstruction" /> class.
+        /// </summary>
+        /// <param name="operator">The operator.</param>
+        public BinaryOperatorInstruction(OpCode @operator)
+        {
+            _operator = @operator;
+        }
 
-		protected override void Handle()
-		{
-			var right = Pop();
-			var left = Pop();
-			Push(Frame.Runtime.Operators.RunBinaryOperator(_operator, left, right));
-		}
-	}
+        #region Overrides of Instruction
+
+        /// <summary>
+        ///     This method is invoked when the instruction needs to be run.
+        /// </summary>
+        protected override void Handle()
+        {
+            var right = Pop();
+            var left = Pop();
+            Push(Frame.Runtime.Operators.RunBinaryOperator(_operator, left, right));
+        }
+
+        #endregion
+    }
 }

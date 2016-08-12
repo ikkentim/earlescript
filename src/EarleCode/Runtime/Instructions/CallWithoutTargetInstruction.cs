@@ -15,8 +15,20 @@
 
 namespace EarleCode.Runtime.Instructions
 {
-	internal class CallWithoutTargetInstruction : CallInstruction
-	{
-		protected override bool HasTarget => false;
-	}
+    /// <summary>
+    ///     Represents the CALL.T instruction which calls the function stored on the top of the stack with with the specified
+    ///     number of arguments stored below the top of the stack.
+    /// </summary>
+    /// <seealso cref="CallInstruction" />
+    internal class CallWithoutTargetInstruction : CallInstruction
+    {
+        #region Overrides of CallInstruction
+
+        /// <summary>
+        ///     Gets a value indicating whether this call has target.
+        /// </summary>
+        protected override bool HasTarget => false;
+
+        #endregion
+    }
 }

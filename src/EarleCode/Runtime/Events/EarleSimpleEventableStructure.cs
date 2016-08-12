@@ -17,8 +17,16 @@ using EarleCode.Runtime.Values;
 
 namespace EarleCode.Runtime.Events
 {
-	public class EarleSimpleEventableStructure : EarleStructure, IEarleEventableObject
-	{
-		public IEarleEventManager EventManager { get; } = new EarleEventManager();
-	}
+    /// <summary>
+    ///     Represents a simple eventable Earle structure object.
+    /// </summary>
+    /// <seealso cref="EarleCode.Runtime.Values.EarleStructure" />
+    /// <seealso cref="EarleCode.Runtime.Events.IEarleEventableObject" />
+    public class EarleSimpleEventableStructure : EarleStructure, IEarleEventableObject
+    {
+        /// <summary>
+        ///     Gets the event manager.
+        /// </summary>
+        public IEarleEventManager EventManager { get; } = new EarleEventManager();
+    }
 }

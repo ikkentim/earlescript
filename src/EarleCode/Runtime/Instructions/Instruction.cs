@@ -19,106 +19,125 @@ using EarleCode.Runtime.Values;
 
 namespace EarleCode.Runtime.Instructions
 {
-	internal abstract class Instruction : IInstruction
-	{
-		protected EarleStackFrame Frame { get; private set; }
+    /// <summary>
+    ///     Represents a good base class for Earle instructions.
+    /// </summary>
+    /// <seealso cref="IInstruction" />
+    internal abstract class Instruction : IInstruction
+    {
+        /// <summary>
+        ///     Gets the frame which is running the instruction.
+        /// </summary>
+        protected EarleStackFrame Frame { get; private set; }
 
-		#region Implementation of IInstruction
+        #region Implementation of IInstruction
 
-		public void Handle(EarleStackFrame frame)
-		{
-			Frame = frame;
-			Handle();
-		}
+        /// <summary>
+        ///     This method is invoked when the instruction needs to be run.
+        /// </summary>
+        /// <param name="frame">The frame which is running the instruction.</param>
+        public void Handle(EarleStackFrame frame)
+        {
+            // Store the frame so instructions can access it.
+            Frame = frame;
 
-		#endregion
+            // Run the instruction.
+            Handle();
+        }
 
-		protected abstract void Handle();
+        #endregion
 
-		private FastConvert GetConvertable()
-		{
-			var pCode = Frame.Function.PCode;
-			var cip = Frame.Executor.CIP;
-			FastConvert converter = new FastConvert();
-			converter.Byte0 = pCode[cip];
-			converter.Byte1 = pCode[cip + 1];
-			converter.Byte2 = pCode[cip + 2];
-			converter.Byte3 = pCode[cip + 3];
+        /// <summary>
+        ///     This method is invoked when the instruction needs to be run.
+        /// </summary>
+        protected abstract void Handle();
 
-			Jump(4);
+        private FastConvert GetConvertable()
+        {
+            var pCode = Frame.Function.PCode;
+            var cip = Frame.Executor.CIP;
+            var converter = new FastConvert
+            {
+                Byte0 = pCode[cip],
+                Byte1 = pCode[cip + 1],
+                Byte2 = pCode[cip + 2],
+                Byte3 = pCode[cip + 3]
+            };
 
-			return converter;
-		}
+            Jump(4);
 
-		protected int GetInt32()
-		{
-			return GetConvertable().Int32;
-		}
+            return converter;
+        }
 
-		protected float GetSingle()
-		{
-			return GetConvertable().Single;
-		}
+        protected int GetInt32()
+        {
+            return GetConvertable().Int32;
+        }
 
-		protected string GetString()
-		{
-			var start = Frame.Executor.CIP;
-			var pCode = Frame.Function.PCode;
-			var length = 0;
-			while (pCode[Frame.Executor.CIP] != 0)
-			{
-				length++;
-				Frame.Executor.CIP++;
-			}
-			Frame.Executor.CIP++;
-			return Encoding.ASCII.GetString(pCode, start, length);
-		}
+        protected float GetSingle()
+        {
+            return GetConvertable().Single;
+        }
 
-		protected EarleValue Pop()
-		{
-			return Frame.Executor.Stack.Pop();
-		}
+        protected string GetString()
+        {
+            var start = Frame.Executor.CIP;
+            var pCode = Frame.Function.PCode;
+            var length = 0;
+            while (pCode[Frame.Executor.CIP] != 0)
+            {
+                length++;
+                Frame.Executor.CIP++;
+            }
+            Frame.Executor.CIP++;
+            return Encoding.ASCII.GetString(pCode, start, length);
+        }
 
-		protected T Pop<T>()
-		{
-			return Pop().CastTo<T>();
-		}
+        protected EarleValue Pop()
+        {
+            return Frame.Executor.Stack.Pop();
+        }
 
-		protected void Jump(int count)
-		{
-			Frame.Executor.CIP += count;
-		}
+        protected T Pop<T>()
+        {
+            return Pop().CastTo<T>();
+        }
 
-		protected EarleValue Peek()
-		{
-			return Frame.Executor.Stack.Peek();
-		}
+        protected void Jump(int count)
+        {
+            Frame.Executor.CIP += count;
+        }
 
-		protected void Push(EarleValue item)
-		{
-			Frame.Executor.Stack.Push(item);
-		}
+        protected EarleValue Peek()
+        {
+            return Frame.Executor.Stack.Peek();
+        }
 
-		[StructLayout(LayoutKind.Explicit)]
-		private struct FastConvert
-		{
-			[FieldOffset(0)]
-			public byte Byte0;
+        protected void Push(EarleValue item)
+        {
+            Frame.Executor.Stack.Push(item);
+        }
 
-			[FieldOffset(1)]
-			public byte Byte1;
+        [StructLayout(LayoutKind.Explicit)]
+        private struct FastConvert
+        {
+            [FieldOffset(0)]
+            public byte Byte0;
 
-			[FieldOffset(2)]
-			public byte Byte2;
+            [FieldOffset(1)]
+            public byte Byte1;
 
-			[FieldOffset(3)]
-			public byte Byte3;
+            [FieldOffset(2)]
+            public byte Byte2;
 
-			[FieldOffset(0)]
-			public readonly int Int32;
+            [FieldOffset(3)]
+            public byte Byte3;
 
-			[FieldOffset(0)]
-			public readonly float Single;
-		}
-	}
+            [FieldOffset(0)]
+            public readonly int Int32;
+
+            [FieldOffset(0)]
+            public readonly float Single;
+        }
+    }
 }

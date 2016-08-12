@@ -15,15 +15,23 @@
 
 namespace EarleCode.Runtime.Instructions
 {
-	internal class ReturnInstruction : IInstruction
-	{
-		#region Implementation of IInstruction
+    /// <summary>
+    ///     Represents the RET instruction which moves the CIP to the end of the P-code.
+    /// </summary>
+    /// <seealso cref="EarleCode.Runtime.Instructions.IInstruction" />
+    internal class ReturnInstruction : IInstruction
+    {
+        #region Implementation of IInstruction
 
-		public void Handle(EarleStackFrame frame)
-		{
-			frame.Executor.CIP = frame.Function.PCode.Length;
-		}
+        /// <summary>
+        ///     This method is invoked when the instruction needs to be run.
+        /// </summary>
+        /// <param name="frame">The frame which is running the instruction.</param>
+        public void Handle(EarleStackFrame frame)
+        {
+            frame.Executor.CIP = frame.Function.PCode.Length;
+        }
 
-		#endregion
-	}
+        #endregion
+    }
 }

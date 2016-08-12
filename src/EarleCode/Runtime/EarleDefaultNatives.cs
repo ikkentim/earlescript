@@ -20,64 +20,64 @@ using EarleCode.Runtime.Values;
 
 namespace EarleCode.Runtime
 {
-	internal class EarleDefaultNatives
-	{
-		[EarleNativeFunction]
-		private static void Print(string value)
-		{
-			Console.WriteLine(value);
-		}
+    internal class EarleDefaultNatives
+    {
+        [EarleNativeFunction]
+        private static void Print(string value)
+        {
+            Console.WriteLine(value);
+        }
 
-		[EarleNativeFunction]
-		private static void Wait(EarleStackFrame frame, float seconds)
-		{
-			if (seconds > 0)
-				frame.ChildFrame = new WaitFrameExecutor(frame, seconds).Frame;
-		}
+        [EarleNativeFunction]
+        private static void Wait(EarleStackFrame frame, float seconds)
+        {
+            if (seconds > 0)
+                frame.ChildFrame = new WaitFrameExecutor(frame, seconds).Frame;
+        }
 
-		[EarleNativeFunction]
-		private static bool IsDefined(EarleValue value)
-		{
-			return value.Value != null;
-		}
+        [EarleNativeFunction]
+        private static bool IsDefined(EarleValue value)
+        {
+            return value.Value != null;
+        }
 
-		[EarleNativeFunction]
-		private static EarleVector2 CreateVector2(float x, float y)
-		{
-			return new EarleVector2(x, y);
-		}
+        [EarleNativeFunction]
+        private static EarleVector2 CreateVector2(float x, float y)
+        {
+            return new EarleVector2(x, y);
+        }
 
-		[EarleNativeFunction]
-		private static EarleVector3 CreateVector3(float x, float y, float z)
-		{
-			return new EarleVector3(x, y, z);
-		}
+        [EarleNativeFunction]
+        private static EarleVector3 CreateVector3(float x, float y, float z)
+        {
+            return new EarleVector3(x, y, z);
+        }
 
-		[EarleNativeFunction]
-		private static EarleStructure SpawnStruct()
-		{
-			return new EarleStructure();
-		}
+        [EarleNativeFunction]
+        private static EarleStructure SpawnStruct()
+        {
+            return new EarleStructure();
+        }
 
-		private class WaitFrameExecutor : EarleBaseStackFrameExecutor
-		{
-			private readonly long _miliseconds;
-			private readonly Stopwatch _stopwatch;
+        private class WaitFrameExecutor : EarleBaseStackFrameExecutor
+        {
+            private readonly long _miliseconds;
+            private readonly Stopwatch _stopwatch;
 
-			public WaitFrameExecutor(EarleStackFrame parentFrame, float seconds) : base(EarleValue.Undefined)
-			{
-				if (parentFrame == null) throw new ArgumentNullException(nameof(parentFrame));
-				Frame = parentFrame.SpawnChild(null, this, EarleStackFrame.SleepCallIP);
+            public WaitFrameExecutor(EarleStackFrame parentFrame, float seconds) : base(EarleValue.Undefined)
+            {
+                if (parentFrame == null) throw new ArgumentNullException(nameof(parentFrame));
+                Frame = parentFrame.SpawnChild(null, this, EarleStackFrame.SleepCallIP);
 
-				_stopwatch = new Stopwatch();
-				_stopwatch.Start();
-				_miliseconds = (long) (seconds*1000);
-			}
+                _stopwatch = new Stopwatch();
+                _stopwatch.Start();
+                _miliseconds = (long) (seconds*1000);
+            }
 
-			public override EarleValue? Run()
-			{
-				return _stopwatch.ElapsedMilliseconds >= _miliseconds ? (EarleValue?) EarleValue.Undefined : null;
-			}
-		}
-	}
+            public override EarleValue? Run()
+            {
+                return _stopwatch.ElapsedMilliseconds >= _miliseconds ? (EarleValue?) EarleValue.Undefined : null;
+            }
+        }
+    }
 }

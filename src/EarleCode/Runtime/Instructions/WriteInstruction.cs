@@ -15,15 +15,22 @@
 
 namespace EarleCode.Runtime.Instructions
 {
-	internal class WriteInstruction : Instruction
-	{
-		#region Overrides of Instruction
+    /// <summary>
+    ///     Represents the WRITE instruction which writes the value on the top of the stack to the specified variable.
+    /// </summary>
+    /// <seealso cref="Instruction" />
+    internal class WriteInstruction : Instruction
+    {
+        #region Overrides of Instruction
 
-		protected override void Handle()
-		{
-			Frame.Executor.SetValue(GetString(), Pop());
-		}
+        /// <summary>
+        ///     This method is invoked when the instruction needs to be run.
+        /// </summary>
+        protected override void Handle()
+        {
+            Frame.Executor.SetValue(GetString(), Pop());
+        }
 
-		#endregion
-	}
+        #endregion
+    }
 }

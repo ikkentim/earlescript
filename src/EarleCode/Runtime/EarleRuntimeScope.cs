@@ -17,55 +17,55 @@ using EarleCode.Runtime.Values;
 
 namespace EarleCode.Runtime
 {
-	public class EarleRuntimeScope : IEarleRuntimeScope
-	{
-		private readonly EarleDictionary _locals;
-		private readonly IEarleRuntimeScope _superScope;
+    public class EarleRuntimeScope : IEarleRuntimeScope
+    {
+        private readonly EarleDictionary _locals;
+        private readonly IEarleRuntimeScope _superScope;
 
-		public EarleRuntimeScope(IEarleRuntimeScope superScope) : this(superScope, null)
-		{
-		}
+        public EarleRuntimeScope(IEarleRuntimeScope superScope) : this(superScope, null)
+        {
+        }
 
-		public EarleRuntimeScope(IEarleRuntimeScope superScope, EarleDictionary locals)
-		{
-			_superScope = superScope;
-			_locals = locals ?? new EarleDictionary();
-		}
+        public EarleRuntimeScope(IEarleRuntimeScope superScope, EarleDictionary locals)
+        {
+            _superScope = superScope;
+            _locals = locals ?? new EarleDictionary();
+        }
 
-		public virtual EarleValue GetValue(string name)
-		{
-			var value = _superScope?.GetValue(name);
+        public virtual EarleValue GetValue(string name)
+        {
+            var value = _superScope?.GetValue(name);
 
-			if (value?.HasValue ?? false)
-				return value.Value;
+            if (value?.HasValue ?? false)
+                return value.Value;
 
-			return _locals[name];
-		}
+            return _locals[name];
+        }
 
-		public virtual bool SetValue(string name, EarleValue value)
-		{
-			if ((_superScope?.GetValue(name) ?? EarleValue.Undefined).HasValue)
-			{
-				return _superScope.SetValue(name, value);
-			}
+        public virtual bool SetValue(string name, EarleValue value)
+        {
+            if ((_superScope?.GetValue(name) ?? EarleValue.Undefined).HasValue)
+            {
+                return _superScope.SetValue(name, value);
+            }
 
-			if (CanAssignVariableInScope(name))
-			{
-				_locals[name] = value;
-				return true;
-			}
+            if (CanAssignVariableInScope(name))
+            {
+                _locals[name] = value;
+                return true;
+            }
 
-			return false;
-		}
+            return false;
+        }
 
-		public virtual EarleFunctionCollection GetFunctionReference(string fileName, string functionName)
-		{
-			return _superScope == null ? null : _superScope.GetFunctionReference(fileName, functionName);
-		}
+        public virtual EarleFunctionCollection GetFunctionReference(string fileName, string functionName)
+        {
+            return _superScope == null ? null : _superScope.GetFunctionReference(fileName, functionName);
+        }
 
-		protected virtual bool CanAssignVariableInScope(string name)
-		{
-			return true;
-		}
-	}
+        protected virtual bool CanAssignVariableInScope(string name)
+        {
+            return true;
+        }
+    }
 }

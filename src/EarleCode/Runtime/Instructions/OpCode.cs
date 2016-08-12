@@ -17,252 +17,328 @@ using EarleCode.Runtime.Operators;
 
 namespace EarleCode.Runtime.Instructions
 {
-	/// <summary>
-	///     All OpCodes which can be handled by the <see cref="EarleRuntime" />.
-	/// </summary>
-	public enum OpCode : byte
-	{
-		[OpCode("NOP", typeof (NopInstuction))]
-		Nop,
+    /// <summary>
+    ///     All operation codes which can be handled by the <see cref="EarleRuntime" />.
+    /// </summary>
+    public enum OpCode : byte
+    {
+        /// <summary>
+        ///     Do nothing.
+        /// </summary>
+        [OpCode("NOP", typeof (NopInstuction))]
+        Nop,
 
-		// Calls
+        /// <summary>
+        ///     Call the function stored on the top of the stack with the target stored below the top of the stack and with the
+        ///     specified number of arguments stored below the target.
+        /// </summary>
+        [OpCode("CALL $int", typeof (CallInstruction))]
+        Call,
 
-		/// <summary>
-		///     Call the function referenced by the value below the top of the stack and with the value on the top of the stack as
-		///     a
-		///     target with the specified number of arguments.
-		/// </summary>
-		[OpCode("CALL $int", typeof (CallInstruction))]
-		Call,
+        /// <summary>
+        ///     Call the function stored on the top of the stack with with the specified number of arguments stored below the top
+        ///     of the stack.
+        /// </summary>
+        [OpCode("CALL.T $int", typeof (CallWithoutTargetInstruction))]
+        CallNoTarget,
 
-		/// <summary>
-		///     Call the function referenced by the value on the top of the stack with the specified number of arguments.
-		/// </summary>
-		[OpCode("CALL.T $int", typeof (CallWithoutTargetInstruction))]
-		CallNoTarget,
+        /// <summary>
+        ///     Spawn a new thread and call the function stored on the top of the stack with the target stored below the top of the
+        ///     stack and with the specified number of arguments stored below the target.
+        /// </summary>
+        [OpCode("THREAD $int", typeof (ThreadInstruction))]
+        Thread,
 
-		/// <summary>
-		///     Spawn a new thread and call the function referenced by the value below the top of the stack and
-		///     with the value on the top of the stack as a target with the specified number of arguments.
-		/// </summary>
-		[OpCode("THREAD $int", typeof (ThreadInstruction))]
-		Thread,
+        /// <summary>
+        ///     Spawn a new thread and call the function stored on the top of the stack with the specified number of arguments
+        ///     stored below the top of the stack.
+        /// </summary>
+        [OpCode("THREAD.T $int", typeof (ThreadWithoutTargetInstruction))]
+        ThreadNoTarget,
 
-		/// <summary>
-		///     Spawn a new thread and call the function referenced by the value on the top of the stack with the
-		///     specified number of arguments.
-		/// </summary>
-		[OpCode("THREAD.T $int", typeof (ThreadWithoutTargetInstruction))]
-		ThreadNoTarget,
+        /// <summary>
+        ///     Write the value on the top of the stack to the specified variable.
+        /// </summary>
+        [OpCode("WRITE $string", typeof (WriteInstruction))]
+        Write,
 
-		// Values
+        /// <summary>
+        ///     Read the value from the specified variable.
+        /// </summary>
+        [OpCode("READ $string", typeof (ReadInstruction))]
+        Read,
 
-		/// <summary>
-		///     Write the value under the top of the stack to the variable referenced by the top of the stack.
-		/// </summary>
-		[OpCode("WRITE $string", typeof (WriteInstruction))]
-		Write,
+        /// <summary>
+        ///     Push the value from the specified field from the structure on the top of the stack.
+        /// </summary>
+        [OpCode("READ.F $string", typeof (ReadFieldInstuction))]
+        ReadField,
 
-		/// <summary>
-		///     Read the value from the variable referenced by the top of the stack.
-		/// </summary>
-		[OpCode("READ $string", typeof (ReadInstruction))]
-		Read,
+        /// <summary>
+        ///     Read the value from the index on the top of the stack in the array stored below the top of the stack.
+        /// </summary>
+        [OpCode("READ.I", typeof (ReadIndexInstruction))]
+        ReadIndex,
 
-		[OpCode("READ.F $string", typeof (ReadFieldInstuction))]
-		ReadField,
+        /// <summary>
+        ///     Write the value from below the top of the stack to the specified field to the structure on the top of the stack.
+        /// </summary>
+        [OpCode("WRITE.F $string", typeof (WriteFieldInstruction))]
+        WriteField,
 
-		[OpCode("READ.I", typeof (ReadIndexInstruction))]
-		ReadIndex,
+        /// <summary>
+        ///     Write the value stored below the array at the index specified on the top of the stack in the array stored below the
+        ///     index.
+        /// </summary>
+        [OpCode("WRITE.I", typeof (WriteIndexInstruction))]
+        WriteIndex,
 
-		[OpCode("WRITE.F $string", typeof (WriteFieldInstruction))]
-		WriteField,
+        /// <summary>
+        ///     Push the function stored in the specified variable to the stack.
+        /// </summary>
+        [OpCode("UNBOX.C $string", typeof (UnboxFunctionReferenceInstruction))]
+        UnboxFunctionReference,
 
-		[OpCode("WRITE.I", typeof (WriteIndexInstruction))]
-		WriteIndex,
+        /// <summary>
+        ///     Push the specified int to the stack.
+        /// </summary>
+        [OpCode("PUSH.I $int", typeof (PushIntegerInstruction))]
+        PushInteger,
 
-		[OpCode("UNBOX.C $string", typeof (UnboxFunctionReferenceInstruction))]
-		UnboxFunctionReference,
+        /// <summary>
+        ///     Push the specified float to the stack.
+        /// </summary>
+        [OpCode("PUSH.F $float", typeof (PushFloatInstruction))]
+        PushFloat,
 
-		// Stack
+        /// <summary>
+        ///     Push the specified string to the stack.
+        /// </summary>
+        [OpCode("PUSH.S $string", typeof (PushStringInstruction))]
+        PushString,
 
-		/// <summary>
-		///     Push the specified int to the stack.
-		/// </summary>
-		[OpCode("PUSH.I $int", typeof (PushIntegerInstruction))]
-		PushInteger,
+        /// <summary>
+        ///     Push the specified function to the stack.
+        /// </summary>
+        [OpCode("PUSH.C $string", typeof (PushFunctionInstruction))]
+        PushFunction,
 
-		/// <summary>
-		///     Push the specified float to the stack.
-		/// </summary>
-		[OpCode("PUSH.F $float", typeof (PushFloatInstruction))]
-		PushFloat,
+        /// <summary>
+        ///     Push a null value to the stack.
+        /// </summary>
+        [OpCode("PUSH.N", typeof (PushNullInstruction))]
+        PushUndefined,
 
-		/// <summary>
-		///     Push the specified string to the stack.
-		/// </summary>
-		[OpCode("PUSH.S $string", typeof (PushStringInstruction))]
-		PushString,
+        /// <summary>
+        ///     Push a new array to the stack.
+        /// </summary>
+        [OpCode("PUSH.A", typeof (PushArrayInstruction))]
+        PushArray,
 
-		[OpCode("PUSH.C $string", typeof (PushFunctionReferenceInstruction))]
-		PushFunctionReference,
+        /// <summary>
+        ///     Push the integer '1' to the stack.
+        /// </summary>
+        [OpCode("PUSH.1", typeof (PushOneInstruction))]
+        PushOne,
 
-		/// <summary>
-		///     Push a null value to the stack.
-		/// </summary>
-		[OpCode("PUSH.N", typeof (PushNullInstruction))]
-		PushUndefined,
+        /// <summary>
+        ///     Push the value at the specified index stored in the file's value store to the stack.
+        /// </summary>
+        [OpCode("PUSH.V $int", typeof (PushValueInstruction))]
+        PushValue,
 
-		[OpCode("PUSH.A", typeof (PushArrayInstruction))]
-		PushArray,
+        /// <summary>
+        ///     Pop a value off the stack.
+        /// </summary>
+        [OpCode("POP", typeof (PopInstruction))]
+        Pop,
 
-		[OpCode("PUSH.1", typeof (PushOneInstruction))]
-		PushOne,
+        /// <summary>
+        ///     Duplicate the value on the top of the stack.
+        /// </summary>
+        [OpCode("DUP", typeof (DuplicateInstruction))]
+        Duplicate,
 
-		[OpCode("PUSH.V $int", typeof (PushValueInstruction))]
-		PushValue,
+        /// <summary>
+        ///     Push a new scope onto the scopes stack.
+        /// </summary>
+        [OpCode("PUSH.SC", typeof (PushScopeInstruction))]
+        PushScope,
 
-		/// <summary>
-		///     Pop a value off the stack.
-		/// </summary>
-		[OpCode("POP", typeof (PopInstruction))]
-		Pop,
+        /// <summary>
+        ///     Pop a scope off the scopes stack.
+        /// </summary>
+        [OpCode("POP.SC", typeof (PopScopeInstruction))]
+        PopScope,
 
-		/// <summary>
-		///     Duplicates the top value on the stack.
-		/// </summary>
-		[OpCode("DUP", typeof (DuplicateInstruction))]
-		Duplicate,
+        /// <summary>
+        ///     Move the CIP by the specified number of instructions if the value on the top of the stack is false.
+        /// </summary>
+        [OpCode("JUMP.F $int", typeof (JumpIfFalseInstruction))]
+        JumpIfFalse,
 
-		// Scopes
+        /// <summary>
+        ///     Move the CIP by the specified number of instructions if the value on the top of the stack is true.
+        /// </summary>
+        [OpCode("JUMP.T $int", typeof (JumpIfTrueInstruction))]
+        JumpIfTrue,
 
-		/// <summary>
-		///     Push a new scope onto the scopes stack.
-		/// </summary>
-		[OpCode("PUSH.S", typeof (PushScopeInstruction))]
-		PushScope,
+        /// <summary>
+        ///     Move the CIP by the specified number of instructions.
+        /// </summary>
+        [OpCode("JUMP $int", typeof (JumpInstruction))]
+        Jump,
 
-		/// <summary>
-		///     Pop a scope off the scopes stack.
-		/// </summary>
-		[OpCode("POP.S", typeof (PopScopeInstruction))]
-		PopScope,
+        /// <summary>
+        ///     Move the CIP to the end of the P-code.
+        /// </summary>
+        [OpCode("RET", typeof (ReturnInstruction))]
+        Return,
 
-		// Jump
+        /// <summary>
+        ///     Run the binary '+'-operator on the two values on the top of the stack.
+        /// </summary>
+        [OpCode("ADD", typeof (BinaryOperatorInstruction))]
+        [Operator("+",
+            EarleOperatorType.BinaryOperator | EarleOperatorType.AssignmentModOperator |
+            EarleOperatorType.AssignmentOperator, 7)
+        ]
+        Add,
 
-		/// <summary>
-		///     Jump the specified number of instructions relative to the next instruction if the value on the top of the stack is
-		///     false.
-		/// </summary>
-		[OpCode("JUMP.F $int", typeof (JumpIfFalseInstruction))]
-		JumpIfFalse,
+        /// <summary>
+        ///     Run the binary '-'-operator on the two values on the top of the stack.
+        /// </summary>
+        [OpCode("SUB", typeof (BinaryOperatorInstruction))]
+        [Operator("-",
+            EarleOperatorType.BinaryOperator | EarleOperatorType.AssignmentModOperator |
+            EarleOperatorType.AssignmentOperator, 7)
+        ]
+        Subtract,
 
-		/// <summary>
-		///     Jump the specified number of instructions relative to the next instruction if the value on the top of the stack is
-		///     true.
-		/// </summary>
-		[OpCode("JUMP.T $int", typeof (JumpIfTrueInstruction))]
-		JumpIfTrue,
+        /// <summary>
+        ///     Run the binary '*'-operator on the two values on the top of the stack.
+        /// </summary>
+        [OpCode("MUL", typeof (BinaryOperatorInstruction))]
+        [Operator("*", EarleOperatorType.BinaryOperator | EarleOperatorType.AssignmentOperator, 8)]
+        Multiply,
 
-		/// <summary>
-		///     Jump the specified number of instructions relative to the next instruction,
-		/// </summary>
-		[OpCode("JUMP $int", typeof (JumpInstruction))]
-		Jump,
+        /// <summary>
+        ///     Run the binary '%'-operator on the two values on the top of the stack.
+        /// </summary>
+        [OpCode("MOD", typeof (BinaryOperatorInstruction))]
+        [Operator("%", EarleOperatorType.BinaryOperator | EarleOperatorType.AssignmentOperator, 8)]
+        Modulo,
 
-		/// <summary>
-		///     Move the CIP to the end of the P-code.
-		/// </summary>
-		[OpCode("RET", typeof (ReturnInstruction))]
-		Return,
+        /// <summary>
+        ///     Run the binary '/'-operator on the two values on the top of the stack.
+        /// </summary>
+        [OpCode("DIV", typeof (BinaryOperatorInstruction))]
+        [Operator("/", EarleOperatorType.BinaryOperator | EarleOperatorType.AssignmentOperator, 8)]
+        Divide,
 
-		// Operators
+        /// <summary>
+        ///     Run the binary '^'-operator on the two values on the top of the stack.
+        /// </summary>
+        [OpCode("XOR", typeof (BinaryOperatorInstruction))]
+        [Operator("^", EarleOperatorType.BinaryOperator | EarleOperatorType.AssignmentOperator, 2)]
+        BitwiseXor,
 
-		[OpCode("ADD", typeof (BinaryOperatorInstruction))]
-		[Operator("+",
-			EarleOperatorType.BinaryOperator | EarleOperatorType.AssignmentModOperator | EarleOperatorType.AssignmentOperator, 7)
-		]
-		Add,
+        /// <summary>
+        ///     Run the binary '|'-operator on the two values on the top of the stack.
+        /// </summary>
+        [OpCode("OR", typeof (BinaryOperatorInstruction))]
+        [Operator("|", EarleOperatorType.BinaryOperator | EarleOperatorType.AssignmentOperator, 1)]
+        BitwiseOr,
 
-		[OpCode("SUB", typeof (BinaryOperatorInstruction))]
-		[Operator("-",
-			EarleOperatorType.BinaryOperator | EarleOperatorType.AssignmentModOperator | EarleOperatorType.AssignmentOperator, 7)
-		]
-		Subtract,
+        /// <summary>
+        ///     Run the binary '&amp;'-operator on the two values on the top of the stack.
+        /// </summary>
+        [OpCode("AND", typeof (BinaryOperatorInstruction))]
+        [Operator("&", EarleOperatorType.BinaryOperator | EarleOperatorType.AssignmentOperator, 3)]
+        BitwiseAnd,
 
-		[OpCode("MUL", typeof (BinaryOperatorInstruction))]
-		[Operator("*", EarleOperatorType.BinaryOperator | EarleOperatorType.AssignmentOperator, 8)]
-		Multiply,
+        /// <summary>
+        ///     Run the binary '&lt;&lt;'-operator on the two values on the top of the stack.
+        /// </summary>
+        [OpCode("SHL", typeof (BinaryOperatorInstruction))]
+        [Operator("<<", EarleOperatorType.BinaryOperator | EarleOperatorType.AssignmentOperator, 6)]
+        ShiftLeft,
 
-		[OpCode("MOD", typeof (BinaryOperatorInstruction))]
-		[Operator("%", EarleOperatorType.BinaryOperator | EarleOperatorType.AssignmentOperator, 8)]
-		Modulo,
+        /// <summary>
+        ///     Run the binary '>>'-operator on the two values on the top of the stack.
+        /// </summary>
+        [OpCode("SHR", typeof (BinaryOperatorInstruction))]
+        [Operator(">>", EarleOperatorType.BinaryOperator | EarleOperatorType.AssignmentOperator, 6)]
+        ShiftRight,
 
-		[OpCode("DIV", typeof (BinaryOperatorInstruction))]
-		[Operator("/", EarleOperatorType.BinaryOperator | EarleOperatorType.AssignmentOperator, 8)]
-		Divide,
+        /// <summary>
+        ///     Run the binary '&lt;'-operator on the two values on the top of the stack.
+        /// </summary>
+        [OpCode("CLT", typeof (BinaryOperatorInstruction))]
+        [Operator("<", EarleOperatorType.BinaryOperator, 5)]
+        CheckLessThan,
 
-		[OpCode("XOR", typeof (BinaryOperatorInstruction))]
-		[Operator("^", EarleOperatorType.BinaryOperator | EarleOperatorType.AssignmentOperator, 2)]
-		BitwiseXor,
+        /// <summary>
+        ///     Run the binary '>'-operator on the two values on the top of the stack.
+        /// </summary>
+        [OpCode("CGT", typeof (BinaryOperatorInstruction))]
+        [Operator(">", EarleOperatorType.BinaryOperator, 5)]
+        CheckGreaterThan,
 
-		[OpCode("OR", typeof (BinaryOperatorInstruction))]
-		[Operator("|", EarleOperatorType.BinaryOperator | EarleOperatorType.AssignmentOperator, 1)]
-		BitwiseOr,
+        /// <summary>
+        ///     Run the binary '&lt;='-operator on the two values on the top of the stack.
+        /// </summary>
+        [OpCode("CLEQ", typeof (BinaryOperatorInstruction))]
+        [Operator("<=", EarleOperatorType.BinaryOperator, 5)]
+        CheckLessOrEqual,
 
-		[OpCode("AND", typeof (BinaryOperatorInstruction))]
-		[Operator("&", EarleOperatorType.BinaryOperator | EarleOperatorType.AssignmentOperator, 3)]
-		BitwiseAnd,
+        /// <summary>
+        ///     Run the binary '>='-operator on the two values on the top of the stack.
+        /// </summary>
+        [OpCode("CGEQ", typeof (BinaryOperatorInstruction))]
+        [Operator(">=", EarleOperatorType.BinaryOperator, 5)]
+        CheckGreaterOrEqual,
 
-		[OpCode("SHL", typeof (BinaryOperatorInstruction))]
-		[Operator("<<", EarleOperatorType.BinaryOperator | EarleOperatorType.AssignmentOperator, 6)]
-		ShiftLeft,
+        /// <summary>
+        ///     Run the binary '=='-operator on the two values on the top of the stack.
+        /// </summary>
+        [OpCode("CEQ", typeof (BinaryOperatorInstruction))]
+        [Operator("==", EarleOperatorType.BinaryOperator, 4)]
+        CheckEqual,
 
-		[OpCode("SHR", typeof (BinaryOperatorInstruction))]
-		[Operator(">>", EarleOperatorType.BinaryOperator | EarleOperatorType.AssignmentOperator, 6)]
-		ShiftRight,
+        /// <summary>
+        ///     Run the binary '!='-operator on the two values on the top of the stack.
+        /// </summary>
+        [OpCode("CNEQ", typeof (BinaryOperatorInstruction))]
+        [Operator("!=", EarleOperatorType.BinaryOperator, 4)]
+        CheckNotEqual,
 
-		[OpCode("CLT", typeof (BinaryOperatorInstruction))]
-		[Operator("<", EarleOperatorType.BinaryOperator, 5)]
-		CheckLessThan,
+        /// <summary>
+        ///     Run the unary '-'-operator on the value on the top of the stack.
+        /// </summary>
+        [OpCode("NEG", typeof (UnaryOperatorInstruction))]
+        [Operator("-", EarleOperatorType.UnaryOperator)]
+        Negate,
 
-		[OpCode("CGT", typeof (BinaryOperatorInstruction))]
-		[Operator(">", EarleOperatorType.BinaryOperator, 5)]
-		CheckGreaterThan,
+        /// <summary>
+        ///     Run the unary '!'-operator on the value on the top of the stack.
+        /// </summary>
+        [OpCode("NOT.L", typeof (UnaryOperatorInstruction))]
+        [Operator("!", EarleOperatorType.UnaryOperator)]
+        LogicalNot,
 
-		[OpCode("CLEQ", typeof (BinaryOperatorInstruction))]
-		[Operator("<=", EarleOperatorType.BinaryOperator, 5)]
-		CheckLessOrEqual,
+        /// <summary>
+        ///     Run the unary '~'-operator on the value on the top of the stack.
+        /// </summary>
+        [OpCode("NOT.B", typeof (UnaryOperatorInstruction))]
+        [Operator("~", EarleOperatorType.UnaryOperator)]
+        BitwiseNot,
 
-		[OpCode("CGEQ", typeof (BinaryOperatorInstruction))]
-		[Operator(">=", EarleOperatorType.BinaryOperator, 5)]
-		CheckGreaterOrEqual,
-
-		[OpCode("CEQ", typeof (BinaryOperatorInstruction))]
-		[Operator("==", EarleOperatorType.BinaryOperator, 4)]
-		CheckEqual,
-
-		[OpCode("CNEQ", typeof (BinaryOperatorInstruction))]
-		[Operator("!=", EarleOperatorType.BinaryOperator, 4)]
-		CheckNotEqual,
-
-		[OpCode("NEG", typeof (UnaryOperatorInstruction))]
-		[Operator("-", EarleOperatorType.UnaryOperator)]
-		Negate,
-
-		/// <summary>
-		///     Replace the value on top of the stack with its logical NOT value.
-		/// </summary>
-		[OpCode("NOT.L", typeof (UnaryOperatorInstruction))]
-		[Operator("!", EarleOperatorType.UnaryOperator)]
-		LogicalNot,
-
-		[OpCode("NOT.B", typeof (UnaryOperatorInstruction))]
-		[Operator("~", EarleOperatorType.UnaryOperator)]
-		BitwiseNot,
-
-		[OpCode("CONV", typeof (UnaryOperatorInstruction))]
-		[Operator("@", EarleOperatorType.UnaryOperator)]
-		Convert
-	}
+        /// <summary>
+        ///     Run the unary '@'-operator on the value on the top of the stack.
+        /// </summary>
+        [OpCode("CONV", typeof (UnaryOperatorInstruction))]
+        [Operator("@", EarleOperatorType.UnaryOperator)]
+        Convert
+    }
 }

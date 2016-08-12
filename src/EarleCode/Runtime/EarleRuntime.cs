@@ -26,174 +26,174 @@ using EarleCode.Runtime.Values;
 
 namespace EarleCode.Runtime
 {
-	public partial class EarleRuntime : IEarleRuntimeScope, IEnumerable<EarleFile>
-	{
-		private readonly Dictionary<string, EarleFile> _files = new Dictionary<string, EarleFile>();
-		private readonly Queue<EarleThread> _threadPool = new Queue<EarleThread>();
+    public partial class EarleRuntime : IEarleRuntimeScope, IEnumerable<EarleFile>
+    {
+        private readonly Dictionary<string, EarleFile> _files = new Dictionary<string, EarleFile>();
+        private readonly Queue<EarleThread> _threadPool = new Queue<EarleThread>();
 
-		public EarleRuntime()
-		{
-			Compiler = new EarleCompiler(this);
+        public EarleRuntime()
+        {
+            Compiler = new EarleCompiler(this);
 
-			RegisterDefaultNatives();
-			RegisterDefaultOperators();
-		}
+            RegisterDefaultNatives();
+            RegisterDefaultOperators();
+        }
 
-		internal EarleCompiler Compiler { get; }
+        internal EarleCompiler Compiler { get; }
 
-		public EarleDictionary GlobalVariables { get; } = new EarleDictionary();
+        public EarleDictionary GlobalVariables { get; } = new EarleDictionary();
 
-		public EarleOperatorCollection Operators { get; } = new EarleOperatorCollection();
+        public EarleOperatorCollection Operators { get; } = new EarleOperatorCollection();
 
-		public EarleLocalizer Localizer { get; } = new EarleLocalizer();
+        public EarleLocalizer Localizer { get; } = new EarleLocalizer();
 
-		public EarleNativeCollection Natives { get; } = new EarleNativeCollection();
+        public EarleNativeCollection Natives { get; } = new EarleNativeCollection();
 
-		public EarleFile this[string fileName] => GetFile(fileName);
+        public EarleFile this[string fileName] => GetFile(fileName);
 
-		private void RegisterDefaultNatives()
-		{
-		    var scanner = new EarleAttributeScanner(this);
+        private void RegisterDefaultNatives()
+        {
+            var scanner = new EarleAttributeScanner(this);
             scanner.Scan<EarleDefaultNatives>();
             scanner.Scan<EarleEventManagerNatives>();
             scanner.Scan<EarleLocalizerNatives>();
-		}
+        }
 
-		#region Debugging
+        #region Debugging
 
-		public IEnumerable<string> GetDebugInformation()
-		{
-			return this.SelectMany(f => f).SelectMany(Compiler.GetDebugInformation);
-		}
+        public IEnumerable<string> GetDebugInformation()
+        {
+            return this.SelectMany(f => f).SelectMany(Compiler.GetDebugInformation);
+        }
 
-		#endregion
+        #endregion
 
-		#region Running
+        #region Running
 
-		public void EnqueueThread(EarleThread thread)
-		{
-			_threadPool.Enqueue(thread);
-		}
+        public void EnqueueThread(EarleThread thread)
+        {
+            _threadPool.Enqueue(thread);
+        }
 
-		public bool Tick(int ticks = int.MaxValue)
-		{
-			if (_threadPool.Count < ticks)
-				ticks = _threadPool.Count;
+        public bool Tick(int ticks = int.MaxValue)
+        {
+            if (_threadPool.Count < ticks)
+                ticks = _threadPool.Count;
 
-			int count = 0;
-			while (_threadPool.Any() && count < ticks)
-			{
-				var thread = _threadPool.Dequeue();
+            int count = 0;
+            while (_threadPool.Any() && count < ticks)
+            {
+                var thread = _threadPool.Dequeue();
 
-				if (!thread.IsAlive)
-				{
-					ticks--;
-					continue;
-				}
-				thread.Run();
-				count++;
-			}
+                if (!thread.IsAlive)
+                {
+                    ticks--;
+                    continue;
+                }
+                thread.Run();
+                count++;
+            }
 
-			return !_threadPool.Any();
-		}
+            return !_threadPool.Any();
+        }
 
-		public virtual void HandleWarning(string warning)
-		{
-			// TODO: Implement proper warning/error handling
-			Console.WriteLine(warning);
-		}
+        public virtual void HandleWarning(string warning)
+        {
+            // TODO: Implement proper warning/error handling
+            Console.WriteLine(warning);
+        }
 
-		#endregion
+        #endregion
 
-		#region Files
+        #region Files
 
-		public void AddFile(EarleFile file)
-		{
-			if (file == null) throw new ArgumentNullException(nameof(file));
+        public void AddFile(EarleFile file)
+        {
+            if (file == null) throw new ArgumentNullException(nameof(file));
 
-			if (_files.ContainsKey(file.Name))
-				throw new ArgumentException("File name is already present");
+            if (_files.ContainsKey(file.Name))
+                throw new ArgumentException("File name is already present");
 
-			file.Lock();
-			_files[file.Name] = file;
+            file.Lock();
+            _files[file.Name] = file;
 
-			foreach (var f in this)
-				f.ClearCache();
-		}
+            foreach (var f in this)
+                f.ClearCache();
+        }
 
-		public bool RemoveFile(string fileName)
-		{
-			return _files.Remove(fileName);
-		}
+        public bool RemoveFile(string fileName)
+        {
+            return _files.Remove(fileName);
+        }
 
-		public EarleFile GetFile(string fileName)
-		{
-			EarleFile file;
-			_files.TryGetValue(fileName, out file);
-			return file;
-		}
+        public EarleFile GetFile(string fileName)
+        {
+            EarleFile file;
+            _files.TryGetValue(fileName, out file);
+            return file;
+        }
 
-		public EarleFile CompileFile(string fileName, string script)
-		{
-			//try
-			//{
-			var file = Compiler.CompileFile(fileName, script);
+        public EarleFile CompileFile(string fileName, string script)
+        {
+            //try
+            //{
+            var file = Compiler.CompileFile(fileName, script);
 
-			AddFile(file);
-			return file;
-			//}
-			//catch(Exception e)
-			//{
-			//    throw e;
-			//}
-		}
+            AddFile(file);
+            return file;
+            //}
+            //catch(Exception e)
+            //{
+            //    throw e;
+            //}
+        }
 
-		#endregion
+        #endregion
 
-		#region Implementation of IRuntimeScope
+        #region Implementation of IRuntimeScope
 
-		public virtual EarleValue GetValue(string name)
-		{
-			// Look global variables up.
-			if (GlobalVariables.ContainsKey(name))
-				return GlobalVariables[name];
+        public virtual EarleValue GetValue(string name)
+        {
+            // Look global variables up.
+            if (GlobalVariables.ContainsKey(name))
+                return GlobalVariables[name];
 
-			return EarleValue.Undefined;
-		}
+            return EarleValue.Undefined;
+        }
 
-		public virtual bool SetValue(string name, EarleValue value)
-		{
-			return false;
-		}
+        public virtual bool SetValue(string name, EarleValue value)
+        {
+            return false;
+        }
 
-		public virtual EarleFunctionCollection GetFunctionReference(string fileName, string functionName)
-		{
-			if (fileName == null)
-			{
-				return Natives.Get(functionName);
-			}
+        public virtual EarleFunctionCollection GetFunctionReference(string fileName, string functionName)
+        {
+            if (fileName == null)
+            {
+                return Natives.Get(functionName);
+            }
 
-			var file = GetFile(fileName);
+            var file = GetFile(fileName);
 
-			return file == null
-				? null
-				: file.GetFunctions(functionName);
-		}
+            return file == null
+                ? null
+                : file.GetFunctions(functionName);
+        }
 
-		#endregion
+        #endregion
 
-		#region Implementation of IEnumerable<EarleFile>
+        #region Implementation of IEnumerable<EarleFile>
 
-		public IEnumerator<EarleFile> GetEnumerator()
-		{
-			return _files.Values.GetEnumerator();
-		}
+        public IEnumerator<EarleFile> GetEnumerator()
+        {
+            return _files.Values.GetEnumerator();
+        }
 
-		IEnumerator IEnumerable.GetEnumerator()
-		{
-			return GetEnumerator();
-		}
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
 
-		#endregion
-	}
+        #endregion
+    }
 }

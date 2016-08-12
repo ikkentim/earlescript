@@ -18,47 +18,51 @@ using EarleCode.Runtime.Values;
 
 namespace EarleCode.Runtime
 {
-	public abstract class EarleBaseStackFrameExecutor : IEarleStackFrameExecutor
-	{
-		public EarleBaseStackFrameExecutor(EarleValue target)
-		{
-			Target = target;
-		}
+    public abstract class EarleBaseStackFrameExecutor : IEarleStackFrameExecutor
+    {
+        public EarleBaseStackFrameExecutor(EarleValue target)
+        {
+            Target = target;
+        }
 
-		public EarleStackFrame Frame { get; protected set; }
+        public EarleStackFrame Frame { get; protected set; }
 
-		public EarleValue Target { get; }
+        public EarleValue Target { get; }
 
-		public Stack<IEarleRuntimeScope> Scopes { get; } = new Stack<IEarleRuntimeScope>();
+        public Stack<IEarleRuntimeScope> Scopes { get; } = new Stack<IEarleRuntimeScope>();
 
-		public Stack<EarleValue> Stack { get; } = new Stack<EarleValue>();
+        public Stack<EarleValue> Stack { get; } = new Stack<EarleValue>();
 
-		public int CIP { get; set; }
+        public int CIP { get; set; }
 
-		public virtual EarleValue GetValue(string name)
-		{
-			if (name == "self")
-				return Target;
+        public virtual EarleValue GetValue(string name)
+        {
+            if (name == "self")
+                return Target;
 
-			return Scopes.Peek().GetValue(name);
-		}
+            return Scopes.Peek().GetValue(name);
+        }
 
-		public virtual bool SetValue(string name, EarleValue value)
-		{
-			if (name == "self" || name == "thread")
-			{
-				Frame.Runtime.HandleWarning($"'{name}' cannot be set!");
-				return false;
-			}
+        public virtual bool SetValue(string name, EarleValue value)
+        {
+            if (name == "self" || name == "thread")
+            {
+                Frame.Runtime.HandleWarning($"'{name}' cannot be set!");
+                return false;
+            }
 
-			return Scopes.Peek().SetValue(name, value);
-		}
+            return Scopes.Peek().SetValue(name, value);
+        }
 
-		public virtual EarleFunctionCollection GetFunctionReference(string fileName, string functionName)
-		{
-			return Scopes.Peek().GetFunctionReference(fileName, functionName);
-		}
+        public virtual EarleFunctionCollection GetFunctionReference(string fileName, string functionName)
+        {
+            return Scopes.Peek().GetFunctionReference(fileName, functionName);
+        }
 
-		public abstract EarleValue? Run();
-	}
+        /// <summary>
+        ///     Runs this frame.
+        /// </summary>
+        /// <returns>null if the execution did not complete or a value if it did.</returns>
+        public abstract EarleValue? Run();
+    }
 }

@@ -15,8 +15,20 @@
 
 namespace EarleCode.Runtime.Instructions
 {
-	internal class ThreadWithoutTargetInstruction : ThreadInstruction
-	{
-		protected override bool HasTarget => false;
-	}
+    /// <summary>
+    ///     Represents the THREAD.T instruction which spawns a new thread and call the function stored on the top of the stack
+    ///     with the specified number of arguments stored below the top of the stack.
+    /// </summary>
+    /// <seealso cref="EarleCode.Runtime.Instructions.ThreadInstruction" />
+    internal class ThreadWithoutTargetInstruction : ThreadInstruction
+    {
+        #region Overrides of ThreadInstruction
+
+        /// <summary>
+        ///     Gets a value indicating whether this call has target.
+        /// </summary>
+        protected override bool HasTarget => false;
+
+        #endregion
+    }
 }

@@ -18,16 +18,31 @@ using EarleCode.Runtime.Values;
 
 namespace EarleCode.Runtime.Events
 {
-	public class EarleEventNotifyEventArgs : EventArgs
-	{
-		public EarleEventNotifyEventArgs(string eventName, EarleValue firer)
-		{
-			EventName = eventName;
-			Firer = firer;
-		}
+    /// <summary>
+    ///     Contains the event data for the <see cref="IEarleEventManager.EventFired" /> event.
+    /// </summary>
+    /// <seealso cref="System.EventArgs" />
+    public class EarleEventNotifyEventArgs : EventArgs
+    {
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="EarleEventNotifyEventArgs" /> class.
+        /// </summary>
+        /// <param name="eventName">Name of the event.</param>
+        /// <param name="firer">The firer of the event.</param>
+        public EarleEventNotifyEventArgs(string eventName, EarleValue firer)
+        {
+            EventName = eventName;
+            Firer = firer;
+        }
 
-		public string EventName { get; }
+        /// <summary>
+        ///     Gets the name of the event.
+        /// </summary>
+        public string EventName { get; }
 
-		public EarleValue Firer { get; }
-	}
+        /// <summary>
+        ///     Gets the firer of the event.
+        /// </summary>
+        public EarleValue Firer { get; }
+    }
 }

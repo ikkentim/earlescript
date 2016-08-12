@@ -242,14 +242,14 @@ namespace EarleCode.Compiler.Parsers
 
 		#region Push call
 
-		public void PushFunctionReference(string path, string name)
+		public void PushFunction(string path, string name)
 		{
 			if (name == null) throw new ArgumentNullException(nameof(name));
 
 			if (!string.IsNullOrEmpty(path) && !_usedFiles.Contains(path))
 				_usedFiles.Add(path);
 
-			Yield(OpCode.PushFunctionReference);
+			Yield(OpCode.PushFunction);
 			Yield($"{path}::{name}".ToLower());
 		}
 
@@ -271,7 +271,7 @@ namespace EarleCode.Compiler.Parsers
 		{
 			if (name == null) throw new ArgumentNullException(nameof(name));
 
-			PushFunctionReference(path, name);
+			PushFunction(path, name);
 			PushCallWithoutTarget(arguments, lineNumber);
 		}
 

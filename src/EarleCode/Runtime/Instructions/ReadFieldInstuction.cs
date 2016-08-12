@@ -17,24 +17,32 @@ using EarleCode.Runtime.Values;
 
 namespace EarleCode.Runtime.Instructions
 {
-	internal class ReadFieldInstuction : Instruction
-	{
-		#region Overrides of Instruction
+    /// <summary>
+    ///     Represents the READ.F instruction which pushes the value from the specified field from the structure on the top of
+    ///     the stack.
+    /// </summary>
+    /// <seealso cref="EarleCode.Runtime.Instructions.Instruction" />
+    internal class ReadFieldInstuction : Instruction
+    {
+        #region Overrides of Instruction
 
-		protected override void Handle()
-		{
-			var structure = Pop();
-			var field = GetString();
-			if (!structure.Is<IEarleStructure>())
-			{
-				Push(EarleValue.Undefined);
-			}
-			else
-			{
-				Push(structure.As<IEarleStructure>().GetField(field));
-			}
-		}
+        /// <summary>
+        ///     This method is invoked when the instruction needs to be run.
+        /// </summary>
+        protected override void Handle()
+        {
+            var structure = Pop();
+            var field = GetString();
+            if (!structure.Is<IEarleStructure>())
+            {
+                Push(EarleValue.Undefined);
+            }
+            else
+            {
+                Push(structure.As<IEarleStructure>().GetField(field));
+            }
+        }
 
-		#endregion
-	}
+        #endregion
+    }
 }

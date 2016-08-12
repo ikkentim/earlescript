@@ -17,18 +17,32 @@ using System;
 
 namespace EarleCode.Runtime.Attributes
 {
-	[AttributeUsage(AttributeTargets.Method)]
-	public class EarleNativeFunctionAttribute : Attribute
-	{
-		public EarleNativeFunctionAttribute()
-		{
-		}
+    /// <summary>
+    ///     Indicates the method is an native Earle function.
+    /// </summary>
+    /// <seealso cref="System.Attribute" />
+    [AttributeUsage(AttributeTargets.Method)]
+    public class EarleNativeFunctionAttribute : Attribute
+    {
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="EarleNativeFunctionAttribute" /> class.
+        /// </summary>
+        public EarleNativeFunctionAttribute()
+        {
+        }
 
-		public EarleNativeFunctionAttribute(string name)
-		{
-			Name = name;
-		}
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="EarleNativeFunctionAttribute" /> class.
+        /// </summary>
+        /// <param name="name">The name of the native function.</param>
+        public EarleNativeFunctionAttribute(string name)
+        {
+            Name = name;
+        }
 
-		public string Name { get; }
-	}
+        /// <summary>
+        ///     Gets the name of the native function.
+        /// </summary>
+        public string Name { get; }
+    }
 }

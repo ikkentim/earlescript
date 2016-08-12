@@ -15,7 +15,7 @@
 
 namespace EarleCode.Runtime
 {
-	public interface IEarleObject
-	{
-	}
+    public interface IEarleObject
+    {
+    }
 }

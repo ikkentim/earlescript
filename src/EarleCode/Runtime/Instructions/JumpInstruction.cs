@@ -15,15 +15,22 @@
 
 namespace EarleCode.Runtime.Instructions
 {
-	internal class JumpInstruction : Instruction
-	{
-		#region Overrides of Instruction
+    /// <summary>
+    ///     Represents the JUMP instruction which moves the CIP by the specified number of instructions.
+    /// </summary>
+    /// <seealso cref="EarleCode.Runtime.Instructions.Instruction" />
+    internal class JumpInstruction : Instruction
+    {
+        #region Overrides of Instruction
 
-		protected override void Handle()
-		{
-			Jump(GetInt32());
-		}
+        /// <summary>
+        ///     This method is invoked when the instruction needs to be run.
+        /// </summary>
+        protected override void Handle()
+        {
+            Jump(GetInt32());
+        }
 
-		#endregion
-	}
+        #endregion
+    }
 }

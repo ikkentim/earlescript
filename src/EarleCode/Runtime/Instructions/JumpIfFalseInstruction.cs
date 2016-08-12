@@ -15,15 +15,23 @@
 
 namespace EarleCode.Runtime.Instructions
 {
-	internal class JumpIfFalseInstruction : Instruction
-	{
-		#region Overrides of Instruction
+    /// <summary>
+    ///     Represents the JUMP.F instruction which moves the CIP by the specified number of instructions if the value on the
+    ///     top of the stack is false.
+    /// </summary>
+    /// <seealso cref="EarleCode.Runtime.Instructions.Instruction" />
+    internal class JumpIfFalseInstruction : Instruction
+    {
+        #region Overrides of Instruction
 
-		protected override void Handle()
-		{
-			Jump(!Pop<bool>() ? GetInt32() : 4);
-		}
+        /// <summary>
+        ///     This method is invoked when the instruction needs to be run.
+        /// </summary>
+        protected override void Handle()
+        {
+            Jump(!Pop<bool>() ? GetInt32() : 4);
+        }
 
-		#endregion
-	}
+        #endregion
+    }
 }

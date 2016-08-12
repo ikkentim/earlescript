@@ -17,16 +17,27 @@ using EarleCode.Runtime.Values;
 
 namespace EarleCode.Runtime.Instructions
 {
-	internal class UnboxFunctionReferenceInstruction : Instruction
-	{
-		protected override void Handle()
-		{
-			var value = Frame.Executor.GetValue(GetString());
+    /// <summary>
+    ///     Represents the UNBOX.C instruction which pushes the function stored in the specified variable to the stack.
+    /// </summary>
+    /// <seealso cref="EarleCode.Runtime.Instructions.Instruction" />
+    internal class UnboxFunctionReferenceInstruction : Instruction
+    {
+        #region Overrides of Instruction
 
-			if (value.Is<EarleFunctionCollection>())
-				Push(value);
-			else
-				Push(EarleValue.Undefined);
-		}
-	}
+        /// <summary>
+        ///     This method is invoked when the instruction needs to be run.
+        /// </summary>
+        protected override void Handle()
+        {
+            var value = Frame.Executor.GetValue(GetString());
+
+            if (value.Is<EarleFunctionCollection>())
+                Push(value);
+            else
+                Push(EarleValue.Undefined);
+        }
+
+        #endregion
+    }
 }

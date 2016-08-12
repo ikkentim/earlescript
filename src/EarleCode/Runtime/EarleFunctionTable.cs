@@ -20,52 +20,52 @@ using System.Linq;
 
 namespace EarleCode.Runtime
 {
-	internal class EarleFunctionTable : IEnumerable<EarleFunction>
-	{
-		private readonly Dictionary<string, EarleFunctionCollection> _values =
-			new Dictionary<string, EarleFunctionCollection>();
+    internal class EarleFunctionTable : IEnumerable<EarleFunction>
+    {
+        private readonly Dictionary<string, EarleFunctionCollection> _values =
+            new Dictionary<string, EarleFunctionCollection>();
 
-		public void Add(EarleFunction function)
-		{
-			if (function == null)
-				throw new ArgumentNullException(nameof(function));
+        public void Add(EarleFunction function)
+        {
+            if (function == null)
+                throw new ArgumentNullException(nameof(function));
 
-			EarleFunctionCollection collection;
+            EarleFunctionCollection collection;
 
-			if (_values.TryGetValue(function.Name, out collection))
-			{
-				collection.Add(function);
-			}
-			else
-			{
-				collection = new EarleFunctionCollection();
-				collection.Add(function);
-				_values.Add(function.Name, collection);
-			}
-		}
+            if (_values.TryGetValue(function.Name, out collection))
+            {
+                collection.Add(function);
+            }
+            else
+            {
+                collection = new EarleFunctionCollection();
+                collection.Add(function);
+                _values.Add(function.Name, collection);
+            }
+        }
 
-		public EarleFunctionCollection Get(string functionName)
-		{
-			if (functionName == null)
-				throw new ArgumentNullException(nameof(functionName));
-			EarleFunctionCollection collection;
+        public EarleFunctionCollection Get(string functionName)
+        {
+            if (functionName == null)
+                throw new ArgumentNullException(nameof(functionName));
+            EarleFunctionCollection collection;
 
-			_values.TryGetValue(functionName, out collection);
-			return collection;
-		}
+            _values.TryGetValue(functionName, out collection);
+            return collection;
+        }
 
-		#region Implementation of IEnumerable<EarleFunction>
+        #region Implementation of IEnumerable<EarleFunction>
 
-		public IEnumerator<EarleFunction> GetEnumerator()
-		{
-			return _values.Values.SelectMany(c => c).GetEnumerator();
-		}
+        public IEnumerator<EarleFunction> GetEnumerator()
+        {
+            return _values.Values.SelectMany(c => c).GetEnumerator();
+        }
 
-		IEnumerator IEnumerable.GetEnumerator()
-		{
-			return GetEnumerator();
-		}
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
 
-		#endregion
-	}
+        #endregion
+    }
 }

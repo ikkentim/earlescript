@@ -15,53 +15,53 @@
 
 namespace EarleCode.Runtime.Values
 {
-	public class EarleVector2 : IEarleStructure
-	{
-		public EarleVector2(float x, float y)
-		{
-			X = x;
-			Y = y;
-		}
+    public class EarleVector2 : IEarleStructure
+    {
+        public EarleVector2(float x, float y)
+        {
+            X = x;
+            Y = y;
+        }
 
-		public float X { get; }
+        public float X { get; }
 
-		public float Y { get; }
+        public float Y { get; }
 
-		#region Overrides of Object
+        #region Overrides of Object
 
-		/// <summary>
-		///     Returns a string that represents the current object.
-		/// </summary>
-		/// <returns>
-		///     A string that represents the current object.
-		/// </returns>
-		public override string ToString()
-		{
-			return $"({X}, {Y})";
-		}
+        /// <summary>
+        ///     Returns a string that represents the current object.
+        /// </summary>
+        /// <returns>
+        ///     A string that represents the current object.
+        /// </returns>
+        public override string ToString()
+        {
+            return $"({X}, {Y})";
+        }
 
-		#endregion
+        #endregion
 
-		#region Implementation of IEarleStructure
+        #region Implementation of IEarleStructure
 
-		public EarleValue GetField(string name)
-		{
-			switch (name)
-			{
-				case "x":
-					return (EarleValue) X;
-				case "y":
-					return (EarleValue) Y;
-				default:
-					return EarleValue.Undefined;
-			}
-		}
+        public EarleValue GetField(string name)
+        {
+            switch (name)
+            {
+                case "x":
+                    return (EarleValue) X;
+                case "y":
+                    return (EarleValue) Y;
+                default:
+                    return EarleValue.Undefined;
+            }
+        }
 
-		public void SetField(string name, EarleValue value)
-		{
-			// Values cannot be set.
-		}
+        public void SetField(string name, EarleValue value)
+        {
+            // Values cannot be set.
+        }
 
-		#endregion
-	}
+        #endregion
+    }
 }

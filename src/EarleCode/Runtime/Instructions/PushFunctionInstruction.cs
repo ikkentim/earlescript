@@ -1,4 +1,4 @@
-﻿// EarleCode
+// EarleCode
 // Copyright 2016 Tim Potze
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,22 +13,44 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using EarleCode.Runtime.Values;
 
 namespace EarleCode.Runtime.Instructions
 {
     /// <summary>
-    ///     Represents the PUSH.1 instruction which pushes the integer '1' to the stack.
+    ///     Represents the PUSH.C instruction which pushes the specified function to the stack.
     /// </summary>
     /// <seealso cref="EarleCode.Runtime.Instructions.Instruction" />
-    internal class PushOneInstruction : Instruction
+    internal class PushFunctionInstruction : Instruction
     {
+        #region Overrides of Instruction
+
         /// <summary>
         ///     This method is invoked when the instruction needs to be run.
         /// </summary>
         protected override void Handle()
         {
-            Push(1.ToEarleValue());
+            var refString = GetString();
+
+            string file = null,
+                name;
+
+            if (refString.Contains("::"))
+            {
+                var spl = refString.Split(new[] {"::"}, StringSplitOptions.None);
+                file = spl[0];
+                name = spl[1];
+            }
+            else
+                name = refString;
+
+            if (file != null && file.Length == 0)
+                file = null;
+
+            Push(Frame.Executor.GetFunctionReference(file, name).ToEarleValue());
         }
+
+        #endregion
     }
 }
