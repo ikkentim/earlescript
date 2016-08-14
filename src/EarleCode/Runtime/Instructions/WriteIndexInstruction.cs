@@ -34,10 +34,9 @@ namespace EarleCode.Runtime.Instructions
             var index = Pop();
             var array = Pop();
             var value = Pop();
+
             if (array.Is<EarleArray>())
-            {
                 array.As<EarleArray>().SetValue(index, value);
-            }
         }
 
         #endregion

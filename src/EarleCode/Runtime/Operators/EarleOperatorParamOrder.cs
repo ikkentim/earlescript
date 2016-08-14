@@ -15,11 +15,23 @@
 
 namespace EarleCode.Runtime.Operators
 {
-    public enum EarleOperatorTypeOrder
+    public enum EarleOperatorParamOrder
     {
+        /// <summary>
+        /// The order specified by the definition.
+        /// </summary>
         Normal,
+        /// <summary>
+        /// The order specified by the code.
+        /// </summary>
         Any,
+        /// <summary>
+        /// The order specified by the definition. This may mean the left and right values are swapped.
+        /// </summary>
         Specified,
+        /// <summary>
+        /// The reverse order as specified by the code.
+        /// </summary>
         Swap
     }
 }

@@ -33,14 +33,8 @@ namespace EarleCode.Runtime.Instructions
         {
             var structure = Pop();
             var field = GetString();
-            if (!structure.Is<IEarleStructure>())
-            {
-                Push(EarleValue.Undefined);
-            }
-            else
-            {
-                Push(structure.As<IEarleStructure>().GetField(field));
-            }
+            Push(structure.As<IEarleStructure>()?.GetField(field)
+                 ?? EarleValue.Undefined);
         }
 
         #endregion

@@ -14,12 +14,23 @@
 // limitations under the License.
 
 using System;
+using EarleCode.Runtime.Instructions;
 
 namespace EarleCode.Runtime.Operators
 {
+    /// <summary>
+    ///     Holds information about an operator <see cref="OpCode" />
+    /// </summary>
+    /// <seealso cref="System.Attribute" />
     [AttributeUsage(AttributeTargets.Field)]
     internal class OperatorAttribute : Attribute
     {
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="OperatorAttribute" /> class.
+        /// </summary>
+        /// <param name="symbol">The symbol.</param>
+        /// <param name="type">The type.</param>
+        /// <param name="priority">The priority.</param>
         public OperatorAttribute(string symbol, EarleOperatorType type, int priority = 0)
         {
             Symbol = symbol;
@@ -27,10 +38,19 @@ namespace EarleCode.Runtime.Operators
             Priority = priority;
         }
 
+        /// <summary>
+        ///     Gets the symbol.
+        /// </summary>
         public string Symbol { get; }
 
+        /// <summary>
+        ///     Gets the type.
+        /// </summary>
         public EarleOperatorType Type { get; }
 
+        /// <summary>
+        ///     Gets the priority.
+        /// </summary>
         public int Priority { get; }
     }
 }

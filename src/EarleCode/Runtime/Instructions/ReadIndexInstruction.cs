@@ -33,14 +33,8 @@ namespace EarleCode.Runtime.Instructions
         {
             var index = Pop();
             var array = Pop();
-            if (!array.Is<EarleArray>())
-            {
-                Push(EarleValue.Undefined);
-            }
-            else
-            {
-                Push(array.As<EarleArray>().GetValue(index));
-            }
+            Push(array.As<EarleArray>()?.GetValue(index)
+                 ?? EarleValue.Undefined);
         }
 
         #endregion

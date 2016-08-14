@@ -23,12 +23,12 @@ namespace EarleCode.Runtime.Operators
 {
     internal static class EarleOperators
     {
-        private static readonly Dictionary<string, OpCode> _binaryOperators = new Dictionary<string, OpCode>();
-        private static readonly Dictionary<string, OpCode> _unaryOperators = new Dictionary<string, OpCode>();
-        private static readonly Dictionary<OpCode, int> _binaryOperatorPriority = new Dictionary<OpCode, int>();
+        private static readonly Dictionary<string, OpCode> BinaryOpCodes = new Dictionary<string, OpCode>();
+        private static readonly Dictionary<string, OpCode> UnaryOpCodes = new Dictionary<string, OpCode>();
+        private static readonly Dictionary<OpCode, int> BinaryPriorities = new Dictionary<OpCode, int>();
 
-        private static readonly List<OpCode> _assignmentOperators = new List<OpCode>();
-        private static readonly List<OpCode> _assignmentModOperators = new List<OpCode>();
+        private static readonly List<OpCode> AssignmentOpCodes = new List<OpCode>();
+        private static readonly List<OpCode> AssignmentModOpCodes = new List<OpCode>();
 
         public static readonly IEnumerable<string> BinaryOperators;
         public static readonly IEnumerable<string> UnaryOperators;
@@ -49,27 +49,27 @@ namespace EarleCode.Runtime.Operators
                     continue;
 
                 if (attribute.Type.HasFlag(EarleOperatorType.UnaryOperator))
-                    _unaryOperators.Add(attribute.Symbol, op);
+                    UnaryOpCodes.Add(attribute.Symbol, op);
                 if (attribute.Type.HasFlag(EarleOperatorType.BinaryOperator))
                 {
-                    _binaryOperators.Add(attribute.Symbol, op);
-                    _binaryOperatorPriority.Add(op, attribute.Priority);
+                    BinaryOpCodes.Add(attribute.Symbol, op);
+                    BinaryPriorities.Add(op, attribute.Priority);
 
                     if (attribute.Type.HasFlag(EarleOperatorType.AssignmentOperator))
-                        _assignmentOperators.Add(op);
+                        AssignmentOpCodes.Add(op);
                     if (attribute.Type.HasFlag(EarleOperatorType.AssignmentModOperator))
-                        _assignmentModOperators.Add(op);
+                        AssignmentModOpCodes.Add(op);
                 }
             }
 
-            BinaryOperators = _binaryOperators.Keys.ToArray();
-            UnaryOperators = _unaryOperators.Keys.ToArray();
-            AssignmentModOperators = _binaryOperators
-                .Where(kv => _assignmentModOperators.Contains(kv.Value))
+            BinaryOperators = BinaryOpCodes.Keys.ToArray();
+            UnaryOperators = UnaryOpCodes.Keys.ToArray();
+            AssignmentModOperators = BinaryOpCodes
+                .Where(kv => AssignmentModOpCodes.Contains(kv.Value))
                 .Select(kv => kv.Key + kv.Key)
                 .ToArray();
-            AssignmentOperators = _binaryOperators
-                .Where(kv => _assignmentOperators.Contains(kv.Value))
+            AssignmentOperators = BinaryOpCodes
+                .Where(kv => AssignmentOpCodes.Contains(kv.Value))
                 .Select(kv => kv.Key)
                 .ToArray();
         }
@@ -101,7 +101,7 @@ namespace EarleCode.Runtime.Operators
         public static int GetPriority(OpCode opCode)
         {
             int result;
-            return _binaryOperatorPriority.TryGetValue(opCode, out result) ? result : 0;
+            return BinaryPriorities.TryGetValue(opCode, out result) ? result : 0;
         }
 
         public static int GetMaxOperatorLength(EarleOperatorType type, string startingWith)
@@ -127,9 +127,9 @@ namespace EarleCode.Runtime.Operators
                 case EarleOperatorType.AssignmentOperator:
                     return GetOpCode(EarleOperatorType.BinaryOperator, symbol);
                 case EarleOperatorType.UnaryOperator:
-                    return _unaryOperators[symbol];
+                    return UnaryOpCodes[symbol];
                 case EarleOperatorType.BinaryOperator:
-                    return _binaryOperators[symbol];
+                    return BinaryOpCodes[symbol];
                 default:
                     throw new ArgumentException("Invalid symbol type", nameof(type));
             }
@@ -137,12 +137,12 @@ namespace EarleCode.Runtime.Operators
 
         public static bool IsAssignmentOperator(OpCode opCode)
         {
-            return _assignmentOperators.Contains(opCode);
+            return AssignmentOpCodes.Contains(opCode);
         }
 
         public static bool IsAssignmentModOperator(OpCode opCode)
         {
-            return _assignmentModOperators.Contains(opCode);
+            return AssignmentModOpCodes.Contains(opCode);
         }
     }
 }

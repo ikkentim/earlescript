@@ -36,11 +36,12 @@ namespace EarleCode.Runtime.Instructions
             string file = null,
                 name;
 
-            if (refString.Contains("::"))
+            // Split the refString formatted `file::name`.
+            var splitIndex = refString.IndexOf("::", StringComparison.Ordinal);
+            if (splitIndex >= 0)
             {
-                var spl = refString.Split(new[] {"::"}, StringSplitOptions.None);
-                file = spl[0];
-                name = spl[1];
+                file = refString.Substring(0, splitIndex);
+                name = refString.Substring(splitIndex + 2);
             }
             else
                 name = refString;
@@ -48,7 +49,7 @@ namespace EarleCode.Runtime.Instructions
             if (file != null && file.Length == 0)
                 file = null;
 
-            Push(Frame.Executor.GetFunctionReference(file, name).ToEarleValue());
+            Push((EarleValue)Frame.Executor.GetFunctionReference(file, name));
         }
 
         #endregion

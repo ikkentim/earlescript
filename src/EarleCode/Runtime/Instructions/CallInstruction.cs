@@ -51,44 +51,41 @@ namespace EarleCode.Runtime.Instructions
         protected virtual IEarleStackFrameExecutor CreateFrameExecutor(EarleStackFrame superFrame, int callerIp)
         {
             var argumentCount = GetInt32();
-            var value = Pop();
-            EarleFunction function;
 
-            if (value.Is<EarleFunctionCollection>())
-            {
-                var functions = value.As<EarleFunctionCollection>();
-                function = functions.GetBestOverload(argumentCount);
-            }
-            else
-            {
-                function = value.As<EarleFunction>();
-            }
+            var funcValue = Pop();
 
-            if (function == null)
-            {
-                if (value.As<EarleFunctionCollection>()?.Any() ?? false)
-                    Frame.Runtime.HandleWarning(
-                        $"No suitable overload can be found of `{value.As<EarleFunctionCollection>().FirstOrDefault()?.Name}`.");
-                else if (value.As<EarleFunctionCollection>()?.Any() ?? false)
-                    Frame.Runtime.HandleWarning("No suitable overload can be found.");
-                else if (!value.HasValue)
-                    Frame.Runtime.HandleWarning("A null pointer cannot be invoked.");
-                else
-                    Frame.Runtime.HandleWarning($"{value.Value?.GetType()} cannot be invoked.");
-
-                for (var i = 0; i < argumentCount; i++)
-                    Pop();
-
-                Push(EarleValue.Undefined);
-                return null;
-            }
-
+            // Pop the arguments of the stack.
             var args = new EarleValue[argumentCount];
             for (var i = 0; i < argumentCount; i++)
                 args[argumentCount - 1 - i] = Pop();
 
+            // Pop the call target of the stack.
             var target = HasTarget ? Pop() : EarleValue.Undefined;
 
+            // Find the function to call.
+            var function = funcValue.As<EarleFunctionCollection>()?.GetBestOverload(argumentCount)
+                           ?? funcValue.As<EarleFunction>();
+
+            // If no function was specified, show an error and push NULL onto the stack instead of the result.
+            if (function == null)
+            {
+                // Throw a tailored warning.
+                if (funcValue.As<EarleFunctionCollection>()?.Any() ?? false)
+                    Frame.Runtime.HandleWarning(
+                        $"No suitable overload can be found of `{funcValue.As<EarleFunctionCollection>().FirstOrDefault()?.Name}`.");
+                else if (funcValue.As<EarleFunctionCollection>()?.Any() ?? false)
+                    Frame.Runtime.HandleWarning("No suitable overload can be found.");
+                else if (!funcValue.HasValue)
+                    Frame.Runtime.HandleWarning("A null pointer cannot be invoked.");
+                else
+                    Frame.Runtime.HandleWarning($"{funcValue.Value?.GetType()} cannot be invoked.");
+                
+                // Push NULL onto the stack to as the result.
+                Push(EarleValue.Undefined);
+                return null;
+            }
+            
+            // Create the frame executor of the function.
             return function.CreateFrameExecutor(superFrame, callerIp, target, args);
         }
     }

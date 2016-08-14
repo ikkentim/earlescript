@@ -144,6 +144,16 @@ namespace EarleCode.Runtime.Values
             return new EarleValue(value);
         }
 
+        public static explicit operator EarleValue(EarleFunctionCollection value)
+        {
+            return new EarleValue(value);
+        }
+
+        public static explicit operator EarleValue(EarleArray value)
+        {
+            return new EarleValue(value);
+        }
+
         #region Overrides of ValueType
 
         /// <summary>

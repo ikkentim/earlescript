@@ -28,10 +28,10 @@ namespace EarleCode.Runtime
 
             // +
             Operators.AddBinaryOperator(OpCode.Add, null, typeof (string),
-                (l, r) => { return (EarleValue) ((string) l + (string) r); }, EarleOperatorTypeOrder.Any);
+                (l, r) => { return (EarleValue) ((string) l + (string) r); }, EarleOperatorParamOrder.Any);
 
             Operators.AddBinaryOperator(OpCode.Add, typeof (int), typeof (float),
-                (l, r) => { return (EarleValue) ((int) l + (float) r); }, EarleOperatorTypeOrder.Specified);
+                (l, r) => { return (EarleValue) ((int) l + (float) r); }, EarleOperatorParamOrder.Specified);
 
             Operators.AddBinaryOperator(OpCode.Add, typeof (int), typeof (int),
                 (l, r) => { return (EarleValue) ((int) l + (int) r); });
@@ -54,7 +54,7 @@ namespace EarleCode.Runtime
 
             // *
             Operators.AddBinaryOperator(OpCode.Multiply, typeof (int), typeof (float),
-                (l, r) => { return (EarleValue) ((int) l*(float) r); }, EarleOperatorTypeOrder.Specified);
+                (l, r) => { return (EarleValue) ((int) l*(float) r); }, EarleOperatorParamOrder.Specified);
 
 
             Operators.AddBinaryOperator(OpCode.Multiply, typeof (int), typeof (int),

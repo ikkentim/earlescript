@@ -30,6 +30,7 @@ namespace EarleCode.Runtime.Instructions
         /// </summary>
         protected override void Handle()
         {
+            // Create the thread and frame executor.
             var ip = Frame.Executor.CIP - 1;
             var thread = new EarleThread(null);
             var rootFrame = new EarleStackFrame(Frame.Runtime, Frame.Function, null, ip, Frame, thread);
@@ -37,8 +38,9 @@ namespace EarleCode.Runtime.Instructions
 
             if (frame == null)
                 return;
-            thread.AttachExecutor(frame);
 
+            // Attach the frame to the thread and put the thread in the runtime's threadpool.
+            thread.AttachExecutor(frame);
             Frame.Runtime.EnqueueThread(thread);
         }
 

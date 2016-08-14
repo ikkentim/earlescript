@@ -34,10 +34,9 @@ namespace EarleCode.Runtime.Instructions
             var structure = Pop();
             var value = Pop();
             var field = GetString();
+
             if (structure.Is<IEarleStructure>())
-            {
                 structure.As<IEarleStructure>().SetField(field, value);
-            }
         }
 
         #endregion
