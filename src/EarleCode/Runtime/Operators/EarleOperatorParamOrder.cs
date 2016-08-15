@@ -15,22 +15,28 @@
 
 namespace EarleCode.Runtime.Operators
 {
+    /// <summary>
+    ///     Contains the ways operator parameters can be sent to binary operator functions.
+    /// </summary>
     public enum EarleOperatorParamOrder
     {
         /// <summary>
-        /// The order specified by the definition.
+        ///     The order specified by the definition.
         /// </summary>
         Normal,
+
         /// <summary>
-        /// The order specified by the code.
+        ///     The order specified by the code.
         /// </summary>
         Any,
+
         /// <summary>
-        /// The order specified by the definition. This may mean the left and right values are swapped.
+        ///     The order specified by the definition. This may mean the left and right values are swapped.
         /// </summary>
         Specified,
+
         /// <summary>
-        /// The reverse order as specified by the code.
+        ///     The opposite order as specified by the code.
         /// </summary>
         Swap
     }

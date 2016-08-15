@@ -19,12 +19,24 @@ using System.Linq;
 
 namespace EarleCode.Runtime.Values
 {
+    /// <summary>
+    /// Represents an array of Earle values.
+    /// </summary>
+    /// <seealso cref="EarleCode.Runtime.Values.IEarleStructure" />
     public class EarleArray : IEarleStructure, IEnumerable<KeyValuePair<EarleValue, EarleValue>>
     {
         private readonly IDictionary<object, EarleValue> _values = new Dictionary<object, EarleValue>();
 
+        /// <summary>
+        /// Gets the length of this array.
+        /// </summary>
         public virtual int Length => _values.Count;
 
+        /// <summary>
+        /// Gets the value at the specified index.
+        /// </summary>
+        /// <param name="index">The index.</param>
+        /// <returns>The value at the specified index. If the index is out of range, <see cref="EarleValue.Undefined"/> is returned.</returns>
         public virtual EarleValue GetValue(EarleValue index)
         {
             if (!index.HasValue)
@@ -36,6 +48,11 @@ namespace EarleCode.Runtime.Values
                 : EarleValue.Undefined;
         }
 
+        /// <summary>
+        /// Sets the value at the specified index.
+        /// </summary>
+        /// <param name="index">The index.</param>
+        /// <param name="value">The value.</param>
         public virtual void SetValue(EarleValue index, EarleValue value)
         {
             if (!index.HasValue)

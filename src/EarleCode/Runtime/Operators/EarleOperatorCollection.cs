@@ -21,7 +21,7 @@ using EarleCode.Runtime.Values;
 namespace EarleCode.Runtime.Operators
 {
     /// <summary>
-    /// Represents a collection of Earle operators.
+    ///     Represents a collection of Earle operators.
     /// </summary>
     public sealed class EarleOperatorCollection
     {
@@ -33,16 +33,20 @@ namespace EarleCode.Runtime.Operators
             new Dictionary<Tuple<OpCode, Type>, Func<EarleValue, EarleValue>>();
 
         /// <summary>
-        /// Adds a binary operator.
+        ///     Adds a binary operator.
         /// </summary>
         /// <param name="operator">The operator's operation code.</param>
         /// <param name="supportedLeftTypes">The supported types on the left side of the operator.</param>
         /// <param name="supportedRightTypes">The supported types on the right side of the operator.</param>
         /// <param name="func">The logic to perform this operator.</param>
         /// <param name="order">The order the left/right values may appear in.</param>
-        /// <exception cref="System.ArgumentNullException">Thrown if <see cref="supportedLeftTypes"/>, <see cref="supportedRightTypes"/> or <see cref="func"/> is null.</exception>
+        /// <exception cref="System.ArgumentNullException">
+        ///     Thrown if <see cref="supportedLeftTypes" />,
+        ///     <see cref="supportedRightTypes" /> or <see cref="func" /> is null.
+        /// </exception>
         public void AddBinaryOperator(OpCode @operator, Type[] supportedLeftTypes, Type[] supportedRightTypes,
-            Func<EarleValue, EarleValue, EarleValue> func, EarleOperatorTypeOrder order = EarleOperatorTypeOrder.Normal)
+            Func<EarleValue, EarleValue, EarleValue> func,
+            EarleOperatorParamOrder order = EarleOperatorParamOrder.Normal)
         {
             if (supportedLeftTypes == null) throw new ArgumentNullException(nameof(supportedLeftTypes));
             if (supportedRightTypes == null) throw new ArgumentNullException(nameof(supportedRightTypes));
@@ -54,16 +58,16 @@ namespace EarleCode.Runtime.Operators
         }
 
         /// <summary>
-        /// Adds a binary operator.
+        ///     Adds a binary operator.
         /// </summary>
         /// <param name="operator">The operator's operation code.</param>
         /// <param name="supportedTypes">The supported types on both sides of the operator.</param>
         /// <param name="func">The logic to perform this operator.</param>
         /// <param name="order">The order the left/right values may appear in.</param>
-        /// <exception cref="System.ArgumentNullException">Thrown if <see cref="supportedTypes"/> or <see cref="func"/> is null.</exception>
+        /// <exception cref="System.ArgumentNullException">Thrown if <see cref="supportedTypes" /> or <see cref="func" /> is null.</exception>
         public void AddBinaryOperator(OpCode @operator, Type[] supportedTypes,
             Func<EarleValue, EarleValue, EarleValue> func,
-            EarleOperatorTypeOrder order = EarleOperatorTypeOrder.Normal)
+            EarleOperatorParamOrder order = EarleOperatorParamOrder.Normal)
         {
             if (supportedTypes == null) throw new ArgumentNullException(nameof(supportedTypes));
             if (func == null) throw new ArgumentNullException(nameof(func));
@@ -72,30 +76,31 @@ namespace EarleCode.Runtime.Operators
         }
 
         /// <summary>
-        /// Adds a binary operator.
+        ///     Adds a binary operator.
         /// </summary>
         /// <param name="operator">The operator's operation code.</param>
         /// <param name="supportedLeftType">The supported type on the left side of the operator.</param>
         /// <param name="supportedRightType">The supported type on the right side of the operator.</param>
         /// <param name="func">The logic to perform this operator.</param>
         /// <param name="order">The order the left/right values may appear in.</param>
-        /// <exception cref="System.ArgumentNullException">Thrown if <see cref="func"/> is null.</exception>
+        /// <exception cref="System.ArgumentNullException">Thrown if <see cref="func" /> is null.</exception>
         public void AddBinaryOperator(OpCode @operator, Type supportedLeftType, Type supportedRightType,
-            Func<EarleValue, EarleValue, EarleValue> func, EarleOperatorTypeOrder order = EarleOperatorTypeOrder.Normal)
+            Func<EarleValue, EarleValue, EarleValue> func,
+            EarleOperatorParamOrder order = EarleOperatorParamOrder.Normal)
         {
             if (func == null) throw new ArgumentNullException(nameof(func));
 
             _binaryOperators[new Tuple<OpCode, Type, Type>(@operator, supportedLeftType, supportedRightType)] =
-                new Tuple<bool, Func<EarleValue, EarleValue, EarleValue>>(order == EarleOperatorTypeOrder.Swap, func);
+                new Tuple<bool, Func<EarleValue, EarleValue, EarleValue>>(order == EarleOperatorParamOrder.Swap, func);
 
-            if (order == EarleOperatorTypeOrder.Any)
+            if (order == EarleOperatorParamOrder.Any)
                 AddBinaryOperator(@operator, supportedRightType, supportedLeftType, func);
-            if (order == EarleOperatorTypeOrder.Specified)
-                AddBinaryOperator(@operator, supportedRightType, supportedLeftType, func, EarleOperatorTypeOrder.Swap);
+            if (order == EarleOperatorParamOrder.Specified)
+                AddBinaryOperator(@operator, supportedRightType, supportedLeftType, func, EarleOperatorParamOrder.Swap);
         }
 
         /// <summary>
-        /// Runs the specified binary operator.
+        ///     Runs the specified binary operator.
         /// </summary>
         /// <param name="operator">The operator to run.</param>
         /// <param name="left">The left value.</param>
@@ -123,12 +128,12 @@ namespace EarleCode.Runtime.Operators
         }
 
         /// <summary>
-        /// Adds an unary operator.
+        ///     Adds an unary operator.
         /// </summary>
         /// <param name="operator">The operator's operation code.</param>
         /// <param name="supportedTypes">The supported types.</param>
         /// <param name="func">The logic to perform this operator.</param>
-        /// <exception cref="System.ArgumentNullException">Thrown if <see cref="supportedTypes"/> or <see cref="func"/> is null.</exception>
+        /// <exception cref="System.ArgumentNullException">Thrown if <see cref="supportedTypes" /> or <see cref="func" /> is null.</exception>
         public void AddUnaryOperator(OpCode @operator, Type[] supportedTypes, Func<EarleValue, EarleValue> func)
         {
             if (supportedTypes == null) throw new ArgumentNullException(nameof(supportedTypes));
@@ -139,12 +144,12 @@ namespace EarleCode.Runtime.Operators
         }
 
         /// <summary>
-        /// Adds an unary operator.
+        ///     Adds an unary operator.
         /// </summary>
         /// <param name="operator">The operator's operation code.</param>
         /// <param name="supportedType">The supported type.</param>
         /// <param name="func">The logic to perform this operator.</param>
-        /// <exception cref="System.ArgumentNullException">Thrown if <see cref="func"/> is null.</exception>
+        /// <exception cref="System.ArgumentNullException">Thrown if <see cref="func" /> is null.</exception>
         public void AddUnaryOperator(OpCode @operator, Type supportedType, Func<EarleValue, EarleValue> func)
         {
             if (func == null) throw new ArgumentNullException(nameof(func));
@@ -153,7 +158,7 @@ namespace EarleCode.Runtime.Operators
         }
 
         /// <summary>
-        /// Runs the specified unary operator.
+        ///     Runs the specified unary operator.
         /// </summary>
         /// <param name="operator">The operator to run.</param>
         /// <param name="value">The value.</param>
@@ -161,8 +166,8 @@ namespace EarleCode.Runtime.Operators
         public EarleValue RunUnaryOperator(OpCode @operator, EarleValue value)
         {
             Func<EarleValue, EarleValue> func;
-            return _unaryOperators.TryGetValue(new Tuple<OpCode, Type>(@operator, value.Value?.GetType()), out func) 
-                ? func(value) 
+            return _unaryOperators.TryGetValue(new Tuple<OpCode, Type>(@operator, value.Value?.GetType()), out func)
+                ? func(value)
                 : EarleValue.Undefined;
         }
     }

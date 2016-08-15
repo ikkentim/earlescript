@@ -49,7 +49,7 @@ namespace EarleCode.Runtime.Instructions
             if (file != null && file.Length == 0)
                 file = null;
 
-            Push((EarleValue)Frame.Executor.GetFunctionReference(file, name));
+            Push((EarleValue) Frame.Executor.GetFunctionReference(file, name));
         }
 
         #endregion

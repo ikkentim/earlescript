@@ -28,7 +28,7 @@ namespace EarleCode.Runtime.Instructions
         /// </summary>
         protected override void Handle()
         {
-            Push(1.ToEarleValue());
+            Push(EarleValue.True);
         }
     }
 }

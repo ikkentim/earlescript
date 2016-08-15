@@ -30,7 +30,7 @@ namespace EarleCode.Runtime.Instructions
         /// </summary>
         protected override void Handle()
         {
-            Push(new EarleArray().ToEarleValue());
+            Push((EarleValue) new EarleArray());
         }
 
         #endregion

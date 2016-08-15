@@ -34,7 +34,7 @@ namespace EarleCode.Compiler.Parsers
 				Lexer.AssertMoveNext();
 			} while (Lexer.Current.Is(TokenType.Token) && EarleOperators.GetMaxOperatorLength(type, str) > str.Length);
 
-			return EarleOperators.GetOpCode(type, str);
+			return EarleOperators.GetOperator(type, str);
 		}
 
 		#region Overrides of Parser
@@ -198,7 +198,7 @@ namespace EarleCode.Compiler.Parsers
 			if (SyntaxMatches("OPERATOR_UNARY"))
 			{
 				Lexer.AssertToken(TokenType.Token);
-				unaryOperator = EarleOperators.GetOpCode(EarleOperatorType.UnaryOperator, Lexer.Current.Value);
+				unaryOperator = EarleOperators.GetOperator(EarleOperatorType.UnaryOperator, Lexer.Current.Value);
 				Lexer.AssertMoveNext();
 			}
 

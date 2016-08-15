@@ -15,9 +15,24 @@
 
 namespace EarleCode.Runtime.Values
 {
+    /// <summary>
+    ///     Provides functionality for getting and settings fields of the Earle structure.
+    /// </summary>
+    /// <seealso cref="IEarleObject" />
     public interface IEarleStructure : IEarleObject
     {
+        /// <summary>
+        ///     Gets the field with the specified name.
+        /// </summary>
+        /// <param name="name">The name.</param>
+        /// <returns>The value of the field.</returns>
         EarleValue GetField(string name);
+
+        /// <summary>
+        ///     Sets the field with the specified name.
+        /// </summary>
+        /// <param name="name">The name.</param>
+        /// <param name="value">The value.</param>
         void SetField(string name, EarleValue value);
     }
 }

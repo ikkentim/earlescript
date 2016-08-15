@@ -146,7 +146,7 @@
     <Compile Include="Runtime\EarleBaseStackFrameExecutor.cs" />
     <Compile Include="Runtime\Operators\EarleOperatorCollection.cs" />
     <Compile Include="Runtime\Operators\EarleOperators.cs" />
-    <Compile Include="Runtime\Operators\EarleOperatorTypeOrder.cs" />
+    <Compile Include="Runtime\Operators\EarleOperatorParamOrder.cs" />
     <Compile Include="Runtime\Operators\OperatorAttribute.cs" />
     <Compile Include="Runtime\Operators\EarleOperatorType.cs" />
     <Compile Include="Runtime\Instructions\PushValueInstruction.cs" />

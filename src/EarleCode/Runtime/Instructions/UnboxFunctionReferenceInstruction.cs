@@ -32,10 +32,7 @@ namespace EarleCode.Runtime.Instructions
         {
             var value = Frame.Executor.GetValue(GetString());
 
-            if (value.Is<EarleFunctionCollection>())
-                Push(value);
-            else
-                Push(EarleValue.Undefined);
+            Push(value.Is<EarleFunctionCollection>() ? value : EarleValue.Undefined);
         }
 
         #endregion

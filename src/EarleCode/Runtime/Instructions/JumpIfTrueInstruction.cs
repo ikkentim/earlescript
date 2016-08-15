@@ -29,6 +29,8 @@ namespace EarleCode.Runtime.Instructions
         /// </summary>
         protected override void Handle()
         {
+            // Jump the number of instructions specified at the CIP if the value on the stack is true. If the value is
+            // false, jump over the jump-count (4 bytes).
             Jump(Pop<bool>() ? GetInt32() : 4);
         }
 

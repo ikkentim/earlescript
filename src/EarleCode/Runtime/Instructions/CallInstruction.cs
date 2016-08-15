@@ -79,12 +79,12 @@ namespace EarleCode.Runtime.Instructions
                     Frame.Runtime.HandleWarning("A null pointer cannot be invoked.");
                 else
                     Frame.Runtime.HandleWarning($"{funcValue.Value?.GetType()} cannot be invoked.");
-                
+
                 // Push NULL onto the stack to as the result.
                 Push(EarleValue.Undefined);
                 return null;
             }
-            
+
             // Create the frame executor of the function.
             return function.CreateFrameExecutor(superFrame, callerIp, target, args);
         }

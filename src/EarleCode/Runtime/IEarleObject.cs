@@ -15,7 +15,11 @@
 
 namespace EarleCode.Runtime
 {
+    /// <summary>
+    /// Represents an Earle object.
+    /// </summary>
     public interface IEarleObject
     {
+        
     }
 }
