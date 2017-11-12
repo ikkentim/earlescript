@@ -2,6 +2,7 @@
 
 init()
 {
+	_valuestoretest::valuestorefiller();
 	// Variables
 	a = "A";
 	print(a);

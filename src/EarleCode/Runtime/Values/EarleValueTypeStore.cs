@@ -21,66 +21,54 @@ namespace EarleCode.Runtime.Values
 {
     internal static class EarleValueTypeStore
     {
-        private static readonly Type[] _supportedTypes =
+        private static readonly Type[] SupportedTypes =
         {
             typeof (int),
             typeof (float),
             typeof (string),
-            typeof (EarleVector2),
-            typeof (EarleVector3),
-            typeof (EarleFunction),
+			typeof (EarleFunction),
             typeof (EarleFunctionCollection),
             typeof (IEarleObject)
         };
 
-        private static readonly Type[] _supportedCastTypes =
+        private static readonly Type[] SupportedCastTypes =
         {
             typeof (bool)
         };
 
-        private static readonly Dictionary<Tuple<Type, Type>, Func<object, object>> _casters = new Dictionary
+        private static readonly Dictionary<Tuple<Type, Type>, Func<object, object>> Casters = new Dictionary
             <Tuple<Type, Type>, Func<object, object>>
         {
             [new Tuple<Type, Type>(typeof (int), typeof (float))] = v => (float) ((int) v),
             [new Tuple<Type, Type>(typeof (float), typeof (int))] = v => (int) ((float) v),
             [new Tuple<Type, Type>(null, typeof (string))] = v => v?.ToString(),
-            [new Tuple<Type, Type>(typeof (EarleVector2), typeof (EarleVector3))] = v =>
-            {
-                var vec2 = (EarleVector2) v;
-                return new EarleVector3(vec2.X, vec2.Y, 0);
-            },
-            [new Tuple<Type, Type>(typeof (EarleVector3), typeof (EarleVector2))] = v =>
-            {
-                var vec3 = (EarleVector3) v;
-                return new EarleVector2(vec3.X, vec3.Y);
-            },
             [new Tuple<Type, Type>(typeof (int), typeof (bool))] = v => (int) v != 0,
             [new Tuple<Type, Type>(typeof (bool), typeof (int))] = v => (bool) v ? 1 : 0
         };
 
         static EarleValueTypeStore()
         {
-            foreach (var fr in _supportedTypes.Concat(_supportedCastTypes))
-                foreach (var to in _supportedTypes.Concat(_supportedCastTypes))
+            foreach (var fr in SupportedTypes.Concat(SupportedCastTypes))
+                foreach (var to in SupportedTypes.Concat(SupportedCastTypes))
                 {
-                    if (_casters.ContainsKey(new Tuple<Type, Type>(fr, to)))
+                    if (Casters.ContainsKey(new Tuple<Type, Type>(fr, to)))
                         continue;
 
-                    var uni = _casters.Keys.FirstOrDefault(c => c.Item1 == null && c.Item2 == to);
+                    var uni = Casters.Keys.FirstOrDefault(c => c.Item1 == null && c.Item2 == to);
                     if (uni != null)
                     {
-                        _casters[new Tuple<Type, Type>(fr, to)] = _casters[uni];
+                        Casters[new Tuple<Type, Type>(fr, to)] = Casters[uni];
                         continue;
                     }
 
-                    var combo = _casters.Keys.Where(c => c.Item1 == fr).Select(c1 =>
+                    var combo = Casters.Keys.Where(c => c.Item1 == fr).Select(c1 =>
                     {
-                        var c2 = _casters.Keys.FirstOrDefault(c => c1.Item2 == c.Item1 && c.Item2 == to);
+                        var c2 = Casters.Keys.FirstOrDefault(c => c1.Item2 == c.Item1 && c.Item2 == to);
                         return c2 == null ? null : new Tuple<Tuple<Type, Type>, Tuple<Type, Type>>(c1, c2);
                     }).FirstOrDefault(v => v != null);
 
                     if (combo != null)
-                        _casters[new Tuple<Type, Type>(fr, to)] = v => _casters[combo.Item2](_casters[combo.Item1](v));
+                        Casters[new Tuple<Type, Type>(fr, to)] = v => Casters[combo.Item2](Casters[combo.Item1](v));
                 }
         }
 
@@ -91,15 +79,18 @@ namespace EarleCode.Runtime.Values
 
             Func<object, object> result;
 
-            return _casters.TryGetValue(new Tuple<Type, Type>(from, to), out result)
+            return Casters.TryGetValue(new Tuple<Type, Type>(from, to), out result)
                 ? result
-                : null;
+                : typeof(IEarleObject).IsAssignableFrom(from) &&
+                  Casters.TryGetValue(new Tuple<Type, Type>(typeof(IEarleObject), to), out result)
+                    ? result
+                    : null;
         }
 
         public static bool IsSupportedType(Type type)
         {
-            return _supportedTypes.Any(t => t.IsAssignableFrom(type)) ||
-                   _supportedCastTypes.Any(t => t.IsAssignableFrom(type));
+            return SupportedTypes.Any(t => t.IsAssignableFrom(type)) ||
+                   SupportedCastTypes.Any(t => t.IsAssignableFrom(type));
         }
     }
 }

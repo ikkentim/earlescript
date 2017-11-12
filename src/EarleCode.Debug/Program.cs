@@ -17,6 +17,8 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
+using EarleCode.Compiling.Lexing;
+using EarleCode.Compiling.Parsing;
 using EarleCode.Runtime;
 using EarleCode.Runtime.Events;
 using EarleCode.Runtime.Values;
@@ -25,7 +27,16 @@ namespace EarleCode.Debug
 {
 	public class Program
 	{
-		private static string GetRelativePath(string filespec, string folder)
+	    private static void Main(string[] args)
+	    {
+	        var parser = new Parser(new EnumProductionRuleSet<ProductionRuleEnum, TokenType>(TokenType.Token));
+
+	        var ast = parser.Parse(new Lexer("fn", "(a+a-a+a+a+a+a)"));
+
+	        Console.ReadLine();
+	    }
+
+        private static string GetRelativePath(string filespec, string folder)
 		{
 			var pathUri = new Uri(filespec);
 
@@ -36,7 +47,7 @@ namespace EarleCode.Debug
 			return Uri.UnescapeDataString(folderUri.MakeRelativeUri(pathUri).ToString().Replace('/', Path.DirectorySeparatorChar));
 		}
 
-		private static void Main(string[] args)
+		private static void Main2(string[] args)
 		{
 			//Console.WriteLine(4 << 1 + 1);//16
 			//Console.WriteLine(4 | 1 << 1 + 1);//4
@@ -71,13 +82,18 @@ namespace EarleCode.Debug
 			foreach (var l in runtime.GetDebugInformation())
 				Console.WriteLine(l);
 
-			runtime.Natives.Register(EarleNativeFunction.Create("printstacktrace", (EarleStackFrame frame) =>
-			{
-				var trace = frame.GetStackTrace();
-				Console.WriteLine(trace);
-			}));
+		    runtime.Natives.Register(EarleNativeFunction.Create("printstacktrace", (EarleStackFrame frame) =>
+		    {
+		        var trace = frame.GetStackTrace();
+		        Console.WriteLine(trace);
+		    }));
 
-			var test = runtime["\\main"]["test"];
+		    runtime.Natives.Register(EarleNativeFunction.Create("print", (EarleValue value) =>
+		    {
+		        Console.WriteLine(value.CastTo<string>());
+		    }));
+
+            var test = runtime["\\main"]["test"];
 
 			if (test != null)
 			{

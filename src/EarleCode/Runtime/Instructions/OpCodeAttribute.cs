@@ -15,7 +15,7 @@
 
 using System;
 using System.Linq;
-using EarleCode.Compiler.Lexing;
+using EarleCode.OldCompiler.Lexing;
 
 namespace EarleCode.Runtime.Instructions
 {
