@@ -37,7 +37,7 @@ namespace EarleCode.Runtime.Values
         /// </returns>
         public override string ToString()
         {
-            return $"({X}, {Y})";
+            return $"{X.ToString("0.########")} {Y.ToString("0.########")}";
         }
 
         #endregion

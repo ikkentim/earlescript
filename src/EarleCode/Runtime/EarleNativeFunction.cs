@@ -1,12 +1,12 @@
 // EarleCode
 // Copyright 2016 Tim Potze
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -248,6 +248,50 @@ namespace EarleCode.Runtime
             #endregion
         }
 
+	    public static EarleValue Invoke(string name, MethodInfo methodInfo, object target, EarleStackFrame frame, EarleValue[] arguments)
+	    {
+			var parameters = methodInfo.GetParameters();
+			var args = new object[parameters.Length];
+
+			for (int i = 0, a = 0; i < args.Length; i++)
+			{
+				var parameter = parameters[i];
+
+				if (parameter.ParameterType == typeof(EarleValue[]))
+				{
+					args[i] = a >= arguments.Length ? new EarleValue[0] : arguments.Skip(a++).ToArray();
+					break;
+				}
+
+				if (i == 0 && parameter.ParameterType == typeof(EarleStackFrame))
+				{
+					args[i] = frame;
+					continue;
+				}
+
+				if (a >= arguments.Length)
+				{
+					frame.Runtime.HandleWarning($"Out of arguments while invoking native '{name}'");
+					continue;
+				}
+
+				if (parameter.ParameterType == typeof(EarleValue))
+				{
+					args[i] = arguments[a++];
+				}
+				else
+				{
+					args[i] = arguments[a++].CastTo(parameter.ParameterType);
+				}
+			}
+
+			var result = methodInfo.Invoke(target, args);
+
+			if (result is EarleValue)
+				return (EarleValue)result;
+			return new EarleValue(result);
+		}
+
         private class LambdaFunction : EarleNativeFunction
         {
             private readonly MethodInfo _methodInfo;
@@ -264,46 +308,7 @@ namespace EarleCode.Runtime
 
             protected override EarleValue Invoke(EarleStackFrame frame, EarleValue[] arguments)
             {
-                var parameters = _methodInfo.GetParameters();
-                var args = new object[parameters.Length];
-
-                for (int i = 0, a = 0; i < args.Length; i++)
-                {
-                    var parameter = parameters[i];
-
-                    if (parameter.ParameterType == typeof (EarleValue[]))
-                    {
-                        args[i] = a >= arguments.Length ? new EarleValue[0] : arguments.Skip(a++).ToArray();
-                        break;
-                    }
-
-                    if (i == 0 && parameter.ParameterType == typeof (EarleStackFrame))
-                    {
-                        args[i] = frame;
-                        continue;
-                    }
-
-                    if (a >= arguments.Length)
-                    {
-                        frame.Runtime.HandleWarning($"Out of arguments while invoking native '{Name}'");
-                        continue;
-                    }
-
-                    if (parameter.ParameterType == typeof (EarleValue))
-                    {
-                        args[i] = arguments[a++];
-                    }
-                    else
-                    {
-                        args[i] = arguments[a++].CastTo(parameter.ParameterType);
-                    }
-                }
-
-                var result = _methodInfo.Invoke(_target, args);
-
-                if (result is EarleValue)
-                    return (EarleValue) result;
-                return new EarleValue(result);
+	            return Invoke(Name, _methodInfo, _target, frame, arguments);
             }
         }
     }

@@ -31,35 +31,66 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.ValueTuple, Version=4.0.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.ValueTuple.4.3.0\lib\portable-net40+sl4+win8+wp8\System.ValueTuple.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Compiling\Lexing\ILexer.cs" />
+    <Compile Include="Compiling\Lexing\Lexer.cs" />
+    <Compile Include="Compiling\Lexing\Token.cs" />
+    <Compile Include="Compiling\Lexing\TokenFlag.cs" />
+    <Compile Include="Compiling\Lexing\TokenRegexAttribute.cs" />
+    <Compile Include="Compiling\Earle\TokenType.cs" />
+    <Compile Include="Compiling\Parsing\AST\AbstractSyntaxTreeInteriorNode.cs" />
+    <Compile Include="Compiling\Parsing\AST\AbstractSyntaxTreeLeafNode.cs" />
+    <Compile Include="Compiling\Parsing\ParserException.cs" />
+    <Compile Include="Compiling\Parsing\Productions\EnumProductionRuleSet.cs" />
+    <Compile Include="Compiling\Parsing\AST\IAbstractSyntaxTreeInteriorNode.cs" />
+    <Compile Include="Compiling\Parsing\AST\IAbstractSyntaxTreeLeafNode.cs" />
+    <Compile Include="Compiling\Parsing\AST\IAbstractSyntaxTreeNode.cs" />
+    <Compile Include="Compiling\Parsing\IParser.cs" />
+    <Compile Include="Compiling\Parsing\Productions\GrammarException.cs" />
+    <Compile Include="Compiling\Parsing\Productions\IProductionRuleSet.cs" />
+    <Compile Include="Compiling\Parsing\Parser.cs" />
+    <Compile Include="Compiling\Parsing\ParsingTable.cs" />
+    <Compile Include="Compiling\Parsing\Productions\KeywordAttribute.cs" />
+    <Compile Include="Compiling\Parsing\Productions\ProductionRule.cs" />
+    <Compile Include="Compiling\Parsing\Productions\ProductionRuleElement.cs" />
+    <Compile Include="Compiling\Parsing\Productions\ProductionRuleElementType.cs" />
+    <Compile Include="Compiling\Earle\ProductionRuleEnum.cs" />
+    <Compile Include="Compiling\Parsing\Productions\ProductionRuleSet.cs" />
+    <Compile Include="Compiling\Parsing\Productions\RuleAttribute.cs" />
+    <Compile Include="Compiling\Parsing\UnexpectedTokenException.cs" />
     <Compile Include="Runtime\Attributes\EarleAttributeScanner.cs" />
     <Compile Include="Runtime\Attributes\EarleAttributeScanScope.cs" />
-    <Compile Include="Utilities\EnumUtility.cs" />
+    <Compile Include="Runtime\Attributes\EarleBinaryOperatorAttribute.cs" />
+    <Compile Include="Runtime\Attributes\EarleUnaryOperatorAttribute.cs" />
+    <Compile Include="Runtime\Values\EarleVector4.cs" />
+    <Compile Include="Utilities\EnumExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Utilities\StringUtility.cs" />
+    <Compile Include="Utilities\StringCollectionExtensions.cs" />
     <Compile Include="Utilities\ArrayUtility.cs" />
-    <Compile Include="Compiler\Parsers\AssignmentExpressionParser.cs" />
-    <Compile Include="Compiler\Parsers\CallExpressionParser.cs" />
-    <Compile Include="Compiler\Parsers\ExpressionParser.cs" />
-    <Compile Include="Compiler\Parsers\FunctionReferenceExpressionParser.cs" />
-    <Compile Include="Compiler\Parsers\FunctionTargetExpressionParser.cs" />
-    <Compile Include="Compiler\Parsers\IParser.cs" />
-    <Compile Include="Compiler\Parsers\ParseException.cs" />
-    <Compile Include="Compiler\Parsers\Parser.cs" />
-    <Compile Include="Compiler\Parsers\StatementAssignmentParser.cs" />
-    <Compile Include="Compiler\Parsers\StatementCallParser.cs" />
-    <Compile Include="Compiler\Parsers\StatementForParser.cs" />
-    <Compile Include="Compiler\Parsers\StatementIfParser.cs" />
-    <Compile Include="Compiler\Parsers\StatementReturnParser.cs" />
-    <Compile Include="Compiler\Parsers\StatementWaitParser.cs" />
-    <Compile Include="Compiler\Parsers\StatementWhileParser.cs" />
+    <Compile Include="OldCompiler\ParseCodeGen\AssignmentExpressionParser.cs" />
+    <Compile Include="OldCompiler\ParseCodeGen\CallExpressionParser.cs" />
+    <Compile Include="OldCompiler\ParseCodeGen\ExpressionParser.cs" />
+    <Compile Include="OldCompiler\ParseCodeGen\FunctionReferenceExpressionParser.cs" />
+    <Compile Include="OldCompiler\ParseCodeGen\FunctionTargetExpressionParser.cs" />
+    <Compile Include="OldCompiler\ParseCodeGen\IParser.cs" />
+    <Compile Include="OldCompiler\ParseCodeGen\ParseException.cs" />
+    <Compile Include="OldCompiler\ParseCodeGen\Parser.cs" />
+    <Compile Include="OldCompiler\ParseCodeGen\StatementAssignmentParser.cs" />
+    <Compile Include="OldCompiler\ParseCodeGen\StatementCallParser.cs" />
+    <Compile Include="OldCompiler\ParseCodeGen\StatementForParser.cs" />
+    <Compile Include="OldCompiler\ParseCodeGen\StatementIfParser.cs" />
+    <Compile Include="OldCompiler\ParseCodeGen\StatementReturnParser.cs" />
+    <Compile Include="OldCompiler\ParseCodeGen\StatementWaitParser.cs" />
+    <Compile Include="OldCompiler\ParseCodeGen\StatementWhileParser.cs" />
     <Compile Include="Runtime\Values\EarleArray.cs" />
     <Compile Include="Runtime\Values\EarleDictionary.cs" />
     <Compile Include="Runtime\Values\EarleStructure.cs" />
@@ -68,15 +99,15 @@
     <Compile Include="Runtime\Values\EarleVector2.cs" />
     <Compile Include="Runtime\Values\EarleVector3.cs" />
     <Compile Include="Runtime\Values\IEarleStructure.cs" />
-    <Compile Include="Compiler\EarleCompiler.cs" />
-    <Compile Include="Compiler\EarleCompiler.grammar.cs" />
-    <Compile Include="Compiler\Lexing\ILexer.cs" />
-    <Compile Include="Compiler\Lexing\Lexer.cs" />
-    <Compile Include="Compiler\Lexing\LexerUtils.cs" />
-    <Compile Include="Compiler\Lexing\Token.cs" />
-    <Compile Include="Compiler\Lexing\TokenType.cs" />
-    <Compile Include="Compiler\Lexing\TokenTypeData.cs" />
-    <Compile Include="Compiler\Lexing\TokenUtils.cs" />
+    <Compile Include="OldCompiler\EarleCompiler.cs" />
+    <Compile Include="OldCompiler\EarleCompiler.grammar.cs" />
+    <Compile Include="OldCompiler\Lexing\ILexer.cs" />
+    <Compile Include="OldCompiler\Lexing\Lexer.cs" />
+    <Compile Include="OldCompiler\Lexing\LexerUtils.cs" />
+    <Compile Include="OldCompiler\Lexing\Token.cs" />
+    <Compile Include="OldCompiler\Lexing\TokenType.cs" />
+    <Compile Include="OldCompiler\Lexing\TokenTypeData.cs" />
+    <Compile Include="OldCompiler\Lexing\TokenUtils.cs" />
     <Compile Include="Runtime\Instructions\CallInstruction.cs" />
     <Compile Include="Runtime\Instructions\CallWithoutTargetInstruction.cs" />
     <Compile Include="Runtime\Instructions\DuplicateInstruction.cs" />
@@ -98,7 +129,7 @@
     <Compile Include="Runtime\Instructions\ReadInstruction.cs" />
     <Compile Include="Runtime\Instructions\ReturnInstruction.cs" />
     <Compile Include="Runtime\Instructions\WriteInstruction.cs" />
-    <Compile Include="Compiler\CompiledBlock.cs" />
+    <Compile Include="OldCompiler\CompiledBlock.cs" />
     <Compile Include="Runtime\EarleFile.cs" />
     <Compile Include="Runtime\EarleFunction.cs" />
     <Compile Include="Runtime\EarleFunctionCollection.cs" />
@@ -107,13 +138,13 @@
     <Compile Include="Runtime\EarleRuntime.operators.cs" />
     <Compile Include="Runtime\EarleRuntimeScope.cs" />
     <Compile Include="Runtime\IEarleRuntimeScope.cs" />
-    <Compile Include="Compiler\Grammar\GrammarProcessor.cs" />
-    <Compile Include="Compiler\Grammar\GrammarRule.cs" />
-    <Compile Include="Compiler\Grammar\GrammarRuleElementEmbed.cs" />
-    <Compile Include="Compiler\Grammar\GrammarRuleElementLiteral.cs" />
-    <Compile Include="Compiler\Grammar\GrammarRuleElementOptional.cs" />
-    <Compile Include="Compiler\Grammar\GrammarRuleTable.cs" />
-    <Compile Include="Compiler\Grammar\IGrammarRuleElement.cs" />
+    <Compile Include="OldCompiler\Grammar\GrammarProcessor.cs" />
+    <Compile Include="OldCompiler\Grammar\GrammarRule.cs" />
+    <Compile Include="OldCompiler\Grammar\GrammarRuleElementEmbed.cs" />
+    <Compile Include="OldCompiler\Grammar\GrammarRuleElementLiteral.cs" />
+    <Compile Include="OldCompiler\Grammar\GrammarRuleElementOptional.cs" />
+    <Compile Include="OldCompiler\Grammar\GrammarRuleTable.cs" />
+    <Compile Include="OldCompiler\Grammar\IGrammarRuleElement.cs" />
     <Compile Include="Runtime\EarleStackFrame.cs" />
     <Compile Include="Runtime\EarleStackFrameExecutor.cs" />
     <Compile Include="Runtime\EarleCompletionHandler.cs" />
@@ -123,8 +154,8 @@
     <Compile Include="Runtime\Values\EarleValueTypeStore.cs" />
     <Compile Include="Runtime\Attributes\EarleNativeFunctionAttribute.cs" />
     <Compile Include="Runtime\EarleFunctionTable.cs" />
-    <Compile Include="Compiler\Parsers\ISimpleStatement.cs" />
-    <Compile Include="Compiler\Parsers\StatementSwitchParser.cs" />
+    <Compile Include="OldCompiler\ParseCodeGen\ISimpleStatement.cs" />
+    <Compile Include="OldCompiler\ParseCodeGen\StatementSwitchParser.cs" />
     <Compile Include="Runtime\Events\EarleEventManager.cs" />
     <Compile Include="Runtime\Events\IEarleEventableObject.cs" />
     <Compile Include="Runtime\Events\IEarleEventManager.cs" />
@@ -133,7 +164,7 @@
     <Compile Include="Runtime\Events\EarleEventManagerNatives.cs" />
     <Compile Include="Runtime\IEarleObject.cs" />
     <Compile Include="Runtime\EarleDefaultNatives.cs" />
-    <Compile Include="Compiler\EarleCompileOptions.cs" />
+    <Compile Include="OldCompiler\EarleCompileOptions.cs" />
     <Compile Include="Runtime\Instructions\BinaryOperatorInstruction.cs" />
     <Compile Include="Runtime\Instructions\PushOneInstruction.cs" />
     <Compile Include="Runtime\Instructions\UnaryOperatorInstruction.cs" />
@@ -157,7 +188,9 @@
     <Compile Include="Runtime\Instructions\WriteFieldInstruction.cs" />
     <Compile Include="Runtime\Instructions\WriteIndexInstruction.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

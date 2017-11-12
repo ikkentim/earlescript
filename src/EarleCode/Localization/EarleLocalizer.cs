@@ -15,7 +15,7 @@
 
 using System;
 using System.Collections.Generic;
-using EarleCode.Compiler.Lexing;
+using EarleCode.OldCompiler.Lexing;
 
 namespace EarleCode.Localization
 {

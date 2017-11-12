@@ -13,6 +13,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
+using System.Linq;
+
 namespace EarleCode.Utilities
 {
 	public static class ArrayUtility

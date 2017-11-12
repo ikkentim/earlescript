@@ -16,16 +16,81 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading;
+using EarleCode.Compiling.Earle;
+using EarleCode.Compiling.Lexing;
+using EarleCode.Compiling.Parsing;
+using EarleCode.Compiling.Parsing.Productions;
 using EarleCode.Runtime;
 using EarleCode.Runtime.Events;
 using EarleCode.Runtime.Values;
+using TokenType = EarleCode.Compiling.Earle.TokenType;
 
 namespace EarleCode.Debug
 {
 	public class Program
 	{
-		private static string GetRelativePath(string filespec, string folder)
+	    private static void Main(string[] args)
+	    {
+            var code = @"
+# include \other\file;
+
+foo()
+{
+    e = (42);
+    v2 = (1, 2);
+    v3 = (1,2,3);
+    v4 = (1,2,3,4);
+    
+    //print(""Hello, World! (foo)"");
+}
+
+bar(oneArg)
+{
+    //print(""Hello, World! (bar)"");
+}
+
+fooBar(arg1, arg2, arg3)
+{
+    //print(""Hello, World! (fooBar)"");
+}
+";
+
+
+            var lexer = new Lexer<TokenType>();
+	        var tokens = lexer.Tokenize(code, "main.earle").ToArray();
+
+            var sw = new Stopwatch();
+
+            sw.Start();
+	        var prod = new EnumProductionRuleSet<ProductionRuleEnum, TokenType>();
+            sw.Stop();
+
+	        var cProp = sw.Elapsed;
+
+            sw.Restart();
+            var parser = new Parser<TokenType>(prod);
+            sw.Stop();
+
+	        var cParser = sw.Elapsed;
+
+            sw.Restart();
+            var ast = parser.Parse(tokens);
+            sw.Stop();
+
+	        var cAST = sw.Elapsed;
+
+	        Console.WriteLine("Time:");
+	        Console.WriteLine($"Creating production rule set: {cProp}.");
+	        Console.WriteLine($"Creating parser: {cParser}.");
+	        Console.WriteLine($"Parsing: {cAST}.");
+	        Console.WriteLine("AST:");
+	        Console.WriteLine(ast);
+	        //Console.ReadLine();
+	    }
+        
+	    private static string GetRelativePath(string filespec, string folder)
 		{
 			var pathUri = new Uri(filespec);
 
@@ -36,7 +101,7 @@ namespace EarleCode.Debug
 			return Uri.UnescapeDataString(folderUri.MakeRelativeUri(pathUri).ToString().Replace('/', Path.DirectorySeparatorChar));
 		}
 
-		private static void Main(string[] args)
+		private static void Main2(string[] args)
 		{
 			//Console.WriteLine(4 << 1 + 1);//16
 			//Console.WriteLine(4 | 1 << 1 + 1);//4
@@ -71,13 +136,18 @@ namespace EarleCode.Debug
 			foreach (var l in runtime.GetDebugInformation())
 				Console.WriteLine(l);
 
-			runtime.Natives.Register(EarleNativeFunction.Create("printstacktrace", (EarleStackFrame frame) =>
-			{
-				var trace = frame.GetStackTrace();
-				Console.WriteLine(trace);
-			}));
+		    runtime.Natives.Register(EarleNativeFunction.Create("printstacktrace", (EarleStackFrame frame) =>
+		    {
+		        var trace = frame.GetStackTrace();
+		        Console.WriteLine(trace);
+		    }));
 
-			var test = runtime["\\main"]["test"];
+		    runtime.Natives.Register(EarleNativeFunction.Create("print", (EarleValue value) =>
+		    {
+		        Console.WriteLine(value.CastTo<string>());
+		    }));
+
+            var test = runtime["\\main"]["test"];
 
 			if (test != null)
 			{

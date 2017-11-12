@@ -23,12 +23,6 @@ namespace EarleCode.Runtime
     internal class EarleDefaultNatives
     {
         [EarleNativeFunction]
-        private static void Print(string value)
-        {
-            Console.WriteLine(value);
-        }
-
-        [EarleNativeFunction]
         private static void Wait(EarleStackFrame frame, float seconds)
         {
             if (seconds > 0)
@@ -47,13 +41,19 @@ namespace EarleCode.Runtime
             return new EarleVector2(x, y);
         }
 
-        [EarleNativeFunction]
-        private static EarleVector3 CreateVector3(float x, float y, float z)
-        {
-            return new EarleVector3(x, y, z);
-        }
+		[EarleNativeFunction]
+		private static EarleVector3 CreateVector3(float x, float y, float z)
+		{
+			return new EarleVector3(x, y, z);
+		}
 
-        [EarleNativeFunction]
+		[EarleNativeFunction]
+		private static EarleVector4 CreateVector4(float x, float y, float z, float w)
+		{
+			return new EarleVector4(x, y, z, w);
+		}
+
+		[EarleNativeFunction]
         private static EarleStructure SpawnStruct()
         {
             return new EarleStructure();

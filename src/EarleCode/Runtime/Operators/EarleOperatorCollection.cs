@@ -153,7 +153,7 @@ namespace EarleCode.Runtime.Operators
         public void AddUnaryOperator(OpCode @operator, Type supportedType, Func<EarleValue, EarleValue> func)
         {
             if (func == null) throw new ArgumentNullException(nameof(func));
-
+            
             _unaryOperators[new Tuple<OpCode, Type>(@operator, supportedType)] = func;
         }
 

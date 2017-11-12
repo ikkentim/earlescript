@@ -16,6 +16,7 @@
 using System;
 using System.Linq;
 using System.Reflection;
+using EarleCode.Runtime.Values;
 
 namespace EarleCode.Runtime.Attributes
 {
@@ -26,7 +27,7 @@ namespace EarleCode.Runtime.Attributes
     public class EarleAttributeScanner
     {
         protected const BindingFlags AnyStatic = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
-        protected const BindingFlags AnyInstance = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
+        protected const BindingFlags AnyInstance = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="EarleAttributeScanner" /> class.
@@ -99,14 +100,44 @@ namespace EarleCode.Runtime.Attributes
             if (type == null) throw new ArgumentNullException(nameof(type));
 
             ScanMethodsForAttribute<EarleNativeFunctionAttribute>(type, AnyStatic, true, OnStaticNativeFound);
-        }
+			ScanMethodsForAttribute<EarleBinaryOperatorAttribute>(type, AnyStatic, true, OnStaticBinaryOperatorFound);
+			ScanMethodsForAttribute<EarleUnaryOperatorAttribute>(type, AnyStatic, true, OnStaticUnaryOperatorFound);
+		}
 
-        /// <summary>
-        ///     Called when a static native method was found.
-        /// </summary>
-        /// <param name="method">The method.</param>
-        /// <param name="attribute">The attribute.</param>
-        protected virtual void OnStaticNativeFound(MethodInfo method, EarleNativeFunctionAttribute attribute)
+		/// <summary>
+		/// Called when a static binary operator was found.
+		/// </summary>
+		/// <param name="method">The method.</param>
+		/// <param name="attribute">The attribute.</param>
+		protected virtual void OnStaticBinaryOperatorFound(MethodInfo method, EarleBinaryOperatorAttribute attribute) {
+			var parameters = method.GetParameters();
+			if (method.ReturnType != typeof(EarleValue) || parameters.Length != 2 ||
+				parameters[0].ParameterType != typeof(EarleValue) || parameters[1].ParameterType != typeof(EarleValue))
+				return;
+
+			Runtime.Operators.AddBinaryOperator(attribute.Operator, attribute.LeftTypes, attribute.RightTypes, (l, r) => (EarleValue)method.Invoke(null, new object[] { l, r }), attribute.Order);
+		}
+
+		/// <summary>
+		/// Called when a static unary operator was found.
+		/// </summary>
+		/// <param name="method">The method.</param>
+		/// <param name="attribute">The attribute.</param>
+		protected virtual void OnStaticUnaryOperatorFound(MethodInfo method, EarleUnaryOperatorAttribute attribute) {
+			var parameters = method.GetParameters();
+			if (method.ReturnType != typeof(EarleValue) || parameters.Length != 1 ||
+				parameters[0].ParameterType != typeof(EarleValue))
+				return;
+
+			Runtime.Operators.AddUnaryOperator(attribute.Operator, attribute.Types, v=> (EarleValue)method.Invoke(null, new object[] { v }));
+		}
+
+		/// <summary>
+		///     Called when a static native method was found.
+		/// </summary>
+		/// <param name="method">The method.</param>
+		/// <param name="attribute">The attribute.</param>
+		protected virtual void OnStaticNativeFound(MethodInfo method, EarleNativeFunctionAttribute attribute)
         {
             var name = attribute.Name?.ToLower() ?? method.Name.ToLower();
 
