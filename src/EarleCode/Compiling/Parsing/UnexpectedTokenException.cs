@@ -13,7 +13,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
 using EarleCode.Compiling.Lexing;
 
 namespace EarleCode.Compiling.Parsing
@@ -21,23 +20,22 @@ namespace EarleCode.Compiling.Parsing
     /// <summary>
     ///     Represents errors that occur during the parsing phase when an unexpected token was found.
     /// </summary>
-    /// <typeparam name="TTokenType">The type of the token type.</typeparam>
-    public class UnexpectedTokenException<TTokenType> : ParserException where TTokenType : struct, IConvertible
+    public class UnexpectedTokenException : ParserException
     {
         /// <summary>
-        ///     Initializes a new instance of the <see cref="UnexpectedTokenException{TTokenType}" /> class.
+        ///     Initializes a new instance of the <see cref="UnexpectedTokenException" /> class.
         /// </summary>
         /// <param name="actual">The actual.</param>
-        public UnexpectedTokenException(Token<TTokenType> actual) : this(null, actual)
+        public UnexpectedTokenException(Token actual) : this(null, actual)
         {
         }
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="UnexpectedTokenException{TTokenType}" /> class.
+        ///     Initializes a new instance of the <see cref="UnexpectedTokenException" /> class.
         /// </summary>
         /// <param name="expectation">The expected token.</param>
         /// <param name="actual">The actual.</param>
-        public UnexpectedTokenException(string expectation, Token<TTokenType> actual) :
+        public UnexpectedTokenException(string expectation, Token actual) :
             base(expectation == null
                 ? $"{actual:FP} Unexpected token {actual:T v}."
                 : $"{actual:FP} Unexpected token {actual:T v}; expected {expectation}.")
@@ -45,11 +43,11 @@ namespace EarleCode.Compiling.Parsing
         }
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="UnexpectedTokenException{TTokenType}" /> class.
+        ///     Initializes a new instance of the <see cref="UnexpectedTokenException" /> class.
         /// </summary>
         /// <param name="expectation">The expected token.</param>
         /// <param name="actual">The actual.</param>
-        public UnexpectedTokenException(Token<TTokenType> expectation, Token<TTokenType> actual) :
+        public UnexpectedTokenException(Token expectation, Token actual) :
             base($"{actual:FP} Unexpected {actual:T v}; expected {expectation:B}.")
         {
         }

@@ -23,19 +23,18 @@ namespace EarleCode.Compiling.Lexing
     /// <summary>
     ///     Represents a single token.
     /// </summary>
-    /// <typeparam name="TTokenType">The type of the token.</typeparam>
-    public struct Token<TTokenType> : IFormattable where TTokenType : struct
+    public struct Token
     {
         /// <summary>
-        ///     Instantiates a new instance of the <see cref="Token{TTokenType}" /> struct.
+        ///     Instantiates a new instance of the <see cref="Token" /> struct.
         /// </summary>
-        /// <param name="flag">The flag attached to the token</param>
+        /// <param name="flag">The flag attached to the token.</param>
         /// <param name="type">The type of the token.</param>
         /// <param name="value">The token value.</param>
         /// <param name="file">The source file name the token was found in.</param>
         /// <param name="line">The line in the source file the token was found at.</param>
         /// <param name="column">The column in the source file the token was found at.</param>
-        public Token(TokenFlag flag, TTokenType type, string value, string file, int line, int column)
+        public Token(TokenFlag flag, TokenType type, string value, string file, int line, int column)
         {
             Flag = flag;
             Type = type;
@@ -46,37 +45,48 @@ namespace EarleCode.Compiling.Lexing
         }
 
         /// <summary>
-        ///     Instantiates a new instance of the <see cref="Token{TTokenType}" /> struct.
+        ///     Instantiates a new instance of the <see cref="Token" /> struct.
         /// </summary>
-        /// <param name="flag">The flag attached to the token</param>
+        /// <param name="flag">The flag attached to the token.</param>
         public Token(TokenFlag flag)
-            : this(flag, default(TTokenType), null, null, 0, 0)
+            : this(flag, default(TokenType), null, null, 0, 0)
         {
             Flag = flag;
         }
 
         /// <summary>
-        ///     Instantiates a new instance of the <see cref="Token{TTokenType}" /> struct.
+        ///     Instantiates a new instance of the <see cref="Token" /> struct.
         /// </summary>
         /// <param name="type">The type of the token.</param>
         /// <param name="value">The token value.</param>
         /// <param name="file">The source file name the token was found in.</param>
         /// <param name="line">The line in the source file the token was found at.</param>
         /// <param name="column">The column in the source file the token was found at.</param>
-        public Token(TTokenType type, string value, string file, int line, int column) 
+        public Token(TokenType type, string value, string file, int line, int column) 
             : this(TokenFlag.Default, type, value, file, line, column)
         {
         }
         
-        /// <summary>
-        ///     Instantiates a new instance of the <see cref="Token{TTokenType}" /> struct.
-        /// </summary>
-        /// <param name="type">The type of the token.</param>
-        /// <param name="value">The token value.</param>
-        public Token(TTokenType type, string value) 
-            : this(type, value, null, 0, 0)
-        {
-        }
+	    /// <summary>
+	    ///     Instantiates a new instance of the <see cref="Token" /> struct.
+	    /// </summary>
+	    /// <param name="type">The type of the token.</param>
+	    /// <param name="value">The token value.</param>
+	    public Token(TokenType type, string value) 
+		    : this(type, value, null, 0, 0)
+	    {
+	    }
+
+	    /// <summary>
+	    ///     Instantiates a new instance of the <see cref="Token" /> struct.
+	    /// </summary>
+	    /// <param name="flag">The flag attached to the token.</param>
+	    /// <param name="type">The type of the token.</param>
+	    /// <param name="value">The token value.</param>
+	    public Token(TokenFlag flag, TokenType type, string value) 
+		    : this(flag, type, value, null, 0, 0)
+	    {
+	    }
 
         /// <summary>
         ///     Gets the line in the source file this token was found at.
@@ -88,11 +98,15 @@ namespace EarleCode.Compiling.Lexing
         /// </summary>
         public int Column { get; }
 
+        /// <summary>
+        ///     Gets the flags for this token.
+        /// </summary>
         public TokenFlag Flag { get; }
+        
         /// <summary>
         ///     Gets the type of this token.
         /// </summary>
-        public TTokenType Type { get; }
+        public TokenType Type { get; }
 
         /// <summary>
         ///     Gets a value indicating whether this token is empty.
@@ -112,12 +126,12 @@ namespace EarleCode.Compiling.Lexing
         /// <summary>
         ///     Gets an empty token.
         /// </summary>
-        public static Token<TTokenType> Empty { get; } = new Token<TTokenType>(TokenFlag.Empty);
+        public static Token Empty { get; } = new Token(TokenFlag.Empty);
 
         /// <summary>
         ///     Gets an end-of-file token.
         /// </summary>
-        public static Token<TTokenType> EndOfFile { get; } = new Token<TTokenType>(TokenFlag.EndOfFile);
+        public static Token EndOfFile { get; } = new Token(TokenFlag.EndOfFile);
 
         /// <summary>
         ///     Indicates whether this value and the specified other value are equal.
@@ -127,9 +141,9 @@ namespace EarleCode.Compiling.Lexing
         ///     <see langword="true" /> if this value and the other value represent the same value; otherwise,
         ///     <see langword="false" />.
         /// </returns>
-        public bool Equals(Token<TTokenType> other)
+        public bool Equals(Token other)
         {
-            return other.Flag == Flag && Type.Equals(other.Type) && string.Equals(Value, other.Value);
+            return other.Flag == Flag && Type == other.Type && string.Equals(Value, other.Value);
         }
 
         /// <summary>
@@ -137,7 +151,7 @@ namespace EarleCode.Compiling.Lexing
         /// </summary>
         /// <param name="other">The other value.</param>
         /// <returns><see langword="true" /> if this value describes the other value; otherwise, <see langword="false" />.</returns>
-        public bool Describes(Token<TTokenType> other)
+        public bool Describes(Token other)
         {
             switch (Flag)
             {
@@ -146,9 +160,12 @@ namespace EarleCode.Compiling.Lexing
                         return false;
 
                     if (Value == null)
-                        return Type.Equals(other.Type);
+                        return Type == other.Type;
 
-                    return Type.Equals(other.Type) && string.Equals(Value, other.Value);
+                    if(Type == TokenType.Identifier && other.Type == TokenType.Identifier)
+                        Console.WriteLine("SHOULD NO LONGER REACH THIS"); // TODO: Check
+                    
+                    return Type == other.Type && string.Equals(Value, other.Value);
                 case TokenFlag.Empty:
                     if (other.Flag != TokenFlag.Empty)
                     {
@@ -168,6 +185,22 @@ namespace EarleCode.Compiling.Lexing
         private string LowerCaseTypeName => string.Concat(Type.ToString()
             .Select(n => char.IsUpper(n) ? " " + char.ToLowerInvariant(n) : n.ToString())).Trim();
 
+        private string ShortTypeName
+        {
+            get
+            {
+                switch (Type)
+                {
+                    case TokenType.Identifier: return "id";
+                    case TokenType.Keyword: return "kw";
+                    case TokenType.NumberLiteral: return "num";
+                    case TokenType.StringLiteral: return "str";
+                    case TokenType.Symbol: return "sym";
+                    default: return "???";
+                }
+            }
+        }
+        
         /// <summary>
         ///     Returns a <see cref="System.String" /> that represents this instance.
         /// </summary>
@@ -242,6 +275,9 @@ namespace EarleCode.Compiling.Lexing
                     case 'T':
                         sb.Append(LowerCaseTypeName);
                         break;
+                    case 's':
+                        sb.Append(ShortTypeName);
+                        break;
                     case 'v':
                         sb.Append(Value);
                         break;
@@ -274,7 +310,7 @@ namespace EarleCode.Compiling.Lexing
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
-            return obj is Token<TTokenType> && Equals((Token<TTokenType>) obj);
+            return obj is Token token && Equals(token);
         }
 
         /// <summary>
@@ -283,7 +319,7 @@ namespace EarleCode.Compiling.Lexing
         /// <returns>A 32-bit signed integer that is the hash code for this instance.</returns>
         public override int GetHashCode()
         {
-            return unchecked(IsEmpty ? 0 : (Type.GetHashCode() * 397) ^ (Value?.GetHashCode() ?? 0));
+            return unchecked(IsEmpty ? 0 : ((byte)Type * 397) ^ (Value?.GetHashCode() ?? 0));
         }
 
         /// <summary>

@@ -15,37 +15,37 @@
 
 using System;
 
-namespace EarleCode.Compiling.Parsing
+namespace EarleCode.Compiling.Parsing.Grammars
 {
     /// <summary>
-    ///     Represents errors that occur during the parsing phase.
+    ///     Represents errors that occur during the parsing phase when an error was found in grammar.
     /// </summary>
-    public class ParserException : Exception
+    public class GrammarException : ParserException
     {
         /// <summary>
-        ///     Initializes a new instance of the <see cref="ParserException" /> class.
+        ///     Initializes a new instance of the <see cref="GrammarException" /> class.
         /// </summary>
-        public ParserException()
+        public GrammarException()
         {
         }
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="ParserException" /> class.
+        ///     Initializes a new instance of the <see cref="GrammarException" /> class.
         /// </summary>
         /// <param name="message">The message that describes the error.</param>
-        public ParserException(string message) : base(message)
+        public GrammarException(string message) : base(message)
         {
         }
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="ParserException" /> class.
+        ///     Initializes a new instance of the <see cref="GrammarException" /> class.
         /// </summary>
         /// <param name="message">The error message that explains the reason for the exception.</param>
         /// <param name="innerException">
         ///     The exception that is the cause of the current exception, or a null reference (Nothing in
         ///     Visual Basic) if no inner exception is specified.
         /// </param>
-        public ParserException(string message, Exception innerException) : base(message, innerException)
+        public GrammarException(string message, Exception innerException) : base(message, innerException)
         {
         }
     }

@@ -1,4 +1,4 @@
-﻿// EarleCode
+// EarleCode
 // Copyright 2017 Tim Potze
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,21 +13,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Collections.Generic;
+using EarleCode.Compiling.Lexing;
 
-namespace EarleCode.Compiling.Lexing
+namespace EarleCode.Compiling.Parsing.ParseTree
 {
     /// <summary>
-    ///     Represents a tokenizer.
+    ///     Contains the methods of a leaf parse tree node which contains a token.
     /// </summary>
-    public interface ILexer
+    public interface ILeafNode : INode
     {
         /// <summary>
-        ///     Tokenizes the specified <paramref name="input" /> string.
+        ///     Gets the token inside this node.
         /// </summary>
-        /// <param name="input">The string to tokenize.</param>
-        /// <param name="file">The source file to assign to the tokens in the result.</param>
-        /// <returns>A collections of tokens.</returns>
-        IEnumerable<Token> Tokenize(string input, string file = null);
+        Token Token { get; }
     }
 }

@@ -19,7 +19,7 @@ using System.Linq;
 
 namespace EarleCode.Utilities
 {
-	public static class EnumExtensions
+	internal static class EnumExtensions
 	{
 	    public static TAttribute GetCustomAttribute<TAttribute>(this Enum enumValue) where TAttribute : Attribute
 	    {

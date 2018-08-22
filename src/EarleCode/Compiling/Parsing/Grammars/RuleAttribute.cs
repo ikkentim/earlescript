@@ -1,4 +1,4 @@
-// EarleCode
+﻿// EarleCode
 // Copyright 2017 Tim Potze
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,26 +13,28 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace EarleCode.Compiling.Lexing
+using System;
+
+namespace EarleCode.Compiling.Parsing.Grammars
 {
     /// <summary>
-    ///     Contains flag values which can be attached to tokens.
+    ///     Specifies which rules are associated with the symbol this attribute has been attached to.
     /// </summary>
-    public enum TokenFlag : byte
+    [AttributeUsage(AttributeTargets.Field, AllowMultiple = true)]
+    public class RuleAttribute : Attribute
     {
         /// <summary>
-        ///     This token is emtpy.
+        ///     Initializes a new instance of the <see cref="RuleAttribute" /> class.
         /// </summary>
-        Empty,
+        /// <param name="rules">The rules accociated with the symbol the attribute is attached to.</param>
+        public RuleAttribute(params string[] rules)
+        {
+            Rules = rules;
+        }
 
         /// <summary>
-        ///     Default flag.
+        ///     Gets the rules accociated with the symbol this attribute is attached to.
         /// </summary>
-        Default,
-
-        /// <summary>
-        ///     This token indicates the end of the file.
-        /// </summary>
-        EndOfFile
+        public string[] Rules { get; }
     }
 }

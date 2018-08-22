@@ -13,21 +13,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Collections.Generic;
-
-namespace EarleCode.Compiling.Lexing
+namespace EarleCode.Compiling.Parsing.ParseTree
 {
     /// <summary>
-    ///     Represents a tokenizer.
+    ///     This interface is implemented by all parse tree nodes.
     /// </summary>
-    public interface ILexer
+    public interface INode
     {
         /// <summary>
-        ///     Tokenizes the specified <paramref name="input" /> string.
+        /// Returns a string representing this node as a tree.
         /// </summary>
-        /// <param name="input">The string to tokenize.</param>
-        /// <param name="file">The source file to assign to the tokens in the result.</param>
-        /// <returns>A collections of tokens.</returns>
-        IEnumerable<Token> Tokenize(string input, string file = null);
+        /// <returns>A string representing this node as a tree.</returns>
+	    string ToTreeString();
     }
 }

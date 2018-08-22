@@ -1,4 +1,4 @@
-﻿// EarleCode
+// EarleCode
 // Copyright 2017 Tim Potze
 // 
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,21 +13,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System.Collections.Generic;
-
-namespace EarleCode.Compiling.Lexing
+namespace EarleCode.Compiling.Parsing.Grammars.Productions
 {
     /// <summary>
-    ///     Represents a tokenizer.
+    ///     Contains the different types of production rule elements.
     /// </summary>
-    public interface ILexer
+    public enum ProductionRuleElementType : byte
     {
+	    /// <summary>
+	    ///     A "no-value" terminal value.
+	    /// </summary>
+	    TerminalEmpty,
+
         /// <summary>
-        ///     Tokenizes the specified <paramref name="input" /> string.
+        ///     A terminal value.
         /// </summary>
-        /// <param name="input">The string to tokenize.</param>
-        /// <param name="file">The source file to assign to the tokens in the result.</param>
-        /// <returns>A collections of tokens.</returns>
-        IEnumerable<Token> Tokenize(string input, string file = null);
+        Terminal,
+
+        /// <summary>
+        ///     A non-terminal value.
+        /// </summary>
+        NonTerminal,
     }
 }

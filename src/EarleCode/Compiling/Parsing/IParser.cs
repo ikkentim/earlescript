@@ -13,24 +13,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
 using EarleCode.Compiling.Lexing;
-using EarleCode.Compiling.Parsing.AST;
+using EarleCode.Compiling.Parsing.ParseTree;
 
 namespace EarleCode.Compiling.Parsing
 {
     /// <summary>
     ///     Contains the methods of a parser.
     /// </summary>
-    /// <typeparam name="TTokenType">The type enum of the token type.</typeparam>
-    public interface IParser<TTokenType> where TTokenType : struct, IConvertible
+    public interface IParser
     {
         /// <summary>
-        ///     Parses the specified tokens into an abstract syntax tree.
+        ///     Parses the specified tokens into a parse tree.
         /// </summary>
         /// <param name="tokens">The tokens to parse.</param>
-        /// <returns>The parsed syntax tree.</returns>
+        /// <returns>The parse tree.</returns>
         /// <exception cref="ParserException">Thrown if an error occurs while parsing the specified tokens.</exception>
-        IAbstractSyntaxTreeNode Parse(Token<TTokenType>[] tokens);
+        INode Parse(Token[] tokens);
     }
 }

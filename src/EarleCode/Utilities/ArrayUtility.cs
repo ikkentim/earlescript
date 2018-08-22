@@ -13,12 +13,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Linq;
-
 namespace EarleCode.Utilities
 {
-	public static class ArrayUtility
+	internal static class ArrayUtility
 	{
 		public static T[] Repeat<T>(T value, int count)
 		{
