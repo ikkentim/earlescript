@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Linq;
 using EarleCode.Compiling.Earle;
+using EarleCode.Compiling.Earle.AST;
 using EarleCode.Compiling.Lexing;
 using EarleCode.Compiling.Parsing;
 using EarleCode.Compiling.Parsing.Grammars;
@@ -35,9 +37,9 @@ namespace EarleCode.Compiling
         public ILexer Lexer { get; }
         public EarleParser Parser { get; }
 
-        public void Compile()
+        public ProgramFile Compile(string input, string file = null)
         {
-            throw new NotImplementedException();
+            return Parser.Parse(Lexer.Tokenize(input, file).ToArray());
         }
     }
 }

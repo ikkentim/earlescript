@@ -89,6 +89,11 @@ namespace EarleCode.Compiling.Lexing
 	    }
 
         /// <summary>
+        ///     Gets the position this token was found at.
+        /// </summary>
+        public FilePosition Position => new FilePosition(File, Line, Column);
+        
+        /// <summary>
         ///     Gets the line in the source file this token was found at.
         /// </summary>
         public int Line { get; }
@@ -250,6 +255,13 @@ namespace EarleCode.Compiling.Lexing
                         sb.Append(Column.ToString(formatProvider));
                         break;
                     case 'p':
+                        if (Line != 0 && Column != 0)
+                        {
+                            sb.Append(Line.ToString(formatProvider));
+                            sb.Append(":");
+                            sb.Append(Column.ToString(formatProvider));
+                        }
+                        break;
                     case 'P':
                         if (Line != 0 && Column != 0)
                         {
@@ -330,7 +342,7 @@ namespace EarleCode.Compiling.Lexing
         /// </returns>
         public override string ToString()
         {
-            return ToString("FP B").Trim();
+            return ToString(null);
         }
 
         #endregion

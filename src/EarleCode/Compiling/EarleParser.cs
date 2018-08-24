@@ -127,6 +127,19 @@ namespace EarleCode.Compiling
                 : null;
         }
 
+        private static FilePosition GetFilePosition(INode node)
+        {
+            switch (node)
+            {
+                case ILeafNode leaf:
+                    return leaf.Token.Position;
+                case IInteriorNode interior:
+                    return GetFilePosition(interior.Children[0]);
+                default:
+                    throw new ParserException();
+            }
+        }
+
         private static IASTNode Parse(INode node)
         {
             return Parse(node as IInteriorNode);
@@ -148,7 +161,7 @@ namespace EarleCode.Compiling
                     {
                         includes = new List<Include>();
                         functionDeclarations = new List<FunctionDeclaration>();
-                        file = new ProgramFile(includes, functionDeclarations);
+                        file = new ProgramFile(GetFilePosition(node), includes, functionDeclarations);
                     }
                     else
                     {
@@ -175,12 +188,12 @@ namespace EarleCode.Compiling
 
                     return file;
                 case nameof(Rule.Include):
-                    return new Include(ParsePath(node.Children[2]));
+                    return new Include(GetFilePosition(node), ParsePath(node.Children[2]));
                 case nameof(Rule.FunctionDeclaration):
                     var name = ParseValue(node.Children[0]);
                     var parameters = ParseIdentifiers(node.Children[2]);
                     var statement = Parse(node.Children[4]) as Statement;
-                    return new FunctionDeclaration(name, parameters, new[] {statement});
+                    return new FunctionDeclaration(GetFilePosition(node), name, parameters, new[] {statement});
                 case nameof(Rule.Statement):
                     return Parse(node.Children[0]);
                 case nameof(Rule.StatementBlock):
@@ -190,52 +203,52 @@ namespace EarleCode.Compiling
                             prev.Add(Parse(n.Children.Last()) as Statement);
                             return prev;
                         }, new List<Statement>());
-                    return new StatementBlock(statements);
+                    return new StatementBlock(GetFilePosition(node), statements);
                 case nameof(Rule.StatementFunctionCall):
-                    return new StatementFunctionCall(Parse(node.Children[0]) as FunctionCall);
+                    return new StatementFunctionCall(GetFilePosition(node), Parse(node.Children[0]) as FunctionCall);
                 case nameof(Rule.StatementBreak):
-                    return new StatementBreak();
+                    return new StatementBreak(GetFilePosition(node));
                 case nameof(Rule.StatementContinue):
-                    return new StatementContinue();
+                    return new StatementContinue(GetFilePosition(node));
                 case nameof(Rule.StatementReturn):
-                    return new StatementReturn(node.Children.Count == 3 ? ParseExpression(node.Children[1]) : null);
+                    return new StatementReturn(GetFilePosition(node), node.Children.Count == 3 ? ParseExpression(node.Children[1]) : null);
                 case nameof(Rule.FunctionCall):
                     return Parse(node.Children[0]);
                 case nameof(Rule.TargetlessFunctionCall):
-                    return new FunctionCall(Parse(node.Children[0]) as FunctionIdentifier,
+                    return new FunctionCall(GetFilePosition(node), Parse(node.Children[0]) as FunctionIdentifier,
                         ParseExpressionList(node.Children[2]), false, null);
                 case nameof(Rule.TargetedFunctionCall):
-                    return new FunctionCall(Parse(node.Children[1]) as FunctionIdentifier,
+                    return new FunctionCall(GetFilePosition(node), Parse(node.Children[1]) as FunctionIdentifier,
                         ParseExpressionList(node.Children[3]), false,
                         ParseExpression(node.Children[0]));
                 case nameof(Rule.TargetlessThreadedFunctionCall):
-                    return new FunctionCall(Parse(node.Children[1]) as FunctionIdentifier,
+                    return new FunctionCall(GetFilePosition(node), Parse(node.Children[1]) as FunctionIdentifier,
                         ParseExpressionList(node.Children[3]), true, null);
                 case nameof(Rule.TargetedThreadedFunctionCall):
-                    return new FunctionCall(Parse(node.Children[2]) as FunctionIdentifier,
+                    return new FunctionCall(GetFilePosition(node), Parse(node.Children[2]) as FunctionIdentifier,
                         ParseExpressionList(node.Children[4]), true,
                         ParseExpression(node.Children[0]));
                 case nameof(Rule.FunctionIdentifier) when node.Children[0] is ILeafNode leaf:
-                    return new ImplicitFunctionIdentifier(ParseValue(leaf));
+                    return new ImplicitFunctionIdentifier(GetFilePosition(node), ParseValue(leaf));
                 case nameof(Rule.FunctionIdentifier):
                     return Parse(node.Children[0]);
                 case nameof(Rule.ExplicitFunctionIdentifier):
-                    return new ExplicitFunctionIdentifier(node.Children.Count == 3 ? ParsePath(node.Children[0]) : null,
+                    return new ExplicitFunctionIdentifier(GetFilePosition(node), node.Children.Count == 3 ? ParsePath(node.Children[0]) : null,
                         ParseValue(node.Children.Last()));
                 case nameof(Rule.UnboxedFunctionIdentifier):
-                    return new UnboxedFunctionIdentifier(ParseExpression(node.Children[2]));
+                    return new UnboxedFunctionIdentifier(GetFilePosition(node), ParseExpression(node.Children[2]));
                 case nameof(Rule.StatementIf):
-                    return new StatementIf(ParseExpression(node.Children[2]),
+                    return new StatementIf(GetFilePosition(node), ParseExpression(node.Children[2]),
                         new List<Statement> {Parse(node.Children[4]) as Statement});
                 case nameof(Rule.StatementWhile):
-                    return new StatementWhile(ParseExpression(node.Children[2]),
+                    return new StatementWhile(GetFilePosition(node), ParseExpression(node.Children[2]),
                         new List<Statement> {Parse(node.Children[4]) as Statement});
                 case nameof(Rule.StatementDoWhile):
-                    return new StatementDoWhile(ParseExpression(node.Children[5]),
+                    return new StatementDoWhile(GetFilePosition(node), ParseExpression(node.Children[5]),
                         new List<Statement> {Parse(node.Children[1]) as Statement});
                 case nameof(Rule.StatementWait):
                 case nameof(Rule.StatementAssignments):
-                    return new StatementAssignments(ParseAssignments(node.Children[0] as IInteriorNode));
+                    return new StatementAssignments(GetFilePosition(node), ParseAssignments(node.Children[0] as IInteriorNode));
                 case nameof(Rule.StatementFor):
                     var assignmentsNode = node.Children[2] as IInteriorNode;
                     var conditionNode = node.Children[4] as IInteriorNode;
@@ -256,7 +269,7 @@ namespace EarleCode.Compiling
                     if (incrementsNode.Children[0] is IInteriorNode incrementsNodeChild)
                         increments = ParseAssignments(incrementsNodeChild);
 
-                    return new StatementFor(assignments, condition, increments,
+                    return new StatementFor(GetFilePosition(node), assignments, condition, increments,
                         new List<Statement> {Parse(node.Children[8] as IInteriorNode) as Statement});
                 default:
                     throw new ParserException("No parser for " + node.Rule);
@@ -275,7 +288,7 @@ namespace EarleCode.Compiling
                 case nameof(Rule.Assignment):
                     return ParseAssignment(node.Children[0]);
                 case nameof(Rule.VariableAssignment):
-                    return new AssignmentExpression(ParseVariable(node.Children[0]), ParseExpression(node.Children[2]));
+                    return new AssignmentExpression(GetFilePosition(node), ParseVariable(node.Children[0]), ParseExpression(node.Children[2]));
                 case nameof(Rule.PostfixAdditionAssignment):
                 case nameof(Rule.PrefixAdditionAssignment):
                 case nameof(Rule.PostfixSubtractionAssignment):
@@ -341,26 +354,26 @@ namespace EarleCode.Compiling
                 case nameof(Rule.Expression):
                     return ParseAssignment(node.Children[0]);
                 case nameof(Rule.Expression2):
-                    return new OrExpression(ParseExpression(node.Children[0]), ParseExpression(node.Children[2]));
+                    return new OrExpression(GetFilePosition(node), ParseExpression(node.Children[0]), ParseExpression(node.Children[2]));
                 case nameof(Rule.Expression3):
-                    return new AndExpression(ParseExpression(node.Children[0]), ParseExpression(node.Children[2]));
+                    return new AndExpression(GetFilePosition(node), ParseExpression(node.Children[0]), ParseExpression(node.Children[2]));
                 case nameof(Rule.Expression4):
-                    return new BitwiseOrExpression(ParseExpression(node.Children[0]),
+                    return new BitwiseOrExpression(GetFilePosition(node), ParseExpression(node.Children[0]),
                         ParseExpression(node.Children[2]));
                 case nameof(Rule.Expression5):
-                    return new BitwiseXorExpression(ParseExpression(node.Children[0]),
+                    return new BitwiseXorExpression(GetFilePosition(node), ParseExpression(node.Children[0]),
                         ParseExpression(node.Children[2]));
                 case nameof(Rule.Expression6):
-                    return new BitwiseAndExpression(ParseExpression(node.Children[0]),
+                    return new BitwiseAndExpression(GetFilePosition(node), ParseExpression(node.Children[0]),
                         ParseExpression(node.Children[2]));
                 case nameof(Rule.Expression7):
                     switch (ParseValue(node.Children[1]))
                     {
                         case "==":
-                            return new EqualExpression(ParseExpression(node.Children[0]),
+                            return new EqualExpression(GetFilePosition(node), ParseExpression(node.Children[0]),
                                 ParseExpression(node.Children[2]));
                         case "!=":
-                            return new NotEqualExpression(ParseExpression(node.Children[0]),
+                            return new NotEqualExpression(GetFilePosition(node), ParseExpression(node.Children[0]),
                                 ParseExpression(node.Children[2]));
                         default:
                             throw new ParserException();
@@ -369,16 +382,16 @@ namespace EarleCode.Compiling
                     switch (ParseValue(node.Children[1]))
                     {
                         case "<":
-                            return new LessThanExpression(ParseExpression(node.Children[0]),
+                            return new LessThanExpression(GetFilePosition(node), ParseExpression(node.Children[0]),
                                 ParseExpression(node.Children[2]));
                         case ">":
-                            return new GreaterThanExpression(ParseExpression(node.Children[0]),
+                            return new GreaterThanExpression(GetFilePosition(node), ParseExpression(node.Children[0]),
                                 ParseExpression(node.Children[2]));
                         case "<=":
-                            return new LessOrEqualExpression(ParseExpression(node.Children[0]),
+                            return new LessOrEqualExpression(GetFilePosition(node), ParseExpression(node.Children[0]),
                                 ParseExpression(node.Children[2]));
                         case ">=":
-                            return new GreaterOrEqualExpression(ParseExpression(node.Children[0]),
+                            return new GreaterOrEqualExpression(GetFilePosition(node), ParseExpression(node.Children[0]),
                                 ParseExpression(node.Children[2]));
                         default:
                             throw new ParserException();
@@ -387,10 +400,10 @@ namespace EarleCode.Compiling
                     switch (ParseValue(node.Children[1]))
                     {
                         case "<<":
-                            return new ShiftLeftExpression(ParseExpression(node.Children[0]),
+                            return new ShiftLeftExpression(GetFilePosition(node), ParseExpression(node.Children[0]),
                                 ParseExpression(node.Children[2]));
                         case ">>":
-                            return new ShiftRightExpression(ParseExpression(node.Children[0]),
+                            return new ShiftRightExpression(GetFilePosition(node), ParseExpression(node.Children[0]),
                                 ParseExpression(node.Children[2]));
                         default:
                             throw new ParserException();
@@ -399,10 +412,10 @@ namespace EarleCode.Compiling
                     switch (ParseValue(node.Children[1]))
                     {
                         case "+":
-                            return new AddExpression(ParseExpression(node.Children[0]),
+                            return new AddExpression(GetFilePosition(node), ParseExpression(node.Children[0]),
                                 ParseExpression(node.Children[2]));
                         case "-":
-                            return new SubtractExpression(ParseExpression(node.Children[0]),
+                            return new SubtractExpression(GetFilePosition(node), ParseExpression(node.Children[0]),
                                 ParseExpression(node.Children[2]));
                         default:
                             throw new ParserException();
@@ -411,13 +424,13 @@ namespace EarleCode.Compiling
                     switch (ParseValue(node.Children[1]))
                     {
                         case "*":
-                            return new MultiplyExpression(ParseExpression(node.Children[0]),
+                            return new MultiplyExpression(GetFilePosition(node), ParseExpression(node.Children[0]),
                                 ParseExpression(node.Children[2]));
                         case "/":
-                            return new DivideExpression(ParseExpression(node.Children[0]),
+                            return new DivideExpression(GetFilePosition(node), ParseExpression(node.Children[0]),
                                 ParseExpression(node.Children[2]));
                         case "%":
-                            return new ModuloExpression(ParseExpression(node.Children[0]),
+                            return new ModuloExpression(GetFilePosition(node), ParseExpression(node.Children[0]),
                                 ParseExpression(node.Children[2]));
                         default:
                             throw new ParserException();
@@ -427,28 +440,28 @@ namespace EarleCode.Compiling
                 case nameof(Rule.Expression12):
                     return ParseExpression(node.Children[0]);
                 case nameof(Rule.ExplicitFunctionIdentifier):
-                    return new ExplicitFunctionIdentifierExpression(Parse(node) as ExplicitFunctionIdentifier);
+                    return new ExplicitFunctionIdentifierExpression(GetFilePosition(node), Parse(node) as ExplicitFunctionIdentifier);
                 case nameof(Rule.Value):
                     if (node.Children[0] is ILeafNode leafExpression)
                         switch (leafExpression.Token.Type)
                         {
                             case TokenType.NumberLiteral:
                                 if (int.TryParse(leafExpression.Token.Value, out var intValue))
-                                    return new NumberExpression(intValue);
+                                    return new NumberExpression(GetFilePosition(node), intValue);
                                 else if (float.TryParse(leafExpression.Token.Value, out var floatValue))
-                                    return new NumberExpression(floatValue);
+                                    return new NumberExpression(GetFilePosition(node), floatValue);
                                 else
                                     throw new ParserException();
                             case TokenType.StringLiteral:
 
-                                return new StringExpression(leafExpression.Token.Value
+                                return new StringExpression(GetFilePosition(node), leafExpression.Token.Value
                                     .Substring(1, leafExpression.Token.Value.Length - 2).Replace("\\\"", "\""));
                             default:
                                 throw new ParserException();
                         }
                     return ParseExpression(node.Children[0]);
                 case nameof(Rule.Variable):
-                    return new VariableExpression(ParseVariable(node));
+                    return new VariableExpression(GetFilePosition(node), ParseVariable(node));
                 case nameof(Rule.FunctionCall):
                     return Parse(node) as FunctionCall;
                 default:
@@ -463,7 +476,7 @@ namespace EarleCode.Compiling
 
         private static Variable ParseVariable(IInteriorNode node)
         {
-            return new Variable(ParseValue(node.Children[0]));
+            return new Variable(GetFilePosition(node), ParseValue(node.Children[0]));
         }
     }
 }
