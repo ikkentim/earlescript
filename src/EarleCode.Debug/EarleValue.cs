@@ -102,6 +102,12 @@ namespace EarleCode.Debug
 					throw new NotImplementedException();
 			}
 		}
+
+		public static implicit operator EarleValue(bool value)
+		{
+			return value ? True : False;
+		}
+
 		#region Overrides of ValueType
 
 		/// <summary>Returns the fully qualified type name of this instance.</summary>

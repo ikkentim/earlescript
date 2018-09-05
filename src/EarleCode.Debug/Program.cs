@@ -37,7 +37,7 @@ namespace EarleCode.Debug
                                 "print(\"dowhile\" + n);\n" +
                                 "if(n == 3) break;\n" +
                                 "n = n + 1; }while(1);\n" +
-                                "for(i = 0; i != 5; i = i + 1)\n" +
+                                "for(i = 0; i <= 5; i = i + 1)\n" +
                                 "{\n" +
                                 "print(\"for\" + i);\n" +
                                 "}\n" +

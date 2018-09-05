@@ -50,10 +50,9 @@ namespace EarleCode.Debug
 				case EarleValueType.Array:
 					break;
 				case EarleValueType.Null:
-					break;
+					return rhs;
 			}
-
-			throw new NotImplementedException();
+			
 			return EarleValue.Null;
 		}
 
@@ -76,42 +75,66 @@ namespace EarleCode.Debug
 		{
 			throw new NotImplementedException();
 		}
-
+		
 		public EarleValue Equal(EarleValue lhs, EarleValue rhs)
 		{
-			switch (lhs.Type)
-			{
-				case EarleValueType.NumberInt:
-					switch (rhs.Type)
-					{
-						case EarleValueType.NumberInt:
-							return lhs.IntValue == rhs.IntValue ? EarleValue.True : EarleValue.False;
-					}
-
-					break;
-			}
-
-			throw new NotImplementedException();
+			return lhs.Type == rhs.Type &&
+			       lhs.IntValue == rhs.IntValue &&
+			       lhs.FloatValue == rhs.FloatValue &&
+			       lhs.FunctionValue == rhs.FunctionValue &&
+			       lhs.StringValue == rhs.StringValue;
 		}
 
 		public EarleValue GreaterOrEqual(EarleValue lhs, EarleValue rhs)
 		{
-			throw new NotImplementedException();
+			if ((lhs.Type & EarleValueType.Number) != 0 && (rhs.Type & EarleValueType.Number) != 0)
+			{
+				if (lhs.Type == EarleValueType.NumberFloat || rhs.Type == EarleValueType.NumberFloat)
+					return lhs.Convert(EarleValueType.NumberFloat).FloatValue >= rhs.Convert(EarleValueType.NumberFloat).FloatValue;
+
+				return lhs.IntValue >= rhs.IntValue;
+			}
+
+			return EarleValue.False;
 		}
 
 		public EarleValue GreaterThan(EarleValue lhs, EarleValue rhs)
 		{
-			throw new NotImplementedException();
+			if ((lhs.Type & EarleValueType.Number) != 0 && (rhs.Type & EarleValueType.Number) != 0)
+			{
+				if (lhs.Type == EarleValueType.NumberFloat || rhs.Type == EarleValueType.NumberFloat)
+					return lhs.Convert(EarleValueType.NumberFloat).FloatValue > rhs.Convert(EarleValueType.NumberFloat).FloatValue;
+
+				return lhs.IntValue > rhs.IntValue;
+			}
+
+			return EarleValue.False;
 		}
 
 		public EarleValue LessOrEqual(EarleValue lhs, EarleValue rhs)
 		{
-			throw new NotImplementedException();
+			if ((lhs.Type & EarleValueType.Number) != 0 && (rhs.Type & EarleValueType.Number) != 0)
+			{
+				if (lhs.Type == EarleValueType.NumberFloat || rhs.Type == EarleValueType.NumberFloat)
+					return lhs.Convert(EarleValueType.NumberFloat).FloatValue <= rhs.Convert(EarleValueType.NumberFloat).FloatValue;
+
+				return lhs.IntValue <= rhs.IntValue;
+			}
+
+			return EarleValue.False;
 		}
 
 		public EarleValue LessThan(EarleValue lhs, EarleValue rhs)
 		{
-			throw new NotImplementedException();
+			if ((lhs.Type & EarleValueType.Number) != 0 && (rhs.Type & EarleValueType.Number) != 0)
+			{
+				if (lhs.Type == EarleValueType.NumberFloat || rhs.Type == EarleValueType.NumberFloat)
+					return lhs.Convert(EarleValueType.NumberFloat).FloatValue < rhs.Convert(EarleValueType.NumberFloat).FloatValue;
+
+				return lhs.IntValue < rhs.IntValue;
+			}
+
+			return EarleValue.False;
 		}
 
 		public EarleValue Modulo(EarleValue lhs, EarleValue rhs)
@@ -126,7 +149,7 @@ namespace EarleCode.Debug
 
 		public EarleValue NotEqual(EarleValue lhs, EarleValue rhs)
 		{
-			return IsTrue(Equal(lhs, rhs)) ? EarleValue.False : EarleValue.True;
+			return !IsTrue(Equal(lhs, rhs));
 		}
 
 		public EarleValue ShiftLeft(EarleValue lhs, EarleValue rhs)

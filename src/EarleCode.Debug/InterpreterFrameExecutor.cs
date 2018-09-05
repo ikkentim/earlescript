@@ -480,7 +480,7 @@ namespace EarleCode.Debug
 							if (!Run(expression.Rhs, pathIndex + 1))
 								return ExecState.Pause;
 						
-							Stack.Push(_arithmetic.IsTrue(Stack.Pop()) ? EarleValue.True : EarleValue.False);
+							Stack.Push(_arithmetic.IsTrue(Stack.Pop()));
 							return ExecState.Finished;
 					}
 
