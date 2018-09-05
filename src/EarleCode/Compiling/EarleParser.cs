@@ -244,7 +244,7 @@ namespace EarleCode.Compiling
                     return new StatementWhile(GetFilePosition(node), ParseExpression(node.Children[2]),
                         new List<Statement> {Parse(node.Children[4]) as Statement});
                 case nameof(Rule.StatementDoWhile):
-                    return new StatementDoWhile(GetFilePosition(node), ParseExpression(node.Children[5]),
+                    return new StatementDoWhile(GetFilePosition(node), ParseExpression(node.Children[4]),
                         new List<Statement> {Parse(node.Children[1]) as Statement});
                 case nameof(Rule.StatementWait):
                 case nameof(Rule.StatementAssignments):

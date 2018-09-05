@@ -24,10 +24,24 @@ namespace EarleCode.Debug
                          return "foo()\n" +
                                 "{\n" +
                                 "print(\"hello\");\n" +
+                                "print(\"who is there?\" + \"??\" + 8);\n" +
+                                "if(1){ print(\"TRUE\");}\n" +
+                                "if(0){ print(\"FALSE\");}\n" +
                                 "}\n" +
                                 "main()\n" +
                                 "{\n" +
                                 "foo();\n" +
+                                "n=0;\n" +
+                                "do{\n" +
+                                "if(n == 2){n = n + 1; continue;}\n" +
+                                "print(\"dowhile\" + n);\n" +
+                                "if(n == 3) break;\n" +
+                                "n = n + 1; }while(1);\n" +
+                                "for(i = 0; i != 5; i = i + 1)\n" +
+                                "{\n" +
+                                "print(\"for\" + i);\n" +
+                                "}\n" +
+                                "\n" +
                                 "}\n";
                      default:
                          return null;
