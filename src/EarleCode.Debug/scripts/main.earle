@@ -1,0 +1,38 @@
+foo()
+{
+    print("hello");
+    print("who is there?" + "??" + 8);
+
+    if(1)
+        print("TRUE");
+
+    if(0)
+        print("FALSE");
+}
+main()
+{
+    foo();
+
+    n=0;
+
+    do
+    {
+        if(n == 2)
+        {
+            n = n + 1;
+            continue;
+        }
+
+        print("dowhile" + n);
+
+        if(n == 3)
+            break;
+
+        n = n + 1;
+    } while(1);
+
+    for(i = 0; i <= 5; i = i + 1)
+    {
+        print("for" + i);
+    }
+}
