@@ -1,83 +1,102 @@
-﻿using System;
-using System.IO;
-using System.ComponentModel;
+﻿// EarleCode
+// Copyright 2018 Tim Potze
+// 
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+// 
+//     http://www.apache.org/licenses/LICENSE-2.0
+// 
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+using System;
+using System.Collections;
 using System.Diagnostics;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Security.Cryptography.X509Certificates;
+using System.IO;
+using System.Runtime.InteropServices;
+using System.Threading;
 using EarleCode.Compiling;
-using EarleCode.Compiling.Lexing;
-using EarleCode.Compiling.Parsing;
-using EarleCode.Compiling.Parsing.Grammars;
-using EarleCode.Utilities;
 
 namespace EarleCode.Debug
 {
-    class Program
-    {
-        static void Main(string[] args)
-        {
-            var interp = new EarleInterpreter((name) =>
-            {
-                switch (name)
-                {
-                     case "\\main":
-                         return File.ReadAllText("scripts/main.earle");
-                     default:
-                         return null;
-                }
-            });
+	internal class Program
+	{
+		private static void Main(string[] args)
+		{
+			CleanRun();
+		}
 
-            var main = interp["\\main"]["main"];
 
-            var ok = interp.Invoke(main, out var res);
+		private static void CleanRun()
+		{
+			// Load the interpreter with a function which indicates how script files are loaded
+			var interpreter = new EarleInterpreter(path => path.IsEmpty
+				? null
+				: File.ReadAllText($"scripts/{path.RelativePath}.earle"));
 
-            Console.WriteLine($"OK: {ok}, result: {res}");
-        }
-        
-        static void Main2(string[] args)
-        {
-            var compiler = new EarleCompiler();
+			// Register a simple "print" function
+			interpreter.Natives.Register("print", 1, (a) =>
+			{
+				Console.WriteLine(a[0].Convert(EarleValueType.String).StringValue);
+				return EarleValue.Null;
+			});
 
-            var input = "#include \\foo\\bar;" +
-                        "#include \\foo\\foo;" +
-                        "random()" +
-                        "{" +
-                        "    return 4; // chosen by a fair dice roll\n" +
-                        "}" +
-                        "baz(a, b, c)" +
-                        "{" +
-                        "    result = a + b * c;" +
-                        "    print(\"a + b * c equals \" + (result));" +
-                        "    " +
-                        "    randfunc = ::random;" +
-                        "    " +
-                        "    randval = who [[randfunc]]();" +
-                        "    " +
-                        "    print(\"Random value is \" + randval);" +
-                        "}" +
-                        "";
+			// Register a "waittick" function which halts execution for one game tick
+			interpreter.Natives.Register("waittick", 0, (Func<EarleValue[], IEnumerator>) WaitOneFrame);
 
-            var sw = new Stopwatch();
+			// Invoke the "main" method in the "waitsample" script file
+			interpreter.Invoke(interpreter["\\waitsample"]["main"], out _);
 
-            sw.Start();
-            var file = compiler.Compile(input, "testfile");
-            sw.Stop();
-            Console.WriteLine("Compilation completed. Took " + sw.Elapsed);
+			// ... mock game update loop
+			for (;;)
+			{
+				interpreter.Tick();
 
-            Console.WriteLine("Functions: " + file.FunctionDeclarations.Count);
-            foreach (var func in file.FunctionDeclarations)
-                Console.WriteLine("- " + func.Name + "(" + string.Join(", ", func.Parameters ?? new string[0]) + "): " +
-                                  func.Statements.Count + " statements");
+				Thread.Sleep(100);
+			}
+		}
 
-            Console.WriteLine();
+		private static IEnumerator WaitOneFrame(EarleValue[] args)
+		{
+			yield return null;
+		}
 
-            Console.WriteLine("Includes: " + file.Includes.Count);
+		private static void PerformanceTest()
+		{
+			var sw = new Stopwatch();
 
-            foreach (var inc in file.Includes)
-                Console.WriteLine("- " + inc.Path);
+			sw.Start();
+			var interpreter = new EarleInterpreter(path => path.IsEmpty
+				? null
+				: File.ReadAllText($"scripts/{path.RelativePath}.earle"));
 
-            Console.WriteLine();
-        }
-    }
+			interpreter.Natives.Register("print", 1, (a) =>
+			{
+				Console.WriteLine(a[0].Convert(EarleValueType.String).StringValue);
+				return EarleValue.Null;
+			});
+
+			sw.Stop();
+			var buildInterpreter = sw.Elapsed;
+
+			sw.Restart();
+			var mainFn = interpreter["\\main"]["main"];
+			sw.Stop();
+			var compiling = sw.Elapsed;
+
+			sw.Restart();
+			var ok = interpreter.Invoke(mainFn, out var res);
+			sw.Stop();
+			var running = sw.Elapsed;
+
+			Console.WriteLine($"OK: {ok}, result: {res}");
+			Console.WriteLine("Building interpreter: " + buildInterpreter);
+			Console.WriteLine("Compiling: " + compiling);
+			Console.WriteLine("Running: " + running);
+		}
+	}
 }

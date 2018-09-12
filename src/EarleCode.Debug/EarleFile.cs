@@ -7,9 +7,10 @@ namespace EarleCode.Debug
 	public class EarleFile
 	{
 		private readonly Dictionary<string, EarleFunction> _functions;
-
-		public EarleFile(ProgramFile node)
+		
+		public EarleFile(EarleInterpreter interpreter, ProgramFile node)
 		{
+			Interpreter = interpreter ?? throw new ArgumentNullException(nameof(interpreter));
 			Node = node ?? throw new ArgumentNullException(nameof(node));
 
 			if (node.FunctionDeclarations == null)
@@ -19,6 +20,8 @@ namespace EarleCode.Debug
 			foreach (var function in node.FunctionDeclarations)
 				_functions[function.Name] = new EarleFunction(this, function);
 		}
+
+		public EarleInterpreter Interpreter { get; }
 
 		public ProgramFile Node { get; }
 

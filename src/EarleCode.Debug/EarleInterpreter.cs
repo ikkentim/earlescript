@@ -4,11 +4,12 @@ using EarleCode.Compiling;
 
 namespace EarleCode.Debug
 {
-	public class EarleInterpreter
+	public class EarleInterpreter : IScope
 	{
 		private readonly EarleFileLoader _loader;
 		private readonly Dictionary<string, EarleFile> _files = new Dictionary<string, EarleFile>();
-
+		private readonly List<CallQueueEntry> _queue = new List<CallQueueEntry>(64);
+		
 		public EarleInterpreter(EarleFileLoader loader)
 		{
 			_loader = loader ?? throw new ArgumentNullException(nameof(loader));
@@ -19,15 +20,22 @@ namespace EarleCode.Debug
 
 		public EarleFile this[string path] => GetFile(path);
 		
+		public EarleNativeFunctionCollection Natives { get; } = new EarleNativeFunctionCollection();
+
+		EarleValue IScope.this[string name] => EarleValue.Null;
+
 		public EarleFile LoadFile(string path)
 		{
 			if (path == null) throw new ArgumentNullException(nameof(path));
 
-			var input = _loader(path);
+			if (!EarlePath.TryParse(path, out var value))
+				throw new RuntimeException("Malformed script file path");
+
+			var input = _loader(value);
 
 			var file = Compiler.Compile(input);
 
-			return new EarleFile(file);
+			return new EarleFile(this, file);
 		}
 
 		private EarleFile GetFile(string path)
@@ -42,37 +50,32 @@ namespace EarleCode.Debug
 
 			return file;
 		}
-		
-		public EarleFunction GetFunction(string name)
-		{
-			// TODO: IEarleFunction and not a switch-case
-			if (name == "print")
-			{
-				return new Print(null, null);
-			}
 
-			return null;
+		public IEarleFunction GetFunction(string name)
+		{
+			return Natives[name];
 		}
 
-		public bool Invoke(EarleFunction function, out EarleValue result, params EarleValue[] args)
+		public void Tick()
 		{
-			var frm = new InterpreterFrameExecutor
+			// TODO: Optimize; lists are bad for this
+			for (var i = _queue.Count - 1; i >= 0; i--)
 			{
-				Function = function, 
-				Interpreter = this,
-				Target = EarleValue.Null
-			};
+				 var res = _queue[i].frame.Run(null);
 
-			var scope = new Scope();
-
-			if(function.Parameters != null && args != null)
-				for (var i = 0; i < function.Parameters.Count; i++)
+				if (res != null)
 				{
-					scope.Variables[function.Parameters[i]] = args.Length <= i ? EarleValue.Null : args[i];
+					_queue[i].handler?.Invoke(res.Value);
+					_queue.RemoveAt(i);
 				}
-			frm.Scopes.Push(scope);
+			}
+		}
 
-			var res = frm.Run();
+		public bool Invoke(IEarleFunction function, out EarleValue result, params EarleValue[] args)
+		{
+			var frame = function.GetFrameExecutor(args);
+			var res = frame.Run(null);
+
 			if (res != null)
 			{
 				result = res.Value;
@@ -80,8 +83,45 @@ namespace EarleCode.Debug
 			}
 
 			result = EarleValue.Null;
-            
+			_queue.Add(new CallQueueEntry
+			{
+				frame = frame
+			});
+
+
 			return false;
+		}
+		
+		public bool Invoke(IEarleFunction function, Action<EarleValue> resultHandler, params EarleValue[] args)
+		{
+			var frame = function.GetFrameExecutor(args);
+			var res = frame.Run(null);
+
+			if (res != null)
+			{
+				resultHandler?.Invoke(res.Value);
+				return true;
+			}
+
+			_queue.Add(new CallQueueEntry
+			{
+				handler = resultHandler, 
+				frame = frame
+			});
+			
+			return false;
+		}
+
+
+		bool IScope.SetIfPresent(string name, EarleValue value)
+		{
+			return false;
+		}
+
+		private struct CallQueueEntry
+		{
+			public Action<EarleValue> handler;
+			public IFrameExecutor frame;
 		}
 	}
 }

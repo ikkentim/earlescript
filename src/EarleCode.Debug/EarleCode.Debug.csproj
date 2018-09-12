@@ -6,4 +6,12 @@
   <ItemGroup>
     <ProjectReference Include="..\EarleCode\EarleCode.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <None Update="scripts\main.earle">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="scripts\waitsample.earle">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>

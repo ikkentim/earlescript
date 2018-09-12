@@ -1,0 +1,19 @@
+﻿printBoolean(value)
+{
+    if(value)
+        print("TRUE");
+	else
+		print("FALSE");
+}
+
+main()
+{
+    printBoolean(1);
+
+	for(i = 0 ;; i = i + 1)
+	{
+	    waittick();
+
+		print("Tick " + i);
+	}
+}

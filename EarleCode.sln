@@ -1,15 +1,18 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2019
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EarleCode.Test", "src\EarleCode.Test\EarleCode.Test.csproj", "{41D1D406-4C70-4F17-AC80-8214178F1A7A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EarleCode.Test", "src\EarleCode.Test\EarleCode.Test.csproj", "{41D1D406-4C70-4F17-AC80-8214178F1A7A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EarleCode", "src\EarleCode\EarleCode.csproj", "{31A9D4D2-67E2-4441-BAE0-070B868D7D07}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EarleCode", "src\EarleCode\EarleCode.csproj", "{31A9D4D2-67E2-4441-BAE0-070B868D7D07}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EarleCode.Debug", "src\EarleCode.Debug\EarleCode.Debug.csproj", "{E1F27FDE-9B1C-417E-8C26-1D7098A5F3F8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EarleCode.Debug", "src\EarleCode.Debug\EarleCode.Debug.csproj", "{E1F27FDE-9B1C-417E-8C26-1D7098A5F3F8}"
 EndProject
 Global
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
@@ -30,5 +33,11 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {AFDEDC9C-C6E1-4C59-9412-B215F48A83A2}
+	EndGlobalSection
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
 	EndGlobalSection
 EndGlobal

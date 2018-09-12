@@ -465,7 +465,7 @@ namespace EarleCode.Compiling
                 case nameof(Rule.FunctionCall):
                     return Parse(node) as FunctionCall;
                 default:
-                    throw new ParserException();
+                    throw new ParserException("Unsupported node " + node.Rule + ": " + node);
             }
         }
 

@@ -1,4 +1,4 @@
 ﻿namespace EarleCode.Debug
 {
-	public delegate string EarleFileLoader(string path);
+	public delegate string EarleFileLoader(EarlePath path);
 }

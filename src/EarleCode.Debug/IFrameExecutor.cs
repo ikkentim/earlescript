@@ -2,6 +2,8 @@
 {
 	public interface IFrameExecutor
 	{
-		EarleValue? Run();
+		string Name { get; }
+
+		EarleValue? Run(IFrameExecutor parent);
 	}
 }

@@ -35,12 +35,14 @@ namespace EarleCode.Debug
 		public Stack<EarleValue> Stack = new Stack<EarleValue>();
 		public IFrameExecutor SubFrame;
 		public EarleValue Target;
+		
+		public string Name => Function.Name;
 
 		private bool RunSubFrame()
 		{
 			if (SubFrame != null)
 			{
-				var subResult = SubFrame.Run();
+				var subResult = SubFrame.Run(this);
 				if (subResult != null)
 				{
 					Stack.Push(subResult.Value);
@@ -124,7 +126,7 @@ namespace EarleCode.Debug
 
 		private void PushScope()
 		{
-			Scopes.Push(new Scope{Parent = Scopes.Peek()});
+			Scopes.Push(new Scope(Scopes.Peek()));
 		}
 
 		private void PopScope()
@@ -402,7 +404,7 @@ namespace EarleCode.Debug
 					}
 					else if (index == argCount)
 					{
-						EarleFunction callingFunction;
+						IEarleFunction callingFunction;
 						switch (expression.FunctionIdentifier)
 						{
 							case ImplicitFunctionIdentifier impl:
@@ -421,32 +423,20 @@ namespace EarleCode.Debug
 							throw new RuntimeException("Function not found: " + expression.FunctionIdentifier);
 						}
 
-						var frm = new InterpreterFrameExecutor
-						{
-							Target = EarleValue.Null,
-							Function = callingFunction,
-							Interpreter = Interpreter
-						};
+						var lim = Math.Min(callingFunction.ParameterCount, argCount);
 
-						var scope = new Scope();
+						var args = new EarleValue[lim];
 
-						if (callingFunction.Parameters != null)
-						{
-							for (var i = callingFunction.Parameters.Count - 1; i >= 0; i--)
-							{
-								scope.Variables[callingFunction.Parameters[i]] = argCount <= i
-									? EarleValue.Null
-									: Stack.Pop();
-							}
+						for (var i = 0; i < lim; i++)
+							args[i] = Stack.Pop();
 
-							for (var i = callingFunction.Parameters.Count; i < argCount; i++)
-							{
-								Stack.Pop();
-							}
-						}
+						var frame = callingFunction.GetFrameExecutor(args);
 
-						frm.Scopes.Push(scope);
-						SubFrame = frm;
+						// Sync stack
+						for (var i = lim; i < argCount; i++) 
+							Stack.Pop();
+						
+						SubFrame = frame;
 
 						return ExecState.Finished;
 					}
@@ -637,6 +627,23 @@ namespace EarleCode.Debug
 			return false;
 		}
 
+		public EarleValue? Run(IFrameExecutor parent)
+		{
+			if (RunSubFrame())
+				return null;
+
+			do
+			{
+				if (Run(Function.Node, 0))
+				{
+					// TODO: Stack.count should never be 0 at this point
+					return Stack.Count == 0 ? EarleValue.Null : Stack.Pop();
+				}
+			} while (!RunSubFrame());
+
+			return null;
+		}
+		
 		private static int GetLength(IASTNode node)
 		{
 			switch (node)
@@ -686,30 +693,6 @@ namespace EarleCode.Debug
 				default:
 					throw new RuntimeException("Unknown AST node type: " + node.GetType());
 			}
-		}
-
-		public EarleValue? Run()
-		{
-			if (Function is Print)
-			{
-				Scopes.Peek().Variables.TryGetValue("value", out var str);
-				Console.WriteLine(str);
-				return EarleValue.Null;
-			}
-
-			if (RunSubFrame())
-				return null;
-
-			do
-			{
-				if (Run(Function.Node, 0))
-				{
-					// TODO: Stack.count should never be 0 at this point
-					return Stack.Count == 0 ? EarleValue.Null : Stack.Pop();
-				}
-			} while (!RunSubFrame());
-
-			return null;
 		}
 
 		private enum ExecState

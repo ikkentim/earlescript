@@ -30,29 +30,12 @@ namespace EarleCode.Debug
 					? new EarleValue(lhs.Convert(EarleValueType.NumberFloat).FloatValue + rhs.Convert(EarleValueType.NumberFloat).FloatValue)
 					: new EarleValue(lhs.IntValue + rhs.IntValue);
 			}
-
-			switch (lhs.Type)
-			{
-				case EarleValueType.NumberInt:
-					break;
-				case EarleValueType.NumberFloat:
-					break;
-				case EarleValueType.FunctionPointer:
-					break;
-				case EarleValueType.Struct:
-					break;
-				case EarleValueType.Vector2:
-					break;
-				case EarleValueType.Vector3:
-					break;
-				case EarleValueType.Vector4:
-					break;
-				case EarleValueType.Array:
-					break;
-				case EarleValueType.Null:
-					return rhs;
-			}
 			
+			if (lhs.Type == EarleValueType.Null)
+				return rhs;
+			if (rhs.Type == EarleValueType.Null)
+				return lhs;
+
 			return EarleValue.Null;
 		}
 
