@@ -8,6 +8,8 @@ namespace EarleCode.Compiling.Parsing
 {
 	public class LRCannonicalCollection
 	{
+		private List<LRItem> _itemBuffer = new List<LRItem>();
+
 		private readonly Dictionary<LRClosure, LRGoToRow> _sets;
 
 		/// <summary>
@@ -126,16 +128,21 @@ namespace EarleCode.Compiling.Parsing
 		{
 			var closure = new LRClosure { closureItem };
 			bool changes;
+			
+			if (_itemBuffer.Capacity < closure.Items.Count)
+				_itemBuffer.Capacity = closure.Items.Count;
+
+			foreach (var item in closure.Items)
+				_itemBuffer.Add(item);
+
 			do
 			{
 				changes = false;
-
+				
 				// Collection is modified during enumeration; cannot use foreach.
-				// ReSharper disable once ForCanBeConvertedToForeach
-				// ReSharper disable once LoopCanBeConvertedToQuery
-				for (var i = 0; i < closure.Items.Count; i++)
+				for (var i = _itemBuffer.Count - 1; i >= 0; i--)
 				{
-					var item = closure.Items[i];
+					var item = _itemBuffer[i];
 
 					if (item.Position >= item.Rule.Elements.Length)
 						continue;
@@ -147,9 +154,19 @@ namespace EarleCode.Compiling.Parsing
 
 					var rules = grammar.Get(element.Value);
 
-					changes = rules.Aggregate(changes, (current, rule) => current | closure.Add(new LRItem(rule)));
+					foreach (var rule in rules)
+					{
+						var newItem = new LRItem(rule);
+						if (closure.Add(newItem))
+						{
+							changes = true;
+							_itemBuffer.Add(newItem);
+						}
+					}
 				}
 			} while (changes);
+			
+			_itemBuffer.Clear();
 
 			return closure;
 		}

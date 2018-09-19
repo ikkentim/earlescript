@@ -56,7 +56,7 @@ namespace EarleCode.Debug
 			return Natives[name];
 		}
 
-		public void Tick()
+		public bool Tick()
 		{
 			// TODO: Optimize; lists are bad for this
 			for (var i = _queue.Count - 1; i >= 0; i--)
@@ -69,6 +69,8 @@ namespace EarleCode.Debug
 					_queue.RemoveAt(i);
 				}
 			}
+
+			return _queue.Count > 0;
 		}
 
 		public bool Invoke(IEarleFunction function, out EarleValue result, params EarleValue[] args)

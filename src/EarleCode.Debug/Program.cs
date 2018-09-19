@@ -52,10 +52,8 @@ namespace EarleCode.Debug
 			interpreter.Invoke(interpreter["\\waitsample"]["main"], out _);
 
 			// ... mock game update loop
-			for (;;)
+			while (interpreter.Tick())
 			{
-				interpreter.Tick();
-
 				Thread.Sleep(100);
 			}
 		}

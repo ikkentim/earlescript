@@ -12,7 +12,7 @@ namespace EarleCode.Compiling.Parsing
 		/// <summary>
 		/// Gets the items of this closure.
 		/// </summary>
-		public List<LRItem> Items { get; } = new List<LRItem>();
+		public HashSet<LRItem> Items { get; } = new HashSet<LRItem>();
 
 		/// <summary>
 		/// Adds the specified <paramref name="item"/> to this closure.
@@ -21,10 +21,7 @@ namespace EarleCode.Compiling.Parsing
 		/// <returns><c>true</c> if the item was added; <c>false</c> otherwise.</returns>
 		public bool Add(LRItem item)
 		{
-			if (Items.Contains(item)) return false;
-
-			Items.Add(item);
-			return true;
+			return Items.Add(item);
 		}
 
 		/// <summary>
@@ -79,7 +76,7 @@ namespace EarleCode.Compiling.Parsing
 		/// <returns>true if the specified closure is equal to the current closure; otherwise, false.</returns>
 		public bool Equals(LRClosure other)
 		{
-			return Items.SequenceEqual(other.Items);
+			return Items.SetEquals(other.Items);
 		}
 
 		/// <summary>Determines whether the specified object is equal to the current object.</summary>

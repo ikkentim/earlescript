@@ -350,7 +350,7 @@ namespace EarleCode.Debug
 						Stack.Push(EarleValue.Null);
 					}
 
-					break;
+					return ExecState.Return;
 				case StatementWhile statement:
 					if (index == 0)
 					{

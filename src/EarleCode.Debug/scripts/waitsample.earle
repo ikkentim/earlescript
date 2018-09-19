@@ -10,6 +10,7 @@ main()
 {
     printBoolean(1);
 
+	return 1;
 	for(i = 0 ;; i = i + 1)
 	{
 	    waittick();
