@@ -33,19 +33,17 @@ namespace EarleCode.Compiling.Parsing.Grammars
         /// </summary>
         IEnumerable<ProductionRule> All { get; }
 
-        /// <summary>
+	    /// <summary>
+	    ///		Gets a collection of all non-terminal symbols for which production rules have been defined by this grammar.
+	    /// </summary>
+	    IEnumerable<string> Symbols { get; }
+
+	    /// <summary>
         ///     Gets a collection of all available production rules which can be represented by the specified
         ///     <paramref name="symbol" />.
         /// </summary>
         /// <param name="symbol">The symbol of the production rules.</param>
         /// <returns>A collection of all available production rules which can be represented by the specified symbol.</returns>
         IEnumerable<ProductionRule> Get(string symbol);
-
-        /// <summary>
-        /// Gets the index of the specified rule.
-        /// </summary>
-        /// <param name="rule">The rule to find the index of.</param>
-        /// <returns>The index of the rule. -1 if the rule was not found.</returns>
-        int IndexOf(ProductionRule rule);
     }
 }

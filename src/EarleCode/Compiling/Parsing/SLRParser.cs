@@ -18,15 +18,16 @@ namespace EarleCode.Compiling.Parsing
 		/// </summary>
 		/// <param name="grammar">The grammar to build the parse table with.</param>
 	    public SLRParser(IGrammar grammar)
-	    {
-		    Grammar = grammar ?? throw new ArgumentNullException(nameof(grammar));
+		{
+			if (grammar == null) throw new ArgumentNullException(nameof(grammar));
+			
 		    Table = new SLRParsingTable(grammar);
 	    }
 
-		/// <summary>
-		///     Gets the production rules used by this parser.
-		/// </summary>
-		public IGrammar Grammar { get; }
+		public SLRParser(SLRParsingTable table)
+		{
+			Table = table ?? throw new ArgumentNullException(nameof(table));
+		}
 		
 		/// <summary>
 		///     Gets the parsing table used by this parser.
@@ -48,10 +49,8 @@ namespace EarleCode.Compiling.Parsing
 		    var stateStack = new Stack<int>();
 		    var symbolStack = new Stack<INode>();
 		    var index = 0;
-		    var startRules = Grammar.Get(Grammar.Default).ToArray();
-		    if (startRules.Length != 1)
-			    throw new ParserException("Invalid default grammar rule.");
-		    var startRule = startRules[0];
+
+		    var startRule = Table.Default;
 
 			stateStack.Push(Table.InitialState);
 

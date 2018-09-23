@@ -3,7 +3,7 @@
     /// <summary>
     /// Contains the action types on <see cref="SLRParsingTable"/>.
     /// </summary>
-    public enum SLRActionType
+    public enum SLRActionType : byte
     {
         /// <summary>
         /// ERROR action.

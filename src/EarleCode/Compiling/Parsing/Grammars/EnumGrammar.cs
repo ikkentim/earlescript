@@ -168,7 +168,12 @@ namespace EarleCode.Compiling.Parsing.Grammars
         /// </summary>
         public IEnumerable<ProductionRule> All => _grammar.All;
 
-        /// <summary>
+	    /// <summary>
+	    ///		Gets a collection of all non-terminal symbols for which production rules have been defined by this grammar.
+	    /// </summary>
+	    public IEnumerable<string> Symbols => _grammar.Symbols;
+
+	    /// <summary>
         ///     Gets a collection of all available production rules which can be represented by the specified
         ///     <paramref name="symbol" />.
         /// </summary>
@@ -180,12 +185,7 @@ namespace EarleCode.Compiling.Parsing.Grammars
         {
             return _grammar.Get(symbol);
         }
-
-        public int IndexOf(ProductionRule rule)
-        {
-            return _grammar.IndexOf(rule);
-        }
-
+		
         #endregion
     }
 }

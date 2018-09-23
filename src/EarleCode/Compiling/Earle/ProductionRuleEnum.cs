@@ -23,237 +23,237 @@ namespace EarleCode.Compiling.Earle
 	/// </summary>
 	[SuppressMessage("ReSharper", "UnusedMember.Local")]
 	[SuppressMessage("ReSharper", "UnusedMember.Global")]
-	enum ProductionRuleEnum
-	    {
-		    [Rule("FileCont")]
-		    File,
-			
-		    [Rule("FileCont FunctionDeclaration")]
-		    [Rule("FileCont Include")]
-		    [Rule("FunctionDeclaration")]
-		    [Rule("Include")]
-			FileCont,
-		    
-			[Rule("# `include` Path ;")]
-			Include,
+	public enum ProductionRuleEnum
+	{
+		[Rule("FileCont")]
+		File,
 
-		    [Rule("Identifier ( IdentifierList ) Statement")]
-		    FunctionDeclaration,
+		[Rule("FileCont FunctionDeclaration")]
+		[Rule("FileCont Include")]
+		[Rule("FunctionDeclaration")]
+		[Rule("Include")]
+		FileCont,
 
-		    [Rule("IdentifierListCont")]
-		    [Rule("")]
-		    IdentifierList,
+		[Rule("# `include` Path ;")]
+		Include,
 
-		    [Rule("IdentifierListCont, Identifier")]
-		    [Rule("Identifier")]
-		    IdentifierListCont,
-			
-		    [Rule("\\ PathCont")]
-			Path,
+		[Rule("Identifier ( IdentifierList ) Statement")]
+		FunctionDeclaration,
 
-			[Rule("PathCont \\ Identifier")]
-			[Rule("Identifier")]
-			PathCont,
-			
-		    [Rule("StatementsCont")]
-		    [Rule("")]
-		    Statements,
+		[Rule("IdentifierListCont")]
+		[Rule("")]
+		IdentifierList,
 
-		    [Rule("StatementsCont Statement")]
-		    [Rule("Statement")]
-		    StatementsCont,
-			
-		    [Rule("{ Statements }")]
-			StatementBlock,
+		[Rule("IdentifierListCont, Identifier")]
+		[Rule("Identifier")]
+		IdentifierListCont,
 
-			[Rule("FunctionCall ;")]
-			StatementFunctionCall,
-			
-			[Rule("`if` ( Expression ) Statement")]
-			StatementIf,
+		[Rule("\\ PathCont")]
+		Path,
 
-		    [Rule("`while` ( Expression ) Statement")]
-			StatementWhile,
+		[Rule("PathCont \\ Identifier")]
+		[Rule("Identifier")]
+		PathCont,
 
-		    [Rule("`do` Statement `while` ( Expression ) ;")]
-			StatementDoWhile,
+		[Rule("StatementsCont")]
+		[Rule("")]
+		Statements,
 
-		    [Rule("`break` ;")]
-			StatementBreak,
+		[Rule("StatementsCont Statement")]
+		[Rule("Statement")]
+		StatementsCont,
 
-		    [Rule("`continue` ;")]
-			StatementContinue,
+		[Rule("{ Statements }")]
+		StatementBlock,
 
-		    [Rule("`wait` Expression ;")]
-			StatementWait,
+		[Rule("FunctionCall ;")]
+		StatementFunctionCall,
 
-		    [Rule("Assignments ;")]
-			StatementAssignments,
+		[Rule("`if` ( Expression ) Statement")]
+		StatementIf,
 
-		    [Rule("`for` ( ForAssignment ; ForExpression ; ForAssignment ) Statement")]
-			StatementFor,
-			
-		    [Rule("Assignments")]
-			[Rule("")]
-		    ForAssignment,
-			
-			[Rule("Expression")]
-		    [Rule("")]
-		    ForExpression,
-			
-		    [Rule("`return` ;")]
-		    [Rule("`return` Expression ;")]
-			StatementReturn,
-			
-		    [Rule("StatementBlock")]
-		    [Rule("StatementFunctionCall")]
-		    [Rule("StatementIf")]
-		    [Rule("StatementWhile")]
-		    [Rule("StatementDoWhile")]
-		    [Rule("StatementBreak")]
-		    [Rule("StatementContinue")]
-		    [Rule("StatementWait")]
-		    [Rule("StatementAssignments")]
-		    [Rule("StatementFor")]
-		    [Rule("StatementReturn")]
-		    Statement,
-			
-			[Rule("Identifier")]
-			[Rule("ExplicitFunctionIdentifier")]
-			[Rule("UnboxedFunctionIdentifier")]
-			FunctionIdentifier,
-			
-		    [Rule(":: Identifier")]
-		    [Rule("Path :: Identifier")]
-			ExplicitFunctionIdentifier,
-			
-		    [Rule("[[ Variable ]]")]
-		    UnboxedFunctionIdentifier,
-		    
-		    [Rule("TargetlessFunctionCall")]
-		    [Rule("TargetedFunctionCall")]
-		    [Rule("TargetlessThreadedFunctionCall")]
-		    [Rule("TargetedThreadedFunctionCall")]
-		    FunctionCall,
-			
-		    [Rule("FunctionIdentifier ( ExpressionList )")]
-		    TargetlessFunctionCall,
-		    
-		    [Rule("Variable FunctionIdentifier ( ExpressionList )")]
-		    TargetedFunctionCall,
-		    
-		    [Rule("`thread` FunctionIdentifier ( ExpressionList )")]
-		    TargetlessThreadedFunctionCall,
-		    
-		    [Rule("Variable `thread` FunctionIdentifier ( ExpressionList )")]
-		    TargetedThreadedFunctionCall,
-		    
-			[Rule("ExpressionListCont")]
-			[Rule("")]
-			ExpressionList,
+		[Rule("`while` ( Expression ) Statement")]
+		StatementWhile,
 
-		    [Rule("ExpressionListCont, Expression")]
-		    [Rule("Expression")]
-			ExpressionListCont,
+		[Rule("`do` Statement `while` ( Expression ) ;")]
+		StatementDoWhile,
 
-		    [Rule("Identifier")]
+		[Rule("`break` ;")]
+		StatementBreak,
+
+		[Rule("`continue` ;")]
+		StatementContinue,
+
+		[Rule("`wait` Expression ;")]
+		StatementWait,
+
+		[Rule("Assignments ;")]
+		StatementAssignments,
+
+		[Rule("`for` ( ForAssignment ; ForExpression ; ForAssignment ) Statement")]
+		StatementFor,
+
+		[Rule("Assignments")]
+		[Rule("")]
+		ForAssignment,
+
+		[Rule("Expression")]
+		[Rule("")]
+		ForExpression,
+
+		[Rule("`return` ;")]
+		[Rule("`return` Expression ;")]
+		StatementReturn,
+
+		[Rule("StatementBlock")]
+		[Rule("StatementFunctionCall")]
+		[Rule("StatementIf")]
+		[Rule("StatementWhile")]
+		[Rule("StatementDoWhile")]
+		[Rule("StatementBreak")]
+		[Rule("StatementContinue")]
+		[Rule("StatementWait")]
+		[Rule("StatementAssignments")]
+		[Rule("StatementFor")]
+		[Rule("StatementReturn")]
+		Statement,
+
+		[Rule("Identifier")]
+		[Rule("ExplicitFunctionIdentifier")]
+		[Rule("UnboxedFunctionIdentifier")]
+		FunctionIdentifier,
+
+		[Rule(":: Identifier")]
+		[Rule("Path :: Identifier")]
+		ExplicitFunctionIdentifier,
+
+		[Rule("[[ Variable ]]")]
+		UnboxedFunctionIdentifier,
+
+		[Rule("TargetlessFunctionCall")]
+		[Rule("TargetedFunctionCall")]
+		[Rule("TargetlessThreadedFunctionCall")]
+		[Rule("TargetedThreadedFunctionCall")]
+		FunctionCall,
+
+		[Rule("FunctionIdentifier ( ExpressionList )")]
+		TargetlessFunctionCall,
+
+		[Rule("Variable FunctionIdentifier ( ExpressionList )")]
+		TargetedFunctionCall,
+
+		[Rule("`thread` FunctionIdentifier ( ExpressionList )")]
+		TargetlessThreadedFunctionCall,
+
+		[Rule("Variable `thread` FunctionIdentifier ( ExpressionList )")]
+		TargetedThreadedFunctionCall,
+
+		[Rule("ExpressionListCont")]
+		[Rule("")]
+		ExpressionList,
+
+		[Rule("ExpressionListCont, Expression")]
+		[Rule("Expression")]
+		ExpressionListCont,
+
+		[Rule("Identifier")]
 //		    [Rule("Variable . Identifier")] // TODO: Should be expression operators
 //		    [Rule("Variable [ Expression ]")]
-			Variable,
-			
-		    [Rule("Assignment")]
-		    [Rule("Assignments , Assignment")]
-		    Assignments,
-			
-		    [Rule("VariableAssignment")]
-		    [Rule("PostfixAdditionAssignment")]
-		    [Rule("PrefixAdditionAssignment")]
-		    [Rule("PostfixSubtractionAssignment")]
-		    [Rule("PrefixSubtractionAssignment")]
-		    [Rule("AdditionAssignment")]
-			Assignment,
-		    
-		    [Rule("Variable = Expression")]
-		    VariableAssignment,
-		    
-		    [Rule("Variable += Expression")]
-		    AdditionAssignment, // TODO: Other opterators
-		    
-		    [Rule("Variable ++")]
-		    PostfixAdditionAssignment,
+		Variable,
 
-		    [Rule("++ Variable")]
-		    PrefixAdditionAssignment,
+		[Rule("Assignment")]
+		[Rule("Assignments , Assignment")]
+		Assignments,
 
-		    [Rule("Variable --")]
-		    PostfixSubtractionAssignment,
+		[Rule("VariableAssignment")]
+		[Rule("PostfixAdditionAssignment")]
+		[Rule("PrefixAdditionAssignment")]
+		[Rule("PostfixSubtractionAssignment")]
+		[Rule("PrefixSubtractionAssignment")]
+		[Rule("AdditionAssignment")]
+		Assignment,
 
-		    [Rule("-- Variable")]
-		    PrefixSubtractionAssignment,
+		[Rule("Variable = Expression")]
+		VariableAssignment,
 
-		    [Rule("Variable")]
-		    [Rule("StringLiteral")]
-		    [Rule("NumberLiteral")]
-		    // TODO: vectors
-		    Value,
-		    
-		    [Rule("Assignment")]
-		    [Rule("Expression2")]
-		    Expression, // assignment
+		[Rule("Variable += Expression")]
+		AdditionAssignment, // TODO: Other opterators
 
-		    [Rule("Expression2 || Expression3")]
-		    [Rule("Expression3")]
-		    Expression2, // logical OR
+		[Rule("Variable ++")]
+		PostfixAdditionAssignment,
 
-		    [Rule("Expression3 && Expression4")]
-		    [Rule("Expression4")]
-		    Expression3, // logical AND 
-		    
-		    [Rule("Expression4 | Expression5")]
-		    [Rule("Expression5")]
-		    Expression4, // bitwise OR
+		[Rule("++ Variable")]
+		PrefixAdditionAssignment,
 
-		    [Rule("Expression5 ^ Expression6")]
-		    [Rule("Expression6")]
-		    Expression5, // bitwise XOR
+		[Rule("Variable --")]
+		PostfixSubtractionAssignment,
 
-		    [Rule("Expression6 & Expression7")]
-		    [Rule("Expression7")]
-		    Expression6, // bitwise AND
+		[Rule("-- Variable")]
+		PrefixSubtractionAssignment,
 
-		    [Rule("Expression7 == Expression8")]
-		    [Rule("Expression7 != Expression8")]
-		    [Rule("Expression8")]
-		    Expression7, // equality
+		[Rule("Variable")]
+		[Rule("StringLiteral")]
+		[Rule("NumberLiteral")]
+		// TODO: vectors
+		Value,
 
-		    [Rule("Expression8 < Expression9")]
-		    [Rule("Expression8 > Expression9")]
-		    [Rule("Expression8 <= Expression9")]
-		    [Rule("Expression8 >= Expression9")]
-		    [Rule("Expression9")]
-		    Expression8, // relational
+		[Rule("Assignment")]
+		[Rule("Expression2")]
+		Expression, // assignment
 
-		    [Rule("Expression9 << Expression10")]
-		    [Rule("Expression9 >> Expression10")]
-		    [Rule("Expression10")]
-		    Expression9, // shift
+		[Rule("Expression2 || Expression3")]
+		[Rule("Expression3")]
+		Expression2, // logical OR
 
-		    [Rule("Expression10 + Expression11")]
-		    [Rule("Expression10 - Expression11")]
-		    [Rule("Expression11")]
-		    Expression10, // additive
+		[Rule("Expression3 && Expression4")]
+		[Rule("Expression4")]
+		Expression3, // logical AND 
 
-		    [Rule("Expression11 * Expression12")]
-		    [Rule("Expression11 / Expression12")]
-		    [Rule("Expression11 % Expression12")]
-		    [Rule("Expression12")]
-		    Expression11, // multiplicative
+		[Rule("Expression4 | Expression5")]
+		[Rule("Expression5")]
+		Expression4, // bitwise OR
 
-		    [Rule("ExplicitFunctionIdentifier")]
-		    [Rule("(Expression)")]
-		    [Rule("Value")]
-		    [Rule("FunctionCall")]
-		    Expression12, // Brackets and values
+		[Rule("Expression5 ^ Expression6")]
+		[Rule("Expression6")]
+		Expression5, // bitwise XOR
 
-	    }
+		[Rule("Expression6 & Expression7")]
+		[Rule("Expression7")]
+		Expression6, // bitwise AND
+
+		[Rule("Expression7 == Expression8")]
+		[Rule("Expression7 != Expression8")]
+		[Rule("Expression8")]
+		Expression7, // equality
+
+		[Rule("Expression8 < Expression9")]
+		[Rule("Expression8 > Expression9")]
+		[Rule("Expression8 <= Expression9")]
+		[Rule("Expression8 >= Expression9")]
+		[Rule("Expression9")]
+		Expression8, // relational
+
+		[Rule("Expression9 << Expression10")]
+		[Rule("Expression9 >> Expression10")]
+		[Rule("Expression10")]
+		Expression9, // shift
+
+		[Rule("Expression10 + Expression11")]
+		[Rule("Expression10 - Expression11")]
+		[Rule("Expression11")]
+		Expression10, // additive
+
+		[Rule("Expression11 * Expression12")]
+		[Rule("Expression11 / Expression12")]
+		[Rule("Expression11 % Expression12")]
+		[Rule("Expression12")]
+		Expression11, // multiplicative
+
+		[Rule("ExplicitFunctionIdentifier")]
+		[Rule("(Expression)")]
+		[Rule("Value")]
+		[Rule("FunctionCall")]
+		Expression12, // Brackets and values
+
+	}
 }

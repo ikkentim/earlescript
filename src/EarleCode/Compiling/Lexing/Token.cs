@@ -23,7 +23,7 @@ namespace EarleCode.Compiling.Lexing
     /// <summary>
     ///     Represents a single token.
     /// </summary>
-    public struct Token
+    public struct Token : IFormattable
     {
         /// <summary>
         ///     Instantiates a new instance of the <see cref="Token" /> struct.

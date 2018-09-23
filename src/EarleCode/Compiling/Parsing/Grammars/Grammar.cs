@@ -27,9 +27,7 @@ namespace EarleCode.Compiling.Parsing.Grammars
     {
         private readonly Dictionary<string, List<ProductionRule>> _productionRules =
             new Dictionary<string, List<ProductionRule>>();
-
-        private List<ProductionRule> _indexer = new List<ProductionRule>();
-        
+		
         /// <summary>
         ///     Adds a production rule for the specified symbol.
         /// </summary>
@@ -40,9 +38,7 @@ namespace EarleCode.Compiling.Parsing.Grammars
         {
             if (symbol == null) throw new ArgumentNullException(nameof(symbol));
             if (rule == null) throw new ArgumentNullException(nameof(rule));
-
-            _indexer.Add(rule);
-            
+			
             if (_productionRules.TryGetValue(symbol, out var collection))
             {
                 collection.Add(rule);
@@ -60,13 +56,12 @@ namespace EarleCode.Compiling.Parsing.Grammars
         public void Clear()
         {
             _productionRules.Clear();
-            _indexer.Clear();
         }
 
         #region Implementation of IProductionRuleSet
 
         /// <summary>
-        ///     Gets the default production symbol.
+        ///     Gets or sets the default production symbol.
         /// </summary>
         public string Default { get; set; }
 
@@ -74,6 +69,11 @@ namespace EarleCode.Compiling.Parsing.Grammars
         ///     Gets a collection of all available production rules.
         /// </summary>
         public IEnumerable<ProductionRule> All => _productionRules.Values.SelectMany(r => r);
+
+		/// <summary>
+		///		Gets a collection of all non-terminal symbols for which production rules have been defined by this grammar.
+		/// </summary>
+		public IEnumerable<string> Symbols => _productionRules.Keys;
 
         /// <summary>
         ///     Gets a collection of all available production rules which can be represented by the specified
@@ -86,17 +86,7 @@ namespace EarleCode.Compiling.Parsing.Grammars
             _productionRules.TryGetValue(symbol, out var result);
             return result;
         }
-
-        /// <summary>
-        /// Gets the index of the specified rule.
-        /// </summary>
-        /// <param name="rule">The rule to find the index of.</param>
-        /// <returns>The index of the rule. -1 if the rule was not found.</returns>
-        public int IndexOf(ProductionRule rule)
-        {
-            return _indexer.IndexOf(rule);
-        }
-
+		
         #endregion
     }
 }

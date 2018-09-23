@@ -87,7 +87,7 @@ namespace EarleCode.Compiling.Parsing.Grammars.Productions
 			    }
 		    }
 	    }
-
+		
         #region Overrides of Object
 
         /// <summary>

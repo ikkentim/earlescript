@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using EarleCode.Compiling.Parsing.Grammars;
 using EarleCode.Compiling.Parsing.Grammars.Productions;
@@ -29,6 +30,8 @@ namespace EarleCode.Compiling.Parsing
 				throw new GrammarException("Invalid default grammar rule. There must be exactly 1 start rule.");
 
 			var startRule = startRules[0];
+
+			Default = startRule;
 
 			var cannonicalCollection = new LRCannonicalCollection(grammar);
 			var sets = cannonicalCollection.Sets.ToArray();
@@ -107,6 +110,18 @@ namespace EarleCode.Compiling.Parsing
 			}
 		}
 
+		/// <summary>
+		/// Initializes a new instance of the <see cref="SLRParsingTable"/> class.
+		/// </summary>
+		/// <param name="initialState">The initial state.</param>
+		/// <param name="table">The table data.</param>
+		public SLRParsingTable(int initialState, List<Dictionary<ProductionRuleElement, SLRAction>> table, ProductionRule @default)
+		{
+			InitialState = initialState;
+			Default = @default ?? throw new ArgumentNullException(nameof(@default));
+			_table = table ?? throw new ArgumentNullException(nameof(table));
+		}
+
 		public SLRAction this[int state, ProductionRuleElement element]
 		{
 			get
@@ -116,6 +131,12 @@ namespace EarleCode.Compiling.Parsing
 			}
 		}
 
+		public ProductionRule Default { get; }
+		public int States => _table.Count;
+
 		public int InitialState { get; } = -1;
+
+		public IReadOnlyDictionary<ProductionRuleElement, SLRAction> GetRow(int state) =>
+			new ReadOnlyDictionary<ProductionRuleElement, SLRAction>(_table[state]);
 	}
 }

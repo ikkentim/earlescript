@@ -1,12 +1,11 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
+using System.Reflection;
+using System.Resources;
 using EarleCode.Compiling.Earle;
 using EarleCode.Compiling.Earle.AST;
 using EarleCode.Compiling.Lexing;
 using EarleCode.Compiling.Parsing;
 using EarleCode.Compiling.Parsing.Grammars;
-using EarleCode.OldCompiler.ParseCodeGen;
-using IParser = EarleCode.Compiling.Parsing.IParser;
 
 namespace EarleCode.Compiling
 {
@@ -29,9 +28,29 @@ namespace EarleCode.Compiling
         public EarleCompiler()
         {
             Lexer = new Lexer(MultiCharSymbols, Keywords);
-            var grammar = new EnumGrammar<ProductionRuleEnum>(MultiCharSymbols);
-            var parser = new SLRParser(grammar);
-            Parser = new EarleParser(parser);
+
+	        var assembly = GetType().GetTypeInfo().Assembly;
+
+	        var cacheResource = assembly.GetManifestResourceNames().FirstOrDefault(n => n.EndsWith("slr.earle-cache"));
+
+	        SLRParser parser;
+	        if (cacheResource != null)
+	        {
+				var serializer= new CacheSerializer();
+
+		        SLRParsingTable table;
+		        using (var stream = assembly.GetManifestResourceStream(cacheResource))
+			        table = serializer.DeserializeSLRParsingTable(stream);
+
+		        parser = new SLRParser(table);
+	        }
+	        else
+	        {
+		        var grammar = new EnumGrammar<ProductionRuleEnum>(MultiCharSymbols);
+		        parser = new SLRParser(grammar);
+	        }
+
+	        Parser = new EarleParser(parser);
         }
         
         public ILexer Lexer { get; }

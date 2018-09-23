@@ -2,4 +2,10 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
+  <ItemGroup>
+    <None Remove="cache\slr.earle-cache" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="cache\slr.earle-cache" />
+  </ItemGroup>
 </Project>
