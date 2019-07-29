@@ -241,7 +241,7 @@ namespace EarleCode.Compiling
                     return new UnboxedFunctionIdentifier(GetFilePosition(node), ParseExpression(node.Children[2]));
                 case nameof(Rule.StatementIf):
                     return new StatementIf(GetFilePosition(node), ParseExpression(node.Children[2]),
-                        new List<Statement> {Parse(node.Children[4]) as Statement}, new List<Statement> {Parse(node.Children[6]) as Statement});
+                        new List<Statement> {Parse(node.Children[4]) as Statement}, node.Children.Count < 7 ? null : new List<Statement> {Parse(node.Children[6]) as Statement});
                 case nameof(Rule.StatementWhile):
                     return new StatementWhile(GetFilePosition(node), ParseExpression(node.Children[2]),
                         new List<Statement> {Parse(node.Children[4]) as Statement});

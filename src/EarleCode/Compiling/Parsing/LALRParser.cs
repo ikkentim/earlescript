@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CodeProject.Syntax.LALR;
 using EarleCode.Compiling.Earle;
 using EarleCode.Compiling.Lexing;
+using EarleCode.Compiling.Parsing.CodeProject;
 using EarleCode.Compiling.Parsing.Grammars;
 using EarleCode.Compiling.Parsing.Grammars.Productions;
 using EarleCode.Compiling.Parsing.ParseTree;
@@ -17,6 +17,7 @@ namespace EarleCode.Compiling.Parsing
 	    
 	    public LALRParser(IGrammar grammar)
 	    {
+		    // Temporary wrapper while I build my own LALR parser... Only works for Earle's ProductionRuleElementType grammar.
 		    var def = grammar.Default;
 		    var nonTerminals = grammar.Symbols.Where(x => x != def).ToArray();
 		    var terminals = grammar.All.SelectMany(x =>

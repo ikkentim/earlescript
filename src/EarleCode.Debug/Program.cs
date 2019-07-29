@@ -34,8 +34,8 @@ namespace EarleCode.Debug
 		private static void Main(string[] args)
 		{
 //			Serialization();
-			CleanRun();
-//			PerformanceTest();
+//			CleanRun();
+			PerformanceTest();
 		}
 
 		private static void Serialization()

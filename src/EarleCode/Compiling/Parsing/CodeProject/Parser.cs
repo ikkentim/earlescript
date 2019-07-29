@@ -1,45 +1,27 @@
 using System;
 using System.Collections.Generic;
 
-namespace CodeProject.Syntax.LALR
+namespace EarleCode.Compiling.Parsing.CodeProject
 {
-	public class LalrPropagation
-	{
-		public int Lr0TargetState { get; set; }
-		public int Lr0TargetItem { get; set; }
-	};
-
 	public class Parser
 	{
-		public HashSet<int>[] FirstSets { get; private set; }
-
-		public List<Lr0Item> Lr0Items { get; }
-
-		public List<Lr1Item> Lr1Items { get; }
-
-		public List<HashSet<int>> Lr0States { get; }
-
-		public List<HashSet<int>> Lr0Kernels { get; }
-
-		public List<HashSet<int>> LalrStates { get; }
-
-		public List<int[]> LrGoto { get; }
-
-		public List<int[]> GotoPrecedence { get; }
+		private HashSet<int>[] _firstSets;
+		private readonly List<Lr0Item> _lr0Items;
+		private readonly Dictionary<Lr0Item, int> _lr0Id = new Dictionary<Lr0Item, int>();
+		private readonly List<Lr1Item> _lr1Items;
+		private readonly Dictionary<Lr1Item, int> _lr1Id = new Dictionary<Lr1Item, int>();
+		private readonly List<HashSet<int>> _lr0States;
+		private readonly List<HashSet<int>> _lr0Kernels;
+		private readonly List<HashSet<int>> _lalrStates;
+		private readonly List<int[]> _lrGoto;
+		private readonly List<int[]> _gotoPrecedence;
+		private readonly List<int> _terminals;
+		private readonly List<int> _nonTerminals;
+		private readonly List<Dictionary<int, List<LalrPropagation>>> _lalrPropagations;
+		private readonly List<int> _productionPrecedence;
+		private readonly Grammar _grammar;
 
 		public List<Production> Productions { get; }
-
-		public List<int> Terminals { get; }
-
-		public List<int> NonTerminals { get; }
-
-		public List<Dictionary<int, List<LalrPropagation>>> LalrPropagations { get; }
-
-		public List<int> ProductionPrecedence { get; }
-
-		public List<Derivation> ProductionDerivation { get; }
-
-		public Grammar Grammar { get; }
 
 		public ParseTable ParseTable { get; private set; }
 
@@ -49,12 +31,12 @@ namespace CodeProject.Syntax.LALR
 		/// </summary>
 		private void AddPropagation(int nLr0SourceState, int nLr0SourceItem, int nLr0TargetState, int nLr0TargetItem)
 		{
-			while (LalrPropagations.Count <= nLr0SourceState)
+			while (_lalrPropagations.Count <= nLr0SourceState)
 			{
-				LalrPropagations.Add(new Dictionary<int, List<LalrPropagation>>());
+				_lalrPropagations.Add(new Dictionary<int, List<LalrPropagation>>());
 			}
 
-			var propagationsForState = LalrPropagations[nLr0SourceState];
+			var propagationsForState = _lalrPropagations[nLr0SourceState];
 			if (!propagationsForState.TryGetValue(nLr0SourceItem, out var propagationList))
 			{
 				propagationList = new List<LalrPropagation>();
@@ -69,19 +51,13 @@ namespace CodeProject.Syntax.LALR
 		/// </summary>
 		private int GetLr0ItemId(Lr0Item item)
 		{
-			var nItemId = 0;
-			foreach (var oItem in Lr0Items)
-			{
-				if (oItem.Equals(item))
-				{
-					return nItemId;
-				}
+			if (_lr0Id.TryGetValue(item, out var id))
+				return id;
 
-				nItemId++;
-			}
-
-			Lr0Items.Add(item);
-			return nItemId;
+			id = _lr0Items.Count;
+			_lr0Items.Add(item);
+			_lr0Id[item] = id;
+			return id;
 		}
 
 
@@ -90,19 +66,13 @@ namespace CodeProject.Syntax.LALR
 		/// </summary>
 		private int GetLr1ItemId(Lr1Item item)
 		{
-			var nItemId = 0;
-			foreach (var oItem in Lr1Items)
-			{
-				if (oItem.Equals(item))
-				{
-					return nItemId;
-				}
+			if (_lr1Id.TryGetValue(item, out var id))
+				return id;
 
-				nItemId++;
-			}
-
-			Lr1Items.Add(item);
-			return nItemId;
+			id = _lr1Items.Count;
+			_lr1Items.Add(item);
+			_lr1Id[item] = id;
+			return id;
 		}
 
 
@@ -112,7 +82,7 @@ namespace CodeProject.Syntax.LALR
 		private int GetLr0StateId(HashSet<int> state, ref bool bAdded)
 		{
 			var nStateId = 0;
-			foreach (var oState in Lr0States)
+			foreach (var oState in _lr0States)
 			{
 				if (oState.SetEquals(state))
 				{
@@ -122,7 +92,7 @@ namespace CodeProject.Syntax.LALR
 				nStateId++;
 			}
 
-			Lr0States.Add(state);
+			_lr0States.Add(state);
 			bAdded = true;
 			return nStateId;
 		}
@@ -144,7 +114,7 @@ namespace CodeProject.Syntax.LALR
 			{
 				var nItem = open[0];
 				open.RemoveAt(0);
-				var item = Lr0Items[nItem];
+				var item = _lr0Items[nItem];
 				closed.Add(nItem);
 
 				var nProduction = 0;
@@ -153,7 +123,7 @@ namespace CodeProject.Syntax.LALR
 					if ((item.Position < Productions[item.Production].Right.Length) &&
 					    (production.Left == Productions[item.Production].Right[item.Position]))
 					{
-						var newItem = new Lr0Item {Production = nProduction, Position = 0};
+						var newItem = new Lr0Item(0, nProduction);
 						var nNewItemId = GetLr0ItemId(newItem);
 						if (!open.Contains(nNewItemId) && !closed.Contains(nNewItemId))
 						{
@@ -185,14 +155,14 @@ namespace CodeProject.Syntax.LALR
 			{
 				var nLr1Item = open[0];
 				open.RemoveAt(0);
-				var lr1Item = Lr1Items[nLr1Item];
-				var lr0Item = Lr0Items[lr1Item.Lr0ItemId];
+				var lr1Item = _lr1Items[nLr1Item];
+				var lr0Item = _lr0Items[lr1Item.Lr0ItemId];
 				closed.Add(nLr1Item);
 
 				if (lr0Item.Position < Productions[lr0Item.Production].Right.Length)
 				{
 					var nToken = Productions[lr0Item.Production].Right[lr0Item.Position];
-					if (NonTerminals.Contains(nToken))
+					if (_nonTerminals.Contains(nToken))
 					{
 						var argFirst = new List<int>();
 						for (var nIdx = lr0Item.Position + 1;
@@ -210,7 +180,7 @@ namespace CodeProject.Syntax.LALR
 							{
 								foreach (var nTokenFirst in first)
 								{
-									var newLr0Item = new Lr0Item {Production = nProduction, Position = 0};
+									var newLr0Item = new Lr0Item(0, nProduction);
 									var nNewLr0ItemId = GetLr0ItemId(newLr0Item);
 									var newLr1Item = new Lr1Item {Lr0ItemId = nNewLr0ItemId, LookAhead = nTokenFirst};
 									var nNewLr1ItemId = GetLr1ItemId(newLr1Item);
@@ -236,17 +206,17 @@ namespace CodeProject.Syntax.LALR
 		private int GotoLr0(int nState, int nTokenId, ref bool bAdded, ref int nPrecedence)
 		{
 			var gotoLr0 = new HashSet<int>();
-			var state = Lr0States[nState];
+			var state = _lr0States[nState];
 			foreach (var nItem in state)
 			{
-				var item = Lr0Items[nItem];
+				var item = _lr0Items[nItem];
 				if (item.Position < Productions[item.Production].Right.Length &&
 				    (Productions[item.Production].Right[item.Position] == nTokenId))
 				{
-					var newItem = new Lr0Item {Production = item.Production, Position = item.Position + 1};
+					var newItem = new Lr0Item(item.Position + 1, item.Production);
 					var nNewItemId = GetLr0ItemId(newItem);
 					gotoLr0.Add(nNewItemId);
-					var nProductionPrecedence = ProductionPrecedence[item.Production];
+					var nProductionPrecedence = _productionPrecedence[item.Production];
 					if (nPrecedence < nProductionPrecedence)
 					{
 						nPrecedence = nProductionPrecedence;
@@ -269,7 +239,7 @@ namespace CodeProject.Syntax.LALR
 		/// </summary>
 		private void GenerateLr0Items()
 		{
-			var startState = new HashSet<int> {GetLr0ItemId(new Lr0Item {Production = 0, Position = 0})};
+			var startState = new HashSet<int> {GetLr0ItemId(new Lr0Item(0, 0))};
 
 			var bIgnore = false;
 			var open = new List<int> {GetLr0StateId(Lr0Closure(startState), ref bIgnore)};
@@ -278,20 +248,20 @@ namespace CodeProject.Syntax.LALR
 			{
 				var nState = open[0];
 				open.RemoveAt(0);
-				while (LrGoto.Count <= nState)
+				while (_lrGoto.Count <= nState)
 				{
-					LrGoto.Add(new int [Grammar.Tokens.Length]);
-					GotoPrecedence.Add(new int [Grammar.Tokens.Length]);
+					_lrGoto.Add(new int [_grammar.Tokens.Length]);
+					_gotoPrecedence.Add(new int [_grammar.Tokens.Length]);
 				}
 
-				for (var nToken = 0; nToken < Grammar.Tokens.Length; nToken++)
+				for (var nToken = 0; nToken < _grammar.Tokens.Length; nToken++)
 				{
 					var bAdded = false;
 					var nPrecedence = int.MinValue;
 					var nGoto = GotoLr0(nState, nToken, ref bAdded, ref nPrecedence);
 
-					LrGoto[nState][nToken] = nGoto;
-					GotoPrecedence[nState][nToken] = nPrecedence;
+					_lrGoto[nState][nToken] = nGoto;
+					_gotoPrecedence[nState][nToken] = nPrecedence;
 
 					if (bAdded)
 					{
@@ -307,14 +277,14 @@ namespace CodeProject.Syntax.LALR
 		/// </summary>
 		private void ComputeFirstSets()
 		{
-			var nCountTokens = NonTerminals.Count + Terminals.Count;
-			FirstSets = new HashSet<int> [nCountTokens];
+			var nCountTokens = _nonTerminals.Count + _terminals.Count;
+			_firstSets = new HashSet<int> [nCountTokens];
 			for (var nIdx = 0; nIdx < nCountTokens; nIdx++)
 			{
-				FirstSets[nIdx] = new HashSet<int>();
-				if (Terminals.Contains(nIdx))
+				_firstSets[nIdx] = new HashSet<int>();
+				if (_terminals.Contains(nIdx))
 				{
-					FirstSets[nIdx].Add(nIdx);
+					_firstSets[nIdx].Add(nIdx);
 				}
 			}
 
@@ -322,7 +292,7 @@ namespace CodeProject.Syntax.LALR
 			{
 				if (production.Right.Length == 0)
 				{
-					FirstSets[production.Left].Add(-1);
+					_firstSets[production.Left].Add(-1);
 				}
 			}
 
@@ -335,13 +305,13 @@ namespace CodeProject.Syntax.LALR
 					foreach (var nToken in production.Right)
 					{
 						var bLookAhead = false;
-						foreach (var nTokenFirst in FirstSets[nToken])
+						foreach (var nTokenFirst in _firstSets[nToken])
 						{
 							if (nTokenFirst == -1)
 							{
 								bLookAhead = true;
 							}
-							else if (FirstSets[production.Left].Add(nTokenFirst))
+							else if (_firstSets[production.Left].Add(nTokenFirst))
 							{
 								bDidSomething = true;
 							}
@@ -365,7 +335,7 @@ namespace CodeProject.Syntax.LALR
 			foreach (var nToken in tokens)
 			{
 				var bLookAhead = false;
-				foreach (var nTokenFirst in FirstSets[nToken])
+				foreach (var nTokenFirst in _firstSets[nToken])
 				{
 					if (nTokenFirst == -1)
 					{
@@ -393,12 +363,12 @@ namespace CodeProject.Syntax.LALR
 		private void InitLalrTables()
 		{
 			var nLr0State = 0;
-			foreach (var unused in Lr0States)
+			foreach (var unused in _lr0States)
 			{
-				LalrStates.Add(new HashSet<int>());
+				_lalrStates.Add(new HashSet<int>());
 			}
 
-			foreach (var lr0Kernel in Lr0Kernels)
+			foreach (var lr0Kernel in _lr0Kernels)
 			{
 				var j = new HashSet<int>();
 				foreach (var jLr0ItemId in lr0Kernel)
@@ -411,21 +381,20 @@ namespace CodeProject.Syntax.LALR
 				var jPrime = Lr1Closure(j);
 				foreach (var jpLr1ItemId in jPrime)
 				{
-					var lr1Item = Lr1Items[jpLr1ItemId];
-					var lr0Item = Lr0Items[lr1Item.Lr0ItemId];
+					var lr1Item = _lr1Items[jpLr1ItemId];
+					var lr0Item = _lr0Items[lr1Item.Lr0ItemId];
 
 					if ((lr1Item.LookAhead != -1) || (nLr0State == 0))
 					{
-						LalrStates[nLr0State].Add(jpLr1ItemId);
+						_lalrStates[nLr0State].Add(jpLr1ItemId);
 					}
 
 					if (lr0Item.Position < Productions[lr0Item.Production].Right.Length)
 					{
 						var nToken = Productions[lr0Item.Production].Right[lr0Item.Position];
-						var lr0Successor = new Lr0Item
-							{Production = lr0Item.Production, Position = lr0Item.Position + 1};
+						var lr0Successor = new Lr0Item(lr0Item.Position + 1, lr0Item.Production);
 						var nLr0Successor = GetLr0ItemId(lr0Successor);
-						var nSuccessorState = LrGoto[nLr0State][nToken];
+						var nSuccessorState = _lrGoto[nLr0State][nToken];
 						if (lr1Item.LookAhead == -1)
 						{
 							AddPropagation(nLr0State, lr1Item.Lr0ItemId, nSuccessorState, nLr0Successor);
@@ -434,7 +403,7 @@ namespace CodeProject.Syntax.LALR
 						{
 							var lalrItem = new Lr1Item {Lr0ItemId = nLr0Successor, LookAhead = lr1Item.LookAhead};
 							var nLalrItemId = GetLr1ItemId(lalrItem);
-							LalrStates[nSuccessorState].Add(nLalrItemId);
+							_lalrStates[nSuccessorState].Add(nLalrItemId);
 						}
 					}
 				}
@@ -453,12 +422,12 @@ namespace CodeProject.Syntax.LALR
 			{
 				bChanged = false;
 				var nState = 0;
-				foreach (var statePropagations in LalrPropagations)
+				foreach (var statePropagations in _lalrPropagations)
 				{
 					var bStateChanged = false;
-					foreach (var nLr1Item in LalrStates[nState])
+					foreach (var nLr1Item in _lalrStates[nState])
 					{
-						var lr1Item = Lr1Items[nLr1Item];
+						var lr1Item = _lr1Items[nLr1Item];
 
 						if (statePropagations.ContainsKey(lr1Item.Lr0ItemId))
 						{
@@ -467,7 +436,7 @@ namespace CodeProject.Syntax.LALR
 								var nGoto = lalrPropagation.Lr0TargetState;
 								var item = new Lr1Item
 									{Lr0ItemId = lalrPropagation.Lr0TargetItem, LookAhead = lr1Item.LookAhead};
-								if (LalrStates[nGoto].Add(GetLr1ItemId(item)))
+								if (_lalrStates[nGoto].Add(GetLr1ItemId(item)))
 								{
 									bChanged = true;
 									bStateChanged = true;
@@ -478,7 +447,7 @@ namespace CodeProject.Syntax.LALR
 
 					if (bStateChanged)
 					{
-						LalrStates[nState] = Lr1Closure(LalrStates[nState]);
+						_lalrStates[nState] = Lr1Closure(_lalrStates[nState]);
 					}
 
 					nState++;
@@ -491,7 +460,7 @@ namespace CodeProject.Syntax.LALR
 		/// </summary>
 		private void InitSymbols()
 		{
-			for (var nSymbol = 0; nSymbol < Grammar.Tokens.Length; nSymbol++)
+			for (var nSymbol = 0; nSymbol < _grammar.Tokens.Length; nSymbol++)
 			{
 				var bTerminal = true;
 				foreach (var production in Productions)
@@ -505,11 +474,11 @@ namespace CodeProject.Syntax.LALR
 
 				if (bTerminal)
 				{
-					Terminals.Add(nSymbol);
+					_terminals.Add(nSymbol);
 				}
 				else
 				{
-					NonTerminals.Add(nSymbol);
+					_nonTerminals.Add(nSymbol);
 				}
 			}
 		}
@@ -517,14 +486,14 @@ namespace CodeProject.Syntax.LALR
 		/// <summary>
 		/// Converts an LR0 State to an LR0 Kernel consisting of only the 'initiating' LR0 Items in the state
 		/// </summary>
-		public void ConvertLr0ItemsToKernels()
+		private void ConvertLr0ItemsToKernels()
 		{
-			foreach (var lr0State in Lr0States)
+			foreach (var lr0State in _lr0States)
 			{
 				var lr0Kernel = new HashSet<int>();
 				foreach (var nLr0Item in lr0State)
 				{
-					var item = Lr0Items[nLr0Item];
+					var item = _lr0Items[nLr0Item];
 					if (item.Position != 0)
 					{
 						lr0Kernel.Add(nLr0Item);
@@ -535,7 +504,7 @@ namespace CodeProject.Syntax.LALR
 					}
 				}
 
-				Lr0Kernels.Add(lr0Kernel);
+				_lr0Kernels.Add(lr0Kernel);
 			}
 		}
 
@@ -562,28 +531,28 @@ namespace CodeProject.Syntax.LALR
 		{
 			ParseTable = new ParseTable
 			{
-				Actions = new Action[LalrStates.Count, Grammar.Tokens.Length + 1]
+				Actions = new Action[_lalrStates.Count, _grammar.Tokens.Length + 1]
 			};
-			for (var nStateId = 0; nStateId < LalrStates.Count; nStateId++)
+			for (var nStateId = 0; nStateId < _lalrStates.Count; nStateId++)
 			{
-				var lalrState = LalrStates[nStateId];
+				var lalrState = _lalrStates[nStateId];
 
-				for (var nToken = -1; nToken < Grammar.Tokens.Length; nToken++)
+				for (var nToken = -1; nToken < _grammar.Tokens.Length; nToken++)
 				{
 					var actions = new List<Action>();
 					if (nToken >= 0)
 					{
-						if (LrGoto[nStateId][nToken] >= 0)
+						if (_lrGoto[nStateId][nToken] >= 0)
 						{
 							actions.Add(new Action
-								{ActionType = ActionType.Shift, ActionParameter = LrGoto[nStateId][nToken]});
+								{ActionType = ActionType.Shift, ActionParameter = _lrGoto[nStateId][nToken]});
 						}
 					}
 
 					foreach (var nLr1ItemId in lalrState)
 					{
-						var lr1Item = Lr1Items[nLr1ItemId];
-						var lr0Item = Lr0Items[lr1Item.Lr0ItemId];
+						var lr1Item = _lr1Items[nLr1ItemId];
+						var lr0Item = _lr0Items[lr1Item.Lr0ItemId];
 
 						if ((lr0Item.Position == Productions[lr0Item.Production].Right.Length) &&
 						    lr1Item.LookAhead == nToken)
@@ -604,11 +573,11 @@ namespace CodeProject.Syntax.LALR
 						var nActionPrecedence = int.MinValue;
 						if (action.ActionType == ActionType.Shift)
 						{
-							nActionPrecedence = GotoPrecedence[nStateId][nToken]; //nToken will never be -1
+							nActionPrecedence = _gotoPrecedence[nStateId][nToken]; //nToken will never be -1
 						}
 						else if (action.ActionType == ActionType.Reduce)
 						{
-							nActionPrecedence = ProductionPrecedence[action.ActionParameter];
+							nActionPrecedence = _productionPrecedence[action.ActionParameter];
 						}
 
 						if (nActionPrecedence > nMaxPrecedence)
@@ -643,7 +612,7 @@ namespace CodeProject.Syntax.LALR
 							}
 						}
 
-						var derv = Grammar.PrecedenceGroups[-nMaxPrecedence].Derivation;
+						var derv = _grammar.PrecedenceGroups[-nMaxPrecedence].Derivation;
 						if (derv == Derivation.LeftMost && reduceActions.Count == 1)
 						{
 							ParseTable.Actions[nStateId, nToken + 1] = reduceActions[0];
@@ -682,13 +651,12 @@ namespace CodeProject.Syntax.LALR
 		private void PopulateProductions()
 		{
 			var nPrecedence = 0;
-			foreach (var oGroup in Grammar.PrecedenceGroups)
+			foreach (var oGroup in _grammar.PrecedenceGroups)
 			{
 				foreach (var oProduction in oGroup.Productions)
 				{
 					Productions.Add(oProduction);
-					ProductionPrecedence.Add(nPrecedence);
-					ProductionDerivation.Add(oGroup.Derivation);
+					_productionPrecedence.Add(nPrecedence);
 				}
 
 				nPrecedence--;
@@ -700,20 +668,19 @@ namespace CodeProject.Syntax.LALR
 		/// </summary>
 		public Parser(Grammar grammar)
 		{
-			LrGoto = new List<int[]>();
-			GotoPrecedence = new List<int[]>();
-			Lr0Items = new List<Lr0Item>();
-			Lr1Items = new List<Lr1Item>();
-			Lr0States = new List<HashSet<int>>();
-			Lr0Kernels = new List<HashSet<int>>();
-			LalrStates = new List<HashSet<int>>();
-			Terminals = new List<int>();
-			NonTerminals = new List<int>();
-			LalrPropagations = new List<Dictionary<int, List<LalrPropagation>>>();
-			Grammar = grammar;
+			_lrGoto = new List<int[]>();
+			_gotoPrecedence = new List<int[]>();
+			_lr0Items = new List<Lr0Item>();
+			_lr1Items = new List<Lr1Item>();
+			_lr0States = new List<HashSet<int>>();
+			_lr0Kernels = new List<HashSet<int>>();
+			_lalrStates = new List<HashSet<int>>();
+			_terminals = new List<int>();
+			_nonTerminals = new List<int>();
+			_lalrPropagations = new List<Dictionary<int, List<LalrPropagation>>>();
+			_grammar = grammar;
 			Productions = new List<Production>();
-			ProductionDerivation = new List<Derivation>();
-			ProductionPrecedence = new List<int>();
+			_productionPrecedence = new List<int>();
 
 			PopulateProductions();
 			InitSymbols();
