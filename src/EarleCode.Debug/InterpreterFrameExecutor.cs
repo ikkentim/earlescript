@@ -205,15 +205,27 @@ namespace EarleCode.Debug
 						if (!Run(statement.Condition, pathIndex + 1))
 							return ExecState.Pause;
 
-						if (!_arithmetic.IsTrue(Stack.Pop()))
+						var result = _arithmetic.IsTrue(Stack.Pop());
+						
+						if (result && statement.Statements == null)
 							return ExecState.Finished;
 
-						if (statement.Statements != null)
-							PushScope();
+						if (!result && statement.ElseStatements == null)
+							return ExecState.Finished;
+
+						if (!result)
+						{
+							// hacks
+							index += 100000;
+						}
+
+						PushScope();
 					}
-					else if (statement.Statements != null)
+					else
 					{
-						switch (state = RunWithState(statement.Statements[index - 1], pathIndex + 1))
+						var subStatements = index > 100000 ? statement.ElseStatements : statement.Statements;
+						var subIndex = index > 100000 ? index - 100001 : index - 1;
+						switch (state = RunWithState(subStatements[subIndex], pathIndex + 1))
 						{
 							case ExecState.Pause:
 								return ExecState.Pause;
@@ -224,11 +236,12 @@ namespace EarleCode.Debug
 								return state;
 						}
 
-						if (statement.Statements.Count == index + 1)
+						if (subStatements.Count == subIndex + 1)
+						{
 							PopScope();
+							return ExecState.Finished;
+						}
 					}
-
-					
 					break;
 				case StatementAssignments statement:
 					if (!Run(statement.Assignments[index], pathIndex + 1))
@@ -658,7 +671,7 @@ namespace EarleCode.Debug
 				case StatementFunctionCall _:
 					return 2;
 				case StatementIf statement:
-					return 1 + (statement.Statements?.Count ?? 0);
+					return int.MaxValue;//1 + (statement.Statements?.Count ?? 0);
 				case StatementDoWhile statement:
 					return 1 + (statement.Statements?.Count ?? 0);
 				case StatementWhile statement:

@@ -72,7 +72,7 @@ namespace EarleCode.Compiling
         {
             if (node.Rule == nameof(Rule.IdentifierList))
             {
-                return IsEmpty(node.Children[0]) ? null : ParseIdentifiers(node.Children[0]);
+                return node.Children.Count == 0 || IsEmpty(node.Children[0]) ? null : ParseIdentifiers(node.Children[0]);
             }
 
             if (node.Rule == nameof(Rule.IdentifierListCont))
@@ -114,7 +114,7 @@ namespace EarleCode.Compiling
 
         private static IReadOnlyList<Expression> ParseExpressionList(IInteriorNode node)
         {
-            return node.Children[0] is IInteriorNode child
+            return node.Children.Count > 0 && node.Children[0] is IInteriorNode child
                 ? Collect(child, nameof(Rule.ExpressionListCont),
                     (IInteriorNode check, List<Expression> prev) =>
                     {
@@ -147,6 +147,8 @@ namespace EarleCode.Compiling
 
         private static IASTNode Parse(IInteriorNode node)
         {
+            if (node.Children.Count == 0) node = new InteriorNode(node.Rule, new[] {new LeafNode(Token.Empty),}); // temp fix
+
             switch (node.Rule)
             {
                 case nameof(Rule.File):
@@ -239,7 +241,7 @@ namespace EarleCode.Compiling
                     return new UnboxedFunctionIdentifier(GetFilePosition(node), ParseExpression(node.Children[2]));
                 case nameof(Rule.StatementIf):
                     return new StatementIf(GetFilePosition(node), ParseExpression(node.Children[2]),
-                        new List<Statement> {Parse(node.Children[4]) as Statement});
+                        new List<Statement> {Parse(node.Children[4]) as Statement}, new List<Statement> {Parse(node.Children[6]) as Statement});
                 case nameof(Rule.StatementWhile):
                     return new StatementWhile(GetFilePosition(node), ParseExpression(node.Children[2]),
                         new List<Statement> {Parse(node.Children[4]) as Statement});
@@ -262,11 +264,11 @@ namespace EarleCode.Compiling
                     Debug.Assert(conditionNode != null, nameof(conditionNode) + " != null");
                     Debug.Assert(incrementsNode != null, nameof(incrementsNode) + " != null");
 
-                    if (assignmentsNode.Children[0] is IInteriorNode assignmentsNodeChild)
+                    if (assignmentsNode.Children.Count > 0 && assignmentsNode.Children[0] is IInteriorNode assignmentsNodeChild)
                         assignments = ParseAssignments(assignmentsNodeChild.Children[0] as IInteriorNode);
-                    if (conditionNode.Children[0] is IInteriorNode conditionNodeChild)
+                    if (conditionNode.Children.Count > 0 && conditionNode.Children[0] is IInteriorNode conditionNodeChild)
                         condition = ParseExpression(conditionNodeChild);
-                    if (incrementsNode.Children[0] is IInteriorNode incrementsNodeChild)
+                    if (incrementsNode.Children.Count > 0 && incrementsNode.Children[0] is IInteriorNode incrementsNodeChild)
                         increments = ParseAssignments(incrementsNodeChild);
 
                     return new StatementFor(GetFilePosition(node), assignments, condition, increments,

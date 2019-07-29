@@ -21,7 +21,7 @@ namespace EarleCode.Compiling
 
         public static readonly string[] Keywords =
         {
-            "include", "thread", "if", "while", "do", 
+            "include", "thread", "if", "else", "while", "do", 
             "break", "continue", "wait", "for", "return"
         };
 
@@ -33,22 +33,22 @@ namespace EarleCode.Compiling
 
 	        var cacheResource = assembly.GetManifestResourceNames().FirstOrDefault(n => n.EndsWith("slr.earle-cache"));
 
-	        SLRParser parser;
-	        if (cacheResource != null)
-	        {
-				var serializer= new CacheSerializer();
-
-		        SLRParsingTable table;
-		        using (var stream = assembly.GetManifestResourceStream(cacheResource))
-			        table = serializer.DeserializeSLRParsingTable(stream);
-
-		        parser = new SLRParser(table);
-	        }
-	        else
-	        {
+	        IParser parser;
+//	        if (cacheResource != null)
+//	        {
+//				var serializer= new CacheSerializer();
+//
+//		        SLRParsingTable table;
+//		        using (var stream = assembly.GetManifestResourceStream(cacheResource))
+//			        table = serializer.DeserializeSLRParsingTable(stream);
+//
+//		        parser = new SLRParser(table);
+//	        }
+//	        else
+//	        {
 		        var grammar = new EnumGrammar<ProductionRuleEnum>(MultiCharSymbols);
-		        parser = new SLRParser(grammar);
-	        }
+                parser = new LALRParser(grammar);
+//	        }
 
 	        Parser = new EarleParser(parser);
         }

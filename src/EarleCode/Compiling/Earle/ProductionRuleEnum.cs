@@ -69,6 +69,7 @@ namespace EarleCode.Compiling.Earle
 		[Rule("FunctionCall ;")]
 		StatementFunctionCall,
 
+		[Rule("`if` ( Expression ) Statement `else` Statement")]
 		[Rule("`if` ( Expression ) Statement")]
 		StatementIf,
 

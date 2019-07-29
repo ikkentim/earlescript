@@ -41,21 +41,29 @@ namespace EarleCode.Debug
 
 		public EarleValue BitwiseAnd(EarleValue lhs, EarleValue rhs)
 		{
+			if (lhs.Type == EarleValueType.NumberInt && rhs.Type == EarleValueType.NumberInt)
+				return new EarleValue(lhs.IntValue & rhs.IntValue);
 			throw new NotImplementedException();
 		}
 
 		public EarleValue BitwiseOr(EarleValue lhs, EarleValue rhs)
 		{
+			if (lhs.Type == EarleValueType.NumberInt && rhs.Type == EarleValueType.NumberInt)
+				return new EarleValue(lhs.IntValue | rhs.IntValue);
 			throw new NotImplementedException();
 		}
 
 		public EarleValue BitwiseXor(EarleValue lhs, EarleValue rhs)
 		{
+			if (lhs.Type == EarleValueType.NumberInt && rhs.Type == EarleValueType.NumberInt)
+				return new EarleValue(lhs.IntValue ^ rhs.IntValue);
 			throw new NotImplementedException();
 		}
 
 		public EarleValue Divide(EarleValue lhs, EarleValue rhs)
 		{
+			if (lhs.Type == EarleValueType.NumberInt && rhs.Type == EarleValueType.NumberInt)
+				return new EarleValue(lhs.IntValue / rhs.IntValue);
 			throw new NotImplementedException();
 		}
 		
@@ -122,11 +130,15 @@ namespace EarleCode.Debug
 
 		public EarleValue Modulo(EarleValue lhs, EarleValue rhs)
 		{
+			if (lhs.Type == EarleValueType.NumberInt && rhs.Type == EarleValueType.NumberInt)
+				return new EarleValue(lhs.IntValue % rhs.IntValue);
 			throw new NotImplementedException();
 		}
 
 		public EarleValue Multiply(EarleValue lhs, EarleValue rhs)
 		{
+			if (lhs.Type == EarleValueType.NumberInt && rhs.Type == EarleValueType.NumberInt)
+				return new EarleValue(lhs.IntValue * rhs.IntValue);
 			throw new NotImplementedException();
 		}
 
@@ -137,16 +149,22 @@ namespace EarleCode.Debug
 
 		public EarleValue ShiftLeft(EarleValue lhs, EarleValue rhs)
 		{
+			if (lhs.Type == EarleValueType.NumberInt && rhs.Type == EarleValueType.NumberInt)
+				return new EarleValue(lhs.IntValue << rhs.IntValue);
 			throw new NotImplementedException();
 		}
 
 		public EarleValue ShiftRight(EarleValue lhs, EarleValue rhs)
 		{
+			if (lhs.Type == EarleValueType.NumberInt && rhs.Type == EarleValueType.NumberInt)
+				return new EarleValue(lhs.IntValue >> rhs.IntValue);
 			throw new NotImplementedException();
 		}
 
 		public EarleValue Subtract(EarleValue lhs, EarleValue rhs)
 		{
+			if (lhs.Type == EarleValueType.NumberInt && rhs.Type == EarleValueType.NumberInt)
+				return new EarleValue(lhs.IntValue - rhs.IntValue);
 			throw new NotImplementedException();
 		}
 
