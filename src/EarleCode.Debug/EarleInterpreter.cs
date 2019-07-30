@@ -38,7 +38,7 @@ namespace EarleCode.Debug
 			return new EarleFile(this, file);
 		}
 
-		private EarleFile GetFile(string path)
+		public EarleFile GetFile(string path)
 		{
 			if (path == null) throw new ArgumentNullException(nameof(path));
 

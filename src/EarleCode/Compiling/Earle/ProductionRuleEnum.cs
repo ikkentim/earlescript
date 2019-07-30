@@ -171,14 +171,50 @@ namespace EarleCode.Compiling.Earle
 		[Rule("PrefixAdditionAssignment")]
 		[Rule("PostfixSubtractionAssignment")]
 		[Rule("PrefixSubtractionAssignment")]
+		[Rule("OrAssignment")]
+		[Rule("AndAssignment")]
+		[Rule("XorAssignment")]
+		[Rule("LeftShiftAssignment")]
+		[Rule("RightShiftAssignment")]
 		[Rule("AdditionAssignment")]
+		[Rule("SubtractionAssignment")]
+		[Rule("MultiplicationAssignment")]
+		[Rule("DivisionAssignment")]
+		[Rule("ModuloAssignment")]
 		Assignment,
 
 		[Rule("Variable = Expression")]
 		VariableAssignment,
 
+		[Rule("Variable |= Expression")]
+		OrAssignment,
+		
+		[Rule("Variable &= Expression")]
+		AndAssignment,
+		
+		[Rule("Variable ^= Expression")]
+		XorAssignment,
+		
+		[Rule("Variable <<= Expression")]
+		LeftShiftAssignment,
+		
+		[Rule("Variable >>= Expression")]
+		RightShiftAssignment,
+		
 		[Rule("Variable += Expression")]
-		AdditionAssignment, // TODO: Other opterators
+		AdditionAssignment,
+		
+		[Rule("Variable -= Expression")]
+		SubtractionAssignment,
+
+		[Rule("Variable *= Expression")]
+		MultiplicationAssignment,
+		
+		[Rule("Variable /= Expression")] 
+		DivisionAssignment,
+
+		[Rule("Variable %= Expression")] 
+		ModuloAssignment,
 
 		[Rule("Variable ++")]
 		PostfixAdditionAssignment,
@@ -196,6 +232,7 @@ namespace EarleCode.Compiling.Earle
 		[Rule("StringLiteral")]
 		[Rule("NumberLiteral")]
 		// TODO: vectors
+		// TODO: keywords (true false undefined)
 		Value,
 
 		[Rule("Assignment")]
@@ -254,7 +291,7 @@ namespace EarleCode.Compiling.Earle
 		[Rule("(Expression)")]
 		[Rule("Value")]
 		[Rule("FunctionCall")]
-		Expression12, // Brackets and values
+		Expression12 // Brackets and values
 
 	}
 }

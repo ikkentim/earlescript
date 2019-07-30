@@ -1,0 +1,319 @@
+#include \included;
+
+main()
+{
+    /* multiline comment
+     
+     // don't bother with this
+     
+     */
+    
+    // StatementBlock
+    {
+        print("In a StatementBlock");
+    }
+    
+    // StatementFunctionCall
+    fun();
+    funAb(1, "hello");
+    funIncluded();
+    
+    // StatementIf
+    if(1)
+    {
+        print("if true");
+    }
+    
+    if(1)
+        print("if true else");
+    else
+        print("ERROR else");
+    
+    if(0)
+        print("ERROR if");
+    else
+        print("if false else");
+    
+    // StatementWhile
+    i=0;
+    while(i < 4)
+    {
+        print("while " + i + " < 4");
+        i++;
+    }
+    
+    // StatementDoWhile
+    i = 0;
+    do
+    {
+        print("do while " + i + " < 4");
+        i++;
+    } while(i < 4);
+    
+    do
+    {
+        print("do while " + i + " < 2");
+        i++;
+    } while(i < 2);
+    
+    // StatementBreak
+    while(i < 1000)
+    {
+        print("while i < 1000 break");
+        break;
+    }
+    
+    // StatementContinue
+    i=0;
+    while(i < 4)
+    {
+        if(i == 2) continue;
+        print("while i < 4, if i == 2 continue");
+    }
+    
+    // StatementWait
+    print("Waiting 1");
+    wait 1;
+    print("Waited 1");
+    
+    // StatementAssignments
+    a=1;
+    b=1,c="three";
+    print("a should be 1, is " + a);
+    print("b should be 2, is " + b);
+    print("c should be three, is " + c);
+    
+    // StatementFor
+    i=0;
+    for(;;)
+    {
+        print("forever but break after 2");
+
+        i++;
+        if(i == 2) // TODO: if(++i == 2) fails to parse
+            break;
+    }
+    
+    for(i = 0; i < 5; i++)
+    {
+        print("(i=0;i<5;i++): " + i);
+    }
+    
+    for(;i < 10;)
+    {
+        print("(;i<10;): " + i);
+        i++;
+    }
+    
+    // StatementReturn
+    funRet();
+    print(funRetVal(9) + "should be 9");
+    
+    // ExplicitFunctionIdentifier
+    f = ::fun;
+    e = \included2::funIncluded2;
+    
+    // UnboxedFunctionIdentifier
+    [[f]]();
+    [[e]]();
+    
+    // TargetlessFunctionCall
+    funSelf();
+    
+    // TargetedFunctionCall
+    x = 6;
+    x funSelf();
+    
+    // TargetlessThreadedFunctionCall
+    thread funSelfWait();
+    
+    // TargetedThreadedFunctionCall
+    x thread funSelfWait();
+    
+    // ExpressionList
+    funAbc("alpha", "bravo", "charly");
+    
+    // Variable
+    var = 44;
+    print("var is " + var + " == 44");
+    // TODO: objects and arrays
+    
+    // VariableAssignment
+    a=9;
+    b=11,c="seven";
+    print("a should be 9, is " + a);
+    print("b should be 11, is " + b);
+    print("c should be seven, is " + c);
+    
+    // AdditionAssignment
+    a += 4, b += 9;
+    print("a should be 13, is " + a);
+    print("b should be 20, is " + b);
+    
+    // OrAssignment
+    a = 9;
+    a |= 7;
+    print("a should be 15, is " + a);
+    
+    // AndAssignment
+    a = 10;
+    a &= 9;
+    print("a should be 8, is " + a);
+    
+    // XorAssignment
+    a = 3;
+    a ^= 5;
+    print("a should be 6, is " + a);
+    
+    // LeftShiftAssignment
+    a = 4;
+    a <<= 2;
+    print("a should be 16, is " + a);
+    
+    // RightShiftAssignment
+    a = 32;
+    a <<= 2;
+    print("a should be 8, is " + a);
+    
+    // SubtractionAssignment
+    a = 20;
+    a -= 6;
+    print("a should be 14, is " + a);
+    
+    // MultiplicationAssignment
+    a = 4;
+    a *= 3;
+    print("a should be 12, is " + a);
+    
+    // DivisionAssignment
+    a = 20;
+    a /= 5;
+    print("a should be 4, is " + a);
+    
+    // ModuloAssignment
+    a = 15;
+    a -= 4;
+    print("a should be 3, is " + a);
+    
+    // PostfixAdditionAssignment
+    a = 3;
+    b = a++;
+    print("a should be 4, is " + a);
+    print("b should be 3, is " + b);
+    
+    // PrefixAdditionAssignment
+    a = 3;
+    b = ++a;
+    print("a should be 4, is " + a);
+    print("b should be 4, is " + b);
+    
+    // PostfixSubtractionAssignment
+    a = 3;
+    b = a--;
+    print("a should be 2, is " + a);
+    print("b should be 3, is " + b);
+    
+    // PrefixSubtractionAssignment
+    a = 3;
+    b = --a;
+    print("a should be 2, is " + a);
+    print("b should be 2, is " + b);
+    
+    // Value
+    print("string and int");
+    print("string");
+    print(4567);
+    
+    // Expression, assignment
+    print((a = 99) + " == (a = 99) == 99");
+    
+    // Expression2, logical OR
+    print((1 || 0) + " == (1 || 0) == true");
+    print((0 || 0) + " == (0 || 0) == false");
+    
+    // Expression3, logical AND
+    print((1 && 1) + " == (1 && 1) == true");
+    print((1 && 0) + " == (1 && 0) == false");
+    
+    // Expression4 bitwise OR
+    print((1 | 4) + " == (1 | 4) == 5");
+    
+    // Expression5 bitwise XOR
+    print((3 ^ 5) + " == (3 ^ 5) == 6");
+    
+    // Expression6 bitwise AND
+    print((3 & 5) + " == (3 & 5) == 1");
+    
+    // Expression7 equality
+    print((3 == 3) + " == (3 == 3) == true");
+    print((3 != 3) + " == (3 != 3) == false");
+    
+    // Expression8 relational
+    print((2 < 3) + " == (2 < 3) == true");
+    print((2 > 3) + " == (2 > 3) == false");
+    print((2 <= 3) + " == (2 <= 3) == true");
+    print((2 >= 3) + " == (2 >= 3) == false");
+    
+    // Expression9 shift
+    print((2 << 3) + " == (2 << 3) == 16");
+    print((16 >> 3) + " == (16 >> 3) == 2");
+    
+    // Expression10 additive
+    print((2 + 3) + " == (2 + 3) == 5");
+    print((16 - 3) + " == (16 - 3) == 13");
+    
+    // Expression11 multiplicative
+    print((2 * 3) + " == (2 * 3) == 6");
+    print((12 / 3) + " == (12 / 3) == 4");
+    print((15 % 4) + " == (15 / 4) == 3");
+    
+    // Expression12 multiplicative
+    print(::fun + " == ExplicitFunctionIdentifier");
+    print((4) + " is 4 between ( )");
+    a = 19;
+    print((a) + " is a between ( )");
+    print("hello" + " is a value");
+    print(7 + " is a value");
+    print(funRetVal(123) + " is a return value of  funRetVal(123)");
+}
+
+funSelf()
+{
+    print("Self is " + self);
+}
+
+funSelfWait()
+{
+    print("Self is (waiting...)");
+    
+    wait 0.1;
+    
+    print("Self is (after wait) " + self);
+}
+
+funRetVal(val)
+{
+    return val;
+}
+
+funRet()
+{
+    print("before return");
+    return;
+    print("ERROR return");
+}
+
+fun()
+{
+    print("fun");
+}
+
+funAb(a, b)
+{
+    print("funAb: a: " + a + " b: " + b);
+}
+
+funAb(a, b, c)
+{
+    print("funAbc: a: " + a + " b: " + b + " c: " + c);
+}

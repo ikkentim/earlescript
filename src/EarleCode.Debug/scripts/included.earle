@@ -1,0 +1,4 @@
+funIncluded()
+{
+    print("fun included");
+}

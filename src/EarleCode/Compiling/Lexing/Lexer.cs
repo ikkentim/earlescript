@@ -28,7 +28,8 @@ namespace EarleCode.Compiling.Lexing
 	{
 		private readonly string[] _keywords;
 		private readonly string[] _multiCharSymbols;
-
+		private readonly int _maxMultiCharSymbolLength;
+		
 		private readonly List<TokenTypeData> _tokenTypes = new List<TokenTypeData>();
 
 		/// <summary>
@@ -38,7 +39,15 @@ namespace EarleCode.Compiling.Lexing
 		/// <param name="keywords">Keywords to be detected.</param>
 		public Lexer(string[] multiCharSymbols, string[] keywords)
 		{
+			if(multiCharSymbols == null)
+				multiCharSymbols = new string[0];
+			
+			if(keywords == null)
+				keywords= new string[0];
+			
 			_multiCharSymbols = multiCharSymbols;
+			_maxMultiCharSymbolLength = _multiCharSymbols.Max(s => s.Length);
+				
 			_keywords = keywords;
 
 			SetRegex(new Dictionary<TokenType, Regex>
@@ -134,11 +143,23 @@ namespace EarleCode.Compiling.Lexing
 					continue;
 
 				// If no token type was found, a symbol must follow.
-				// TODO: Support _multiCharSymbols with lengths other than 2.
-				var doubleToken = _multiCharSymbols != null && input.Length > position.Caret + 1 ? input.Substring(position.Caret, 2) : null;
-				var token = doubleToken != null && doubleToken.Length > 1 && _multiCharSymbols.Contains(doubleToken)
-					? doubleToken
-					: input.Substring(position.Caret, 1);
+				string token = null;
+				for (var l = _maxMultiCharSymbolLength; l > 1; l--)
+				{
+					if (input.Length < position.Caret + l)
+						continue;
+
+					var symbol = input.Substring(position.Caret, l);
+
+					if (!_multiCharSymbols.Contains(symbol))
+						continue;
+
+					token = symbol;
+					break;
+				}
+
+				if (token == null)
+					token = input.Substring(position.Caret, 1);
 
 				yield return new Token(default(TokenType), token, file, position.Line, position.Column);
 

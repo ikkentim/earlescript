@@ -6,8 +6,8 @@ namespace EarleCode.Compiling.Earle.AST
 {
     public class StatementFor : Statement, IASTStatements
     {
-        public StatementFor(FilePosition filePosition, IReadOnlyList<AssignmentExpression> assignments,
-            Expression condition, IReadOnlyList<AssignmentExpression> increments, IReadOnlyList<Statement> statements) :
+        public StatementFor(FilePosition filePosition, IReadOnlyList<Expression> assignments,
+            Expression condition, IReadOnlyList<Expression> increments, IReadOnlyList<Statement> statements) :
             base(filePosition)
         {
             Assignments = assignments;
@@ -16,9 +16,9 @@ namespace EarleCode.Compiling.Earle.AST
             Statements = statements;
         }
 
-        public IReadOnlyList<AssignmentExpression> Assignments { get; }
+        public IReadOnlyList<Expression> Assignments { get; }
         public Expression Condition { get; }
-        public IReadOnlyList<AssignmentExpression> Increments { get; }
+        public IReadOnlyList<Expression> Increments { get; }
         public IReadOnlyList<Statement> Statements { get; }
         
         public override string ToString()

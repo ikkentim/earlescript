@@ -12,8 +12,8 @@ namespace EarleCode.Compiling.Parsing
 {
     public class LALRParser : IParser
     {
-	    private Parser _parser;
-	    private string[] _tokens;
+	    private readonly Parser _parser;
+	    private readonly string[] _tokens;
 	    
 	    public LALRParser(IGrammar grammar)
 	    {
@@ -37,9 +37,9 @@ namespace EarleCode.Compiling.Parsing
 		     _parser = new Parser(ConvertGrammar(grammar, _tokens));
 	    }
 
-	    private static CodeProject.Syntax.LALR.Grammar ConvertGrammar(IGrammar grammar, string[] tokens)
+	    private static CodeProject.Grammar ConvertGrammar(IGrammar grammar, string[] tokens)
 	    {
-		    var result = new CodeProject.Syntax.LALR.Grammar();
+		    var result = new CodeProject.Grammar();
 		    var names = Enum.GetNames(typeof(ProductionRuleEnum));
 
 		    result.PrecedenceGroups = names.Select(name => new PrecedenceGroup

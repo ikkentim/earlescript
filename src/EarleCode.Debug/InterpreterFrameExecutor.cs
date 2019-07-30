@@ -378,7 +378,7 @@ namespace EarleCode.Debug
 						if (index == 0 && !continuation)
 							PushScope();
 						
-						switch (RunWithState(statement.Statements[index], pathIndex + 1))
+						switch (RunWithState(statement.Statements[index - 1], pathIndex + 1))
 						{
 							case ExecState.Pause:
 								return ExecState.Pause;
@@ -422,6 +422,23 @@ namespace EarleCode.Debug
 						{
 							case ImplicitFunctionIdentifier impl:
 								callingFunction = Function.File[impl.Name] ?? Interpreter.GetFunction(impl.Name);
+								if (callingFunction == null)
+								{
+									// TODO: This should be in a table
+									foreach (var inc in Function.File.Node.Includes)
+									{
+										var file = Interpreter.GetFile(inc.Path);
+										if (file == null)
+										{
+											throw new Exception("Included not found");
+										}
+
+										callingFunction = file[impl.Name];
+
+										if (callingFunction != null)
+											break;
+									}
+								}
 								break;
 							case ExplicitFunctionIdentifier _:
 							case UnboxedFunctionIdentifier _:
@@ -699,6 +716,21 @@ namespace EarleCode.Debug
 				case ExplicitFunctionIdentifierExpression _:
 				case ValueExpression _:
 				case VariableExpression _:
+					
+				case OrAssignmentExpression _:
+				case AndAssignmentExpression _:
+				case XorAssignmentExpression _:
+				case LeftShiftAssignmentExpression _:
+				case RightShiftAssignmentExpression _:
+				case AdditionAssignmentExpression _:
+				case SubtractionAssignmentExpression _:
+				case MultiplicationAssignmentExpression _:
+				case DivisionAssignmentExpression _:
+				case ModuloAssignmentExpression _:
+				case PostfixAdditionAssignmentExpression _:
+				case PrefixAdditionAssignmentExpression _:
+				case PostfixSubtractionAssignmentExpression _:
+				case PrefixSubtractionAssignmentExpression _:
 					return 1;
 
 				#endregion

@@ -24,6 +24,7 @@ using System.Text;
 using System.Threading;
 using EarleCode.Compiling;
 using EarleCode.Compiling.Earle;
+using EarleCode.Compiling.Lexing;
 using EarleCode.Compiling.Parsing;
 using EarleCode.Compiling.Parsing.Grammars;
 
@@ -124,7 +125,9 @@ namespace EarleCode.Debug
 			var buildInterpreter = sw.Elapsed;
 
 			sw.Restart();
-			var mainFn = interpreter["\\main"]["main"];
+			//var mainFn = interpreter["\\main"]["main"];
+			var mainFn = interpreter["\\allfeatures"]["main"];
+
 			sw.Stop();
 			var compiling = sw.Elapsed;
 

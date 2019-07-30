@@ -249,6 +249,7 @@ namespace EarleCode.Compiling
                     return new StatementDoWhile(GetFilePosition(node), ParseExpression(node.Children[4]),
                         new List<Statement> {Parse(node.Children[1]) as Statement});
                 case nameof(Rule.StatementWait):
+                    return new StatementWait(GetFilePosition(node), ParseExpression(node.Children[1]));
                 case nameof(Rule.StatementAssignments):
                     return new StatementAssignments(GetFilePosition(node), ParseAssignments(node.Children[0] as IInteriorNode));
                 case nameof(Rule.StatementFor):
@@ -256,9 +257,9 @@ namespace EarleCode.Compiling
                     var conditionNode = node.Children[4] as IInteriorNode;
                     var incrementsNode = node.Children[6] as IInteriorNode;
 
-                    IReadOnlyList<AssignmentExpression> assignments = null;
+                    IReadOnlyList<Expression> assignments = null;
                     Expression condition = null;
-                    IReadOnlyList<AssignmentExpression> increments = null;
+                    IReadOnlyList<Expression> increments = null;
 
                     Debug.Assert(assignmentsNode != null, nameof(assignmentsNode) + " != null");
                     Debug.Assert(conditionNode != null, nameof(conditionNode) + " != null");
@@ -278,12 +279,12 @@ namespace EarleCode.Compiling
             }
         }
 
-        private static AssignmentExpression ParseAssignment(INode node)
+        private static Expression ParseAssignment(INode node)
         {
             return ParseAssignment(node as IInteriorNode);
         }
 
-        private static AssignmentExpression ParseAssignment(IInteriorNode node)
+        private static Expression ParseAssignment(IInteriorNode node)
         {
             switch (node.Rule)
             {
@@ -291,27 +292,49 @@ namespace EarleCode.Compiling
                     return ParseAssignment(node.Children[0]);
                 case nameof(Rule.VariableAssignment):
                     return new AssignmentExpression(GetFilePosition(node), ParseVariable(node.Children[0]), ParseExpression(node.Children[2]));
-                case nameof(Rule.PostfixAdditionAssignment):
-                case nameof(Rule.PrefixAdditionAssignment):
-                case nameof(Rule.PostfixSubtractionAssignment):
-                case nameof(Rule.PrefixSubtractionAssignment):
+                case nameof(Rule.OrAssignment):
+                    return new OrAssignmentExpression(GetFilePosition(node), ParseVariable(node.Children[0]), ParseExpression(node.Children[2]));
+                case nameof(Rule.AndAssignment):
+                    return new AndAssignmentExpression(GetFilePosition(node), ParseVariable(node.Children[0]), ParseExpression(node.Children[2]));
+                case nameof(Rule.XorAssignment):
+                    return new XorAssignmentExpression(GetFilePosition(node), ParseVariable(node.Children[0]), ParseExpression(node.Children[2]));
+                case nameof(Rule.LeftShiftAssignment):
+                    return new LeftShiftAssignmentExpression(GetFilePosition(node), ParseVariable(node.Children[0]), ParseExpression(node.Children[2]));
+                case nameof(Rule.RightShiftAssignment):
+                    return new RightShiftAssignmentExpression(GetFilePosition(node), ParseVariable(node.Children[0]), ParseExpression(node.Children[2]));
                 case nameof(Rule.AdditionAssignment):
-                    throw new NotImplementedException(); //todo
+                    return new AdditionAssignmentExpression(GetFilePosition(node), ParseVariable(node.Children[0]), ParseExpression(node.Children[2]));
+                case nameof(Rule.SubtractionAssignment):
+                    return new SubtractionAssignmentExpression(GetFilePosition(node), ParseVariable(node.Children[0]), ParseExpression(node.Children[2]));
+                case nameof(Rule.MultiplicationAssignment):
+                    return new MultiplicationAssignmentExpression(GetFilePosition(node), ParseVariable(node.Children[0]), ParseExpression(node.Children[2]));
+                case nameof(Rule.DivisionAssignment):
+                    return new DivisionAssignmentExpression(GetFilePosition(node), ParseVariable(node.Children[0]), ParseExpression(node.Children[2]));
+                case nameof(Rule.ModuloAssignment):
+                    return new ModuloAssignmentExpression(GetFilePosition(node), ParseVariable(node.Children[0]), ParseExpression(node.Children[2]));
+                case nameof(Rule.PostfixAdditionAssignment):
+                    return new PostfixAdditionAssignmentExpression(GetFilePosition(node), ParseVariable(node.Children[0]));
+                case nameof(Rule.PrefixAdditionAssignment):
+                    return new PrefixAdditionAssignmentExpression(GetFilePosition(node), ParseVariable(node.Children[1]));
+                case nameof(Rule.PostfixSubtractionAssignment):
+                    return new PostfixSubtractionAssignmentExpression(GetFilePosition(node), ParseVariable(node.Children[0]));
+                case nameof(Rule.PrefixSubtractionAssignment):
+                    return new PrefixSubtractionAssignmentExpression(GetFilePosition(node), ParseVariable(node.Children[1]));
                 default:
                     throw new ParserException();
             }
         }
 
-        private static IReadOnlyList<AssignmentExpression> ParseAssignments(IInteriorNode node)
+        private static IReadOnlyList<Expression> ParseAssignments(IInteriorNode node)
         {
             return Collect(node, nameof(Rule.Assignments),
-                (IInteriorNode node1, List<AssignmentExpression> prev) =>
+                (IInteriorNode node1, List<Expression> prev) =>
                 {
                     prev.Add(ParseAssignment(node1));
 
                     return prev;
                 },
-                new List<AssignmentExpression>());
+                new List<Expression>());
         }
 
         private static bool IsExpression(IInteriorNode node)

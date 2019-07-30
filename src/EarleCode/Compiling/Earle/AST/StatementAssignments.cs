@@ -6,12 +6,12 @@ namespace EarleCode.Compiling.Earle.AST
 {
     public class StatementAssignments : Statement
     {
-        public StatementAssignments(FilePosition filePosition, IReadOnlyList<AssignmentExpression> assignments) : base(filePosition)
+        public StatementAssignments(FilePosition filePosition, IReadOnlyList<Expression> assignments) : base(filePosition)
         {
             Assignments = assignments;
         }
 
-        public IReadOnlyList<AssignmentExpression> Assignments { get; }
+        public IReadOnlyList<Expression> Assignments { get; }
 
         public override string ToString()
         {
