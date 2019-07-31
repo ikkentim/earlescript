@@ -11,15 +11,27 @@ using Rule = EarleCode.Compiling.Earle.ProductionRuleEnum;
 
 namespace EarleCode.Compiling
 {
+    /// <summary>
+    /// Represents the Earle parser which can convert a lexed stream of tokens to an Earle abstract syntax tree (AST).
+    /// </summary>
     public class EarleParser
     {
         private readonly IParser _parser;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EarleParser"/> class with the specified code <paramref name="parser"/>.
+        /// </summary>
+        /// <param name="parser">The parser to use for building the intermediate parse tree.</param>
         public EarleParser(IParser parser)
         {
             _parser = parser ?? throw new ArgumentNullException(nameof(parser));
         }
 
+        /// <summary>
+        /// Parses the specified array of tokens to an Earle AST.
+        /// </summary>
+        /// <param name="tokens">The tokens to parse.</param>
+        /// <returns>The created abstract syntax tree.</returns>
         public ProgramFile Parse(Token[] tokens)
         {
             var tree = _parser.Parse(tokens) as IInteriorNode;
@@ -96,15 +108,17 @@ namespace EarleCode.Compiling
         {
             if (node == null) throw new ArgumentNullException(nameof(node));
 
-            if (node.Rule == nameof(Rule.Path))
-                return "\\" + ParsePath(node.Children.Last());
-            if (node.Rule == nameof(Rule.PathCont))
-                if (node.Children.Count == 1)
+            switch (node.Rule)
+            {
+                case nameof(Rule.Path):
+                    return "\\" + ParsePath(node.Children.Last());
+                case nameof(Rule.PathCont) when node.Children.Count == 1:
                     return ParseValue(node.Children[0]);
-                else if (node.Children.Count == 3)
+                case nameof(Rule.PathCont) when node.Children.Count == 3:
                     return ParsePath(node.Children[0]) + "\\" + ParseValue(node.Children[2]);
-
-            throw new ParserException();
+                default:
+                    throw new ParserException();
+            }
         }
 
         private static IReadOnlyList<Expression> ParseExpressionList(INode node)
@@ -129,14 +143,18 @@ namespace EarleCode.Compiling
 
         private static FilePosition GetFilePosition(INode node)
         {
-            switch (node)
+            while (true)
             {
-                case ILeafNode leaf:
-                    return leaf.Token.Position;
-                case IInteriorNode interior:
-                    return GetFilePosition(interior.Children[0]);
-                default:
-                    throw new ParserException();
+                switch (node)
+                {
+                    case ILeafNode leaf:
+                        return leaf.Token.Position;
+                    case IInteriorNode interior:
+                        node = interior.Children[0];
+                        continue;
+                    default:
+                        throw new ParserException();
+                }
             }
         }
 

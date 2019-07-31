@@ -27,6 +27,7 @@ using EarleCode.Compiling.Earle;
 using EarleCode.Compiling.Lexing;
 using EarleCode.Compiling.Parsing;
 using EarleCode.Compiling.Parsing.Grammars;
+using EarleCode.Interpreter;
 
 namespace EarleCode.Debug
 {
@@ -129,7 +130,7 @@ namespace EarleCode.Debug
 
 			interpreter.Natives.Register("print", 1, (a) =>
 			{
-				Console.WriteLine(a[0].Convert(EarleValueType.String).StringValue);
+				//Console.WriteLine(a[0].Convert(EarleValueType.String).StringValue);
 				return EarleValue.Null;
 			});
 			
@@ -143,8 +144,8 @@ namespace EarleCode.Debug
 			var buildInterpreter = sw.Elapsed;
 
 			sw.Restart();
-			//var mainFn = interpreter["\\main"]["main"];
-			var mainFn = interpreter["\\allfeatures"]["main"];
+			var mainFn = interpreter["\\main"]["main"];
+			//var mainFn = interpreter["\\allfeatures"]["main"];
 
 			sw.Stop();
 			var compiling = sw.Elapsed;
