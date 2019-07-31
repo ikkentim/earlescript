@@ -105,6 +105,18 @@ namespace EarleCode.Debug
 		{
 			yield return null;
 		}
+		
+		private static IEnumerator Wait(EarleValue[] args)
+		{
+			var sw = new Stopwatch();
+			sw.Start();
+
+			var delay = args[0];
+			var delayF = delay.Type == EarleValueType.NumberFloat ? delay.FloatValue : (float) delay.IntValue;
+
+			while (sw.Elapsed.TotalSeconds < delayF)
+				yield return null;
+		}
 
 		private static void PerformanceTest()
 		{
@@ -120,6 +132,12 @@ namespace EarleCode.Debug
 				Console.WriteLine(a[0].Convert(EarleValueType.String).StringValue);
 				return EarleValue.Null;
 			});
+			
+			// Register a "waittick" function which halts execution for one game tick
+			interpreter.Natives.Register("waittick", 0, (Func<EarleValue[], IEnumerator>) WaitOneFrame);
+			
+			// Register a "wait" function to implement the wait statement
+			interpreter.Natives.Register("wait", 1, (Func<EarleValue[], IEnumerator>) Wait);
 
 			sw.Stop();
 			var buildInterpreter = sw.Elapsed;
@@ -133,6 +151,15 @@ namespace EarleCode.Debug
 
 			sw.Restart();
 			var ok = interpreter.Invoke(mainFn, out var res);
+
+			if (!ok)
+			{
+				while (interpreter.Tick())
+				{
+					Thread.Sleep(50);
+				}
+			}
+			
 			sw.Stop();
 			var running = sw.Elapsed;
 

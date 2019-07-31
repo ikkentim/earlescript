@@ -142,7 +142,7 @@ namespace EarleCode.Debug
 			{
 				case FunctionDeclaration decl:
 					if(index == 0 && !continuation)
-					PushScope();
+						PushScope();
 
 					switch (RunWithState(decl.Statements[index], pathIndex + 1))
 					{
@@ -157,7 +157,7 @@ namespace EarleCode.Debug
 					}
 
 					if(index + 1 == decl.Statements.Count)
-					PopScope();
+						PopScope();
 					break;
 
 				#region Statements
@@ -375,7 +375,7 @@ namespace EarleCode.Debug
 					}
 					else
 					{
-						if (index == 0 && !continuation)
+						if (index == 1 && !continuation)
 							PushScope();
 						
 						switch (RunWithState(statement.Statements[index - 1], pathIndex + 1))
@@ -390,11 +390,11 @@ namespace EarleCode.Debug
 								return ExecState.Finished;
 							case ExecState.Continue:
 								PopScope();
-								index = statement.Statements.Count;
+								index = 0;
 								return ExecState.Normal;
 						}
 
-						if (statement.Statements.Count == index + 1)
+						if (statement.Statements.Count == index)
 						{
 							PopScope();
 							index = 0;
@@ -469,6 +469,36 @@ namespace EarleCode.Debug
 						SubFrame = frame;
 
 						return ExecState.Finished;
+					}
+
+					break;
+				case StatementWait expression:
+					switch (index)
+					{
+						case 0 when !Run(expression.Delay, pathIndex + 1):
+							return ExecState.Pause;
+						case 1:
+						{
+							IEarleFunction callingFunction = Interpreter.GetFunction("wait");
+
+							if (callingFunction == null)
+							{
+								// TODO: More error info
+								throw new RuntimeException("Function not found: wait");
+							}
+
+							var args = new EarleValue[1];
+							args[0] = Stack.Pop();
+
+							var frame = callingFunction.GetFrameExecutor(args);
+
+							SubFrame = frame;
+							break;
+						}
+
+						case 2:
+							Stack.Pop();
+							return ExecState.Finished;
 					}
 
 					break;
@@ -616,6 +646,38 @@ namespace EarleCode.Debug
 				case VariableExpression expression:
 					Stack.Push(Scopes.Peek()[expression.Variable.Name]);
 					break;
+				case PostfixAdditionAssignmentExpression expression:
+				{
+					var value = Scopes.Peek()[expression.Variable.Name];
+					Stack.Push(value);
+					value = _arithmetic.Add(value, new EarleValue(1));
+					Scopes.Peek()[expression.Variable.Name] = value;
+					break;
+				}
+				case PostfixSubtractionAssignmentExpression expression:
+				{
+					var value = Scopes.Peek()[expression.Variable.Name];
+					Stack.Push(value);
+					value = _arithmetic.Subtract(value, new EarleValue(1));
+					Scopes.Peek()[expression.Variable.Name] = value;
+					break;
+				}
+				case PrefixAdditionAssignmentExpression expression:
+				{
+					var value = Scopes.Peek()[expression.Variable.Name];
+					value = _arithmetic.Add(value, new EarleValue(1));
+					Stack.Push(value);
+					Scopes.Peek()[expression.Variable.Name] = value;
+					break;
+				}
+				case PrefixSubtractionAssignmentExpression expression:
+				{
+					var value = Scopes.Peek()[expression.Variable.Name];
+					value = _arithmetic.Subtract(value, new EarleValue(1));
+					Stack.Push(value);
+					Scopes.Peek()[expression.Variable.Name] = value;
+					break;
+				}
 
 				#endregion
 
@@ -688,7 +750,7 @@ namespace EarleCode.Debug
 				case StatementFunctionCall _:
 					return 2;
 				case StatementIf statement:
-					return int.MaxValue;//1 + (statement.Statements?.Count ?? 0);
+					return int.MaxValue;// Let implementation decide because if/else branch is unknown
 				case StatementDoWhile statement:
 					return 1 + (statement.Statements?.Count ?? 0);
 				case StatementWhile statement:
@@ -708,6 +770,8 @@ namespace EarleCode.Debug
 
 				case FunctionCall call:
 					return (call.Arguments?.Count ?? 0) + 1;
+				case StatementWait _:
+					return 3; // expression + call + stack pop
 				case BinaryExpression _:
 					return 2;
 				case StringExpression _:
@@ -716,7 +780,6 @@ namespace EarleCode.Debug
 				case ExplicitFunctionIdentifierExpression _:
 				case ValueExpression _:
 				case VariableExpression _:
-					
 				case OrAssignmentExpression _:
 				case AndAssignmentExpression _:
 				case XorAssignmentExpression _:
@@ -732,7 +795,6 @@ namespace EarleCode.Debug
 				case PostfixSubtractionAssignmentExpression _:
 				case PrefixSubtractionAssignmentExpression _:
 					return 1;
-
 				#endregion
 
 				default:
