@@ -49,8 +49,9 @@ namespace EarleCode.Debug
 
 			public string Name { get; }
 
-			public IFrameExecutor GetFrameExecutor(EarleValue[] args)
+			public IFrameExecutor GetFrameExecutor(EarleValue target, EarleValue[] args)
 			{
+				// TODO: Provide target to function
 				return new Executor(this, args);
 			}
 
@@ -101,8 +102,9 @@ namespace EarleCode.Debug
 			public int ParameterCount { get; }
 			public string Name { get; }
 
-			public IFrameExecutor GetFrameExecutor(EarleValue[] args)
+			public IFrameExecutor GetFrameExecutor(EarleValue target, EarleValue[] args)
 			{
+				// TODO: Provide target to function
 				return new Executor(this, args);
 			}
 

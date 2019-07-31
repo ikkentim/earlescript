@@ -7,7 +7,7 @@ namespace EarleCode.Debug
 		public int IntValue { get; }
 		public float FloatValue { get; }
 		public string StringValue { get; }
-		public EarleFunction FunctionValue { get; }
+		public IEarleFunction FunctionValue { get; }
 		public EarleValueType Type { get; }
 		
 		public static readonly EarleValue Null = new EarleValue();
@@ -41,7 +41,7 @@ namespace EarleCode.Debug
 			Type = EarleValueType.String;
 		}
 
-		public EarleValue(EarleFunction value)
+		public EarleValue(IEarleFunction value)
 		{
 			IntValue = 0;
 			FloatValue = 0;
@@ -67,6 +67,7 @@ namespace EarleCode.Debug
 						case EarleValueType.NumberFloat:
 							return new EarleValue(FloatValue.ToString());
 						case EarleValueType.FunctionPointer:
+							return new EarleValue(FunctionValue.ToString());
 						case EarleValueType.Struct:
 						case EarleValueType.Vector2:
 						case EarleValueType.Vector3:

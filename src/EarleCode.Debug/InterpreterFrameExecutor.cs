@@ -409,13 +409,18 @@ namespace EarleCode.Debug
 				#region Expressions
 
 				case FunctionCall expression:
+
 					var argCount = expression.Arguments?.Count ?? 0;
-					if (index < argCount)
+					var targetCount = expression.Target == null ? 0 : 1;
+					if (index < argCount + targetCount)
 					{
-						if (!Run(expression.Arguments[index], pathIndex + 1))
+						if (index == 0 && expression.Target != null && !Run(expression.Target, pathIndex + 1))
+							return ExecState.Pause;
+						
+						if (index >= targetCount && !Run(expression.Arguments[index - targetCount], pathIndex + 1))
 							return ExecState.Pause;
 					}
-					else if (index == argCount)
+					else if (index == argCount + targetCount)
 					{
 						IEarleFunction callingFunction;
 						switch (expression.FunctionIdentifier)
@@ -440,9 +445,24 @@ namespace EarleCode.Debug
 									}
 								}
 								break;
-							case ExplicitFunctionIdentifier _:
-							case UnboxedFunctionIdentifier _:
-								throw new NotImplementedException();
+							case ExplicitFunctionIdentifier exp:
+							{
+								var file = Interpreter.GetFile(exp.Path);
+								if (file == null)
+								{
+									throw new Exception("Included not found");
+								}
+
+								callingFunction = file[exp.Name];
+								break;
+							}
+
+							case UnboxedFunctionIdentifier unb:
+								if (!Run(unb.Expression, pathIndex + 1))
+									return ExecState.Pause;
+
+								callingFunction = Stack.Pop().FunctionValue;
+								break;
 							default:
 								throw new RuntimeException("Unknown function identifier type: " + expression.FunctionIdentifier.GetType());
 						}
@@ -460,13 +480,25 @@ namespace EarleCode.Debug
 						for (var i = 0; i < lim; i++)
 							args[i] = Stack.Pop();
 
-						var frame = callingFunction.GetFrameExecutor(args);
-
 						// Sync stack
 						for (var i = lim; i < argCount; i++) 
 							Stack.Pop();
 						
-						SubFrame = frame;
+						var target = EarleValue.Null;
+						if (expression.Target != null)
+						{
+							target = Stack.Pop();
+						}
+						
+						var frame = callingFunction.GetFrameExecutor(target, args);
+
+						if (expression.IsThreaded)
+						{
+							Interpreter.EnqueueFrame(frame);
+							Stack.Push(EarleValue.Null);
+						}
+						else
+							SubFrame = frame;
 
 						return ExecState.Finished;
 					}
@@ -490,7 +522,7 @@ namespace EarleCode.Debug
 							var args = new EarleValue[1];
 							args[0] = Stack.Pop();
 
-							var frame = callingFunction.GetFrameExecutor(args);
+							var frame = callingFunction.GetFrameExecutor(EarleValue.Null, args);
 
 							SubFrame = frame;
 							break;
@@ -640,11 +672,112 @@ namespace EarleCode.Debug
 					Scopes.Peek()[expression.Variable.Name] = Stack.Peek();
 
 					break;
+
+				case OrAssignmentExpression expression:
+				{
+					if (!Run(expression.Value, pathIndex + 1))
+						return ExecState.Pause;
+
+					var result = _arithmetic.BitwiseOr(Scopes.Peek()[expression.Variable.Name], Stack.Pop());
+					Scopes.Peek()[expression.Variable.Name] = result;
+					Stack.Push(result);
+					break;
+				}
+				case AndAssignmentExpression expression:
+				{
+					if (!Run(expression.Value, pathIndex + 1))
+						return ExecState.Pause;
+
+					var result = _arithmetic.BitwiseAnd(Scopes.Peek()[expression.Variable.Name], Stack.Pop());
+					Scopes.Peek()[expression.Variable.Name] = result;
+					Stack.Push(result);
+					break;
+				}
+				case XorAssignmentExpression expression:
+				{
+					if (!Run(expression.Value, pathIndex + 1))
+						return ExecState.Pause;
+
+					var result = _arithmetic.BitwiseXor(Scopes.Peek()[expression.Variable.Name], Stack.Pop());
+					Scopes.Peek()[expression.Variable.Name] = result;
+					Stack.Push(result);
+					break;
+				}
+				case LeftShiftAssignmentExpression expression:
+				{
+					if (!Run(expression.Value, pathIndex + 1))
+						return ExecState.Pause;
+
+					var result = _arithmetic.ShiftLeft(Scopes.Peek()[expression.Variable.Name], Stack.Pop());
+					Scopes.Peek()[expression.Variable.Name] = result;
+					Stack.Push(result);
+					break;
+				}
+				case RightShiftAssignmentExpression expression:
+				{
+					if (!Run(expression.Value, pathIndex + 1))
+						return ExecState.Pause;
+
+					var result = _arithmetic.ShiftRight(Scopes.Peek()[expression.Variable.Name], Stack.Pop());
+					Scopes.Peek()[expression.Variable.Name] = result;
+					Stack.Push(result);
+					break;
+				}
+				case AdditionAssignmentExpression expression:
+				{
+					if (!Run(expression.Value, pathIndex + 1))
+						return ExecState.Pause;
+
+					var result = _arithmetic.Add(Scopes.Peek()[expression.Variable.Name], Stack.Pop());
+					Scopes.Peek()[expression.Variable.Name] = result;
+					Stack.Push(result);
+					break;
+				}
+				case SubtractionAssignmentExpression expression:
+				{
+					if (!Run(expression.Value, pathIndex + 1))
+						return ExecState.Pause;
+
+					var result = _arithmetic.Subtract(Scopes.Peek()[expression.Variable.Name], Stack.Pop());
+					Scopes.Peek()[expression.Variable.Name] = result;
+					Stack.Push(result);
+					break;
+				}
+				case MultiplicationAssignmentExpression expression:
+				{
+					if (!Run(expression.Value, pathIndex + 1))
+						return ExecState.Pause;
+
+					var result = _arithmetic.Multiply(Scopes.Peek()[expression.Variable.Name], Stack.Pop());
+					Scopes.Peek()[expression.Variable.Name] = result;
+					Stack.Push(result);
+					break;
+				}
+				case DivisionAssignmentExpression expression:
+				{
+					if (!Run(expression.Value, pathIndex + 1))
+						return ExecState.Pause;
+
+					var result = _arithmetic.Divide(Scopes.Peek()[expression.Variable.Name], Stack.Pop());
+					Scopes.Peek()[expression.Variable.Name] = result;
+					Stack.Push(result);
+					break;
+				}
+				case ModuloAssignmentExpression expression:
+				{
+					if (!Run(expression.Value, pathIndex + 1))
+						return ExecState.Pause;
+
+					var result = _arithmetic.Modulo(Scopes.Peek()[expression.Variable.Name], Stack.Pop());
+					Scopes.Peek()[expression.Variable.Name] = result;
+					Stack.Push(result);
+					break;
+				}
 				case ExplicitFunctionIdentifierExpression expression:
 					Stack.Push(new EarleValue(GetFunction(expression.Value)));
 					break;
 				case VariableExpression expression:
-					Stack.Push(Scopes.Peek()[expression.Variable.Name]);
+					Stack.Push(expression.Variable.Name == "self" ? Target : Scopes.Peek()[expression.Variable.Name]);
 					break;
 				case PostfixAdditionAssignmentExpression expression:
 				{
@@ -689,12 +822,15 @@ namespace EarleCode.Debug
 			return ExecState.Normal;
 		}
 
-		private EarleFunction GetFunction(ExplicitFunctionIdentifier id)
+		private IEarleFunction GetFunction(ExplicitFunctionIdentifier id)
 		{
-			var func = id.Path == null
+			IEarleFunction func = id.Path == null
 				? Function.File[id.Name]
 				: Interpreter[id.Path][id.Name];
 
+			if (id.Path == null && func == null)
+				func = Interpreter.GetFunction(id.Name);
+			
 			return func ?? throw new RuntimeException("Function not found");
 		}
 
@@ -769,7 +905,7 @@ namespace EarleCode.Debug
 				#region Expressions
 
 				case FunctionCall call:
-					return (call.Arguments?.Count ?? 0) + 1;
+					return (call.Target == null ? 0 : 1) + (call.Arguments?.Count ?? 0) + 1;
 				case StatementWait _:
 					return 3; // expression + call + stack pop
 				case BinaryExpression _:

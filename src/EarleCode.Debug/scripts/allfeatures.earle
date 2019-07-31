@@ -17,6 +17,7 @@ main()
     fun();
     funAb(1, "hello");
     funIncluded();
+    \included2::funIncluded2();
     
     // StatementIf
     if(1)
@@ -79,7 +80,7 @@ main()
     
     // StatementAssignments
     a=1;
-    b=1,c="three";
+    b=2,c="three";
     print("a should be 1, is " + a);
     print("b should be 2, is " + b);
     print("c should be three, is " + c);
@@ -108,14 +109,16 @@ main()
     
     // StatementReturn
     funRet();
-    print(funRetVal(9) + "should be 9");
+    print(funRetVal(9) + " should be 9");
     
     // ExplicitFunctionIdentifier
     f = ::fun;
     e = \included2::funIncluded2;
     
     // UnboxedFunctionIdentifier
+    print("incoming fun");
     [[f]]();
+    print("incoming fun included 2");
     [[e]]();
     
     // TargetlessFunctionCall
@@ -130,6 +133,9 @@ main()
     
     // TargetedThreadedFunctionCall
     x thread funSelfWait();
+    
+    print("Give threads some time");
+    wait 1;
     
     // ExpressionList
     funAbc("alpha", "bravo", "charly");
@@ -173,7 +179,7 @@ main()
     
     // RightShiftAssignment
     a = 32;
-    a <<= 2;
+    a >>= 2;
     print("a should be 8, is " + a);
     
     // SubtractionAssignment
@@ -193,7 +199,7 @@ main()
     
     // ModuloAssignment
     a = 15;
-    a -= 4;
+    a %= 4;
     print("a should be 3, is " + a);
     
     // PostfixAdditionAssignment
@@ -269,10 +275,11 @@ main()
     print((15 % 4) + " == (15 / 4) == 3");
     
     // Expression12 multiplicative
-    print(::fun + " == ExplicitFunctionIdentifier");
-    print((4) + " is 4 between ( )");
+    print(::fun + " == ExplicitFunctionIdentifier (fun)");
+    print(::print + " == ExplicitFunctionIdentifier (print)");
+    print((4) + " is 4 between ( ): (4)");
     a = 19;
-    print((a) + " is a between ( )");
+    print((a) + " is a between ( ): (a)");
     print("hello" + " is a value");
     print(7 + " is a value");
     print(funRetVal(123) + " is a return value of  funRetVal(123)");
@@ -314,7 +321,7 @@ funAb(a, b)
     print("funAb: a: " + a + " b: " + b);
 }
 
-funAb(a, b, c)
+funAbc(a, b, c)
 {
     print("funAbc: a: " + a + " b: " + b + " c: " + c);
 }

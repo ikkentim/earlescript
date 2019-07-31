@@ -22,13 +22,13 @@ namespace EarleCode.Debug
 
 		public string Name => Node.Name;
 
-		public IFrameExecutor GetFrameExecutor(EarleValue[] args)
+		public IFrameExecutor GetFrameExecutor(EarleValue target, EarleValue[] args)
 		{
 			var frame = new InterpreterFrameExecutor
 			{
 				Function = this, 
 				Interpreter = File.Interpreter,
-				Target = EarleValue.Null
+				Target = target
 			};
 			
 			var scope = new Scope(File.Interpreter);

@@ -73,9 +73,9 @@ namespace EarleCode.Debug
 			return _queue.Count > 0;
 		}
 
-		public bool Invoke(IEarleFunction function, out EarleValue result, params EarleValue[] args)
+		public bool Invoke(IEarleFunction function, EarleValue target, out EarleValue result, params EarleValue[] args)
 		{
-			var frame = function.GetFrameExecutor(args);
+			var frame = function.GetFrameExecutor(target, args);
 			var res = frame.Run(null);
 
 			if (res != null)
@@ -94,9 +94,9 @@ namespace EarleCode.Debug
 			return false;
 		}
 		
-		public bool Invoke(IEarleFunction function, Action<EarleValue> resultHandler, params EarleValue[] args)
+		public bool Invoke(IEarleFunction function, Action<EarleValue> resultHandler, EarleValue target, params EarleValue[] args)
 		{
-			var frame = function.GetFrameExecutor(args);
+			var frame = function.GetFrameExecutor(target, args);
 			var res = frame.Run(null);
 
 			if (res != null)
@@ -112,6 +112,14 @@ namespace EarleCode.Debug
 			});
 			
 			return false;
+		}
+
+		public void EnqueueFrame(IFrameExecutor frame)
+		{
+			_queue.Add(new CallQueueEntry
+			{
+				frame = frame
+			});
 		}
 
 

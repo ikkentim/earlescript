@@ -92,7 +92,7 @@ namespace EarleCode.Debug
 			interpreter.Natives.Register("waittick", 0, (Func<EarleValue[], IEnumerator>) WaitOneFrame);
 
 			// Invoke the "main" method in the "waitsample" script file
-			interpreter.Invoke(interpreter["\\waitsample"]["main"], out _);
+			interpreter.Invoke(interpreter["\\waitsample"]["main"], EarleValue.Null, out _);
 
 			// ... mock game update loop
 			while (interpreter.Tick())
@@ -150,7 +150,7 @@ namespace EarleCode.Debug
 			var compiling = sw.Elapsed;
 
 			sw.Restart();
-			var ok = interpreter.Invoke(mainFn, out var res);
+			var ok = interpreter.Invoke(mainFn, EarleValue.Null, out var res);
 
 			if (!ok)
 			{

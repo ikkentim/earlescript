@@ -8,6 +8,6 @@ namespace EarleCode.Debug
 
 		string Name { get; }
 
-		IFrameExecutor GetFrameExecutor(EarleValue[] args);
+		IFrameExecutor GetFrameExecutor(EarleValue target, EarleValue[] args);
 	}
 }
