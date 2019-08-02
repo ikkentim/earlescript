@@ -11,7 +11,7 @@ main()
     printBoolean(0);
 
     print(10 * 2 - 1 / (3 | 1));
-	return 1;
+
 	for(i = 0 ;; i = i + 1)
 	{
 	    waittick();

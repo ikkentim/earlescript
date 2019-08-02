@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using EarleCode.Compiling.Lexing;
 using EarleCode.Compiling.Parsing.Grammars;
 using EarleCode.Compiling.Parsing.Grammars.Productions;
@@ -26,29 +27,36 @@ namespace EarleCode.Compiling.Parsing
 
                 foreach (var rule in grammar.All)
                 {
-                    var any = false;
+                    var doBreak = false;
                     foreach (var element in rule.Elements)
                     {
                         switch (element.Type)
                         {
                             case ProductionRuleElementType.Terminal:
                                 changes |= Add(rule.Name, element.Token);
-                                any = true;
+                                doBreak = true;
                                 break;
+                            case ProductionRuleElementType.TerminalEmpty:
+                                changes |= Add(rule.Name, Token.Empty);
+                                doBreak = true;
+                                break;
+                                
                             case ProductionRuleElementType.NonTerminal:
-                                changes |= Add(rule.Name, Get(element.Value));
+                                var s = Get(element.Value);
+                                changes |= Add(rule.Name, s);
 
-                                if (!grammar.SymbolCanBeEmpty(element.Value))
-                                    any = true;
+                                
+                                if (s == null || !s.Any(x => x.IsEmpty))//grammar.SymbolCanBeEmpty(element.Value))
+                                    doBreak = true;
                                 break;
                         }
 
-                        if (any)
+                        if (doBreak)
                             break;
                     }
 
-                    if (!any)
-                        changes |= Add(rule.Name, Token.Empty);
+//                    if (!doBreak)
+//                        changes |= Add(rule.Name, Token.Empty);
                 }
             } while (changes);
         }

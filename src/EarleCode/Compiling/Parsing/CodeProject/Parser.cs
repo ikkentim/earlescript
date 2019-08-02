@@ -6,22 +6,22 @@ namespace EarleCode.Compiling.Parsing.CodeProject
 	public class Parser
 	{
 		private HashSet<int>[] _firstSets;
-		private readonly List<Lr0Item> _lr0Items;
+		private readonly List<Lr0Item> _lr0Items = new List<Lr0Item>();
 		private readonly Dictionary<Lr0Item, int> _lr0Id = new Dictionary<Lr0Item, int>();
-		private readonly List<Lr1Item> _lr1Items;
+		private readonly List<Lr1Item> _lr1Items = new List<Lr1Item>();
 		private readonly Dictionary<Lr1Item, int> _lr1Id = new Dictionary<Lr1Item, int>();
-		private readonly List<HashSet<int>> _lr0States;
-		private readonly List<HashSet<int>> _lr0Kernels;
-		private readonly List<HashSet<int>> _lalrStates;
-		private readonly List<int[]> _lrGoto;
-		private readonly List<int[]> _gotoPrecedence;
-		private readonly List<int> _terminals;
-		private readonly List<int> _nonTerminals;
-		private readonly List<Dictionary<int, List<LalrPropagation>>> _lalrPropagations;
-		private readonly List<int> _productionPrecedence;
+		private readonly List<HashSet<int>> _lr0States = new List<HashSet<int>>();
+		private readonly List<HashSet<int>> _lr0Kernels = new List<HashSet<int>>();
+		private readonly List<HashSet<int>> _lalrStates = new List<HashSet<int>>();
+		private readonly List<int[]> _lrGoto = new List<int[]>();
+		private readonly List<int[]> _gotoPrecedence = new List<int[]>();
+		private readonly List<int> _terminals = new List<int>();
+		private readonly List<int> _nonTerminals = new List<int>();
+		private readonly List<Dictionary<int, List<LalrPropagation>>> _lalrPropagations = new List<Dictionary<int, List<LalrPropagation>>>();
+		private readonly List<int> _productionPrecedence = new List<int>();
 		private readonly Grammar _grammar;
 
-		public List<Production> Productions { get; }
+		public List<Production> Productions { get; } = new List<Production>();
 
 		public ParseTable ParseTable { get; private set; }
 
@@ -513,15 +513,7 @@ namespace EarleCode.Compiling.Parsing.CodeProject
 		/// </summary>
 		private bool ListContainsAction(List<Action> list, Action action)
 		{
-			foreach (var listAction in list)
-			{
-				if (listAction.Equals(action))
-				{
-					return true;
-				}
-			}
-
-			return false;
+			return list.Contains(action);
 		}
 
 		/// <summary>
@@ -598,7 +590,8 @@ namespace EarleCode.Compiling.Parsing.CodeProject
 					}
 					else if (importantActions.Count > 1)
 					{
-						Action shiftAction = default(Action);
+						var shiftAction = default(Action);
+						var hasShiftAction = false;
 						var reduceActions = new List<Action>();
 						foreach (var action in importantActions)
 						{
@@ -609,6 +602,7 @@ namespace EarleCode.Compiling.Parsing.CodeProject
 							else
 							{
 								shiftAction = action;
+								hasShiftAction = true;
 							}
 						}
 
@@ -617,7 +611,7 @@ namespace EarleCode.Compiling.Parsing.CodeProject
 						{
 							ParseTable.Actions[nStateId, nToken + 1] = reduceActions[0];
 						}
-						else if (derv == Derivation.RightMost && shiftAction != null)
+						else if (derv == Derivation.RightMost && hasShiftAction)
 						{
 							ParseTable.Actions[nStateId, nToken + 1] = shiftAction;
 						}
@@ -668,19 +662,7 @@ namespace EarleCode.Compiling.Parsing.CodeProject
 		/// </summary>
 		public Parser(Grammar grammar)
 		{
-			_lrGoto = new List<int[]>();
-			_gotoPrecedence = new List<int[]>();
-			_lr0Items = new List<Lr0Item>();
-			_lr1Items = new List<Lr1Item>();
-			_lr0States = new List<HashSet<int>>();
-			_lr0Kernels = new List<HashSet<int>>();
-			_lalrStates = new List<HashSet<int>>();
-			_terminals = new List<int>();
-			_nonTerminals = new List<int>();
-			_lalrPropagations = new List<Dictionary<int, List<LalrPropagation>>>();
 			_grammar = grammar;
-			Productions = new List<Production>();
-			_productionPrecedence = new List<int>();
 
 			PopulateProductions();
 			InitSymbols();

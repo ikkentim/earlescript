@@ -22,6 +22,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
+using CommandLine;
 using EarleCode.Compiling;
 using EarleCode.Compiling.Earle;
 using EarleCode.Compiling.Lexing;
@@ -35,9 +36,30 @@ namespace EarleCode.Debug
 	{
 		private static void Main(string[] args)
 		{
-//			Serialization();
-//			CleanRun();
-			PerformanceTest();
+			Options opts = null;
+			Parser.Default.ParseArguments<Options>(args).WithParsed(x => { opts = x; });
+
+			if (opts?.PopulateCache ?? false)
+			{
+				Console.WriteLine("Cache population started.");
+				
+				Serialization();
+
+				return;
+			}
+
+			if ((opts?.ParserTest ?? false))
+			{
+				var g = new EnumGrammar<GrammarCompat>(null);
+			
+				TestParser("LL1", new LL1Parser(g));
+				TestParser("SLR", new SLRParser(g));
+				//TestParser("LALR", new LALRParser(g)); // FIXME: LALR Parser hardcoded to earle at the moment
+
+				return;
+			}
+
+			Run(opts?.InputFile ?? "\\main", opts?.Function ?? "main", opts?.IgnorePrint ?? false);
 		}
 
 		private static void Serialization()
@@ -75,33 +97,25 @@ namespace EarleCode.Debug
 			Console.ReadLine();
 		}
 
-		private static void CleanRun()
+		private static void TestParser(IParser p, string input)
 		{
-			// Load the interpreter with a function which indicates how script files are loaded
-			var interpreter = new EarleInterpreter(path => path.IsEmpty
-				? null
-				: File.ReadAllText($"scripts/{path.RelativePath}.earle"));
+			var result = p.Parse(new Lexer(null, new[] {"a", "b", "d"}).Tokenize(input, "x").ToArray());
 
-			// Register a simple "print" function
-			interpreter.Natives.Register("print", 1, (a) =>
-			{
-				Console.WriteLine(a[0].Convert(EarleValueType.String).StringValue);
-				return EarleValue.Null;
-			});
-
-			// Register a "waittick" function which halts execution for one game tick
-			interpreter.Natives.Register("waittick", 0, (Func<EarleValue[], IEnumerator>) WaitOneFrame);
-
-			// Invoke the "main" method in the "waitsample" script file
-			interpreter.Invoke(interpreter["\\waitsample"]["main"], EarleValue.Null, out _);
-
-			// ... mock game update loop
-			while (interpreter.Tick())
-			{
-				Thread.Sleep(100);
-			}
+			Console.WriteLine(result.ToString() != input
+				? $"ERROR: input: {input}, output: {result}"
+				: $"OK: {input}");
 		}
-
+		
+		private static void TestParser(string name, IParser p)
+		{
+			Console.WriteLine($"==== TESTING {name} ====");
+			TestParser(p, "b d a");
+			TestParser(p, "b  a");
+			TestParser(p, " d a");
+			TestParser(p, "  a");
+			Console.WriteLine($"==== END TEST {name} ====");
+			Console.WriteLine();
+		}
 		private static IEnumerator WaitOneFrame(EarleValue[] args)
 		{
 			yield return null;
@@ -113,13 +127,13 @@ namespace EarleCode.Debug
 			sw.Start();
 
 			var delay = args[0];
-			var delayF = delay.Type == EarleValueType.NumberFloat ? delay.FloatValue : (float) delay.IntValue;
+			var delayF = delay.Type == EarleValueType.NumberFloat ? delay.FloatValue : delay.IntValue;
 
 			while (sw.Elapsed.TotalSeconds < delayF)
 				yield return null;
 		}
 
-		private static void PerformanceTest()
+		private static void Run(string file, string function, bool ignorePrint, params string[] precompiledFiles)
 		{
 			var sw = new Stopwatch();
 
@@ -128,9 +142,12 @@ namespace EarleCode.Debug
 				? null
 				: File.ReadAllText($"scripts/{path.RelativePath}.earle"));
 
-			interpreter.Natives.Register("print", 1, (a) =>
+			// Register a "print" function to print
+			interpreter.Natives.Register("print", 1, a =>
 			{
-				//Console.WriteLine(a[0].Convert(EarleValueType.String).StringValue);
+				if (!ignorePrint)
+					Console.WriteLine(a[0].Convert(EarleValueType.String).StringValue);
+				
 				return EarleValue.Null;
 			});
 			
@@ -140,19 +157,30 @@ namespace EarleCode.Debug
 			// Register a "wait" function to implement the wait statement
 			interpreter.Natives.Register("wait", 1, (Func<EarleValue[], IEnumerator>) Wait);
 
+			// Compile main files
 			sw.Stop();
 			var buildInterpreter = sw.Elapsed;
 
 			sw.Restart();
-			var mainFn = interpreter["\\main"]["main"];
-			//var mainFn = interpreter["\\allfeatures"]["main"];
+			var mainFn = interpreter[file][function];
+
+			foreach (var precompile in precompiledFiles)
+			{
+				var precompiledFile = interpreter.GetFile(precompile);
+				if (precompiledFile == null)
+				{
+					throw new Exception($"Could not precompile {precompile}");
+				}
+			}
 
 			sw.Stop();
 			var compiling = sw.Elapsed;
 
+			// Invoke the function
 			sw.Restart();
 			var ok = interpreter.Invoke(mainFn, EarleValue.Null, out var res);
 
+			// mock update loop
 			if (!ok)
 			{
 				while (interpreter.Tick())
@@ -164,7 +192,8 @@ namespace EarleCode.Debug
 			sw.Stop();
 			var running = sw.Elapsed;
 
-			Console.WriteLine($"OK: {ok}, result: {res}");
+			Console.WriteLine($"======== Executed {file}::{function} ========");
+			Console.WriteLine($"Initial result: OK: {ok}, result: {res}");
 			Console.WriteLine("Building interpreter: " + buildInterpreter);
 			Console.WriteLine("Compiling: " + compiling);
 			Console.WriteLine("Running: " + running);

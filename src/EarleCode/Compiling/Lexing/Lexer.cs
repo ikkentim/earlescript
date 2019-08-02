@@ -46,7 +46,7 @@ namespace EarleCode.Compiling.Lexing
 				keywords= new string[0];
 			
 			_multiCharSymbols = multiCharSymbols;
-			_maxMultiCharSymbolLength = _multiCharSymbols.Max(s => s.Length);
+			_maxMultiCharSymbolLength = _multiCharSymbols.Length == 0 ? 0 : _multiCharSymbols.Max(s => s.Length);
 				
 			_keywords = keywords;
 

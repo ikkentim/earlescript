@@ -62,7 +62,7 @@ namespace EarleCode.Compiling.Parsing
                                 changes |= Add(element.Value, nextElement.Token);
                                 break;
                             case ProductionRuleElementType.NonTerminal:
-                                changes |= Add(element.Value, firstSet.Get(nextElement.Value));
+                                changes |= Add(element.Value, firstSet.Get(nextElement.Value).Where(t => !t.IsEmpty));
                                 break;
                             case ProductionRuleElementType.TerminalEmpty:
                                 throw new NotImplementedException();

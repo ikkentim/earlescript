@@ -98,26 +98,47 @@ namespace EarleCode.Compiling.Parsing
         {
             foreach (var rule in _grammar.All)
             {
-                var firstElement = rule.Elements[0];
+                var containsEpsilon = true;
 
-                switch (firstElement.Type)
+                foreach (var element in rule.Elements)
                 {
-                    case ProductionRuleElementType.Terminal:
-                        AddToTable(rule.Name, firstElement.Token, rule);
-                        break;
-                    case ProductionRuleElementType.NonTerminal:
-                        foreach (var t in _first[firstElement.Value].Where(t => !t.IsEmpty))
-                            AddToTable(rule.Name, t, rule);
+                    containsEpsilon = false;
+                    
+                    switch (element.Type)
+                    {
+                        case ProductionRuleElementType.Terminal:
+                            AddToTable(rule.Name, element.Token, rule);
+                            break;
+                        case ProductionRuleElementType.NonTerminal:
+                            foreach (var t in _first[element.Value])
+                            {
+                                if (t.IsEmpty)
+                                {
+                                    containsEpsilon = true;
+                                }
+                                else
+                                {
+                                    AddToTable(rule.Name, t, rule);
+                                }
+                            }
 
-                        if (_first[firstElement.Value].Any(t => t.IsEmpty))
+
+                            break;
+                        case ProductionRuleElementType.TerminalEmpty:
+                            containsEpsilon = true;
+                            
                             foreach (var t in _follow[rule.Name])
                                 AddToTable(rule.Name, t, rule);
-                        break;
-                    case ProductionRuleElementType.TerminalEmpty:
-                        foreach (var t in _follow[rule.Name])
-                            AddToTable(rule.Name, t, rule);
+                            break;
+                    }
+
+                    if (!containsEpsilon)
                         break;
                 }
+
+                if (containsEpsilon)
+                    foreach (var t in _follow[rule.Name])
+                        AddToTable(rule.Name, t, rule);
             }
         }
         
@@ -177,7 +198,7 @@ namespace EarleCode.Compiling.Parsing
         /// <exception cref="GrammarException">Thrown if the grammar is ambiguous.</exception>
         private void AddToTable(string row, Token column, ProductionRule value)
         {
-            if (_table[row].ContainsKey(column))
+            if (_table[row].TryGetValue(column, out var ex) && value != ex)
                 throw new GrammarException($"{row} is ambiguous (near {column}).");
 
             _table[row][column] = value;
