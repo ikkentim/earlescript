@@ -13,7 +13,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using EarleCode.Compiling.Lexing;
+using EarleCode.Compiling.Parsing.Grammars;
 
 namespace EarleCode.Compiling.Parsing
 {
@@ -46,8 +48,18 @@ namespace EarleCode.Compiling.Parsing
         ///     Initializes a new instance of the <see cref="UnexpectedTokenException" /> class.
         /// </summary>
         /// <param name="expectation">The expected token.</param>
-        /// <param name="actual">The actual.</param>
+        /// <param name="actual">The actual token.</param>
+        [Obsolete("Use .ctor(Terminal, Token) instead")]
         public UnexpectedTokenException(Token expectation, Token actual) :
+            base($"{actual:FP} Unexpected {actual:T v}; expected {expectation:B}.")
+        {
+        }
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="UnexpectedTokenException" /> class.
+        /// </summary>
+        /// <param name="expectation">The expected terminal.</param>
+        /// <param name="actual">The actual token.</param>
+        public UnexpectedTokenException(Terminal expectation, Token actual) :
             base($"{actual:FP} Unexpected {actual:T v}; expected {expectation:B}.")
         {
         }

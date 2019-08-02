@@ -1,18 +1,3 @@
-﻿// EarleCode
-// Copyright 2017 Tim Potze
-// 
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-// 
-//     http://www.apache.org/licenses/LICENSE-2.0
-// 
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 using System;
 using System.Collections.Generic;
 using EarleCode.Compiling.Lexing;
@@ -65,19 +50,6 @@ namespace EarleCode.Compiling.Parsing
         #endregion
 
         /// <summary>
-        /// Gets the token at the specified <paramref name="index"/>. If the <paramref name="index"/> is past the upper bounds of the <paramref name="tokens"/> array, an empty token is returned.
-        /// </summary>
-        /// <param name="tokens">The tokens to get the token from.</param>
-        /// <param name="index">The index of the token.</param>
-        /// <exception cref="ArgumentOutOfRangeException">Thrown if index is out of bounds.</exception>
-        /// <returns>The token.</returns>
-        private Token GetToken(Token[] tokens, int index)
-        {
-            if (index < 0) throw new ArgumentOutOfRangeException(nameof(index));
-            return index >= tokens.Length ? Token.EndOfFile : tokens[index];
-        }
-
-        /// <summary>
         ///     Parses the specified tokens with the specified rule.
         /// </summary>
         /// <param name="rule">The symbol of the rule to parse the tokens into.</param>
@@ -91,10 +63,14 @@ namespace EarleCode.Compiling.Parsing
         /// </exception>
         private INode Parse(string rule, Token[] tokens, ref int index)
         {
-            var token = GetToken(tokens, index);
+            var isEof = index >= tokens.Length;
+            var token = isEof ? default(Token) : tokens[index];
+
+            if(isEof)
+                throw new ParserException("Unexpected end of file.");
 
             // Find the production rule suitable for the expected rule symbol.
-            var productionRule = Table.GetProduction(rule, token);
+            var productionRule = Table.GetProduction(rule, isEof ? Terminal.EndOfFile : new Terminal(token.Type, token.Value));
 
             // Verify a production rule was found.
             if (productionRule == null)
@@ -102,23 +78,26 @@ namespace EarleCode.Compiling.Parsing
 
             // Construct a collection of child nodes for the constructing interior node.
             var nodes = new List<INode>();
+            
             foreach (var element in productionRule.Elements)
             {
-                token = GetToken(tokens, index);
+                isEof = index >= tokens.Length;
+                token = isEof ? default(Token) : tokens[index];
+                
                 switch (element.Type)
                 {
                     case ProductionRuleElementType.Terminal:
+                        if(isEof)
+                            throw new ParserException("Unexpected end of file.");
+
                         // Verify the current token.
-                        if (!element.Token.Describes(token))
-                            throw new UnexpectedTokenException(element.Token, token);
+                        if (!element.Terminal.Describes(new Terminal(token.Type, token.Value)))
+                            throw new UnexpectedTokenException(element.Terminal, token);
 
                         nodes.Add(new LeafNode(tokens[index++]));
                         break;
                     case ProductionRuleElementType.NonTerminal:
                         nodes.Add(Parse(element.Value, tokens, ref index));
-                        break;
-                    case ProductionRuleElementType.TerminalEmpty:
-                        nodes.Add(new LeafNode(Token.Empty));
                         break;
                     default:
                         throw new ParserException("Unexpected production rule element type.");

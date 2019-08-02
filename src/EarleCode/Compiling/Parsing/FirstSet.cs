@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using EarleCode.Compiling.Lexing;
 using EarleCode.Compiling.Parsing.Grammars;
@@ -9,7 +9,7 @@ namespace EarleCode.Compiling.Parsing
     /// <summary>
     /// Represents a FIRST set.
     /// </summary>
-    public class FirstSet : RuleTokenSet
+    public class FirstSet : RuleTerminalSet
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="FirstSet"/> class.
@@ -27,36 +27,34 @@ namespace EarleCode.Compiling.Parsing
 
                 foreach (var rule in grammar.All)
                 {
-                    var doBreak = false;
+                    var noEpsilon = false;
+                    if (rule.Elements.Length == 0)
+                    {
+                        changes |= Add(rule.Name, Terminal.Epsilon);
+                    }
+                    
                     foreach (var element in rule.Elements)
                     {
                         switch (element.Type)
                         {
                             case ProductionRuleElementType.Terminal:
-                                changes |= Add(rule.Name, element.Token);
-                                doBreak = true;
-                                break;
-                            case ProductionRuleElementType.TerminalEmpty:
-                                changes |= Add(rule.Name, Token.Empty);
-                                doBreak = true;
-                                break;
-                                
+                                changes |= Add(rule.Name, element.Terminal);
+                                noEpsilon = true;
+                                break;  
+                            
                             case ProductionRuleElementType.NonTerminal:
-                                var s = Get(element.Value);
-                                changes |= Add(rule.Name, s);
+                                var first = Get(element.Value);
+                                changes |= Add(rule.Name, first);
 
-                                
-                                if (s == null || !s.Any(x => x.IsEmpty))//grammar.SymbolCanBeEmpty(element.Value))
-                                    doBreak = true;
+                                // Only proceed to next element if no epsilon was found
+                                if (first == null || !first.Any(x => x.Type == TerminalType.Epsilon))
+                                    noEpsilon = true;
                                 break;
                         }
 
-                        if (doBreak)
+                        if (noEpsilon)
                             break;
                     }
-
-//                    if (!doBreak)
-//                        changes |= Add(rule.Name, Token.Empty);
                 }
             } while (changes);
         }

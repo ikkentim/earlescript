@@ -19,12 +19,12 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using EarleCode.Compiling.Lexing;
-using EarleCode.Compiling.Parsing.Grammars.Productions;
 
 namespace EarleCode.Compiling.Parsing.Grammars
 {
 	public class CacheSerializer
 	{
+		/*
 		// NOTE: Ugly code, but does work
 		private readonly byte[] _buffer = new byte[1024];
 		private readonly byte[] _full = { 0xff };
@@ -259,6 +259,7 @@ namespace EarleCode.Compiling.Parsing.Grammars
 			}
 		}
 
+		/*
 		private void Serialize(SLRAction action, Stream destination, ProductionRule[] rules)
 		{
 			_buffer[0] = (byte) action.Type;
@@ -431,7 +432,7 @@ namespace EarleCode.Compiling.Parsing.Grammars
 
 			return new SLRParsingTable(initialState, result, rules[defaultIndex]);
 		}
-
+*/
 		private enum GState
 		{
 			FindDefault,

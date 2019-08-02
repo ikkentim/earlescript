@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using EarleCode.Compiling.Parsing.Grammars.Productions;
 
 namespace EarleCode.Compiling.Parsing
 {
     /// <summary>
-    /// Represents a row in an <see cref="LRCannonicalCollection"/>.
+    /// Represents a row in an <see cref="LRCanonicalCollection"/>.
     /// </summary>
     public class LRGoToRow
     {

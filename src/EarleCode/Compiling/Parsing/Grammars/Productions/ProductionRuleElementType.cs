@@ -20,11 +20,6 @@ namespace EarleCode.Compiling.Parsing.Grammars.Productions
     /// </summary>
     public enum ProductionRuleElementType : byte
     {
-	    /// <summary>
-	    ///     A "no-value" terminal value.
-	    /// </summary>
-	    TerminalEmpty,
-
         /// <summary>
         ///     A terminal value.
         /// </summary>

@@ -21,11 +21,6 @@ namespace EarleCode.Compiling.Lexing
     public enum TokenFlag : byte
     {
         /// <summary>
-        ///     This token is emtpy.
-        /// </summary>
-        Empty,
-
-        /// <summary>
         ///     Default flag.
         /// </summary>
         Default,

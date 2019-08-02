@@ -39,11 +39,6 @@ namespace EarleCode.Compiling
             return Parse(tree) as ProgramFile;
         }
 
-        private static bool IsEmpty(INode node)
-        {
-            return node is ILeafNode leaf && leaf.Token.IsEmpty;
-        }
-
         private static TResult Collect<TNode, TResult>(IInteriorNode node, string collect,
             Func<TNode, TResult, TResult> collector, TResult initial = default(TResult)) where TNode : INode
         {
@@ -84,7 +79,7 @@ namespace EarleCode.Compiling
         {
             if (node.Rule == nameof(Rule.IdentifierList))
             {
-                return node.Children.Count == 0 || IsEmpty(node.Children[0]) ? null : ParseIdentifiers(node.Children[0]);
+                return node.Children.Count == 0 ? null : ParseIdentifiers(node.Children[0]);
             }
 
             if (node.Rule == nameof(Rule.IdentifierListCont))
@@ -165,8 +160,6 @@ namespace EarleCode.Compiling
 
         private static IASTNode Parse(IInteriorNode node)
         {
-            if (node.Children.Count == 0) node = new InteriorNode(node.Rule, new[] {new LeafNode(Token.Empty),}); // temp fix
-
             switch (node.Rule)
             {
                 case nameof(Rule.File):

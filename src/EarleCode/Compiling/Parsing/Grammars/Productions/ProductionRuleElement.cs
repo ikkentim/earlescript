@@ -57,33 +57,31 @@ namespace EarleCode.Compiling.Parsing.Grammars.Productions
         /// <summary>
         ///     Gets or sets the type of this element.
         /// </summary>
-        public ProductionRuleElementType Type { get; set; }
+        public ProductionRuleElementType Type { get; }
 
         /// <summary>
         ///     Gets or sets the type of the token in this element.
         /// </summary>
-        public TokenType TokenType { get; set; }
+        public TokenType TokenType { get; }
 
         /// <summary>
         ///     Gets or sets the value of this element.
         /// </summary>
-        public string Value { get; set; }
+        public string Value { get; }
 
 	    /// <summary>
 	    ///     Gets the token of this element.
 	    /// </summary>
-	    public Token Token
+	    public Terminal Terminal
 	    {
 		    get
 		    {
 			    switch (Type)
 			    {
-					case ProductionRuleElementType.TerminalEmpty:
-						return Token.Empty;
 					case ProductionRuleElementType.Terminal:
-						return Value == null && TokenType == TokenType.Symbol ? Token.EndOfFile : new Token(TokenType, Value);
+						return Value == null && TokenType == TokenType.Symbol ? Terminal.EndOfFile : new Terminal(TokenType, Value);
 					default:
-						return Token.Empty;
+						throw new GrammarException("A NonTerminal element does not have a token");
 			    }
 		    }
 	    }
@@ -103,9 +101,7 @@ namespace EarleCode.Compiling.Parsing.Grammars.Productions
                 case ProductionRuleElementType.NonTerminal:
                     return Value;
                 case ProductionRuleElementType.Terminal:
-                    return $"{Token:B}";
-                case ProductionRuleElementType.TerminalEmpty:
-                    return "(empty)";
+                    return $"{Terminal}";
                 default:
                     return "???";
             }

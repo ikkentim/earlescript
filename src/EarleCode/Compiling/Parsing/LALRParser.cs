@@ -19,7 +19,7 @@ namespace EarleCode.Compiling.Parsing
 	    {
 		    // Temporary wrapper while I build my own LALR parser... Only works for Earle's ProductionRuleElementType grammar.
 		    var def = grammar.Default;
-		    var nonTerminals = grammar.Symbols.Where(x => x != def).ToArray();
+		    var nonTerminals = grammar.NonTerminals.Where(x => x != def).ToArray();
 		    var terminals = grammar.All.SelectMany(x =>
 				    x.Elements.Where(y =>
 						    y.Type == ProductionRuleElementType.Terminal && 
@@ -51,10 +51,7 @@ namespace EarleCode.Compiling.Parsing
 					    var x =  new Production
 					    {
 						    Left = Array.IndexOf(tokens, r.Name),
-						    Right = r.Elements.Length == 1 &&
-						            r.Elements[0].Type == ProductionRuleElementType.TerminalEmpty
-							    ? new int[0]
-							    : r.Elements.Select(e => Array.IndexOf(tokens, e.TokenType == TokenType.Keyword || e.TokenType == TokenType.Symbol ? e.Value : e.TokenType.ToString())).ToArray()
+						    Right = r.Elements.Select(e => Array.IndexOf(tokens, e.TokenType == TokenType.Keyword || e.TokenType == TokenType.Symbol ? e.Value : e.TokenType.ToString())).ToArray()
 					    };
 
 					    if(x.Right.Any(z => z == -1)) throw new Exception("token error");
@@ -83,11 +80,11 @@ namespace EarleCode.Compiling.Parsing
 
 			while (true)
 			{
-				var token = ptr == tokens.Count ? Token.EndOfFile: tokens[ptr];
+				var token = ptr == tokens.Count ? default(Token): tokens[ptr];
 
 				var tokenId = -1;
 
-				if(token.Flag != TokenFlag.EndOfFile)
+				if(ptr < tokens.Count)
 					switch (token.Type)
 					{
 						case TokenType.Identifier:
@@ -110,6 +107,8 @@ namespace EarleCode.Compiling.Parsing
 				switch (action.ActionType)
 				{
 					case ActionType.Shift:
+						if(tokenId == -1) // eof
+							throw new ParserException("Unexpected end of file.");
 						stateStack.Push(action.ActionParameter);
 						tokenStack.Push(new LeafNode(token));
 						ptr++;

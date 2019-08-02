@@ -36,7 +36,7 @@ namespace EarleCode.Compiling.Parsing.Grammars
 	    /// <summary>
 	    ///		Gets a collection of all non-terminal symbols for which production rules have been defined by this grammar.
 	    /// </summary>
-	    IEnumerable<string> Symbols { get; }
+	    IEnumerable<string> NonTerminals { get; }
 
 	    /// <summary>
         ///     Gets a collection of all available production rules which can be represented by the specified

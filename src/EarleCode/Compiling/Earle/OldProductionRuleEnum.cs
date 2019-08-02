@@ -5,7 +5,7 @@ namespace EarleCode.Compiling.Earle
     /// <summary>
     ///     Contains the Earle script grammar.
     /// </summary>
-    public enum OldProductionRuleEnum
+    internal enum OldProductionRuleEnum
     {
         #region File, Include, Function
         [Rule("FileCont")]

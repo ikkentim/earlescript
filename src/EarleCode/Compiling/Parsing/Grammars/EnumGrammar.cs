@@ -62,9 +62,9 @@ namespace EarleCode.Compiling.Parsing.Grammars
             {
                 case TokenType.Identifier:
                     // If the token is a production symbol, find the associated terminal or non-terminal.
-                    if (ctx.Tokens.TryGetValue(token.Value, out var tokenType))
+                    if (ctx.Terminals.TryGetValue(token.Value, out var tokenType))
                         return new ProductionRuleElement(tokenType, null);
-                    else if (ctx.Symbols.ContainsKey(token.Value))
+                    else if (ctx.NonTerminals.ContainsKey(token.Value))
                         return new ProductionRuleElement(ProductionRuleElementType.NonTerminal,
                             token.Value);
                     else
@@ -99,22 +99,29 @@ namespace EarleCode.Compiling.Parsing.Grammars
             // Construct dictionaries of known token types and production rule symbols
             var ctx = new ConstructionContext
             {
-                Tokens = new Dictionary<string, TokenType>(),
-                Symbols = new Dictionary<string, TProductionRulesEnum>()
+                Terminals = new Dictionary<string, TokenType>(),
+                NonTerminals = new Dictionary<string, TProductionRulesEnum>()
             };
             
+            var lexer = new Lexer(_multiCharSymbols, null);
+            lexer.SetRegex(new Dictionary<TokenType, Regex>
+            {
+                [TokenType.Identifier] = new Regex(@"\G[a-zA-Z_][a-zA-Z0-9_]*"),
+                [TokenType.StringLiteral] = new Regex(@"\G([`])((?:\\\1|.)*?)\1")
+            });
+            
             foreach (var value in typeof(TProductionRulesEnum).GetEnumValues().Cast<TProductionRulesEnum>())
-                ctx.Symbols[value.ToString(CultureInfo.InvariantCulture)] = value;
+                ctx.NonTerminals[value.ToString(CultureInfo.InvariantCulture)] = value;
 
             foreach (var value in typeof(TokenType).GetEnumValues().Cast<TokenType>())
-                ctx.Tokens[value.ToString()] = value;
+                ctx.Terminals[value.ToString()] = value;
 
             foreach (var value in typeof(TProductionRulesEnum).GetEnumValues().Cast<Enum>())
             {
                 // Find the rule strings attached to the value.
                 var rules = value.GetCustomAttributes<RuleAttribute>()
                     .SelectMany(a => a == null || a.Rules.Length == 0 ? new[] {""} : a.Rules)
-                    .Distinct()
+                    .Distinct()// TODO: This probably does nothing for arrays?
                     .ToArray();
 
                 // If no rule has been attached add an empty rule.
@@ -122,28 +129,15 @@ namespace EarleCode.Compiling.Parsing.Grammars
                     rules = new[] {""};
 
                 // Construct production rule instances for each rule value.
+ 
                 foreach (var rule in rules)
                 {
-                    var lexer = new Lexer(_multiCharSymbols, null);
-                    lexer.SetRegex(new Dictionary<TokenType, Regex>
-                    {
-                        [TokenType.Identifier] = new Regex(@"\G[a-zA-Z_][a-zA-Z0-9_]*"),
-                        [TokenType.StringLiteral] = new Regex(@"\G([`])((?:\\\1|.)*?)\1")
-                    });
-
                     var elements = lexer.Tokenize(rule, "rule")
                         .Select(token => GetElement(token, ctx))
                         .ToArray();
 
-                    if (elements.Length == 0)
-                        elements = new[]
-                        {
-                            new ProductionRuleElement()
-                        };
-
                     _grammar.Add(value.ToString(), new ProductionRule(value.ToString(), elements.ToArray()));
                 }
-
 
                 if (_grammar.Default == null)
                     _grammar.Default = value.ToString();
@@ -152,8 +146,8 @@ namespace EarleCode.Compiling.Parsing.Grammars
 
         private struct ConstructionContext
         {
-            public Dictionary<string, TokenType> Tokens;
-            public Dictionary<string, TProductionRulesEnum> Symbols;
+            public Dictionary<string, TokenType> Terminals;
+            public Dictionary<string, TProductionRulesEnum> NonTerminals;
         }
 
         #region Implementation of IProductionRuleSet
@@ -171,7 +165,7 @@ namespace EarleCode.Compiling.Parsing.Grammars
 	    /// <summary>
 	    ///		Gets a collection of all non-terminal symbols for which production rules have been defined by this grammar.
 	    /// </summary>
-	    public IEnumerable<string> Symbols => _grammar.Symbols;
+	    public IEnumerable<string> NonTerminals => _grammar.NonTerminals;
 
 	    /// <summary>
         ///     Gets a collection of all available production rules which can be represented by the specified

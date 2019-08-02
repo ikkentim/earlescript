@@ -26,14 +26,14 @@ namespace EarleCode.Compiling.Parsing.Grammars
         /// <summary>
         ///     Initializes a new instance of the <see cref="RuleAttribute" /> class.
         /// </summary>
-        /// <param name="rules">The rules accociated with the symbol the attribute is attached to.</param>
+        /// <param name="rules">The rules associated with the symbol the attribute is attached to.</param>
         public RuleAttribute(params string[] rules)
         {
             Rules = rules;
         }
 
         /// <summary>
-        ///     Gets the rules accociated with the symbol this attribute is attached to.
+        ///     Gets the rules associated with the symbol this attribute is attached to.
         /// </summary>
         public string[] Rules { get; }
     }

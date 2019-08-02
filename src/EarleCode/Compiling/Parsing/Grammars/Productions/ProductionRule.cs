@@ -36,13 +36,18 @@ namespace EarleCode.Compiling.Parsing.Grammars.Productions
         /// <summary>
         ///     Gets or sets the symbol name of this production rule.
         /// </summary>
-        public string Name { get; set; }
+        public string Name { get; }
 
         /// <summary>
         ///     Gets or sets the elements of this production rule.
         /// </summary>
-        public ProductionRuleElement[] Elements { get; set; }
-
+        public ProductionRuleElement[] Elements { get; }
+    
+        /// <summary>
+        /// Gets a value indicating whether the rule contains epsilon.
+        /// </summary>
+        public bool IsEpsilon => Elements.Length == 0;
+        
         #region Overrides of Object
 
         /// <summary>
@@ -53,7 +58,9 @@ namespace EarleCode.Compiling.Parsing.Grammars.Productions
         /// </returns>
         public override string ToString()
         {
-            return Name + " -> " + string.Join(" ", Elements.Select(n => n.ToString()));
+            return IsEpsilon
+                ? $"{Name} -> \x03B5"
+                : $"{Name} -> {string.Join(" ", Elements.Select(n => n.ToString()))}";
         }
 
         #endregion

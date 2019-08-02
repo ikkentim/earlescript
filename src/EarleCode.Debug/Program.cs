@@ -19,8 +19,6 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading;
 using CommandLine;
 using EarleCode.Compiling;
@@ -65,36 +63,34 @@ namespace EarleCode.Debug
 		private static void Serialization()
 		{
 			var grammar = new EnumGrammar<ProductionRuleEnum>(EarleCompiler.MultiCharSymbols);
-			var slr = new SLRParsingTable(grammar);
+			//var slr = new SLRParsingTable(grammar);
 
-			var ser = new CacheSerializer();
-
-			Console.WriteLine("======== Grammar ========");
-			using (var target = new MemoryStream())
-			{
-				using (var zipStream = new GZipStream(target, CompressionLevel.Optimal, true))
-					ser.Serialize(grammar, zipStream);
-
-				target.Seek(0, SeekOrigin.Begin);
-				var serializedGrammar = target.ToArray();
-
-				Console.WriteLine(Convert.ToBase64String(serializedGrammar));
-
-				using (var zipStream = new GZipStream(target, CompressionMode.Decompress, true))
-				{
-					var newGram = ser.DeserializeGrammar(zipStream);
-					Console.WriteLine(newGram);
-				}
-			}
+//			var ser = new CacheSerializer();
+//
+//			Console.WriteLine("======== Grammar ========");
+//			using (var target = new MemoryStream())
+//			{
+//				using (var zipStream = new GZipStream(target, CompressionLevel.Optimal, true))
+//					ser.Serialize(grammar, zipStream);
+//
+//				target.Seek(0, SeekOrigin.Begin);
+//				var serializedGrammar = target.ToArray();
+//
+//				Console.WriteLine(Convert.ToBase64String(serializedGrammar));
+//
+//				using (var zipStream = new GZipStream(target, CompressionMode.Decompress, true))
+//				{
+//					var newGram = ser.DeserializeGrammar(zipStream);
+//					Console.WriteLine(newGram);
+//				}
+//			}
 
 			Console.WriteLine();
-			Console.WriteLine("======== SLR Table ========");
-			using (var target = File.OpenWrite("slr.earle-cache"))
-			{
-				ser.Serialize(slr, target);
-			}
-
-			Console.ReadLine();
+//			Console.WriteLine("======== SLR Table ========");
+//			using (var target = File.OpenWrite("slr.earle-cache"))
+//			{
+//				ser.Serialize(slr, target);
+//			}
 		}
 
 		private static void TestParser(IParser p, string input)

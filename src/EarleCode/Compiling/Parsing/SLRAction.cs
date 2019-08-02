@@ -1,4 +1,4 @@
-﻿using EarleCode.Compiling.Parsing.Grammars.Productions;
+using EarleCode.Compiling.Parsing.Grammars.Productions;
 
 namespace EarleCode.Compiling.Parsing
 {

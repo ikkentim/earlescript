@@ -1,21 +1,5 @@
-﻿// EarleCode
-// Copyright 2017 Tim Potze
-// 
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-// 
-//     http://www.apache.org/licenses/LICENSE-2.0
-// 
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using EarleCode.Compiling.Lexing;
 using EarleCode.Compiling.Parsing.Grammars;
 using EarleCode.Compiling.Parsing.Grammars.Productions;
@@ -32,8 +16,8 @@ namespace EarleCode.Compiling.Parsing
 
         private readonly IGrammar _grammar;
 
-        private readonly Dictionary<string, Dictionary<Token, ProductionRule>> _table =
-            new Dictionary<string, Dictionary<Token, ProductionRule>>();
+        private readonly Dictionary<string, Dictionary<Terminal, ProductionRule>> _table =
+            new Dictionary<string, Dictionary<Terminal, ProductionRule>>();
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="LL1ParsingTable" /> class.
@@ -54,25 +38,17 @@ namespace EarleCode.Compiling.Parsing
         /// <param name="symbol">The symbol.</param>
         /// <param name="token">The next token.</param>
         /// <returns>The production rule.</returns>
-        public ProductionRule GetProduction(string symbol, Token token)
+        public ProductionRule GetProduction(string symbol, Terminal token)
         {
             var row = _table[symbol];
             
             // Try find the rule for the token.
-            if (row.TryGetValue(token, out var cell))
+            if (row.TryGetValue(new Terminal(token.TokenType, token.Value), out var cell))
                 return cell;
 
             // Try find the rule for the token, without a specific value.
-            token = new Token(token.Type, null);
-
-            if (row.TryGetValue(token, out cell))
-                return cell;
-
-            // Try find the rule an emtpy token.
-            token = Token.Empty;
-
-            row.TryGetValue(token, out cell);
-
+            row.TryGetValue(new Terminal(token.TokenType, null), out cell);
+            
             return cell;
         }
 
@@ -83,7 +59,7 @@ namespace EarleCode.Compiling.Parsing
         {
             foreach (var rule in _grammar.All)
             {
-                _table[rule.Name] = new Dictionary<Token, ProductionRule>();
+                _table[rule.Name] = new Dictionary<Terminal, ProductionRule>();
             }
 
             _first = new FirstSet(_grammar);
@@ -100,6 +76,12 @@ namespace EarleCode.Compiling.Parsing
             {
                 var containsEpsilon = true;
 
+                if (rule.Elements.Length == 0)
+                {  
+                    foreach (var t in _follow[rule.Name])
+                        AddToTable(rule.Name, t, rule);
+                }
+                
                 foreach (var element in rule.Elements)
                 {
                     containsEpsilon = false;
@@ -107,12 +89,12 @@ namespace EarleCode.Compiling.Parsing
                     switch (element.Type)
                     {
                         case ProductionRuleElementType.Terminal:
-                            AddToTable(rule.Name, element.Token, rule);
+                            AddToTable(rule.Name, element.Terminal, rule);
                             break;
                         case ProductionRuleElementType.NonTerminal:
                             foreach (var t in _first[element.Value])
                             {
-                                if (t.IsEmpty)
+                                if (t.Type == TerminalType.Epsilon)
                                 {
                                     containsEpsilon = true;
                                 }
@@ -123,12 +105,6 @@ namespace EarleCode.Compiling.Parsing
                             }
 
 
-                            break;
-                        case ProductionRuleElementType.TerminalEmpty:
-                            containsEpsilon = true;
-                            
-                            foreach (var t in _follow[rule.Name])
-                                AddToTable(rule.Name, t, rule);
                             break;
                     }
 
@@ -194,9 +170,9 @@ namespace EarleCode.Compiling.Parsing
         /// </summary>
         /// <param name="row">The row.</param>
         /// <param name="column">The column.</param>
-        /// <param name="value">The value to add..</param>
+        /// <param name="value">The value to add.</param>
         /// <exception cref="GrammarException">Thrown if the grammar is ambiguous.</exception>
-        private void AddToTable(string row, Token column, ProductionRule value)
+        private void AddToTable(string row, Terminal column, ProductionRule value)
         {
             if (_table[row].TryGetValue(column, out var ex) && value != ex)
                 throw new GrammarException($"{row} is ambiguous (near {column}).");
