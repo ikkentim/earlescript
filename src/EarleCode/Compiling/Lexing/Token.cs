@@ -33,7 +33,7 @@ namespace EarleCode.Compiling.Lexing
         /// <param name="file">The source file name the token was found in.</param>
         /// <param name="line">The line in the source file the token was found at.</param>
         /// <param name="column">The column in the source file the token was found at.</param>
-        public Token(TokenType type, string value, string file, int line, int column)
+        public Token(TokenType type, string value, string file = null, int line = 0, int column = 0)
         {
             Type = type;
             Value = value;
@@ -41,16 +41,6 @@ namespace EarleCode.Compiling.Lexing
             Line = line;
             Column = column;
         }
-
-	    /// <summary>
-	    ///     Instantiates a new instance of the <see cref="Token" /> struct.
-	    /// </summary>
-	    /// <param name="type">The type of the token.</param>
-	    /// <param name="value">The token value.</param>
-	    public Token(TokenType type, string value) 
-		    : this(type, value, null, 0, 0)
-	    {
-	    }
 
         /// <summary>
         ///     Gets the position this token was found at.

@@ -49,7 +49,19 @@ namespace EarleCode.Debug
 			if ((opts?.ParserTest ?? false))
 			{
 				var g = new EnumGrammar<GrammarCompat>(null);
-			
+
+				foreach(var r in g.All)
+					Console.WriteLine(r);
+				Console.WriteLine();
+				var col = new LRCanonicalCollection(g);
+				foreach(var s in col.Sets)
+				{
+					Console.WriteLine("CANONICAL COLLECTION: " + s);
+					foreach (var x in col[s].Keys)
+					{
+						Console.WriteLine(x + " :: " + col[s][x]);
+					}
+				}
 				TestParser("LL1", new LL1Parser(g));
 				TestParser("SLR", new SLRParser(g));
 				//TestParser("LALR", new LALRParser(g)); // FIXME: LALR Parser hardcoded to earle at the moment

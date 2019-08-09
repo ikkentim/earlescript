@@ -6,19 +6,19 @@ namespace EarleCode.Compiling.Parsing
     /// <summary>
     /// Represents a closure.
     /// </summary>
-    public class LRClosure : IEnumerable<LRItem>
+    public class LRClosure : IEnumerable<LR0Item>
     {
         /// <summary>
         /// Gets the items of this closure.
         /// </summary>
-        public HashSet<LRItem> Items { get; } = new HashSet<LRItem>();
+        public HashSet<LR0Item> Items { get; } = new HashSet<LR0Item>();
 
         /// <summary>
         /// Adds the specified <paramref name="item"/> to this closure.
         /// </summary>
         /// <param name="item">The item to add.</param>
         /// <returns><c>true</c> if the item was added; <c>false</c> otherwise.</returns>
-        public bool Add(LRItem item)
+        public bool Add(LR0Item item)
         {
             return Items.Add(item);
         }
@@ -41,7 +41,7 @@ namespace EarleCode.Compiling.Parsing
 
         /// <summary>Returns an enumerator that iterates through the collection.</summary>
         /// <returns>An enumerator that can be used to iterate through the collection.</returns>
-        public IEnumerator<LRItem> GetEnumerator()
+        public IEnumerator<LR0Item> GetEnumerator()
         {
             return Items.GetEnumerator();
         }

@@ -74,7 +74,6 @@ namespace EarleCode.Compiling.Parsing
         {
             switch (Type)
             {
-                case SLRActionType.GoTo: return "GOTO " + Value;
                 case SLRActionType.Shift: return "SHIFT " + Value;
                 case SLRActionType.Reduce: return "REDUCE " + Reduce;
                 default: return base.ToString();

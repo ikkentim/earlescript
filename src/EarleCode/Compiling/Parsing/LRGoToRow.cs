@@ -14,7 +14,7 @@ namespace EarleCode.Compiling.Parsing
         /// <summary>
         /// Gets the closure of the specified <paramref name="element"/>
         /// </summary>
-        /// <param name="element">The elemenent to get the closure of.</param>
+        /// <param name="element">The element to get the closure of.</param>
         public LRClosure this[ProductionRuleElement element] => Get(element);
 
         /// <summary>
@@ -30,9 +30,9 @@ namespace EarleCode.Compiling.Parsing
         /// <summary>
         /// Gets the closure of the specified <paramref name="element"/>.
         /// </summary>
-        /// <param name="element">The elemenent to get the closure of.</param>
+        /// <param name="element">The element to get the closure of.</param>
         /// <returns>The closure of the specified element.</returns>
-        public LRClosure Get(ProductionRuleElement element)
+        private LRClosure Get(ProductionRuleElement element)
         {
             _items.TryGetValue(element, out var value);
             return value;
@@ -44,7 +44,7 @@ namespace EarleCode.Compiling.Parsing
         /// <param name="element">The closure.</param>
         /// <param name="item">The item to add to the closure.</param>
         /// <returns><c>true</c> if the item has been added; <c>false</c> otherwise.</returns>
-        public bool Add(ProductionRuleElement element, LRItem item)
+        public bool Add(ProductionRuleElement element, LR0Item item)
         {
             if (!_items.TryGetValue(element, out var value))
                 _items[element] = value = new LRClosure();

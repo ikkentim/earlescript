@@ -8,7 +8,7 @@ namespace EarleCode.Compiling.Parsing
 {
     public class LRCanonicalCollection
     {
-        private readonly List<LRItem> _itemBuffer = new List<LRItem>();
+        private readonly List<LR0Item> _itemBuffer = new List<LR0Item>();
 
         private readonly Dictionary<LRClosure, LRGoToRow> _sets;
 
@@ -29,7 +29,7 @@ namespace EarleCode.Compiling.Parsing
 
             var startRule = startRules[0];
 
-            var initialItem = new LRItem(startRule);
+            var initialItem = new LR0Item(startRule);
 			
             _sets = ComputeSets(grammar, initialItem);
         }
@@ -50,7 +50,7 @@ namespace EarleCode.Compiling.Parsing
         /// </summary>
         /// <param name="set">The set.</param>
         /// <returns>The row.</returns>
-        public LRGoToRow GetGoTo(LRClosure set)
+        private LRGoToRow GetGoTo(LRClosure set)
         {
             _sets.TryGetValue(set, out var value);
             return value;
@@ -62,7 +62,7 @@ namespace EarleCode.Compiling.Parsing
         /// <param name="grammar">The grammar to compute the sets with.</param>
         /// <param name="initialItem">The initial LR item to compute the sets with.</param>
         /// <returns>The computed sets.</returns>
-        private Dictionary<LRClosure, LRGoToRow> ComputeSets(IGrammar grammar, LRItem initialItem)
+        private Dictionary<LRClosure, LRGoToRow> ComputeSets(IGrammar grammar, LR0Item initialItem)
         {
             var initial = ComputeClosure(grammar, initialItem);
             var closures = new Dictionary<LRClosure, LRGoToRow>
@@ -110,7 +110,7 @@ namespace EarleCode.Compiling.Parsing
             {
                 if(item.Position >= item.Rule.Elements.Length) continue;
 
-                var newItem = new LRItem(item.Rule, item.Position + 1);
+                var newItem = new LR0Item(item.Rule, item.Position + 1);
                 row.Add(item.Rule.Elements[item.Position], ComputeClosure(grammar, newItem));
             }
 
@@ -123,7 +123,7 @@ namespace EarleCode.Compiling.Parsing
         /// <param name="grammar">The grammar to use.</param>
         /// <param name="closureItem">The item to compute the closure of.</param>
         /// <returns>The computed closure.</returns>
-        private LRClosure ComputeClosure(IGrammar grammar, LRItem closureItem)
+        private LRClosure ComputeClosure(IGrammar grammar, LR0Item closureItem)
         {
             var closure = new LRClosure { closureItem };
             bool changes;
@@ -155,7 +155,7 @@ namespace EarleCode.Compiling.Parsing
 
                     foreach (var rule in rules)
                     {
-                        var newItem = new LRItem(rule);
+                        var newItem = new LR0Item(rule);
                         if (closure.Add(newItem))
                         {
                             changes = true;

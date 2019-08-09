@@ -18,11 +18,6 @@
         /// <summary>
         /// REDUCE n action.
         /// </summary>
-        Reduce,
-
-        /// <summary>
-        /// GO TO action.
-        /// </summary>
-        GoTo
+        Reduce
     }
 }

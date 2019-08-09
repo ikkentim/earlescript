@@ -19,10 +19,5 @@ namespace EarleCode.Compiling.Parsing.CodeProject
             get => _lookAhead;
             set => _lookAhead = value;
         }
-
-        public bool Equals(Lr1Item item)
-        {
-            return (_lr0ItemId == item._lr0ItemId) && (_lookAhead == item._lookAhead);
-        }
     };
 }

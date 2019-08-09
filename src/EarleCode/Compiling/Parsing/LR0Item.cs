@@ -7,25 +7,17 @@ namespace EarleCode.Compiling.Parsing
     /// <summary>
     /// Represents a production rule with a cursor indicating how far the rule has been parsed.
     /// </summary>
-    public struct LRItem
+    public struct LR0Item
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="LRItem"/> struct.
+        /// Initializes a new instance of the <see cref="LR0Item"/> struct.
         /// </summary>
         /// <param name="rule">The production rule.</param>
         /// <param name="position">The position of the cursor indicating how far the rule has been parsed.</param>
-        public LRItem(ProductionRule rule, int position)
+        public LR0Item(ProductionRule rule, int position = 0)
         {
             Rule = rule ?? throw new ArgumentNullException(nameof(rule));
             Position = position;
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="LRItem"/> struct.
-        /// </summary>
-        /// <param name="rule">The production rule.</param>
-        public LRItem(ProductionRule rule) : this(rule, 0)
-        {
         }
 
         /// <summary>

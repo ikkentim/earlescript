@@ -17,7 +17,7 @@ using EarleCode.Compiling.Lexing;
 
 namespace EarleCode.Compiling.Parsing.Grammars.Productions
 {
-    public struct ProductionRuleElement
+    public class ProductionRuleElement
     {
         /// <summary>
         ///     Initializes a new instance of the <see cref="ProductionRuleElement" /> class.

@@ -116,19 +116,6 @@ namespace EarleCode.Compiling.Parsing
             }
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="SLRParsingTable"/> class.
-        /// </summary>
-        /// <param name="initialState">The initial state.</param>
-        /// <param name="table">The table data.</param>
-        public SLRParsingTable(int initialState, List<Dictionary<Terminal, SLRAction>> actions, List<Dictionary<string, int>> goTos, ProductionRule @default)
-        {
-            InitialState = initialState;
-            Default = @default ?? throw new ArgumentNullException(nameof(@default));
-            _actions = actions ?? throw new ArgumentNullException(nameof(actions));
-            _goTos = goTos ?? throw new ArgumentNullException(nameof(goTos));
-        }
-
         public SLRAction this[int state, Terminal terminal]
         {
             get
@@ -155,11 +142,7 @@ namespace EarleCode.Compiling.Parsing
 
         public ProductionRule Default { get; }
         
-        public int States => _actions.Count;
-
         public int InitialState { get; } = -1;
 
-        public IReadOnlyDictionary<Terminal, SLRAction> GetRow(int state) =>
-            new ReadOnlyDictionary<Terminal, SLRAction>(_actions[state]);
     }
 }

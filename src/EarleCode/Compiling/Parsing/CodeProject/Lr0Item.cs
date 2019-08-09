@@ -23,11 +23,6 @@ namespace EarleCode.Compiling.Parsing.CodeProject
 			_position = position;
 			_production = production;
 		}
-
-		public bool Equals(Lr0Item item)
-		{
-			return (_production == item._production) && (_position == item._position);
-		}
 	};
 }
 
