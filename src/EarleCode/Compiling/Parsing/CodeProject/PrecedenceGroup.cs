@@ -5,7 +5,7 @@ namespace EarleCode.Compiling.Parsing.CodeProject
     /// </summary>
     public class PrecedenceGroup
     {
-        public Derivation Derivation {get;set;}
-        public Production[] Productions{get;set;}
+		public Derivation Derivation;
+		public Production[] Productions;
     };
 }

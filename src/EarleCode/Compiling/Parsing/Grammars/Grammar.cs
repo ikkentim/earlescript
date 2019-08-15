@@ -27,7 +27,12 @@ namespace EarleCode.Compiling.Parsing.Grammars
     {
         private readonly Dictionary<string, List<ProductionRule>> _productionRules =
             new Dictionary<string, List<ProductionRule>>();
-		
+
+        private HashSet<Terminal> _terminals = new HashSet<Terminal>
+        {
+	        Terminal.EndOfFile
+        };
+
         /// <summary>
         ///     Adds a production rule for the specified symbol.
         /// </summary>
@@ -38,7 +43,13 @@ namespace EarleCode.Compiling.Parsing.Grammars
         {
             if (symbol == null) throw new ArgumentNullException(nameof(symbol));
             if (rule == null) throw new ArgumentNullException(nameof(rule));
-			
+
+            foreach (var element in rule.Elements)
+            {
+	            if (element.Type == ProductionRuleElementType.Terminal)
+		            _terminals.Add(element.Terminal);
+            }
+
             if (_productionRules.TryGetValue(symbol, out var collection))
             {
                 collection.Add(rule);
@@ -56,7 +67,9 @@ namespace EarleCode.Compiling.Parsing.Grammars
         public void Clear()
         {
             _productionRules.Clear();
-        }
+            _terminals.Clear();
+
+		}
 
         #region Implementation of IProductionRuleSet
 
@@ -74,6 +87,11 @@ namespace EarleCode.Compiling.Parsing.Grammars
 		///		Gets a collection of all non-terminal symbols for which production rules have been defined by this grammar.
 		/// </summary>
 		public IEnumerable<string> NonTerminals => _productionRules.Keys;
+
+		/// <summary>
+		///		Gets a collection of all terminal symbols.
+		/// </summary>
+		public IEnumerable<Terminal> Terminals => _terminals;
 
         /// <summary>
         ///     Gets a collection of all available production rules which can be represented by the specified

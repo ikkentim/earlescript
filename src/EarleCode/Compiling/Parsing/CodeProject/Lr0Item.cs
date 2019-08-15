@@ -5,23 +5,31 @@ namespace EarleCode.Compiling.Parsing.CodeProject
 	/// </summary>
 	public struct Lr0Item
 	{
-		private int _production;
-		private int _position;
+		public Production Production;
+		public int Position;
 
-		public int Production
+		public Lr0Item(int position, Production production)
 		{
-			get => _production;
+			Position = position;
+			Production = production;
 		}
 
-		public int Position
+		public bool Equals(Lr0Item other)
 		{
-			get => _position;
+			return Position == other.Position && Production.Id == other.Production.Id;
 		}
 
-		public Lr0Item(int position, int production)
+		public override bool Equals(object obj)
 		{
-			_position = position;
-			_production = production;
+			return obj is Lr0Item other && Equals(other);
+		}
+
+		public override int GetHashCode()
+		{
+			unchecked
+			{
+				return ((Production != null ? Production.Id.GetHashCode() : 0) * 397) ^ Position;
+			}
 		}
 	};
 }

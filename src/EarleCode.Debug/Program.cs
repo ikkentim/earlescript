@@ -15,17 +15,17 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using System.Threading;
 using CommandLine;
-using EarleCode.Compiling;
-using EarleCode.Compiling.Earle;
 using EarleCode.Compiling.Lexing;
 using EarleCode.Compiling.Parsing;
 using EarleCode.Compiling.Parsing.Grammars;
+using EarleCode.Compiling.Parsing.Grammars.Productions;
+using EarleCode.Compiling.Parsing.ParseTree;
 using EarleCode.Interpreter;
 
 namespace EarleCode.Debug
@@ -34,6 +34,81 @@ namespace EarleCode.Debug
 	{
 		private static void Main(string[] args)
 		{
+			
+			var gg = new EnumGrammar<TestGram>(null);
+			var pt = new CanonicalParsingTable(gg);
+			
+			Console.WriteLine("terms: " + string.Join(", ", gg.Terminals));
+			Console.WriteLine("nonterms: " + string.Join(", ", gg.NonTerminals));
+
+			Console.WriteLine("SLR Sets:");
+			var canonicalCollection2 = new SLRCanonicalCollection(gg);
+			var sets2 = canonicalCollection2.Sets.ToArray();
+
+			var k = 0;
+			foreach (var s in sets2)
+			{
+				Console.WriteLine($"I{k++}: {s}");
+			}
+
+
+			Console.WriteLine();
+
+			Console.WriteLine("LALR Sets:");
+			var canonicalCollection = new LALRCanonicalCollection(gg);
+			var sets = canonicalCollection.Sets.ToArray();
+
+			var j = 0;
+			foreach (var s in sets)
+			{
+				Console.WriteLine($"I{j++}: {s}");
+			}
+
+
+			Console.WriteLine();
+
+			for (var i = 0; i < pt.States; i++)
+			{
+				foreach (var n in gg.NonTerminals)
+				{
+					if (pt.TryGetGoTo(i, n, out var r))
+						Console.WriteLine($"[{i}, {n}] = GOTO {r}");
+				}
+
+				foreach (var t in gg.Terminals)
+				{
+					if (pt.TryGetAction(i, t, out var r))
+						Console.WriteLine($"[{i}, {t}] = {r}");
+				}
+			}
+
+
+			var newTable = new LALRParsingTableBuilder().Build(gg);
+
+			Console.WriteLine("LALR:");
+
+			for (var i = 0; i < newTable.States; i++)
+			{
+				foreach (var n in gg.NonTerminals)
+				{
+					if (newTable.TryGetGoTo(i, n, out var r))
+						Console.WriteLine($"[{i}, {n}] = GOTO {r}");
+				}
+
+				foreach (var t in gg.Terminals)
+				{
+					if (newTable.TryGetAction(i, t, out var r))
+						Console.WriteLine($"[{i}, {t}] = {r}");
+				}
+			}
+
+			var parserX = new ShiftReduceParser(newTable);
+
+			var result =parserX.Parse(new Lexer(null, new[] {"c", "d"}).Tokenize("c c c d d", "foo").ToArray());
+			Console.WriteLine(result.ToTreeString());
+
+			return;// */
+
 			Options opts = null;
 			Parser.Default.ParseArguments<Options>(args).WithParsed(x => { opts = x; });
 
@@ -53,7 +128,7 @@ namespace EarleCode.Debug
 				foreach(var r in g.All)
 					Console.WriteLine(r);
 				Console.WriteLine();
-				var col = new LRCanonicalCollection(g);
+				var col = new SLRCanonicalCollection(g);
 				foreach(var s in col.Sets)
 				{
 					Console.WriteLine("CANONICAL COLLECTION: " + s);
@@ -74,35 +149,7 @@ namespace EarleCode.Debug
 
 		private static void Serialization()
 		{
-			var grammar = new EnumGrammar<ProductionRuleEnum>(EarleCompiler.MultiCharSymbols);
-			//var slr = new SLRParsingTable(grammar);
-
-//			var ser = new CacheSerializer();
-//
-//			Console.WriteLine("======== Grammar ========");
-//			using (var target = new MemoryStream())
-//			{
-//				using (var zipStream = new GZipStream(target, CompressionLevel.Optimal, true))
-//					ser.Serialize(grammar, zipStream);
-//
-//				target.Seek(0, SeekOrigin.Begin);
-//				var serializedGrammar = target.ToArray();
-//
-//				Console.WriteLine(Convert.ToBase64String(serializedGrammar));
-//
-//				using (var zipStream = new GZipStream(target, CompressionMode.Decompress, true))
-//				{
-//					var newGram = ser.DeserializeGrammar(zipStream);
-//					Console.WriteLine(newGram);
-//				}
-//			}
-
-			Console.WriteLine();
-//			Console.WriteLine("======== SLR Table ========");
-//			using (var target = File.OpenWrite("slr.earle-cache"))
-//			{
-//				ser.Serialize(slr, target);
-//			}
+			throw new NotImplementedException();
 		}
 
 		private static void TestParser(IParser p, string input)
@@ -200,11 +247,20 @@ namespace EarleCode.Debug
 			sw.Stop();
 			var running = sw.Elapsed;
 
+			//*
 			Console.WriteLine($"======== Executed {file}::{function} ========");
 			Console.WriteLine($"Initial result: OK: {ok}, result: {res}");
 			Console.WriteLine("Building interpreter: " + buildInterpreter);
 			Console.WriteLine("Compiling: " + compiling);
 			Console.WriteLine("Running: " + running);
+			// */
 		}
+	}
+
+	public enum TestGram
+	{
+		[Rule("S")] St,
+		[Rule("C C")] S,
+		[Rule("`c` C", "`d`")] C
 	}
 }

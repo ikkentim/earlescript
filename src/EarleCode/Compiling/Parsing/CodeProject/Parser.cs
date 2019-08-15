@@ -12,12 +12,12 @@ namespace EarleCode.Compiling.Parsing.CodeProject
 		private readonly Dictionary<Lr1Item, int> _lr1Id = new Dictionary<Lr1Item, int>();
 		private readonly List<HashSet<int>> _lr0States = new List<HashSet<int>>();
 		private readonly List<HashSet<int>> _lr0Kernels = new List<HashSet<int>>();
-		private readonly List<HashSet<int>> _lalrStates = new List<HashSet<int>>();
+		private readonly List<HashSet<Lr1Item>> _lalrStates = new List<HashSet<Lr1Item>>();
 		private readonly List<int[]> _lrGoto = new List<int[]>();
 		private readonly List<int[]> _gotoPrecedence = new List<int[]>();
 		private readonly List<int> _terminals = new List<int>();
 		private readonly List<int> _nonTerminals = new List<int>();
-		private readonly List<Dictionary<int, List<LalrPropagation>>> _lalrPropagations = new List<Dictionary<int, List<LalrPropagation>>>();
+		private readonly List<Dictionary<Lr0Item, List<LalrPropagation>>> _lalrPropagations = new List<Dictionary<Lr0Item, List<LalrPropagation>>>();
 		private readonly List<int> _productionPrecedence = new List<int>();
 		private readonly Grammar _grammar;
 
@@ -29,11 +29,11 @@ namespace EarleCode.Compiling.Parsing.CodeProject
 		/// <summary>
 		/// Adds a propagation to the propagation table
 		/// </summary>
-		private void AddPropagation(int nLr0SourceState, int nLr0SourceItem, int nLr0TargetState, int nLr0TargetItem)
+		private void AddPropagation(int nLr0SourceState, Lr0Item nLr0SourceItem, int nLr0TargetState, Lr0Item nLr0TargetItem)
 		{
 			while (_lalrPropagations.Count <= nLr0SourceState)
 			{
-				_lalrPropagations.Add(new Dictionary<int, List<LalrPropagation>>());
+				_lalrPropagations.Add(new Dictionary<Lr0Item, List<LalrPropagation>>());
 			}
 
 			var propagationsForState = _lalrPropagations[nLr0SourceState];
@@ -105,10 +105,7 @@ namespace EarleCode.Compiling.Parsing.CodeProject
 			var closed = new HashSet<int>();
 			var open = new List<int>();
 
-			foreach (var itemCopy in i)
-			{
-				open.Add(itemCopy);
-			}
+			open.AddRange(i);
 
 			while (open.Count > 0)
 			{
@@ -117,21 +114,18 @@ namespace EarleCode.Compiling.Parsing.CodeProject
 				var item = _lr0Items[nItem];
 				closed.Add(nItem);
 
-				var nProduction = 0;
 				foreach (var production in Productions)
 				{
-					if ((item.Position < Productions[item.Production].Right.Length) &&
-					    (production.Left == Productions[item.Production].Right[item.Position]))
+					if ((item.Position < item.Production.Right.Length) &&
+					    (production.Left == item.Production.Right[item.Position]))
 					{
-						var newItem = new Lr0Item(0, nProduction);
+						var newItem = new Lr0Item(0, production);
 						var nNewItemId = GetLr0ItemId(newItem);
 						if (!open.Contains(nNewItemId) && !closed.Contains(nNewItemId))
 						{
 							open.Add(nNewItemId);
 						}
 					}
-
-					nProduction++;
 				}
 			}
 
@@ -141,57 +135,48 @@ namespace EarleCode.Compiling.Parsing.CodeProject
 		/// <summary>
 		/// takes a set of LR1 Items (LR0 items with look-ahead) and produces all of those LR1 items reachable by substitution
 		/// </summary>
-		private HashSet<int> Lr1Closure(HashSet<int> i)
+		private HashSet<Lr1Item> Lr1Closure(HashSet<Lr1Item> i)
 		{
-			var closed = new HashSet<int>();
-			var open = new List<int>();
+			var closed = new HashSet<Lr1Item>();
+			var open = new List<Lr1Item>();
 
-			foreach (var itemCopy in i)
-			{
-				open.Add(itemCopy);
-			}
+			open.AddRange(i);
 
 			while (open.Count > 0)
 			{
-				var nLr1Item = open[0];
+				var lr1Item = open[0];
 				open.RemoveAt(0);
-				var lr1Item = _lr1Items[nLr1Item];
-				var lr0Item = _lr0Items[lr1Item.Lr0ItemId];
-				closed.Add(nLr1Item);
+				var lr0Item = lr1Item.Lr0ItemId;
+				closed.Add(lr1Item);
 
-				if (lr0Item.Position < Productions[lr0Item.Production].Right.Length)
+				if (lr0Item.Position < lr0Item.Production.Right.Length)
 				{
-					var nToken = Productions[lr0Item.Production].Right[lr0Item.Position];
+					var nToken = lr0Item.Production.Right[lr0Item.Position];
 					if (_nonTerminals.Contains(nToken))
 					{
 						var argFirst = new List<int>();
 						for (var nIdx = lr0Item.Position + 1;
-							nIdx < Productions[lr0Item.Production].Right.Length;
+							nIdx < lr0Item.Production.Right.Length;
 							nIdx++)
 						{
-							argFirst.Add(Productions[lr0Item.Production].Right[nIdx]);
+							argFirst.Add(lr0Item.Production.Right[nIdx]);
 						}
 
 						var first = First(argFirst, lr1Item.LookAhead);
-						var nProduction = 0;
 						foreach (var production in Productions)
 						{
 							if (production.Left == nToken)
 							{
 								foreach (var nTokenFirst in first)
 								{
-									var newLr0Item = new Lr0Item(0, nProduction);
-									var nNewLr0ItemId = GetLr0ItemId(newLr0Item);
-									var newLr1Item = new Lr1Item {Lr0ItemId = nNewLr0ItemId, LookAhead = nTokenFirst};
-									var nNewLr1ItemId = GetLr1ItemId(newLr1Item);
-									if (!open.Contains(nNewLr1ItemId) && !closed.Contains(nNewLr1ItemId))
+									var newLr0Item = new Lr0Item(0, production);
+									var newLr1Item = new Lr1Item {Lr0ItemId = newLr0Item, LookAhead = nTokenFirst};
+									if (!open.Contains(newLr1Item) && !closed.Contains(newLr1Item))
 									{
-										open.Add(nNewLr1ItemId);
+										open.Add(newLr1Item);
 									}
 								}
 							}
-
-							nProduction++;
 						}
 					}
 				}
@@ -210,13 +195,13 @@ namespace EarleCode.Compiling.Parsing.CodeProject
 			foreach (var nItem in state)
 			{
 				var item = _lr0Items[nItem];
-				if (item.Position < Productions[item.Production].Right.Length &&
-				    (Productions[item.Production].Right[item.Position] == nTokenId))
+				if (item.Position < item.Production.Right.Length &&
+				    (item.Production.Right[item.Position] == nTokenId))
 				{
 					var newItem = new Lr0Item(item.Position + 1, item.Production);
 					var nNewItemId = GetLr0ItemId(newItem);
 					gotoLr0.Add(nNewItemId);
-					var nProductionPrecedence = _productionPrecedence[item.Production];
+					var nProductionPrecedence = _productionPrecedence[item.Production.Id];
 					if (nPrecedence < nProductionPrecedence)
 					{
 						nPrecedence = nProductionPrecedence;
@@ -239,7 +224,7 @@ namespace EarleCode.Compiling.Parsing.CodeProject
 		/// </summary>
 		private void GenerateLr0Items()
 		{
-			var startState = new HashSet<int> {GetLr0ItemId(new Lr0Item(0, 0))};
+			var startState = new HashSet<int> {GetLr0ItemId(new Lr0Item(0, Productions[0]))};
 
 			var bIgnore = false;
 			var open = new List<int> {GetLr0StateId(Lr0Closure(startState), ref bIgnore)};
@@ -365,45 +350,42 @@ namespace EarleCode.Compiling.Parsing.CodeProject
 			var nLr0State = 0;
 			foreach (var unused in _lr0States)
 			{
-				_lalrStates.Add(new HashSet<int>());
+				_lalrStates.Add(new HashSet<Lr1Item>());
 			}
 
 			foreach (var lr0Kernel in _lr0Kernels)
 			{
-				var j = new HashSet<int>();
+				var j = new HashSet<Lr1Item>();
 				foreach (var jLr0ItemId in lr0Kernel)
 				{
-					var lr1Item = new Lr1Item {Lr0ItemId = jLr0ItemId, LookAhead = -1};
-					var nLr1ItemId = GetLr1ItemId(lr1Item);
-					j.Add(nLr1ItemId);
+					var lr1Item = new Lr1Item {Lr0ItemId = _lr0Items[jLr0ItemId], LookAhead = -1};
+					j.Add(lr1Item);
 				}
 
 				var jPrime = Lr1Closure(j);
 				foreach (var jpLr1ItemId in jPrime)
 				{
-					var lr1Item = _lr1Items[jpLr1ItemId];
-					var lr0Item = _lr0Items[lr1Item.Lr0ItemId];
+					var lr1Item = jpLr1ItemId;
+					var lr0Item = lr1Item.Lr0ItemId;
 
 					if ((lr1Item.LookAhead != -1) || (nLr0State == 0))
 					{
 						_lalrStates[nLr0State].Add(jpLr1ItemId);
 					}
 
-					if (lr0Item.Position < Productions[lr0Item.Production].Right.Length)
+					if (lr0Item.Position < lr0Item.Production.Right.Length)
 					{
-						var nToken = Productions[lr0Item.Production].Right[lr0Item.Position];
+						var nToken = lr0Item.Production.Right[lr0Item.Position];
 						var lr0Successor = new Lr0Item(lr0Item.Position + 1, lr0Item.Production);
-						var nLr0Successor = GetLr0ItemId(lr0Successor);
 						var nSuccessorState = _lrGoto[nLr0State][nToken];
 						if (lr1Item.LookAhead == -1)
 						{
-							AddPropagation(nLr0State, lr1Item.Lr0ItemId, nSuccessorState, nLr0Successor);
+							AddPropagation(nLr0State, lr1Item.Lr0ItemId, nSuccessorState, lr0Successor);
 						}
 						else
 						{
-							var lalrItem = new Lr1Item {Lr0ItemId = nLr0Successor, LookAhead = lr1Item.LookAhead};
-							var nLalrItemId = GetLr1ItemId(lalrItem);
-							_lalrStates[nSuccessorState].Add(nLalrItemId);
+							var lalrItem = new Lr1Item {Lr0ItemId = lr0Successor, LookAhead = lr1Item.LookAhead};
+							_lalrStates[nSuccessorState].Add(lalrItem);
 						}
 					}
 				}
@@ -425,10 +407,8 @@ namespace EarleCode.Compiling.Parsing.CodeProject
 				foreach (var statePropagations in _lalrPropagations)
 				{
 					var bStateChanged = false;
-					foreach (var nLr1Item in _lalrStates[nState])
+					foreach (var lr1Item in _lalrStates[nState])
 					{
-						var lr1Item = _lr1Items[nLr1Item];
-
 						if (statePropagations.ContainsKey(lr1Item.Lr0ItemId))
 						{
 							foreach (var lalrPropagation in statePropagations[lr1Item.Lr0ItemId])
@@ -436,7 +416,7 @@ namespace EarleCode.Compiling.Parsing.CodeProject
 								var nGoto = lalrPropagation.Lr0TargetState;
 								var item = new Lr1Item
 									{Lr0ItemId = lalrPropagation.Lr0TargetItem, LookAhead = lr1Item.LookAhead};
-								if (_lalrStates[nGoto].Add(GetLr1ItemId(item)))
+								if (_lalrStates[nGoto].Add(item))
 								{
 									bChanged = true;
 									bStateChanged = true;
@@ -498,7 +478,7 @@ namespace EarleCode.Compiling.Parsing.CodeProject
 					{
 						lr0Kernel.Add(nLr0Item);
 					}
-					else if (Productions[item.Production].Left == 0)
+					else if (item.Production.Left == 0)
 					{
 						lr0Kernel.Add(nLr0Item);
 					}
@@ -506,14 +486,6 @@ namespace EarleCode.Compiling.Parsing.CodeProject
 
 				_lr0Kernels.Add(lr0Kernel);
 			}
-		}
-
-		/// <summary>
-		/// Helper function that returns true if the list of actions contains an action
-		/// </summary>
-		private bool ListContainsAction(List<Action> list, Action action)
-		{
-			return list.Contains(action);
 		}
 
 		/// <summary>
@@ -525,13 +497,18 @@ namespace EarleCode.Compiling.Parsing.CodeProject
 			{
 				Actions = new Action[_lalrStates.Count, _grammar.Tokens.Length + 1]
 			};
+
+			var actions = new List<Action>();
+			var importantActions = new List<Action>();
+			var reduceActions = new List<Action>();
+
 			for (var nStateId = 0; nStateId < _lalrStates.Count; nStateId++)
 			{
 				var lalrState = _lalrStates[nStateId];
 
 				for (var nToken = -1; nToken < _grammar.Tokens.Length; nToken++)
 				{
-					var actions = new List<Action>();
+					actions.Clear();
 					if (nToken >= 0)
 					{
 						if (_lrGoto[nStateId][nToken] >= 0)
@@ -543,15 +520,15 @@ namespace EarleCode.Compiling.Parsing.CodeProject
 
 					foreach (var nLr1ItemId in lalrState)
 					{
-						var lr1Item = _lr1Items[nLr1ItemId];
-						var lr0Item = _lr0Items[lr1Item.Lr0ItemId];
+						var lr1Item = nLr1ItemId;
+						var lr0Item = lr1Item.Lr0ItemId;
 
-						if ((lr0Item.Position == Productions[lr0Item.Production].Right.Length) &&
+						if ((lr0Item.Position == lr0Item.Production.Right.Length) &&
 						    lr1Item.LookAhead == nToken)
 						{
 							var action = new Action
-								{ActionType = ActionType.Reduce, ActionParameter = lr0Item.Production};
-							if (!ListContainsAction(actions, action))
+								{ActionType = ActionType.Reduce, ActionParameter = lr0Item.Production.Id};
+							if (!actions.Contains(action))
 							{
 								actions.Add(action);
 							}
@@ -559,7 +536,8 @@ namespace EarleCode.Compiling.Parsing.CodeProject
 					}
 
 					var nMaxPrecedence = int.MinValue;
-					var importantActions = new List<Action>();
+					importantActions.Clear();
+
 					foreach (var action in actions)
 					{
 						var nActionPrecedence = int.MinValue;
@@ -592,7 +570,7 @@ namespace EarleCode.Compiling.Parsing.CodeProject
 					{
 						var shiftAction = default(Action);
 						var hasShiftAction = false;
-						var reduceActions = new List<Action>();
+						reduceActions.Clear();
 						foreach (var action in importantActions)
 						{
 							if (action.ActionType == ActionType.Reduce)
@@ -645,10 +623,12 @@ namespace EarleCode.Compiling.Parsing.CodeProject
 		private void PopulateProductions()
 		{
 			var nPrecedence = 0;
+			var nProduction = 0;
 			foreach (var oGroup in _grammar.PrecedenceGroups)
 			{
 				foreach (var oProduction in oGroup.Productions)
 				{
+					oProduction.Id = nProduction++;
 					Productions.Add(oProduction);
 					_productionPrecedence.Add(nPrecedence);
 				}

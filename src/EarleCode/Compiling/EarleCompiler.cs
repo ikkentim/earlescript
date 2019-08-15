@@ -59,6 +59,7 @@ namespace EarleCode.Compiling
 //	        else
 //	        {
 		        var grammar = new EnumGrammar<ProductionRuleEnum>(MultiCharSymbols);
+//		        parser = new ShiftReduceParser(new LALRParsingTableBuilder().Build(grammar));
                 parser = new LALRParser(grammar);
 //	        }
 

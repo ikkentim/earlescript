@@ -5,18 +5,9 @@ using EarleCode.Compiling.Parsing.Grammars.Productions;
 
 namespace EarleCode.Compiling.Parsing
 {
-	/// <summary>
-	/// Represents an SLR(1) parsing table.
-	/// </summary>
-	public class SLRParsingTable : ShiftReduceParsingTable
+	public class CanonicalParsingTable : ShiftReduceParsingTable
 	{
-		/// <summary>
-		/// Initializes a new instance of the <see cref="SLRParsingTable"/> class.
-		/// </summary>
-		/// <param name="grammar">The grammar to base the SLR parsing table on.</param>
-		/// <exception cref="ArgumentNullException">Thrown if <paramref name="grammar"/> is null.</exception>
-		/// <exception cref="GrammarException">Thrown if the grammar is invalid.</exception>
-		public SLRParsingTable(IGrammar grammar)
+		public CanonicalParsingTable(IGrammar grammar, LALRCanonicalCollection canonicalCollection = null)
 		{
 			if (grammar == null) throw new ArgumentNullException(nameof(grammar));
 
@@ -29,11 +20,9 @@ namespace EarleCode.Compiling.Parsing
 
 			Default = startRule;
 
-			var canonicalCollection = new SLRCanonicalCollection(grammar);
+			if (canonicalCollection == null)
+				canonicalCollection = new LALRCanonicalCollection(grammar);
 			var sets = canonicalCollection.Sets.ToArray();
-
-			var first = new FirstSet(grammar);
-			var follow = new FollowSet(grammar, first);
 
 			States = sets.Length;
 			for (var state = 0; state < sets.Length; state++)
@@ -50,19 +39,13 @@ namespace EarleCode.Compiling.Parsing
 					// If dot at end
 					if (value.Position >= value.Rule.Elements.Length)
 					{
-						var followSet = follow[value.Rule.Name];
+						var followValue = value.Lookahead;
+						if (TryGetAction(state, followValue, out var existing) && existing.Reduce != value.Rule)
+							throw new GrammarException(
+								$"Ambiguous grammar near table[{state},{followValue}] = REDUCE {value.Rule}/{existing}");
 
-						if (followSet == null)
-							continue;
+						this[state, followValue] = new SLRAction(value.Rule);
 
-						foreach (var followValue in followSet)
-						{
-							if (TryGetAction(state, followValue, out var existing) && existing.Reduce != value.Rule)
-								throw new GrammarException(
-									$"Ambiguous grammar near table[{state},{followValue}] = REDUCE {value.Rule}/{existing}");
-
-							this[state, followValue] = new SLRAction(value.Rule);
-						}
 					}
 					else
 					{

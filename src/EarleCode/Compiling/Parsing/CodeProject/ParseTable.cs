@@ -5,7 +5,7 @@ namespace EarleCode.Compiling.Parsing.CodeProject
 	/// </summary>
 	public class ParseTable
 	{
-		public Action [,] Actions {get;set;}
+		public Action[,] Actions;
 	};
 }
 

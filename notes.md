@@ -29,10 +29,12 @@ Some examples of LR0 items:
 
 LR Closure
 ----------
-A closure in a set of LR0 items.
+A closure in a set of LR0/LR1 items.
 
 LR Canonical Collection
 -----------------------
 A canonical collection is a {closure -> go to row} dictionary. The closure contains all possible LR0 items which can occur while the cursor of the parser is at a single position.  For the sample grammar, the first closure would be: `S -> • A a; A -> • B D; B -> • b; B -> •` where `;` separates te LR0 items. The go to row is a {symbol -> closure} dictionary which contains all possible next states the shift-reduce parser could be moved to when a certain symbol is reduced. The closure contains the next possible states of the parser and can be found as a key in the canonical collection. For the sample closure above, the go to row would contain the following (in `KEY :: value,` notation): `A :: S -> A • a, B :: A -> B • D; D ->  • d; D -> •, b :: B -> b •,`. When the cursor is at the end of the production rule, like in `B -> b •`, the rule can immediately be reduced, in this case `b` to `B`.
 
-
+LR1 Item
+--------
+An LR1 item is much like an LR0 item, except it also contains a (1) lookahead parameter.

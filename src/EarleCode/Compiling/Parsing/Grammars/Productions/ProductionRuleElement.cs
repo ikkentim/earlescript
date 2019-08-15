@@ -13,6 +13,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using EarleCode.Compiling.Lexing;
 
 namespace EarleCode.Compiling.Parsing.Grammars.Productions
@@ -81,7 +82,7 @@ namespace EarleCode.Compiling.Parsing.Grammars.Productions
 					case ProductionRuleElementType.Terminal:
 						return Value == null && TokenType == TokenType.Symbol ? Terminal.EndOfFile : new Terminal(TokenType, Value);
 					default:
-						throw new GrammarException("A NonTerminal element does not have a token");
+						throw new InvalidOperationException("Instance is not a terminal.");
 			    }
 		    }
 	    }

@@ -152,29 +152,14 @@ namespace EarleCode.Compiling.Parsing.Grammars
 
         #region Implementation of IProductionRuleSet
 
-        /// <summary>
-        ///     Gets the default production symbol.
-        /// </summary>
         public string Default => _grammar.Default;
 
-        /// <summary>
-        ///     Gets a collection of all available production rules.
-        /// </summary>
         public IEnumerable<ProductionRule> All => _grammar.All;
 
-	    /// <summary>
-	    ///		Gets a collection of all non-terminal symbols for which production rules have been defined by this grammar.
-	    /// </summary>
 	    public IEnumerable<string> NonTerminals => _grammar.NonTerminals;
 
-	    /// <summary>
-        ///     Gets a collection of all available production rules which can be represented by the specified
-        ///     <paramref name="symbol" />.
-        /// </summary>
-        /// <param name="symbol">The symbol of the production rules.</param>
-        /// <returns>
-        ///     A collection of all available production rules which can be represented by the specified symbol.
-        /// </returns>
+	    public IEnumerable<Terminal> Terminals => _grammar.Terminals;
+
         public IEnumerable<ProductionRule> Get(string symbol)
         {
             return _grammar.Get(symbol);

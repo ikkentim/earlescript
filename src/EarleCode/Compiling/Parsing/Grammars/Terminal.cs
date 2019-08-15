@@ -7,7 +7,7 @@ namespace EarleCode.Compiling.Parsing.Grammars
     /// <summary>
     ///     Represents a terminal.
     /// </summary>
-    public struct Terminal : IFormattable
+    public struct Terminal : IFormattable, IEquatable<Terminal>
     {
         /// <summary>
         ///     Instantiates a new instance of the <see cref="Terminal" /> struct.

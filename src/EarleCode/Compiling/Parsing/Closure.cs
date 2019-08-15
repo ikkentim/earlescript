@@ -6,21 +6,23 @@ namespace EarleCode.Compiling.Parsing
     /// <summary>
     /// Represents a closure.
     /// </summary>
-    public class LRClosure : IEnumerable<LR0Item>
+    public class Closure<T> : IEnumerable<T>
     {
-        /// <summary>
-        /// Gets the items of this closure.
-        /// </summary>
-        public HashSet<LR0Item> Items { get; } = new HashSet<LR0Item>();
+	    private readonly HashSet<T> _items = new HashSet<T>();
 
-        /// <summary>
-        /// Adds the specified <paramref name="item"/> to this closure.
-        /// </summary>
-        /// <param name="item">The item to add.</param>
-        /// <returns><c>true</c> if the item was added; <c>false</c> otherwise.</returns>
-        public bool Add(LR0Item item)
+	    /// <summary>
+	    /// Gets the items of this closure.
+	    /// </summary>
+	    public HashSet<T> Items => _items;
+
+	    /// <summary>
+	    /// Adds the specified <paramref name="item"/> to this closure.
+	    /// </summary>
+	    /// <param name="item">The item to add.</param>
+	    /// <returns><c>true</c> if the item was added; <c>false</c> otherwise.</returns>
+	    public bool Add(T item)
         {
-            return Items.Add(item);
+            return _items.Add(item);
         }
 
         /// <summary>
@@ -28,7 +30,7 @@ namespace EarleCode.Compiling.Parsing
         /// </summary>
         /// <param name="closure">The closure to add.</param>
         /// <returns><c>true</c> if an item was added; <c>false</c> otherwise.</returns>
-        public bool Add(LRClosure closure)
+        public bool Add(Closure<T> closure)
         {
             var response = false;
             foreach (var item in closure.Items)
@@ -41,7 +43,7 @@ namespace EarleCode.Compiling.Parsing
 
         /// <summary>Returns an enumerator that iterates through the collection.</summary>
         /// <returns>An enumerator that can be used to iterate through the collection.</returns>
-        public IEnumerator<LR0Item> GetEnumerator()
+        public IEnumerator<T> GetEnumerator()
         {
             return Items.GetEnumerator();
         }
@@ -73,7 +75,7 @@ namespace EarleCode.Compiling.Parsing
         /// </summary>
         /// <param name="other">The closure to compare with the current closure.</param>
         /// <returns>true if the specified closure is equal to the current closure; otherwise, false.</returns>
-        public bool Equals(LRClosure other)
+        public bool Equals(Closure<T> other)
         {
             return Items.SetEquals(other.Items);
         }
@@ -86,7 +88,7 @@ namespace EarleCode.Compiling.Parsing
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
-            return Equals((LRClosure) obj);
+            return Equals((Closure<T>) obj);
         }
 
         /// <summary>Serves as the default hash function.</summary>
@@ -100,7 +102,7 @@ namespace EarleCode.Compiling.Parsing
         /// <param name="left">The first value to compare.</param>
         /// <param name="right">The second value to compare.</param>
         /// <returns>true if the <paramref name="left" /> and <paramref name="right" /> parameters have the same value; otherwise, false.</returns>
-        public static bool operator ==(LRClosure left, LRClosure right)
+        public static bool operator ==(Closure<T> left, Closure<T> right)
         {
             return Equals(left, right);
         }
@@ -109,7 +111,7 @@ namespace EarleCode.Compiling.Parsing
         /// <param name="left">The first value to compare.</param>
         /// <param name="right">The second value to compare.</param>
         /// <returns>true if <paramref name="left" /> and <paramref name="right" /> are not equal; otherwise, false.</returns>
-        public static bool operator !=(LRClosure left, LRClosure right)
+        public static bool operator !=(Closure<T> left, Closure<T> right)
         {
             return !Equals(left, right);
         }

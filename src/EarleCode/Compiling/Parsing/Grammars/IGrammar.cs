@@ -39,11 +39,16 @@ namespace EarleCode.Compiling.Parsing.Grammars
 	    IEnumerable<string> NonTerminals { get; }
 
 	    /// <summary>
-        ///     Gets a collection of all available production rules which can be represented by the specified
-        ///     <paramref name="symbol" />.
-        /// </summary>
-        /// <param name="symbol">The symbol of the production rules.</param>
-        /// <returns>A collection of all available production rules which can be represented by the specified symbol.</returns>
-        IEnumerable<ProductionRule> Get(string symbol);
+	    ///		Gets a collection of all terminal symbols.
+	    /// </summary>
+	    IEnumerable<Terminal> Terminals { get; }
+
+		/// <summary>
+		///     Gets a collection of all available production rules which can be represented by the specified
+		///     <paramref name="symbol" />.
+		/// </summary>
+		/// <param name="symbol">The symbol of the production rules.</param>
+		/// <returns>A collection of all available production rules which can be represented by the specified symbol.</returns>
+		IEnumerable<ProductionRule> Get(string symbol);
     }
 }

@@ -5,19 +5,25 @@ namespace EarleCode.Compiling.Parsing.CodeProject
     /// </summary>
     public struct Lr1Item
     {
-        private int _lr0ItemId;
-        private int _lookAhead;
+		public Lr0Item Lr0ItemId;
+		public int LookAhead;
 
-        public int Lr0ItemId
-        {
-            get => _lr0ItemId;
-            set => _lr0ItemId = value;
-        }
+		public bool Equals(Lr1Item other)
+		{
+			return LookAhead == other.LookAhead && Lr0ItemId.Equals(other.Lr0ItemId);
+		}
 
-        public int LookAhead
-        {
-            get => _lookAhead;
-            set => _lookAhead = value;
-        }
+		public override bool Equals(object obj)
+		{
+			return obj is Lr1Item other && Equals(other);
+		}
+
+		public override int GetHashCode()
+		{
+			unchecked
+			{
+				return (Lr0ItemId.GetHashCode() * 397) ^ LookAhead;
+			}
+		}
     };
 }
